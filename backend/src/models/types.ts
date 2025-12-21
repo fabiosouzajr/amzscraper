@@ -2,7 +2,14 @@ export interface Product {
   id: number;
   asin: string;
   description: string;
+  categories?: Category[];
   created_at: string;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  level: number;
 }
 
 export interface PriceHistory {
@@ -25,6 +32,7 @@ export interface ScrapedProductData {
   asin: string;
   description: string;
   price: number;
+  categories?: string[];
 }
 
 export interface PriceDrop {
@@ -34,5 +42,6 @@ export interface PriceDrop {
   price_drop: number;
   price_drop_percentage: number;
   last_updated: string;
+  price_history?: PriceHistory[];
 }
 

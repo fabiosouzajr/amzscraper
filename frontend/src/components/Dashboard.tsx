@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { PriceDrop } from '../types';
+import { MiniPriceChart } from './MiniPriceChart';
 
 export function Dashboard() {
   const [priceDrops, setPriceDrops] = useState<PriceDrop[]>([]);
@@ -130,7 +131,29 @@ export function Dashboard() {
               </div>
               <div className="product-info">
                 <div className="product-asin">{drop.product.asin}</div>
-                <div className="product-description">{drop.product.description}</div>
+                {drop.product.categories && drop.product.categories.length > 0 && (
+                  <div className="product-categories">
+                    {drop.product.categories.map((cat, idx) => (
+                      <span key={cat.id} className="category-badge">
+                        {cat.name}
+                        {idx < drop.product.categories!.length - 1 && ' > '}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <a
+                  href={`https://www.amazon.com.br/dp/${drop.product.asin}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="product-description product-link"
+                >
+                  {drop.product.description}
+                </a>
+                {drop.price_history && drop.price_history.length > 0 && (
+                  <div className="mini-chart-container">
+                    <MiniPriceChart priceHistory={drop.price_history} />
+                  </div>
+                )}
               </div>
               <div className="price-info">
                 <div className="price-row">

@@ -3,10 +3,11 @@ import { Dashboard } from './components/Dashboard';
 import { ProductList } from './components/ProductList';
 import { ProductSearch } from './components/ProductSearch';
 import { ProductDetail } from './components/ProductDetail';
+import { Config } from './components/Config';
 import { Product } from './types';
 import './App.css';
 
-type View = 'dashboard' | 'products' | 'search' | 'detail';
+type View = 'dashboard' | 'products' | 'search' | 'detail' | 'config';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -40,6 +41,12 @@ function App() {
           >
             Search
           </button>
+          <button
+            onClick={() => setCurrentView('config')}
+            className={currentView === 'config' ? 'active' : ''}
+          >
+            Config
+          </button>
         </div>
       </nav>
 
@@ -58,6 +65,7 @@ function App() {
             onBack={() => setCurrentView('search')}
           />
         )}
+        {currentView === 'config' && <Config />}
       </main>
     </div>
   );

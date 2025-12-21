@@ -54,6 +54,18 @@ export class SchedulerService {
           const scrapedData = await scraperService.scrapeProduct(product.asin);
           const lastPrice = await dbService.getLastPrice(product.id);
           
+          // Update categories if they have changed or were missing
+          if (scrapedData.categories && scrapedData.categories.length > 0) {
+            const currentCategories = product.categories || [];
+            const currentCategoryNames = currentCategories.map(c => c.name).join(' > ');
+            const newCategoryNames = scrapedData.categories.join(' > ');
+            
+            if (currentCategoryNames !== newCategoryNames) {
+              await dbService.setProductCategories(product.id, scrapedData.categories);
+              console.log(`  ✓ Categories updated: "${newCategoryNames}"`);
+            }
+          }
+          
           if (lastPrice === null || scrapedData.price < lastPrice) {
             await dbService.addPriceHistory(product.id, scrapedData.price);
             console.log(`  ✓ Price updated: ${scrapedData.price} (previous: ${lastPrice || 'N/A'})`);

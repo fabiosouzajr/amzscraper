@@ -5,10 +5,11 @@ import { validateASIN, normalizeASIN } from '../utils/validation';
 
 const router = Router();
 
-// GET /api/products - List all products
+// GET /api/products - List all products (with optional category filter)
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const products = await dbService.getAllProducts();
+    const categoryFilter = req.query.category as string | undefined;
+    const products = await dbService.getAllProducts(categoryFilter);
     res.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -16,18 +17,30 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/products/search?q=... - Search products
+// GET /api/products/search?q=... - Search products (with optional category filter)
 router.get('/search', async (req: Request, res: Response) => {
   try {
     const query = req.query.q as string;
+    const categoryFilter = req.query.category as string | undefined;
     if (!query) {
       return res.status(400).json({ error: 'Search query is required' });
     }
-    const products = await dbService.searchProducts(query);
+    const products = await dbService.searchProducts(query, categoryFilter);
     res.json(products);
   } catch (error) {
     console.error('Error searching products:', error);
     res.status(500).json({ error: 'Failed to search products' });
+  }
+});
+
+// GET /api/products/categories - Get all available categories
+router.get('/categories', async (req: Request, res: Response) => {
+  try {
+    const categories = await dbService.getAllCategories();
+    res.json(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ error: 'Failed to fetch categories' });
   }
 });
 
@@ -75,8 +88,8 @@ router.post('/', async (req: Request, res: Response) => {
     await scraperService.initialize();
     const scrapedData = await scraperService.scrapeProduct(normalizedASIN);
 
-    // Save product
-    const product = await dbService.addProduct(normalizedASIN, scrapedData.description);
+    // Save product with categories
+    const product = await dbService.addProduct(normalizedASIN, scrapedData.description, scrapedData.categories);
     
     // Save initial price
     await dbService.addPriceHistory(product.id, scrapedData.price);

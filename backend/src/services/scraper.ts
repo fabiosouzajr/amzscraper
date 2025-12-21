@@ -118,27 +118,102 @@ export class ScraperService {
       try {
         console.log('Extracting price...');
         
-        // Wait for price elements with longer timeout
-        await page.waitForSelector('span.a-price-whole, span.a-price-fraction, .a-price .a-offscreen', { timeout: 15000 });
-        
-        // Try to find price using multiple methods
+        // Wait for visible price elements - try main price container first
+        let priceFound = false;
         let wholePart: string | null = null;
         let fractionPart: string | null = null;
         
-        // Method 1: Standard price format (span.a-price-whole + span.a-price-fraction)
-        wholePart = await page.textContent('span.a-price-whole');
-        fractionPart = await page.textContent('span.a-price-fraction');
+        // Method 1: Try to find visible price elements in the main price container
+        try {
+          // Wait for main price container
+          await page.waitForSelector('#corePriceDisplay_desktop_feature_div, #corePrice_feature_div, .a-price.priceToPay', { timeout: 10000, state: 'visible' });
+          
+          // Find visible price whole and fraction parts within the price container
+          const visiblePriceData = await page.evaluate(() => {
+            // @ts-ignore - browser context
+            const priceContainer = document.querySelector('#corePriceDisplay_desktop_feature_div, #corePrice_feature_div, .a-price.priceToPay');
+            if (!priceContainer) return null;
+            
+            // Find visible whole and fraction parts within this container
+            // @ts-ignore
+            const wholeEls = priceContainer.querySelectorAll('span.a-price-whole');
+            // @ts-ignore
+            const fractionEls = priceContainer.querySelectorAll('span.a-price-fraction');
+            
+            // Find first visible elements
+            for (let i = 0; i < wholeEls.length; i++) {
+              // @ts-ignore
+              if (wholeEls[i].offsetParent !== null) {
+                // @ts-ignore
+                const wholeText = wholeEls[i].textContent?.trim();
+                // @ts-ignore
+                const fractionText = fractionEls[i]?.textContent?.trim();
+                if (wholeText) {
+                  return { whole: wholeText, fraction: fractionText || '' };
+                }
+              }
+            }
+            return null;
+          });
+          
+          if (visiblePriceData) {
+            wholePart = visiblePriceData.whole;
+            fractionPart = visiblePriceData.fraction;
+            priceMethod = 'visible price container';
+            console.log(`✓ Found price using method: ${priceMethod}`);
+            console.log(`  Raw wholePart: "${wholePart}", raw fractionPart: "${fractionPart}"`);
+            priceFound = true;
+          }
+        } catch (error) {
+          console.log('✗ Main price container not found, trying alternative methods...');
+        }
         
-        if (wholePart) {
-          priceMethod = 'span.a-price-whole + span.a-price-fraction';
-          console.log(`✓ Found price using method: ${priceMethod}`);
-          console.log(`  Raw wholePart: "${wholePart}", raw fractionPart: "${fractionPart}"`);
-        } else {
-          // Method 2: Alternative price format (.a-price .a-offscreen)
-          console.log('✗ Standard price format not found, trying .a-price .a-offscreen...');
-          const priceText = await page.textContent('.a-price .a-offscreen');
-          if (priceText) {
-            // Extract price from text like "R$ 1.234,56"
+        // Method 2: Find any visible price whole/fraction elements if Method 1 failed
+        if (!priceFound) {
+          try {
+            await page.waitForSelector('span.a-price-whole', { timeout: 10000, state: 'visible' });
+            
+            // Find the first visible price whole and fraction elements
+            const visiblePriceData = await page.evaluate(() => {
+              // @ts-ignore - browser context
+              const wholeEls = document.querySelectorAll('span.a-price-whole');
+              // @ts-ignore
+              const fractionEls = document.querySelectorAll('span.a-price-fraction');
+              
+              // Find first visible whole element
+              for (let i = 0; i < wholeEls.length; i++) {
+                // @ts-ignore
+                if (wholeEls[i].offsetParent !== null) {
+                  // @ts-ignore
+                  const wholeText = wholeEls[i].textContent?.trim();
+                  // @ts-ignore
+                  const fractionText = fractionEls[i]?.textContent?.trim();
+                  if (wholeText) {
+                    return { whole: wholeText, fraction: fractionText || '' };
+                  }
+                }
+              }
+              return null;
+            });
+            
+            if (visiblePriceData) {
+              wholePart = visiblePriceData.whole;
+              fractionPart = visiblePriceData.fraction;
+              priceMethod = 'visible span.a-price-whole + span.a-price-fraction';
+              console.log(`✓ Found price using method: ${priceMethod}`);
+              console.log(`  Raw wholePart: "${wholePart}", raw fractionPart: "${fractionPart}"`);
+              priceFound = true;
+            }
+          } catch (error) {
+            console.log('✗ Visible price elements not found, trying .a-offscreen...');
+          }
+        }
+        
+        // Method 3: Fallback to .a-offscreen if visible elements not found
+        if (!priceFound) {
+          const priceText = await page.textContent('.a-price .a-offscreen').catch(() => null);
+          if (priceText && priceText.trim()) {
+            // Extract price from text like "R$ 342,40" or "R$ 1.234,56"
             const match = priceText.match(/[\d.,]+/);
             if (match) {
               const priceStr = match[0].replace(/\./g, '').replace(',', '.');
@@ -154,6 +229,11 @@ export class ScraperService {
               }
             }
           }
+          
+          throw new Error('Price not found - no visible price elements detected');
+        }
+        
+        if (!wholePart) {
           throw new Error('Price whole part not found');
         }
 
@@ -190,10 +270,94 @@ export class ScraperService {
         throw new Error('Price not found or invalid format');
       }
 
+      // Extract categories from breadcrumbs
+      let categories: string[] = [];
+      try {
+        console.log('Extracting categories...');
+        const categoryData = await page.evaluate(() => {
+          // @ts-ignore - browser context
+          // Try breadcrumb selectors first (most common)
+          let breadcrumbLinks: NodeListOf<Element> | null = null;
+          
+          // Priority 1: wayfinding-breadcrumbs
+          // @ts-ignore
+          const breadcrumbContainer = document.querySelector('#wayfinding-breadcrumbs_feature_div, .a-breadcrumb, nav[aria-label="Breadcrumb"]');
+          if (breadcrumbContainer) {
+            // @ts-ignore
+            breadcrumbLinks = breadcrumbContainer.querySelectorAll('a');
+          }
+          
+          // Priority 2: If no breadcrumbs, try product details table
+          if (!breadcrumbLinks || breadcrumbLinks.length === 0) {
+            // @ts-ignore
+            const detailRows = document.querySelectorAll('#productDetails_feature_div tr, #productDetails_db_sections tr');
+            for (let i = 0; i < detailRows.length; i++) {
+              // @ts-ignore
+              const rowText = detailRows[i].textContent?.toLowerCase() || '';
+              if (rowText.includes('categoria') || rowText.includes('departamento') || 
+                  rowText.includes('category') || rowText.includes('department')) {
+                // @ts-ignore
+                const td = detailRows[i].querySelector('td:last-child');
+                if (td) {
+                  // @ts-ignore
+                  const categoryText = td.textContent?.trim();
+                  if (categoryText) {
+                    // Split by common delimiters if it's a path
+                    return categoryText.split(/[>|•]/).map((c: string) => c.trim()).filter((c: string) => c.length > 0);
+                  }
+                }
+              }
+            }
+          }
+          
+          // Build breadcrumb array (skip first link which is usually "Início" or "Home")
+          if (breadcrumbLinks && breadcrumbLinks.length > 0) {
+            const categories: string[] = [];
+            // Skip first link (usually "Início" or "Home")
+            for (let i = 1; i < breadcrumbLinks.length; i++) {
+              // @ts-ignore
+              const text = breadcrumbLinks[i].textContent?.trim();
+              if (text && text.length > 0) {
+                categories.push(text);
+              }
+            }
+            if (categories.length > 0) {
+              return categories;
+            }
+          }
+          
+          // Try meta tags as last resort
+          // @ts-ignore
+          const metaCategory = document.querySelector('meta[property="product:category"]');
+          if (metaCategory) {
+            // @ts-ignore
+            const content = metaCategory.getAttribute('content');
+            if (content) {
+              // Split by common delimiters
+              // @ts-ignore - browser context, types are inferred
+              return content.split(/[>|•]/).map((c: string) => c.trim()).filter((c: string) => c.length > 0);
+            }
+          }
+          
+          return [];
+        });
+        
+        if (categoryData && Array.isArray(categoryData) && categoryData.length > 0) {
+          categories = categoryData;
+          console.log(`✓ Extracted ${categories.length} categories: ${categories.join(' > ')}`);
+        } else {
+          console.log('⚠ Categories not found (this is optional)');
+        }
+      } catch (error) {
+        console.log('⚠ Error extracting categories (continuing anyway):', error);
+        // Category extraction failure should not block product scraping
+      }
+
       const result = {
         asin,
         description,
-        price
+        price,
+        categories: categories.length > 0 ? categories : undefined
       };
       await page.close();
       return result;

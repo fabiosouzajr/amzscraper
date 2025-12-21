@@ -1,11 +1,14 @@
-import { Product, ProductWithPrice, PriceDrop } from '../types';
+import { Product, ProductWithPrice, PriceDrop, Category } from '../types';
 
 const API_BASE_URL = '/api';
 
 export const api = {
   // Products
-  async getProducts(): Promise<Product[]> {
-    const response = await fetch(`${API_BASE_URL}/products`);
+  async getProducts(categoryFilter?: string): Promise<Product[]> {
+    const url = categoryFilter 
+      ? `${API_BASE_URL}/products?category=${encodeURIComponent(categoryFilter)}`
+      : `${API_BASE_URL}/products`;
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error('Failed to fetch products');
     }
@@ -20,10 +23,21 @@ export const api = {
     return response.json();
   },
 
-  async searchProducts(query: string): Promise<Product[]> {
-    const response = await fetch(`${API_BASE_URL}/products/search?q=${encodeURIComponent(query)}`);
+  async searchProducts(query: string, categoryFilter?: string): Promise<Product[]> {
+    const url = categoryFilter
+      ? `${API_BASE_URL}/products/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(categoryFilter)}`
+      : `${API_BASE_URL}/products/search?q=${encodeURIComponent(query)}`;
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error('Failed to search products');
+    }
+    return response.json();
+  },
+
+  async getCategories(): Promise<Category[]> {
+    const response = await fetch(`${API_BASE_URL}/products/categories`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch categories');
     }
     return response.json();
   },
@@ -69,6 +83,24 @@ export const api = {
     if (!response.ok) {
       throw new Error('Failed to trigger price update');
     }
+  },
+
+  // Config
+  async getDatabaseInfo(): Promise<{ productCount: number; databaseSize: number; databaseSizeFormatted: string }> {
+    const response = await fetch(`${API_BASE_URL}/config/database-info`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch database information');
+    }
+    return response.json();
+  },
+
+  async exportDatabase(): Promise<Blob> {
+    const response = await fetch(`${API_BASE_URL}/config/export-database`);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to export database');
+    }
+    return response.blob();
   },
 };
 

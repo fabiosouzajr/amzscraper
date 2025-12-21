@@ -3,6 +3,7 @@ import cors from 'cors';
 import productsRouter from './routes/products';
 import pricesRouter from './routes/prices';
 import dashboardRouter from './routes/dashboard';
+import configRouter from './routes/config';
 import { schedulerService } from './services/scheduler';
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/api/products', productsRouter);
 app.use('/api/prices', pricesRouter);
 app.use('/api/dashboard', dashboardRouter);
+app.use('/api/config', configRouter);
 
 // Health check
 app.get('/health', (req, res) => {
