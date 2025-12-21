@@ -409,34 +409,31 @@
 }
 
 .product-categories {
-  margin: 0.5rem 0;
+  margin: 0.4rem 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: 0.15rem;
   align-items: center;
 }
 
-.category-badge {
+.category-badge,
+.category-filter-button {
   display: inline-block;
-  padding: 0.25rem 0.5rem;
+  padding: 0.2rem 0.4rem;
   background: #e8f4f8;
   color: #2162a1;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
   font-weight: 500;
+  line-height: 1.3;
 }
 
 .category-filter-button {
   border: none;
-  background: #e8f4f8;
-  color: #2162a1;
   cursor: pointer;
   transition: background 0.2s, color 0.2s, transform 0.1s;
   font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
   margin: 0;
-  padding: 0.25rem 0.5rem;
 }
 
 .category-filter-button:hover {
@@ -1195,9 +1192,10 @@
   }
 
   /* Category badges */
-  .category-badge {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.4rem;
+  .category-badge,
+  .category-filter-button {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.35rem;
   }
 
   /* Import results */
