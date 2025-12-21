@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { Product, Category } from '../types';
 import { ASINInput } from './ASINInput';
@@ -9,6 +10,7 @@ interface ProductListProps {
 }
 
 export function ProductList({ initialCategoryFilter = '', onFilterApplied }: ProductListProps) {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategoryFilter);
@@ -43,7 +45,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
       setProducts(sorted);
       setError(null);
     } catch (err) {
-      setError('Failed to load products');
+      setError(t('products.failedToLoad'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -79,7 +81,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
       await api.addProduct(asin);
       await loadProducts();
     } catch (err: any) {
-      setError(err.message || 'Failed to add product');
+      setError(err.message || t('products.failedToAdd'));
       throw err;
     } finally {
       setIsValidating(false);
@@ -87,14 +89,14 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   };
 
   const handleDeleteProduct = async (id: number) => {
-    if (!confirm('Are you sure you want to remove this product?')) {
+    if (!confirm(t('products.confirmDelete'))) {
       return;
     }
     try {
       await api.deleteProduct(id);
       await loadProducts();
     } catch (err) {
-      setError('Failed to delete product');
+      setError(t('products.failedToDelete'));
       console.error(err);
     }
   };
@@ -107,7 +109,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
 
     // Validate file type
     if (!file.name.endsWith('.csv') && file.type !== 'text/csv') {
-      setError('Please select a CSV file');
+      setError(t('products.invalidFile'));
       event.target.value = ''; // Reset input
       return;
     }
@@ -131,7 +133,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to import ASINs');
+        throw new Error(errorData.error || t('products.failedToImport'));
       }
 
       const results = await response.json();
@@ -148,7 +150,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
       // Clear file input
       event.target.value = '';
     } catch (err: any) {
-      setError(err.message || 'Failed to import ASINs');
+      setError(err.message || t('products.failedToImport'));
       console.error(err);
     } finally {
       setImporting(false);
@@ -156,16 +158,16 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   };
 
   if (loading) {
-    return <div className="loading">Loading products...</div>;
+    return <div className="loading">{t('products.loading')}</div>;
   }
 
   return (
     <div className="product-list">
       <div className="product-list-header">
-        <h2>Manage Products</h2>
+        <h2>{t('products.title')}</h2>
         <div className="import-section">
           <label htmlFor="import-file" className="import-button">
-            {importing ? 'Importing...' : 'Import ASINs'}
+            {importing ? t('products.importing') : t('products.importASINs')}
           </label>
           <input
             id="import-file"
@@ -177,32 +179,32 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
           />
           {importResults && (
             <div className="import-results">
-              <span className="import-result-item">Total: {importResults.total}</span>
-              <span className="import-result-item success">Success: {importResults.success}</span>
-              <span className="import-result-item skipped">Skipped: {importResults.skipped}</span>
-              <span className="import-result-item failed">Failed: {importResults.failed}</span>
+              <span className="import-result-item">{t('products.importTotal')}: {importResults.total}</span>
+              <span className="import-result-item success">{t('products.importSuccess')}: {importResults.success}</span>
+              <span className="import-result-item skipped">{t('products.importSkipped')}: {importResults.skipped}</span>
+              <span className="import-result-item failed">{t('products.importFailed')}: {importResults.failed}</span>
             </div>
           )}
         </div>
       </div>
       
       <div className="add-product-section">
-        <h3>Add New Product</h3>
+        <h3>{t('products.addNew')}</h3>
         <ASINInput onAdd={handleAddProduct} isValidating={isValidating} error={error} />
       </div>
 
       <div className="products-section">
         <div className="products-section-header">
-          <h3>Tracked Products ({products.length})</h3>
+          <h3>{t('products.trackedProducts')} ({products.length})</h3>
           <div className="category-filter">
-            <label htmlFor="category-filter">Filter by Category:</label>
+            <label htmlFor="category-filter">{t('products.filterByCategory')}:</label>
             <select
               id="category-filter"
               value={selectedCategory}
               onChange={(e) => handleCategoryFilterChange(e.target.value)}
               className="category-select"
             >
-              <option value="">All Categories</option>
+              <option value="">{t('products.allCategories')}</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.name}>
                   {category.name}
@@ -212,7 +214,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
           </div>
         </div>
         {products.length === 0 ? (
-          <p className="empty-state">No products tracked yet. Add an ASIN above to get started.</p>
+          <p className="empty-state">{t('products.noProducts')}</p>
         ) : (
           <div className="products-list">
             {products.map((product) => (
@@ -229,7 +231,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                               e.stopPropagation();
                               handleCategoryClick(cat.name);
                             }}
-                            title={`Filter by ${cat.name}`}
+                            title={t('dashboard.filterBy', { category: cat.name })}
                           >
                             {cat.name}
                           </button>
@@ -243,7 +245,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                   </div>
                   <div className="product-asin">{product.asin}</div>
                   <div className="product-date">
-                    Added: {new Date(product.created_at).toLocaleDateString()}
+                    {t('products.added')}: {new Date(product.created_at).toLocaleDateString()}
                   </div>
                 </div>
                 <div className="product-actions">
@@ -251,7 +253,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                     className="delete-button"
                     onClick={() => handleDeleteProduct(product.id)}
                   >
-                    Remove
+                    {t('products.remove')}
                   </button>
                 </div>
               </div>

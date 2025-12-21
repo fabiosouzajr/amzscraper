@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 
 interface DatabaseInfo {
@@ -8,6 +9,7 @@ interface DatabaseInfo {
 }
 
 export function Config() {
+  const { t } = useTranslation();
   const [exporting, setExporting] = useState(false);
   const [exportingDb, setExportingDb] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +27,7 @@ export function Config() {
       setDbInfo(info);
     } catch (err: any) {
       console.error('Failed to load database info:', err);
-      setError(err.message || 'Failed to load database information');
+      setError(err.message || t('config.failedToLoad'));
     } finally {
       setLoadingDbInfo(false);
     }
@@ -40,7 +42,7 @@ export function Config() {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to export ASINs');
+        throw new Error(errorData.error || t('config.failedToExport'));
       }
       
       // Get the filename from Content-Disposition header or use default
@@ -64,7 +66,7 @@ export function Config() {
       URL.revokeObjectURL(url);
       
     } catch (err: any) {
-      setError(err.message || 'Failed to export ASINs');
+      setError(err.message || t('config.failedToExport'));
       console.error('Export error:', err);
     } finally {
       setExporting(false);
@@ -90,7 +92,7 @@ export function Config() {
       URL.revokeObjectURL(url);
       
     } catch (err: any) {
-      setError(err.message || 'Failed to export database');
+      setError(err.message || t('config.failedToExportDatabase'));
       console.error('Database export error:', err);
     } finally {
       setExportingDb(false);
@@ -99,26 +101,26 @@ export function Config() {
 
   return (
     <div className="config-page">
-      <h2>Configuration</h2>
+      <h2>{t('config.title')}</h2>
       
       <div className="config-section">
-        <h3>Database</h3>
+        <h3>{t('config.database')}</h3>
         <div className="database-info">
           {loadingDbInfo ? (
-            <p className="config-description">Loading database information...</p>
+            <p className="config-description">{t('config.loadingInfo')}</p>
           ) : dbInfo ? (
             <>
               <div className="database-stat">
-                <span className="stat-label">Total Products:</span>
+                <span className="stat-label">{t('config.totalProducts')}</span>
                 <span className="stat-value">{dbInfo.productCount}</span>
               </div>
               <div className="database-stat">
-                <span className="stat-label">Database Size:</span>
+                <span className="stat-label">{t('config.databaseSize')}</span>
                 <span className="stat-value">{dbInfo.databaseSizeFormatted}</span>
               </div>
             </>
           ) : (
-            <p className="config-description">Unable to load database information</p>
+            <p className="config-description">{t('config.unableToLoad')}</p>
           )}
         </div>
         <div className="config-actions">
@@ -127,26 +129,26 @@ export function Config() {
             disabled={exportingDb || loadingDbInfo}
             className="export-button"
           >
-            {exportingDb ? 'Exporting...' : 'Export Database'}
+            {exportingDb ? t('config.exportingDatabase') : t('config.exportDatabase')}
           </button>
           <p className="config-description">
-            Export the complete SQLite database file containing all products, categories, and price history.
+            {t('config.exportDatabaseDescription')}
           </p>
         </div>
       </div>
 
       <div className="config-section">
-        <h3>Data Export</h3>
+        <h3>{t('config.dataExport')}</h3>
         <div className="config-actions">
           <button
             onClick={handleExportASINs}
             disabled={exporting}
             className="export-button"
           >
-            {exporting ? 'Exporting...' : 'Export ASINs'}
+            {exporting ? t('config.exportingASINs') : t('config.exportASINs')}
           </button>
           <p className="config-description">
-            Export all tracked ASINs to a CSV file with a single column containing only the ASINs.
+            {t('config.exportASINsDescription')}
           </p>
         </div>
       </div>

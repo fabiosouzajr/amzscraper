@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { api } from '../services/api';
 import { ProductWithPrice } from '../types';
@@ -9,6 +10,7 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ productId, onBack }: ProductDetailProps) {
+  const { t } = useTranslation();
   const [product, setProduct] = useState<ProductWithPrice | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +23,7 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
         setProduct(data);
         setError(null);
       } catch (err) {
-        setError('Failed to load product details');
+        setError(t('productDetail.failedToLoad'));
         console.error(err);
       } finally {
         setLoading(false);
@@ -32,14 +34,14 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
   }, [productId]);
 
   if (loading) {
-    return <div className="loading">Loading product details...</div>;
+    return <div className="loading">{t('productDetail.loading')}</div>;
   }
 
   if (error || !product) {
     return (
       <div className="error">
-        <p>{error || 'Product not found'}</p>
-        <button onClick={onBack}>Go Back</button>
+        <p>{error || t('productDetail.notFound')}</p>
+        <button onClick={onBack}>{t('productDetail.goBack')}</button>
       </div>
     );
   }
@@ -54,14 +56,14 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
 
   return (
     <div className="product-detail">
-      <button onClick={onBack} className="back-button">← Back</button>
+      <button onClick={onBack} className="back-button">{t('productDetail.back')}</button>
       
       <div className="product-header">
         <h2>{product.description}</h2>
         <div className="product-meta">
-          <span className="asin-badge">ASIN: {product.asin}</span>
+          <span className="asin-badge">{t('productDetail.asin')}: {product.asin}</span>
           <span className="date-badge">
-            Added: {new Date(product.created_at).toLocaleDateString()}
+            {t('productDetail.added')}: {new Date(product.created_at).toLocaleDateString()}
           </span>
         </div>
       </div>
@@ -70,18 +72,18 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
         {product.current_price !== undefined ? (
           <>
             <div className="current-price">
-              <span className="label">Current Price:</span>
+              <span className="label">{t('productDetail.currentPrice')}</span>
               <span className="value">R$ {product.current_price.toFixed(2)}</span>
             </div>
             {product.previous_price !== undefined && (
               <div className="price-comparison">
                 <div className="previous-price">
-                  <span className="label">Previous Price:</span>
+                  <span className="label">{t('productDetail.previousPrice')}</span>
                   <span className="value">R$ {product.previous_price.toFixed(2)}</span>
                 </div>
                 {product.price_drop !== undefined && product.price_drop > 0 && (
                   <div className="price-drop">
-                    <span className="label">Price Drop:</span>
+                    <span className="label">{t('productDetail.priceDrop')}</span>
                     <span className="value positive">
                       -R$ {product.price_drop.toFixed(2)} ({product.price_drop_percentage?.toFixed(1)}%)
                     </span>
@@ -91,18 +93,18 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
             )}
             {product.last_updated && (
               <div className="last-updated">
-                Last updated: {new Date(product.last_updated).toLocaleString()}
+                {t('productDetail.lastUpdated')}: {new Date(product.last_updated).toLocaleString()}
               </div>
             )}
           </>
         ) : (
-          <div className="no-price-data">No price data available yet</div>
+          <div className="no-price-data">{t('productDetail.noPriceData')}</div>
         )}
       </div>
 
       {chartData.length > 0 && (
         <div className="price-chart">
-          <h3>Price History</h3>
+          <h3>{t('productDetail.priceHistory')}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -118,12 +120,12 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
       
       {product.price_history && product.price_history.length > 0 && (
         <div className="price-history-table">
-          <h3>Price History Details</h3>
+          <h3>{t('productDetail.priceHistoryDetails')}</h3>
           <table>
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Price</th>
+                <th>{t('productDetail.date')}</th>
+                <th>{t('productDetail.price')}</th>
               </tr>
             </thead>
             <tbody>

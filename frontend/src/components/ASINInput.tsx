@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ASINInputProps {
   onAdd: (asin: string) => Promise<void>;
@@ -7,6 +8,7 @@ interface ASINInputProps {
 }
 
 export function ASINInput({ onAdd, isValidating = false, error }: ASINInputProps) {
+  const { t } = useTranslation();
   const [asin, setAsin] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,7 +45,7 @@ export function ASINInput({ onAdd, isValidating = false, error }: ASINInputProps
           type="text"
           value={asin}
           onChange={(e) => setAsin(e.target.value.toUpperCase())}
-          placeholder="Enter ASIN (10 characters)"
+          placeholder={t('asinInput.placeholder')}
           maxLength={10}
           disabled={isSubmitting || isValidating}
           className={!isValid ? 'invalid' : ''}
@@ -52,12 +54,12 @@ export function ASINInput({ onAdd, isValidating = false, error }: ASINInputProps
           type="submit"
           disabled={!isValid || isSubmitting || isValidating || asin.trim() === ''}
         >
-          {isSubmitting ? 'Adding...' : 'Add Product'}
+          {isSubmitting ? t('asinInput.adding') : t('asinInput.addProduct')}
         </button>
       </div>
       {error && <div className="error-message">{error}</div>}
       {!isValid && asin.trim() !== '' && (
-        <div className="error-message">Invalid ASIN format (must be 10 alphanumeric characters)</div>
+        <div className="error-message">{t('asinInput.invalidFormat')}</div>
       )}
     </form>
   );

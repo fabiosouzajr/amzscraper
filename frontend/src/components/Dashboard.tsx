@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { PriceDrop } from '../types';
 import { MiniPriceChart } from './MiniPriceChart';
@@ -8,6 +9,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onCategoryClick }: DashboardProps) {
+  const { t } = useTranslation();
   const [priceDrops, setPriceDrops] = useState<PriceDrop[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -22,7 +24,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
       setPriceDrops(data);
       setError(null);
     } catch (err) {
-      setError('Failed to load price drops');
+      setError(t('dashboard.failedToLoad'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -36,13 +38,13 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
   const handleUpdatePrices = async () => {
     setUpdating(true);
     setUpdateProgress(0);
-    setUpdateStatus('Starting price update...');
+    setUpdateStatus(t('dashboard.startingUpdate'));
     setError(null);
     
     try {
       // Start the update
       await api.updatePrices();
-      setUpdateStatus('Price update started. Processing products...');
+      setUpdateStatus(t('dashboard.updateStarted'));
       
       // Simulate progress (since we don't have real-time updates from backend)
       // We'll poll for completion by checking if prices changed
@@ -50,11 +52,11 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
         setUpdateProgress((prev) => {
           const newProgress = Math.min(prev + 10, 90);
           if (newProgress < 50) {
-            setUpdateStatus('Scraping product pages...');
+            setUpdateStatus(t('dashboard.scraping'));
           } else if (newProgress < 80) {
-            setUpdateStatus('Comparing prices...');
+            setUpdateStatus(t('dashboard.comparing'));
           } else {
-            setUpdateStatus('Finalizing updates...');
+            setUpdateStatus(t('dashboard.finalizing'));
           }
           return newProgress;
         });
@@ -64,7 +66,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
       setTimeout(async () => {
         clearInterval(progressInterval);
         setUpdateProgress(100);
-        setUpdateStatus('Update complete! Refreshing dashboard...');
+        setUpdateStatus(t('dashboard.updateComplete'));
         
         // Small delay before refreshing to show completion
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -76,7 +78,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
       }, 10000); // Wait 10 seconds for update to complete
       
     } catch (err) {
-      setError('Failed to trigger price update');
+      setError(t('dashboard.failedToUpdate'));
       setUpdateStatus('');
       setUpdating(false);
       setUpdateProgress(0);
@@ -85,19 +87,19 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
   };
 
   if (loading) {
-    return <div className="loading">Loading dashboard...</div>;
+    return <div className="loading">{t('dashboard.loading')}</div>;
   }
 
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h1>Price Drop Dashboard</h1>
+        <h1>{t('dashboard.title')}</h1>
         <button
           onClick={handleUpdatePrices}
           disabled={updating}
           className="update-button"
         >
-          {updating ? 'Updating...' : 'Update Prices Now'}
+          {updating ? t('dashboard.updating') : t('dashboard.updatePrices')}
         </button>
       </div>
 
@@ -118,8 +120,8 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
 
       {priceDrops.length === 0 ? (
         <div className="empty-state">
-          <p>No price drops to display yet.</p>
-          <p>Add some products and wait for price updates, or click "Update Prices Now" to check immediately.</p>
+          <p>{t('dashboard.noPriceDrops')}</p>
+          <p>{t('dashboard.noPriceDropsHint')}</p>
         </div>
       ) : (
         <div className="price-drops-grid">
@@ -127,7 +129,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
             <div key={drop.product.id} className="price-drop-card">
               <div className="drop-header">
                 <div className="drop-percentage">
-                  {drop.price_drop_percentage.toFixed(1)}% OFF
+                  {drop.price_drop_percentage.toFixed(1)}% {t('dashboard.off')}
                 </div>
                 <div className="drop-amount">
                   -R$ {drop.price_drop.toFixed(2)}
@@ -146,7 +148,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                             e.stopPropagation();
                             onCategoryClick(cat.name);
                           }}
-                          title={`Filter by ${cat.name}`}
+                          title={t('dashboard.filterBy', { category: cat.name })}
                         >
                           {cat.name}
                         </button>
@@ -171,15 +173,15 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
               </div>
               <div className="price-info">
                 <div className="price-row">
-                  <span className="label">Previous:</span>
+                  <span className="label">{t('dashboard.previous')}:</span>
                   <span className="price previous">R$ {drop.previous_price.toFixed(2)}</span>
                 </div>
                 <div className="price-row">
-                  <span className="label">Current:</span>
+                  <span className="label">{t('dashboard.current')}:</span>
                   <span className="price current">R$ {drop.current_price.toFixed(2)}</span>
                 </div>
                 <div className="last-updated">
-                  Updated: {new Date(drop.last_updated).toLocaleString()}
+                  {t('dashboard.updated')}: {new Date(drop.last_updated).toLocaleString()}
                 </div>
               </div>
             </div>

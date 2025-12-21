@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { Product } from '../types';
 
@@ -7,6 +8,7 @@ interface ProductSearchProps {
 }
 
 export function ProductSearch({ onSelectProduct }: ProductSearchProps) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,12 +50,12 @@ export function ProductSearch({ onSelectProduct }: ProductSearchProps) {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search products by name or ASIN..."
+        placeholder={t('search.placeholder')}
         className="search-input"
       />
-      {loading && <div className="search-loading">Searching...</div>}
+      {loading && <div className="search-loading">{t('search.searching')}</div>}
       {!loading && query.trim() !== '' && results.length === 0 && (
-        <div className="search-no-results">No products found</div>
+        <div className="search-no-results">{t('search.noResults')}</div>
       )}
       {results.length > 0 && (
         <div className="search-results">
