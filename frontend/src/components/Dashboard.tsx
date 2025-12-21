@@ -3,7 +3,11 @@ import { api } from '../services/api';
 import { PriceDrop } from '../types';
 import { MiniPriceChart } from './MiniPriceChart';
 
-export function Dashboard() {
+interface DashboardProps {
+  onCategoryClick: (categoryName: string) => void;
+}
+
+export function Dashboard({ onCategoryClick }: DashboardProps) {
   const [priceDrops, setPriceDrops] = useState<PriceDrop[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -134,8 +138,18 @@ export function Dashboard() {
                 {drop.product.categories && drop.product.categories.length > 0 && (
                   <div className="product-categories">
                     {drop.product.categories.map((cat, idx) => (
-                      <span key={cat.id} className="category-badge">
-                        {cat.name}
+                      <span key={cat.id}>
+                        <button
+                          className="category-badge category-filter-button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onCategoryClick(cat.name);
+                          }}
+                          title={`Filter by ${cat.name}`}
+                        >
+                          {cat.name}
+                        </button>
                         {idx < drop.product.categories!.length - 1 && ' > '}
                       </span>
                     ))}

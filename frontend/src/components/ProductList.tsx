@@ -3,10 +3,15 @@ import { api } from '../services/api';
 import { Product, Category } from '../types';
 import { ASINInput } from './ASINInput';
 
-export function ProductList() {
+interface ProductListProps {
+  initialCategoryFilter?: string;
+  onFilterApplied?: () => void;
+}
+
+export function ProductList({ initialCategoryFilter = '', onFilterApplied }: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategoryFilter);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -47,12 +52,25 @@ export function ProductList() {
 
   useEffect(() => {
     loadCategories();
-    loadProducts();
-  }, []);
+    if (initialCategoryFilter) {
+      setSelectedCategory(initialCategoryFilter);
+      // Clear the initial filter after applying it
+      onFilterApplied?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialCategoryFilter]);
 
   useEffect(() => {
     loadProducts();
   }, [selectedCategory]);
+
+  const handleCategoryClick = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+  };
+
+  const handleCategoryFilterChange = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+  };
 
   const handleAddProduct = async (asin: string) => {
     setIsValidating(true);
@@ -181,7 +199,7 @@ export function ProductList() {
             <select
               id="category-filter"
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => handleCategoryFilterChange(e.target.value)}
               className="category-select"
             >
               <option value="">All Categories</option>
@@ -203,8 +221,18 @@ export function ProductList() {
                   {product.categories && product.categories.length > 0 && (
                     <div className="product-categories">
                       {product.categories.map((cat, idx) => (
-                        <span key={cat.id} className="category-badge">
-                          {cat.name}
+                        <span key={cat.id}>
+                          <button
+                            className="category-badge category-filter-button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleCategoryClick(cat.name);
+                            }}
+                            title={`Filter by ${cat.name}`}
+                          >
+                            {cat.name}
+                          </button>
                           {idx < product.categories!.length - 1 && ' > '}
                         </span>
                       ))}

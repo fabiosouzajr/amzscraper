@@ -426,6 +426,30 @@
   font-weight: 500;
 }
 
+.category-filter-button {
+  border: none;
+  background: #e8f4f8;
+  color: #2162a1;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+}
+
+.category-filter-button:hover {
+  background: #d0e8f0;
+  color: #1a4d7a;
+  transform: translateY(-1px);
+}
+
+.category-filter-button:active {
+  transform: translateY(0);
+  background: #b8dce8;
+}
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

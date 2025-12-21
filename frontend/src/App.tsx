@@ -12,10 +12,16 @@ type View = 'dashboard' | 'products' | 'search' | 'detail' | 'config';
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [initialCategoryFilter, setInitialCategoryFilter] = useState<string>('');
 
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
     setCurrentView('detail');
+  };
+
+  const handleCategoryClick = (categoryName: string) => {
+    setInitialCategoryFilter(categoryName);
+    setCurrentView('products');
   };
 
   return (
@@ -51,8 +57,13 @@ function App() {
       </nav>
 
       <main className="main-content">
-        {currentView === 'dashboard' && <Dashboard />}
-        {currentView === 'products' && <ProductList />}
+        {currentView === 'dashboard' && <Dashboard onCategoryClick={handleCategoryClick} />}
+        {currentView === 'products' && (
+          <ProductList 
+            initialCategoryFilter={initialCategoryFilter}
+            onFilterApplied={() => setInitialCategoryFilter('')}
+          />
+        )}
         {currentView === 'search' && (
           <div className="search-view">
             <h2>Search Products</h2>
