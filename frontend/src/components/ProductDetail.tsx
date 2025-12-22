@@ -59,7 +59,16 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
       <button onClick={onBack} className="back-button">{t('productDetail.back')}</button>
       
       <div className="product-header">
-        <h2>{product.description}</h2>
+        <h2>
+          <a
+            href={`https://www.amazon.com.br/dp/${product.asin}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="product-link"
+          >
+            {product.description}
+          </a>
+        </h2>
         <div className="product-meta">
           <span className="asin-badge">{t('productDetail.asin')}: {product.asin}</span>
           <span className="date-badge">

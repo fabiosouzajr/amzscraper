@@ -162,20 +162,35 @@
   margin-top: 0.5rem;
 }
 
-.product-description.product-link {
+.product-description.product-link,
+.product-link,
+.result-description.product-link {
   color: #0066c0;
   text-decoration: none;
   cursor: pointer;
   transition: color 0.2s, text-decoration 0.2s;
 }
 
-.product-description.product-link:hover {
+.product-description.product-link:hover,
+.product-link:hover,
+.result-description.product-link:hover {
   color: #c45500;
   text-decoration: underline;
 }
 
-.product-description.product-link:visited {
+.product-description.product-link:visited,
+.product-link:visited,
+.result-description.product-link:visited {
   color: #0066c0;
+}
+
+.product-header h2 .product-link {
+  color: inherit;
+}
+
+.product-header h2 .product-link:hover {
+  color: #c45500;
+  text-decoration: underline;
 }
 
 .price-info {
@@ -314,6 +329,77 @@
 }
 
 .import-result-item.failed {
+  color: #d32f2f;
+  background: #ffebee;
+}
+
+.import-progress-container {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.import-progress-container .progress-bar-wrapper {
+  width: 100%;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.import-progress-container .progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #ff9900 0%, #ffaa00 100%);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  box-shadow: 0 2px 4px rgba(255, 153, 0, 0.3);
+}
+
+.import-progress-container .progress-status {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.import-progress-container .current-asin {
+  font-family: monospace;
+  color: #232f3e;
+  font-weight: 600;
+}
+
+.import-progress-container .progress-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.import-progress-container .progress-stat {
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  background: #f5f5f5;
+  color: #666;
+}
+
+.import-progress-container .progress-stat.success {
+  color: #388e3c;
+  background: #e8f5e9;
+}
+
+.import-progress-container .progress-stat.skipped {
+  color: #ff9900;
+  background: #fff3e0;
+}
+
+.import-progress-container .progress-stat.failed {
   color: #d32f2f;
   background: #ffebee;
 }

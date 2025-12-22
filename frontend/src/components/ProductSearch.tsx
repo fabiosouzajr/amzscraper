@@ -70,7 +70,15 @@ export function ProductSearch({ onSelectProduct }: ProductSearchProps) {
               }}
             >
               <div className="result-asin">{product.asin}</div>
-              <div className="result-description">{product.description}</div>
+              <a
+                href={`https://www.amazon.com.br/dp/${product.asin}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="result-description product-link"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {product.description}
+              </a>
             </div>
           ))}
         </div>

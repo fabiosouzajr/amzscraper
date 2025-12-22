@@ -48,6 +48,25 @@ router.post('/import-asins', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'No ASINs found in CSV file' });
     }
 
+    // Set up Server-Sent Events for progress updates
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
+
+    // Send initial progress
+    const sendProgress = (progress: {
+      current: number;
+      total: number;
+      currentASIN?: string;
+      status: string;
+      success: number;
+      failed: number;
+      skipped: number;
+    }) => {
+      res.write(`data: ${JSON.stringify(progress)}\n\n`);
+    };
+
     // Initialize scraper once
     await scraperService.initialize();
 
@@ -59,11 +78,33 @@ router.post('/import-asins', async (req: Request, res: Response) => {
       errors: [] as Array<{ asin: string; error: string }>
     };
 
+    // Send initial status
+    sendProgress({
+      current: 0,
+      total: asins.length,
+      status: 'starting',
+      success: 0,
+      failed: 0,
+      skipped: 0
+    });
+
     // Process each ASIN
-    for (const asinLine of asins) {
+    for (let i = 0; i < asins.length; i++) {
+      const asinLine = asins[i];
       // Extract ASIN from line (in case CSV has multiple columns, take first one)
       const asinParts = asinLine.split(',');
       const rawAsin = asinParts[0].trim();
+      
+      // Send progress update
+      sendProgress({
+        current: i + 1,
+        total: asins.length,
+        currentASIN: rawAsin,
+        status: 'processing',
+        success: results.success,
+        failed: results.failed,
+        skipped: results.skipped
+      });
       
       if (!rawAsin) {
         results.failed++;
@@ -110,13 +151,26 @@ router.post('/import-asins', async (req: Request, res: Response) => {
       }
     }
 
-    res.json({
-      message: 'Import completed',
-      ...results
+    // Send final results
+    sendProgress({
+      current: asins.length,
+      total: asins.length,
+      status: 'completed',
+      success: results.success,
+      failed: results.failed,
+      skipped: results.skipped
     });
+
+    res.end();
   } catch (error) {
     console.error('Error importing ASINs:', error);
-    res.status(500).json({ error: 'Failed to import ASINs: ' + (error instanceof Error ? error.message : 'Unknown error') });
+    // Send error via SSE if connection is still open
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Failed to import ASINs: ' + (error instanceof Error ? error.message : 'Unknown error') });
+    } else {
+      res.write(`data: ${JSON.stringify({ status: 'error', error: error instanceof Error ? error.message : 'Unknown error' })}\n\n`);
+      res.end();
+    }
   }
 });
 

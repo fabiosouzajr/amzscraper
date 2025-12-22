@@ -18,6 +18,15 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   const [error, setError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState<{
+    current: number;
+    total: number;
+    currentASIN?: string;
+    status: string;
+    success: number;
+    failed: number;
+    skipped: number;
+  } | null>(null);
   const [importResults, setImportResults] = useState<{
     total: number;
     success: number;
@@ -118,11 +127,12 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
       setImporting(true);
       setError(null);
       setImportResults(null);
+      setImportProgress(null);
 
       // Read file content
       const fileContent = await file.text();
 
-      // Send to backend
+      // Send to backend and handle streaming response
       const response = await fetch('/api/config/import-asins', {
         method: 'POST',
         headers: {
@@ -131,21 +141,98 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
         body: JSON.stringify({ csvContent: fileContent }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || t('products.failedToImport'));
+      // Check if response is streaming (text/event-stream) or regular JSON
+      const contentType = response.headers.get('content-type') || '';
+      const isStreaming = contentType.includes('text/event-stream');
+
+      if (!isStreaming && !response.ok) {
+        // Try to parse error as JSON, fallback to text
+        try {
+          const errorData = await response.json();
+          throw new Error(errorData.error || t('products.failedToImport'));
+        } catch {
+          throw new Error(t('products.failedToImport'));
+        }
       }
 
-      const results = await response.json();
-      setImportResults({
-        total: results.total,
-        success: results.success,
-        failed: results.failed,
-        skipped: results.skipped,
-      });
+      if (!isStreaming) {
+        // Fallback to non-streaming response (for backwards compatibility)
+        const results = await response.json();
+        setImportResults({
+          total: results.total,
+          success: results.success,
+          failed: results.failed,
+          skipped: results.skipped,
+        });
+        await loadProducts();
+      } else {
+        // Handle streaming response (Server-Sent Events)
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let importCompleted = false;
 
-      // Reload products to show newly imported ones
-      await loadProducts();
+        if (!reader) {
+          throw new Error(t('products.failedToImport'));
+        }
+
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            
+            if (done) {
+              break;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(line.slice(6));
+                  setImportProgress(data);
+
+                  if (data.status === 'completed' || data.status === 'error') {
+                    if (data.status === 'completed') {
+                      setImportResults({
+                        total: data.total,
+                        success: data.success,
+                        failed: data.failed,
+                        skipped: data.skipped,
+                      });
+                      importCompleted = true;
+                      // Reload products to show newly imported ones
+                      await loadProducts();
+                    } else if (data.status === 'error') {
+                      throw new Error(data.error || t('products.failedToImport'));
+                    }
+                  }
+                } catch (parseError) {
+                  // If it's an error status, rethrow; otherwise just log parse errors
+                  if (line.includes('"status":"error"')) {
+                    try {
+                      const errorData = JSON.parse(line.slice(6));
+                      throw new Error(errorData.error || t('products.failedToImport'));
+                    } catch {
+                      console.error('Error parsing progress data:', parseError);
+                    }
+                  } else {
+                    console.error('Error parsing progress data:', parseError);
+                  }
+                }
+              }
+            }
+          }
+        } finally {
+          reader.releaseLock();
+        }
+
+        if (!importCompleted && !importProgress) {
+          throw new Error(t('products.failedToImport'));
+        }
+      }
 
       // Clear file input
       event.target.value = '';
@@ -154,6 +241,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
       console.error(err);
     } finally {
       setImporting(false);
+      setImportProgress(null);
     }
   };
 
@@ -177,7 +265,46 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
             disabled={importing}
             style={{ display: 'none' }}
           />
-          {importResults && (
+          {importProgress && (
+            <div className="import-progress-container">
+              <div className="progress-bar-wrapper">
+                <div 
+                  className="progress-bar" 
+                  style={{ 
+                    width: `${(importProgress.current / importProgress.total) * 100}%` 
+                  }}
+                />
+              </div>
+              <div className="progress-status">
+                {importProgress.status === 'starting' && t('products.importStarting')}
+                {importProgress.status === 'processing' && (
+                  <>
+                    {t('products.importProcessing', { 
+                      current: importProgress.current, 
+                      total: importProgress.total 
+                    })}
+                    {importProgress.currentASIN && (
+                      <span className="current-asin"> ({importProgress.currentASIN})</span>
+                    )}
+                  </>
+                )}
+                {importProgress.status === 'completed' && t('products.importCompleted')}
+                {importProgress.status === 'error' && t('products.importError')}
+              </div>
+              <div className="progress-stats">
+                <span className="progress-stat success">
+                  {t('products.importSuccess')}: {importProgress.success}
+                </span>
+                <span className="progress-stat skipped">
+                  {t('products.importSkipped')}: {importProgress.skipped}
+                </span>
+                <span className="progress-stat failed">
+                  {t('products.importFailed')}: {importProgress.failed}
+                </span>
+              </div>
+            </div>
+          )}
+          {importResults && !importing && (
             <div className="import-results">
               <span className="import-result-item">{t('products.importTotal')}: {importResults.total}</span>
               <span className="import-result-item success">{t('products.importSuccess')}: {importResults.success}</span>
@@ -240,9 +367,15 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                       ))}
                     </div>
                   )}
-                  <div className="product-description">
+                  <a
+                    href={`https://www.amazon.com.br/dp/${product.asin}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="product-description product-link"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     {product.description}
-                  </div>
+                  </a>
                   <div className="product-asin">{product.asin}</div>
                   <div className="product-date">
                     {t('products.added')}: {new Date(product.created_at).toLocaleDateString()}
