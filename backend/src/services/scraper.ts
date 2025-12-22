@@ -1,4 +1,4 @@
-import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import { firefox, Browser, BrowserContext, Page } from 'playwright';
 import { ScrapedProductData } from '../models/types';
 
 export class ScraperService {
@@ -7,9 +7,8 @@ export class ScraperService {
 
   async initialize(): Promise<void> {
     if (!this.browser) {
-      this.browser = await chromium.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      this.browser = await firefox.launch({
+        headless: true
       });
       
       // Create a context with user agent and viewport settings

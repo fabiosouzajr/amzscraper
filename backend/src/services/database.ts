@@ -1,16 +1,24 @@
 import sqlite3 from 'sqlite3';
 import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop } from '../models/types';
 import path from 'path';
+import fs from 'fs';
 
 // Database path relative to project root
 // __dirname is backend/src/services (source) or backend/dist/services (compiled)
 // Go up 3 levels to reach project root, then into database folder
 const DB_PATH = path.resolve(__dirname, '../../../database/products.db');
+const DB_DIR = path.dirname(DB_PATH);
 
 export class DatabaseService {
   private db: sqlite3.Database;
 
   constructor() {
+    // Ensure database directory exists
+    if (!fs.existsSync(DB_DIR)) {
+      fs.mkdirSync(DB_DIR, { recursive: true });
+      console.log(`Created database directory: ${DB_DIR}`);
+    }
+
     this.db = new sqlite3.Database(DB_PATH, (err) => {
       if (err) {
         console.error('Error opening database:', err);
