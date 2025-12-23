@@ -6,13 +6,16 @@ import { ProductSearch } from './components/ProductSearch';
 import { ProductDetail } from './components/ProductDetail';
 import { Config } from './components/Config';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { Auth } from './components/Auth';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Product } from './types';
 import './App.css';
 
 type View = 'dashboard' | 'products' | 'search' | 'detail' | 'config';
 
-function App() {
+function AppContent() {
   const { t } = useTranslation();
+  const { user, logout, loading } = useAuth();
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [initialCategoryFilter, setInitialCategoryFilter] = useState<string>('');
@@ -26,6 +29,14 @@ function App() {
     setInitialCategoryFilter(categoryName);
     setCurrentView('products');
   };
+
+  if (loading) {
+    return <div className="loading">{t('app.loading')}</div>;
+  }
+
+  if (!user) {
+    return <Auth />;
+  }
 
   return (
     <div className="app">
@@ -56,6 +67,12 @@ function App() {
           >
             {t('app.config')}
           </button>
+          <div className="user-info">
+            <span className="username">{user.username}</span>
+            <button onClick={logout} className="logout-button">
+              {t('app.logout')}
+            </button>
+          </div>
           <LanguageSwitcher />
         </div>
       </nav>
@@ -83,6 +100,14 @@ function App() {
         {currentView === 'config' && <Config />}
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

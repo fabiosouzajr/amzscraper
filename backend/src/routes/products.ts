@@ -2,14 +2,25 @@ import { Router, Request, Response } from 'express';
 import { dbService } from '../services/database';
 import { scraperService } from '../services/scraper';
 import { validateASIN, normalizeASIN } from '../utils/validation';
+import { AuthRequest, authenticate } from '../middleware/auth';
 
 const router = Router();
 
+// All product routes require authentication
+router.use(authenticate);
+
 // GET /api/products - List all products (with optional category filter)
+// Includes list memberships for the authenticated user
 router.get('/', async (req: Request, res: Response) => {
   try {
     const categoryFilter = req.query.category as string | undefined;
-    const products = await dbService.getAllProducts(categoryFilter);
+    const authReq = req as AuthRequest;
+    
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const products = await dbService.getProductsWithLists(authReq.userId, categoryFilter);
     res.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -18,6 +29,7 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // GET /api/products/search?q=... - Search products (with optional category filter)
+// Includes list memberships for the authenticated user
 router.get('/search', async (req: Request, res: Response) => {
   try {
     const query = req.query.q as string;
@@ -25,8 +37,26 @@ router.get('/search', async (req: Request, res: Response) => {
     if (!query) {
       return res.status(400).json({ error: 'Search query is required' });
     }
-    const products = await dbService.searchProducts(query, categoryFilter);
-    res.json(products);
+    const authReq = req as AuthRequest;
+    
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    // Get products for this user
+    const products = await dbService.searchProducts(authReq.userId, query, categoryFilter);
+    
+    // Add list memberships
+    const productsWithLists = await Promise.all(
+      products.map(async (product) => {
+        const lists = await dbService.getProductLists(product.id, authReq.userId!);
+        return {
+          ...product,
+          lists: lists.length > 0 ? lists : undefined
+        };
+      })
+    );
+    res.json(productsWithLists);
   } catch (error) {
     console.error('Error searching products:', error);
     res.status(500).json({ error: 'Failed to search products' });
@@ -51,7 +81,13 @@ router.get('/:id', async (req: Request, res: Response) => {
     if (isNaN(id)) {
       return res.status(400).json({ error: 'Invalid product ID' });
     }
-    const product = await dbService.getProductWithPriceHistory(id);
+    const authReq = req as AuthRequest;
+    
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const product = await dbService.getProductWithPriceHistory(id, authReq.userId);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
@@ -67,6 +103,11 @@ router.get('/:id', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   try {
     const { asin } = req.body;
+    const authReq = req as AuthRequest;
+    
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
     
     if (!asin) {
       return res.status(400).json({ error: 'ASIN is required' });
@@ -78,8 +119,8 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid ASIN format' });
     }
 
-    // Check if product already exists
-    const existing = await dbService.getProductByASIN(normalizedASIN);
+    // Check if product already exists for this user
+    const existing = await dbService.getProductByASIN(authReq.userId, normalizedASIN);
     if (existing) {
       return res.status(409).json({ error: 'Product with this ASIN already exists' });
     }
@@ -88,8 +129,8 @@ router.post('/', async (req: Request, res: Response) => {
     await scraperService.initialize();
     const scrapedData = await scraperService.scrapeProduct(normalizedASIN);
 
-    // Save product with categories
-    const product = await dbService.addProduct(normalizedASIN, scrapedData.description, scrapedData.categories);
+    // Save product with categories for this user
+    const product = await dbService.addProduct(authReq.userId, normalizedASIN, scrapedData.description, scrapedData.categories);
     
     // Save initial price
     await dbService.addPriceHistory(product.id, scrapedData.price);
@@ -108,7 +149,13 @@ router.delete('/:id', async (req: Request, res: Response) => {
     if (isNaN(id)) {
       return res.status(400).json({ error: 'Invalid product ID' });
     }
-    const deleted = await dbService.deleteProduct(id);
+    const authReq = req as AuthRequest;
+    
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const deleted = await dbService.deleteProduct(id, authReq.userId);
     if (!deleted) {
       return res.status(404).json({ error: 'Product not found' });
     }

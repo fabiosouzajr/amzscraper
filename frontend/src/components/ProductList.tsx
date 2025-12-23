@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
-import { Product, Category } from '../types';
+import { Product, Category, UserList } from '../types';
 import { ASINInput } from './ASINInput';
+import { ListsSidebar } from './ListsSidebar';
+import { useAuth } from '../contexts/AuthContext';
 
 interface ProductListProps {
   initialCategoryFilter?: string;
@@ -11,6 +13,7 @@ interface ProductListProps {
 
 export function ProductList({ initialCategoryFilter = '', onFilterApplied }: ProductListProps) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategoryFilter);
@@ -18,6 +21,9 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   const [error, setError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [selectedListId, setSelectedListId] = useState<number | null>(null);
+  const [lists, setLists] = useState<UserList[]>([]);
+  const [addingToListProductId, setAddingToListProductId] = useState<number | null>(null);
   const [importProgress, setImportProgress] = useState<{
     current: number;
     total: number;
@@ -43,6 +49,16 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
     }
   };
 
+  const loadLists = async () => {
+    if (!user) return;
+    try {
+      const data = await api.getLists();
+      setLists(data);
+    } catch (err) {
+      console.error('Failed to load lists:', err);
+    }
+  };
+
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -63,13 +79,16 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
 
   useEffect(() => {
     loadCategories();
+    if (user) {
+      loadLists();
+    }
     if (initialCategoryFilter) {
       setSelectedCategory(initialCategoryFilter);
       // Clear the initial filter after applying it
       onFilterApplied?.();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialCategoryFilter]);
+  }, [initialCategoryFilter, user]);
 
   useEffect(() => {
     loadProducts();
@@ -110,6 +129,34 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
     }
   };
 
+  const handleListClick = (listId: number) => {
+    setSelectedListId(listId === -1 ? null : listId);
+  };
+
+  const handleAddToList = async (productId: number, listId: number) => {
+    try {
+      await api.addProductToList(listId, productId);
+      await loadProducts();
+      setAddingToListProductId(null);
+    } catch (err: any) {
+      setError(err.message || t('products.failedToAddToList'));
+    }
+  };
+
+  const handleRemoveFromList = async (productId: number, listId: number) => {
+    try {
+      await api.removeProductFromList(listId, productId);
+      await loadProducts();
+    } catch (err: any) {
+      setError(err.message || t('products.failedToRemoveFromList'));
+    }
+  };
+
+  // Filter products by selected list
+  const filteredProducts = selectedListId
+    ? products.filter(product => product.lists?.some(list => list.id === selectedListId))
+    : products;
+
   const handleImportASINs = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -133,11 +180,17 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
       const fileContent = await file.text();
 
       // Send to backend and handle streaming response
+      const token = localStorage.getItem('authToken');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch('/api/config/import-asins', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({ csvContent: fileContent }),
       });
 
@@ -149,9 +202,14 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
         // Try to parse error as JSON, fallback to text
         try {
           const errorData = await response.json();
-          throw new Error(errorData.error || t('products.failedToImport'));
-        } catch {
-          throw new Error(t('products.failedToImport'));
+          const errorMsg = errorData.error || t('products.failedToImport');
+          console.error('Import error (non-streaming):', errorMsg);
+          throw new Error(errorMsg);
+        } catch (parseError) {
+          const errorText = await response.text().catch(() => '');
+          const errorMsg = errorText || t('products.failedToImport');
+          console.error('Import error (text):', errorMsg);
+          throw new Error(errorMsg);
         }
       }
 
@@ -206,7 +264,9 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                       // Reload products to show newly imported ones
                       await loadProducts();
                     } else if (data.status === 'error') {
-                      throw new Error(data.error || t('products.failedToImport'));
+                      const errorMsg = data.error || t('products.failedToImport');
+                      console.error('Import error:', errorMsg);
+                      throw new Error(errorMsg);
                     }
                   }
                 } catch (parseError) {
@@ -251,6 +311,16 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
 
   return (
     <div className="product-list">
+      <div className="product-list-layout">
+        {user && (
+          <div className="product-list-sidebar">
+            <ListsSidebar
+              onListClick={handleListClick}
+              selectedListId={selectedListId}
+            />
+          </div>
+        )}
+        <div className="product-list-content">
       <div className="product-list-header">
         <h2>{t('products.title')}</h2>
         <div className="import-section">
@@ -322,7 +392,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
 
       <div className="products-section">
         <div className="products-section-header">
-          <h3>{t('products.trackedProducts')} ({products.length})</h3>
+          <h3>{t('products.trackedProducts')} ({filteredProducts.length}{selectedListId ? ` / ${products.length}` : ''})</h3>
           <div className="category-filter">
             <label htmlFor="category-filter">{t('products.filterByCategory')}:</label>
             <select
@@ -340,11 +410,13 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
             </select>
           </div>
         </div>
-        {products.length === 0 ? (
-          <p className="empty-state">{t('products.noProducts')}</p>
+        {filteredProducts.length === 0 ? (
+          <p className="empty-state">
+            {selectedListId ? t('products.noProductsInList') : t('products.noProducts')}
+          </p>
         ) : (
           <div className="products-list">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <div key={product.id} className="product-list-item">
                 <div className="product-info">
                   {product.categories && product.categories.length > 0 && (
@@ -377,11 +449,71 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                     {product.description}
                   </a>
                   <div className="product-asin">{product.asin}</div>
+                  {product.lists && product.lists.length > 0 && (
+                    <div className="product-lists">
+                      <span className="lists-label">{t('products.inLists')}: </span>
+                      {product.lists.map((list, idx) => (
+                        <span key={list.id} className="list-badge">
+                          {list.name}
+                          {user && (
+                            <button
+                              className="remove-from-list-button"
+                              onClick={() => handleRemoveFromList(product.id, list.id)}
+                              title={t('products.removeFromList')}
+                            >
+                              ×
+                            </button>
+                          )}
+                          {idx < product.lists!.length - 1 && ', '}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <div className="product-date">
                     {t('products.added')}: {new Date(product.created_at).toLocaleDateString()}
                   </div>
                 </div>
                 <div className="product-actions">
+                  {user && (
+                    <div className="add-to-list-container">
+                      <button
+                        className="add-to-list-button"
+                        onClick={() => setAddingToListProductId(
+                          addingToListProductId === product.id ? null : product.id
+                        )}
+                      >
+                        {t('products.addToList')}
+                      </button>
+                      {addingToListProductId === product.id && (
+                        <div className="add-to-list-dropdown">
+                          {lists.length === 0 ? (
+                            <div className="no-lists-message">{t('products.noListsAvailable')}</div>
+                          ) : (
+                            lists.map((list) => {
+                              const isInList = product.lists?.some(l => l.id === list.id);
+                              return (
+                                <button
+                                  key={list.id}
+                                  className={`list-option ${isInList ? 'in-list' : ''}`}
+                                  onClick={() => {
+                                    if (isInList) {
+                                      handleRemoveFromList(product.id, list.id);
+                                    } else {
+                                      handleAddToList(product.id, list.id);
+                                    }
+                                  }}
+                                  disabled={isInList}
+                                >
+                                  {list.name}
+                                  {isInList && ' ✓'}
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <button
                     className="delete-button"
                     onClick={() => handleDeleteProduct(product.id)}
@@ -393,6 +525,8 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
             ))}
           </div>
         )}
+      </div>
+        </div>
       </div>
     </div>
   );

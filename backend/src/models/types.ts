@@ -3,6 +3,7 @@ export interface Product {
   asin: string;
   description: string;
   categories?: Category[];
+  lists?: UserList[];
   created_at: string;
 }
 
@@ -43,5 +44,18 @@ export interface PriceDrop {
   price_drop_percentage: number;
   last_updated: string;
   price_history?: PriceHistory[];
+}
+
+export interface User {
+  id: number;
+  username: string;
+  created_at: string;
+}
+
+export interface UserList {
+  id: number;
+  user_id: number;
+  name: string;
+  created_at: string;
 }
 

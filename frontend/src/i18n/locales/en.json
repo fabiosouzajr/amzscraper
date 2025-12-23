@@ -4,7 +4,9 @@
     "dashboard": "Dashboard",
     "products": "Products",
     "search": "Search",
-    "config": "Config"
+    "config": "Config",
+    "logout": "Logout",
+    "loading": "Loading..."
   },
   "dashboard": {
     "title": "Price Drop Dashboard",
@@ -52,7 +54,14 @@
     "importSkipped": "Skipped",
     "importFailed": "Failed",
     "invalidFile": "Please select a CSV file",
-    "failedToImport": "Failed to import ASINs"
+    "failedToImport": "Failed to import ASINs",
+    "addToList": "Add to List",
+    "inLists": "In Lists",
+    "removeFromList": "Remove from list",
+    "failedToAddToList": "Failed to add product to list",
+    "failedToRemoveFromList": "Failed to remove product from list",
+    "noProductsInList": "No products in this list",
+    "noListsAvailable": "No lists available. Create a list first."
   },
   "search": {
     "title": "Search Products",
@@ -102,9 +111,30 @@
     "failedToExport": "Failed to export ASINs",
     "failedToExportDatabase": "Failed to export database"
   },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "username": "Username",
+    "password": "Password",
+    "loading": "Loading...",
+    "switchToRegister": "Don't have an account? Register",
+    "switchToLogin": "Already have an account? Login"
+  },
+  "lists": {
+    "title": "My Lists",
+    "create": "Create List",
+    "listNamePlaceholder": "List name",
+    "loading": "Loading lists...",
+    "noLists": "No lists yet. Create your first list!",
+    "confirmDelete": "Are you sure you want to delete this list?",
+    "rename": "Rename",
+    "delete": "Delete"
+  },
   "common": {
     "language": "Language",
     "english": "English",
-    "portuguese": "Português"
+    "portuguese": "Português",
+    "cancel": "Cancel",
+    "save": "Save"
   }
 }

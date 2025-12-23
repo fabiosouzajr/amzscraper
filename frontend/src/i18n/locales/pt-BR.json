@@ -4,7 +4,9 @@
     "dashboard": "Painel",
     "products": "Produtos",
     "search": "Buscar",
-    "config": "Configuração"
+    "config": "Configuração",
+    "logout": "Sair",
+    "loading": "Carregando..."
   },
   "dashboard": {
     "title": "Painel de Quedas de Preço",
@@ -52,7 +54,14 @@
     "importSkipped": "Ignorados",
     "importFailed": "Falhou",
     "invalidFile": "Por favor, selecione um arquivo CSV",
-    "failedToImport": "Falha ao importar ASINs"
+    "failedToImport": "Falha ao importar ASINs",
+    "addToList": "Adicionar à Lista",
+    "inLists": "Em Listas",
+    "removeFromList": "Remover da lista",
+    "failedToAddToList": "Falha ao adicionar produto à lista",
+    "failedToRemoveFromList": "Falha ao remover produto da lista",
+    "noProductsInList": "Nenhum produto nesta lista",
+    "noListsAvailable": "Nenhuma lista disponível. Crie uma lista primeiro."
   },
   "search": {
     "title": "Buscar Produtos",
@@ -102,9 +111,30 @@
     "failedToExport": "Falha ao exportar ASINs",
     "failedToExportDatabase": "Falha ao exportar banco de dados"
   },
+  "auth": {
+    "login": "Entrar",
+    "register": "Registrar",
+    "username": "Nome de usuário",
+    "password": "Senha",
+    "loading": "Carregando...",
+    "switchToRegister": "Não tem uma conta? Registrar",
+    "switchToLogin": "Já tem uma conta? Entrar"
+  },
+  "lists": {
+    "title": "Minhas Listas",
+    "create": "Criar Lista",
+    "listNamePlaceholder": "Nome da lista",
+    "loading": "Carregando listas...",
+    "noLists": "Ainda não há listas. Crie sua primeira lista!",
+    "confirmDelete": "Tem certeza de que deseja excluir esta lista?",
+    "rename": "Renomear",
+    "delete": "Excluir"
+  },
   "common": {
     "language": "Idioma",
     "english": "English",
-    "portuguese": "Português"
+    "portuguese": "Português",
+    "cancel": "Cancelar",
+    "save": "Salvar"
   }
 }

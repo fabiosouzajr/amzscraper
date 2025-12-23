@@ -2,14 +2,23 @@ import { Router, Request, Response } from 'express';
 import { dbService } from '../services/database';
 import { scraperService } from '../services/scraper';
 import { validateASIN, normalizeASIN } from '../utils/validation';
+import { AuthRequest, authenticate } from '../middleware/auth';
 import * as fs from 'fs';
 
 const router = Router();
 
+// All config routes require authentication
+router.use(authenticate);
+
 // GET /api/config/export-asins - Export all ASINs as CSV
 router.get('/export-asins', async (req: Request, res: Response) => {
   try {
-    const products = await dbService.getAllProducts();
+    const authReq = req as AuthRequest;
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const products = await dbService.getAllProducts(authReq.userId);
     
     // Create CSV content with only ASINs (no header)
     const csvContent = products.map(product => product.asin || '').join('\n');
@@ -27,6 +36,11 @@ router.get('/export-asins', async (req: Request, res: Response) => {
 // POST /api/config/import-asins - Import ASINs from CSV file
 router.post('/import-asins', async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthRequest;
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
     const { csvContent } = req.body;
     
     if (!csvContent || typeof csvContent !== 'string') {
@@ -121,8 +135,8 @@ router.post('/import-asins', async (req: Request, res: Response) => {
           continue;
         }
 
-        // Check if product already exists
-        const existing = await dbService.getProductByASIN(normalizedASIN);
+        // Check if product already exists for this user
+        const existing = await dbService.getProductByASIN(authReq.userId, normalizedASIN);
         if (existing) {
           results.skipped++;
           continue;
@@ -131,8 +145,8 @@ router.post('/import-asins', async (req: Request, res: Response) => {
         // Scrape product data
         const scrapedData = await scraperService.scrapeProduct(normalizedASIN);
 
-        // Save product with categories
-        const product = await dbService.addProduct(normalizedASIN, scrapedData.description, scrapedData.categories);
+        // Save product with categories for this user
+        const product = await dbService.addProduct(authReq.userId, normalizedASIN, scrapedData.description, scrapedData.categories);
         
         // Save initial price
         await dbService.addPriceHistory(product.id, scrapedData.price);
@@ -143,9 +157,11 @@ router.post('/import-asins', async (req: Request, res: Response) => {
         await new Promise(resolve => setTimeout(resolve, 2000));
       } catch (error) {
         results.failed++;
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`Error processing ASIN ${rawAsin}:`, error);
         results.errors.push({ 
           asin: rawAsin, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+          error: errorMessage
         });
         // Continue with next ASIN even if one fails
       }
@@ -164,11 +180,12 @@ router.post('/import-asins', async (req: Request, res: Response) => {
     res.end();
   } catch (error) {
     console.error('Error importing ASINs:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     // Send error via SSE if connection is still open
     if (!res.headersSent) {
-      res.status(500).json({ error: 'Failed to import ASINs: ' + (error instanceof Error ? error.message : 'Unknown error') });
+      res.status(500).json({ error: `Failed to import ASINs: ${errorMessage}` });
     } else {
-      res.write(`data: ${JSON.stringify({ status: 'error', error: error instanceof Error ? error.message : 'Unknown error' })}\n\n`);
+      res.write(`data: ${JSON.stringify({ status: 'error', error: errorMessage })}\n\n`);
       res.end();
     }
   }
@@ -177,7 +194,12 @@ router.post('/import-asins', async (req: Request, res: Response) => {
 // GET /api/config/database-info - Get database information
 router.get('/database-info', async (req: Request, res: Response) => {
   try {
-    const productCount = await dbService.getProductCount();
+    const authReq = req as AuthRequest;
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const productCount = await dbService.getProductCount(authReq.userId);
     const dbPath = dbService.getDatabasePath();
     
     // Get database file size

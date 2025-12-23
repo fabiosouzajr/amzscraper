@@ -1,7 +1,8 @@
 import sqlite3 from 'sqlite3';
-import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop } from '../models/types';
+import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserList } from '../models/types';
 import path from 'path';
 import fs from 'fs';
+import bcrypt from 'bcrypt';
 
 // Database path relative to project root
 // __dirname is backend/src/services (source) or backend/dist/services (compiled)
@@ -33,9 +34,12 @@ export class DatabaseService {
     const createProductsTable = `
       CREATE TABLE IF NOT EXISTS products (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        asin TEXT UNIQUE NOT NULL,
+        user_id INTEGER NOT NULL,
+        asin TEXT NOT NULL,
         description TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, asin)
       )
     `;
 
@@ -69,19 +73,179 @@ export class DatabaseService {
       )
     `;
 
+    const createUsersTable = `
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    const createUserListsTable = `
+      CREATE TABLE IF NOT EXISTS user_lists (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, name)
+      )
+    `;
+
+    const createProductListsTable = `
+      CREATE TABLE IF NOT EXISTS product_lists (
+        product_id INTEGER NOT NULL,
+        list_id INTEGER NOT NULL,
+        PRIMARY KEY (product_id, list_id),
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY (list_id) REFERENCES user_lists(id) ON DELETE CASCADE
+      )
+    `;
+
     this.db.serialize(() => {
-      this.db.run(createProductsTable);
+      // Create other tables first (users must exist before products due to foreign key)
+      this.db.run(createUsersTable);
       this.db.run(createCategoriesTable);
       this.db.run(createProductCategoriesTable);
       this.db.run(createPriceHistoryTable);
+      this.db.run(createUserListsTable);
+      this.db.run(createProductListsTable);
       
-      // Create indexes
-      this.db.run('CREATE INDEX IF NOT EXISTS idx_product_id ON price_history(product_id)');
-      this.db.run('CREATE INDEX IF NOT EXISTS idx_asin ON products(asin)');
-      this.db.run('CREATE INDEX IF NOT EXISTS idx_category_name ON categories(name)');
-      this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_product ON product_categories(product_id)');
-      this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_category ON product_categories(category_id)');
-      this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_level ON product_categories(level)');
+      // Check if products table needs migration (this will create it if needed)
+      this.checkAndMigrateProductsTable(() => {
+        // Create indexes after migration is complete
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_id ON price_history(product_id)');
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_asin ON products(asin)');
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_products_user ON products(user_id)');
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_category_name ON categories(name)');
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_product ON product_categories(product_id)');
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_category ON product_categories(category_id)');
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_level ON product_categories(level)');
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_user_lists_user ON user_lists(user_id)');
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_product ON product_lists(product_id)');
+        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_list ON product_lists(list_id)');
+      });
+    });
+  }
+
+  private checkAndMigrateProductsTable(callback: () => void): void {
+    // Check if products table exists and if it has user_id column
+    this.db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='products'", (err, row: any) => {
+      if (err) {
+        console.error('Error checking products table:', err);
+        // Create table if it doesn't exist
+        this.db.run(`
+          CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            asin TEXT NOT NULL,
+            description TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            UNIQUE(user_id, asin)
+          )
+        `, () => {
+          callback();
+        });
+        return;
+      }
+
+      if (row) {
+        // Table exists, check if user_id column exists
+        this.db.all("PRAGMA table_info(products)", (err, columns: any[]) => {
+          if (err) {
+            console.error('Error checking table info:', err);
+            callback();
+            return;
+          }
+
+          const hasUserId = columns.some(col => col.name === 'user_id');
+          
+          if (!hasUserId) {
+            console.log('Migrating products table: adding user_id column...');
+            this.migrateProductsTable(callback);
+          } else {
+            // Table already has user_id, just ensure indexes exist
+            callback();
+          }
+        });
+      } else {
+        // Table doesn't exist, create it
+        this.db.run(`
+          CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            asin TEXT NOT NULL,
+            description TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            UNIQUE(user_id, asin)
+          )
+        `, () => {
+          callback();
+        });
+      }
+    });
+  }
+
+  private migrateProductsTable(callback: () => void): void {
+    // SQLite doesn't support adding NOT NULL columns easily, so we need to recreate the table
+    // First, check if there are any existing products
+    this.db.get("SELECT COUNT(*) as count FROM products", (err, row: any) => {
+      if (err) {
+        console.error('Error checking product count:', err);
+        callback();
+        return;
+      }
+
+      const productCount = row?.count || 0;
+      
+      if (productCount > 0) {
+        console.warn(`Found ${productCount} existing products without user_id. These will be deleted during migration.`);
+        console.warn('If you need to preserve this data, please backup your database first.');
+      }
+
+      // Recreate the table with the new schema
+      // Step 1: Create new table with correct schema
+      this.db.run(`
+        CREATE TABLE products_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          asin TEXT NOT NULL,
+          description TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+          UNIQUE(user_id, asin)
+        )
+      `, (err) => {
+        if (err) {
+          console.error('Error creating new products table:', err);
+          callback();
+          return;
+        }
+
+        // Step 2: Drop old table
+        this.db.run("DROP TABLE IF EXISTS products", (err) => {
+          if (err) {
+            console.error('Error dropping old products table:', err);
+            callback();
+            return;
+          }
+
+          // Step 3: Rename new table
+          this.db.run("ALTER TABLE products_new RENAME TO products", (err) => {
+            if (err) {
+              console.error('Error renaming products table:', err);
+              callback();
+              return;
+            }
+
+            console.log('Products table migration completed successfully.');
+            callback();
+          });
+        });
+      });
     });
   }
 
@@ -182,12 +346,12 @@ export class DatabaseService {
   }
 
   // Product CRUD operations
-  async addProduct(asin: string, description: string, categories?: string[]): Promise<Product> {
+  async addProduct(userId: number, asin: string, description: string, categories?: string[]): Promise<Product> {
     return new Promise(async (resolve, reject) => {
       try {
-        const sql = 'INSERT INTO products (asin, description) VALUES (?, ?)';
+        const sql = 'INSERT INTO products (user_id, asin, description) VALUES (?, ?, ?)';
         const dbService = this; // Capture this for async operations
-        this.db.run(sql, [asin, description], async function(err) {
+        this.db.run(sql, [userId, asin, description], async function(err) {
           if (err) {
             reject(err);
             return;
@@ -201,7 +365,7 @@ export class DatabaseService {
           }
           
           // Get product with categories
-          const product = await dbService.getProductById(productId);
+          const product = await dbService.getProductById(productId, userId);
           if (!product) {
             reject(new Error('Failed to retrieve created product'));
             return;
@@ -215,11 +379,11 @@ export class DatabaseService {
     });
   }
 
-  async getProductById(id: number): Promise<Product | null> {
+  async getProductById(id: number, userId: number): Promise<Product | null> {
     return new Promise(async (resolve, reject) => {
       try {
-        const sql = 'SELECT * FROM products WHERE id = ?';
-        this.db.get(sql, [id], async (err, row: any) => {
+        const sql = 'SELECT * FROM products WHERE id = ? AND user_id = ?';
+        this.db.get(sql, [id, userId], async (err, row: any) => {
           if (err) {
             reject(err);
             return;
@@ -245,11 +409,11 @@ export class DatabaseService {
     });
   }
 
-  async getProductByASIN(asin: string): Promise<Product | null> {
+  async getProductByASIN(userId: number, asin: string): Promise<Product | null> {
     return new Promise(async (resolve, reject) => {
       try {
-        const sql = 'SELECT * FROM products WHERE asin = ?';
-        this.db.get(sql, [asin], async (err, row: any) => {
+        const sql = 'SELECT * FROM products WHERE user_id = ? AND asin = ?';
+        this.db.get(sql, [userId, asin], async (err, row: any) => {
           if (err) {
             reject(err);
             return;
@@ -275,7 +439,7 @@ export class DatabaseService {
     });
   }
 
-  async getAllProducts(categoryFilter?: string): Promise<Product[]> {
+  async getAllProducts(userId: number, categoryFilter?: string): Promise<Product[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let sql: string;
@@ -288,13 +452,13 @@ export class DatabaseService {
             FROM products p
             INNER JOIN product_categories pc ON p.id = pc.product_id
             INNER JOIN categories c ON pc.category_id = c.id
-            WHERE c.name LIKE ?
+            WHERE p.user_id = ? AND c.name LIKE ?
             ORDER BY p.created_at DESC
           `;
-          params = [`%${categoryFilter}%`];
+          params = [userId, `%${categoryFilter}%`];
         } else {
-          sql = 'SELECT * FROM products ORDER BY created_at DESC';
-          params = [];
+          sql = 'SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC';
+          params = [userId];
         }
 
         this.db.all(sql, params, async (err, rows: any[]) => {
@@ -325,7 +489,7 @@ export class DatabaseService {
     });
   }
 
-  async searchProducts(query: string, categoryFilter?: string): Promise<Product[]> {
+  async searchProducts(userId: number, query: string, categoryFilter?: string): Promise<Product[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const searchTerm = `%${query}%`;
@@ -338,14 +502,14 @@ export class DatabaseService {
             FROM products p
             INNER JOIN product_categories pc ON p.id = pc.product_id
             INNER JOIN categories c ON pc.category_id = c.id
-            WHERE (p.description LIKE ? OR p.asin LIKE ?)
+            WHERE p.user_id = ? AND (p.description LIKE ? OR p.asin LIKE ?)
             AND c.name LIKE ?
             ORDER BY p.created_at DESC
           `;
-          params = [searchTerm, searchTerm, `%${categoryFilter}%`];
+          params = [userId, searchTerm, searchTerm, `%${categoryFilter}%`];
         } else {
-          sql = 'SELECT * FROM products WHERE description LIKE ? OR asin LIKE ? ORDER BY created_at DESC';
-          params = [searchTerm, searchTerm];
+          sql = 'SELECT * FROM products WHERE user_id = ? AND (description LIKE ? OR asin LIKE ?) ORDER BY created_at DESC';
+          params = [userId, searchTerm, searchTerm];
         }
 
         this.db.all(sql, params, async (err, rows: any[]) => {
@@ -389,7 +553,7 @@ export class DatabaseService {
     });
   }
 
-  async deleteProduct(id: number): Promise<boolean> {
+  async deleteProduct(id: number, userId: number): Promise<boolean> {
     return new Promise((resolve, reject) => {
       // First delete price history
       this.db.run('DELETE FROM price_history WHERE product_id = ?', [id], (err) => {
@@ -397,8 +561,8 @@ export class DatabaseService {
           reject(err);
           return;
         }
-        // Then delete product
-        this.db.run('DELETE FROM products WHERE id = ?', [id], function(err) {
+        // Then delete product (only if owned by user)
+        this.db.run('DELETE FROM products WHERE id = ? AND user_id = ?', [id, userId], function(err) {
           if (err) {
             reject(err);
           } else {
@@ -455,8 +619,8 @@ export class DatabaseService {
     });
   }
 
-  async getProductWithPriceHistory(productId: number): Promise<ProductWithPrice | null> {
-    const product = await this.getProductById(productId);
+  async getProductWithPriceHistory(productId: number, userId: number): Promise<ProductWithPrice | null> {
+    const product = await this.getProductById(productId, userId);
     if (!product) {
       return null;
     }
@@ -479,7 +643,7 @@ export class DatabaseService {
     };
   }
 
-  async getBiggestPriceDrops(limit: number = 10): Promise<PriceDrop[]> {
+  async getBiggestPriceDrops(userId: number, limit: number = 10): Promise<PriceDrop[]> {
     return new Promise((resolve, reject) => {
       const sql = `
         SELECT 
@@ -495,7 +659,8 @@ export class DatabaseService {
         FROM products p
         INNER JOIN price_history current ON p.id = current.product_id
         INNER JOIN price_history previous ON p.id = previous.product_id
-        WHERE current.id = (
+        WHERE p.user_id = ?
+        AND current.id = (
           SELECT id FROM price_history 
           WHERE product_id = p.id 
           ORDER BY date DESC LIMIT 1
@@ -511,7 +676,7 @@ export class DatabaseService {
         LIMIT ?
       `;
 
-      this.db.all(sql, [limit], async (err, rows: any[]) => {
+      this.db.all(sql, [userId, limit], async (err, rows: any[]) => {
         if (err) {
           reject(err);
         } else {
@@ -521,6 +686,11 @@ export class DatabaseService {
             rows.map(async (row) => {
               const priceHistory = await dbService.getPriceHistory(row.id);
               const categories = await dbService.getProductCategories(row.id);
+              // Verify product belongs to user (already filtered in SQL, but double-check)
+              const product = await dbService.getProductById(row.id, userId);
+              if (!product) {
+                return null;
+              }
               return {
                 product: {
                   id: row.id,
@@ -538,16 +708,18 @@ export class DatabaseService {
               };
             })
           );
+          // Filter out null values
+          resolve(drops.filter((drop): drop is PriceDrop => drop !== null));
           resolve(drops);
         }
       });
     });
   }
 
-  async getProductCount(): Promise<number> {
+  async getProductCount(userId: number): Promise<number> {
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT COUNT(*) as count FROM products';
-      this.db.get(sql, [], (err, row: { count: number } | undefined) => {
+      const sql = 'SELECT COUNT(*) as count FROM products WHERE user_id = ?';
+      this.db.get(sql, [userId], (err, row: { count: number } | undefined) => {
         if (err) {
           reject(err);
         } else {
@@ -567,6 +739,301 @@ export class DatabaseService {
         console.error('Error closing database:', err);
       } else {
         console.log('Database connection closed');
+      }
+    });
+  }
+
+  // User operations
+  async createUser(username: string, password: string): Promise<User> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const passwordHash = await bcrypt.hash(password, 10);
+        const sql = 'INSERT INTO users (username, password_hash) VALUES (?, ?)';
+        this.db.run(sql, [username, passwordHash], function(err) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve({
+            id: this.lastID,
+            username,
+            created_at: new Date().toISOString()
+          });
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  async getUserByUsername(username: string): Promise<(User & { password_hash: string }) | null> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM users WHERE username = ?';
+      this.db.get(sql, [username], (err, row: any) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (!row) {
+          resolve(null);
+          return;
+        }
+        resolve({
+          id: row.id,
+          username: row.username,
+          password_hash: row.password_hash,
+          created_at: row.created_at
+        });
+      });
+    });
+  }
+
+  async getUserById(id: number): Promise<User | null> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT id, username, created_at FROM users WHERE id = ?';
+      this.db.get(sql, [id], (err, row: any) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (!row) {
+          resolve(null);
+          return;
+        }
+        resolve({
+          id: row.id,
+          username: row.username,
+          created_at: row.created_at
+        });
+      });
+    });
+  }
+
+  // List operations
+  async createList(userId: number, name: string): Promise<UserList> {
+    return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO user_lists (user_id, name) VALUES (?, ?)';
+      this.db.run(sql, [userId, name], function(err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve({
+          id: this.lastID,
+          user_id: userId,
+          name,
+          created_at: new Date().toISOString()
+        });
+      });
+    });
+  }
+
+  async getUserLists(userId: number): Promise<UserList[]> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM user_lists WHERE user_id = ? ORDER BY name ASC';
+      this.db.all(sql, [userId], (err, rows: UserList[]) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(rows || []);
+      });
+    });
+  }
+
+  async getListById(listId: number): Promise<UserList | null> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM user_lists WHERE id = ?';
+      this.db.get(sql, [listId], (err, row: any) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (!row) {
+          resolve(null);
+          return;
+        }
+        resolve({
+          id: row.id,
+          user_id: row.user_id,
+          name: row.name,
+          created_at: row.created_at
+        });
+      });
+    });
+  }
+
+  async updateList(listId: number, name: string): Promise<UserList | null> {
+    return new Promise(async (resolve, reject) => {
+      const sql = 'UPDATE user_lists SET name = ? WHERE id = ?';
+      const dbService = this;
+      this.db.run(sql, [name, listId], async function(err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (this.changes === 0) {
+          resolve(null);
+          return;
+        }
+        const updated = await dbService.getListById(listId);
+        resolve(updated);
+      });
+    });
+  }
+
+  async deleteList(listId: number): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const sql = 'DELETE FROM user_lists WHERE id = ?';
+      this.db.run(sql, [listId], function(err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(this.changes > 0);
+      });
+    });
+  }
+
+  // Product-List operations
+  async addProductToList(productId: number, listId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const sql = 'INSERT OR IGNORE INTO product_lists (product_id, list_id) VALUES (?, ?)';
+      this.db.run(sql, [productId, listId], (err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+  async removeProductFromList(productId: number, listId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const sql = 'DELETE FROM product_lists WHERE product_id = ? AND list_id = ?';
+      this.db.run(sql, [productId, listId], (err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+  async getProductLists(productId: number, userId?: number): Promise<UserList[]> {
+    return new Promise((resolve, reject) => {
+      let sql = `
+        SELECT ul.id, ul.user_id, ul.name, ul.created_at
+        FROM user_lists ul
+        INNER JOIN product_lists pl ON ul.id = pl.list_id
+        WHERE pl.product_id = ?
+      `;
+      const params: any[] = [productId];
+      
+      if (userId) {
+        sql += ' AND ul.user_id = ?';
+        params.push(userId);
+      }
+      
+      sql += ' ORDER BY ul.name ASC';
+      
+      this.db.all(sql, params, (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(rows || []);
+      });
+    });
+  }
+
+  async getProductsWithLists(userId?: number, categoryFilter?: string): Promise<Product[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let sql: string;
+        let params: any[];
+
+        if (categoryFilter) {
+          sql = `
+            SELECT DISTINCT p.id, p.asin, p.description, p.created_at
+            FROM products p
+            INNER JOIN product_categories pc ON p.id = pc.product_id
+            INNER JOIN categories c ON pc.category_id = c.id
+            WHERE c.name LIKE ?
+            ORDER BY p.created_at DESC
+          `;
+          params = [`%${categoryFilter}%`];
+        } else {
+          sql = 'SELECT * FROM products ORDER BY created_at DESC';
+          params = [];
+        }
+
+        this.db.all(sql, params, async (err, rows: any[]) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          
+          // Load categories and lists for each product
+          const products: Product[] = await Promise.all(
+            (rows || []).map(async (row) => {
+              const categories = await this.getProductCategories(row.id);
+              const lists = userId ? await this.getProductLists(row.id, userId) : [];
+              return {
+                id: row.id,
+                asin: row.asin,
+                description: row.description,
+                categories: categories.length > 0 ? categories : undefined,
+                lists: lists.length > 0 ? lists : undefined,
+                created_at: row.created_at
+              };
+            })
+          );
+          
+          resolve(products);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  async getListProducts(listId: number): Promise<Product[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const sql = `
+          SELECT p.id, p.asin, p.description, p.created_at
+          FROM products p
+          INNER JOIN product_lists pl ON p.id = pl.product_id
+          WHERE pl.list_id = ?
+          ORDER BY p.created_at DESC
+        `;
+        
+        this.db.all(sql, [listId], async (err, rows: any[]) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          
+          const products: Product[] = await Promise.all(
+            (rows || []).map(async (row) => {
+              const categories = await this.getProductCategories(row.id);
+              return {
+                id: row.id,
+                asin: row.asin,
+                description: row.description,
+                categories: categories.length > 0 ? categories : undefined,
+                created_at: row.created_at
+              };
+            })
+          );
+          
+          resolve(products);
+        });
+      } catch (error) {
+        reject(error);
       }
     });
   }
