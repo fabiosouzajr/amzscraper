@@ -41,6 +41,7 @@
     "loading": "Loading products...",
     "failedToLoad": "Failed to load products",
     "failedToAdd": "Failed to add product",
+    "addedSuccessfully": "Product '{{name}}' added successfully!",
     "failedToDelete": "Failed to delete product",
     "confirmDelete": "Are you sure you want to remove this product?",
     "importASINs": "Import ASINs",
@@ -128,7 +129,13 @@
     "noLists": "No lists yet. Create your first list!",
     "confirmDelete": "Are you sure you want to delete this list?",
     "rename": "Rename",
-    "delete": "Delete"
+    "delete": "Delete",
+    "allProducts": "All Products"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {{page}} of {{totalPages}} ({{total}} total)"
   },
   "common": {
     "language": "Language",

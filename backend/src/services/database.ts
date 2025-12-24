@@ -949,7 +949,7 @@ export class DatabaseService {
     });
   }
 
-  async getProductsWithLists(userId?: number, categoryFilter?: string): Promise<Product[]> {
+  async getProductsWithLists(userId: number, categoryFilter?: string, limit?: number, offset?: number): Promise<Product[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let sql: string;
@@ -961,13 +961,23 @@ export class DatabaseService {
             FROM products p
             INNER JOIN product_categories pc ON p.id = pc.product_id
             INNER JOIN categories c ON pc.category_id = c.id
-            WHERE c.name LIKE ?
+            WHERE p.user_id = ? AND c.name LIKE ?
             ORDER BY p.created_at DESC
           `;
-          params = [`%${categoryFilter}%`];
+          params = [userId, `%${categoryFilter}%`];
         } else {
-          sql = 'SELECT * FROM products ORDER BY created_at DESC';
-          params = [];
+          sql = 'SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC';
+          params = [userId];
+        }
+
+        // Add pagination
+        if (limit !== undefined) {
+          sql += ' LIMIT ?';
+          params.push(limit);
+          if (offset !== undefined) {
+            sql += ' OFFSET ?';
+            params.push(offset);
+          }
         }
 
         this.db.all(sql, params, async (err, rows: any[]) => {
@@ -993,6 +1003,39 @@ export class DatabaseService {
           );
           
           resolve(products);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  async getProductsCount(userId: number, categoryFilter?: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      try {
+        let sql: string;
+        let params: any[];
+
+        if (categoryFilter) {
+          sql = `
+            SELECT COUNT(DISTINCT p.id) as count
+            FROM products p
+            INNER JOIN product_categories pc ON p.id = pc.product_id
+            INNER JOIN categories c ON pc.category_id = c.id
+            WHERE p.user_id = ? AND c.name LIKE ?
+          `;
+          params = [userId, `%${categoryFilter}%`];
+        } else {
+          sql = 'SELECT COUNT(*) as count FROM products WHERE user_id = ?';
+          params = [userId];
+        }
+
+        this.db.get(sql, params, (err, row: { count: number } | undefined) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(row ? row.count : 0);
         });
       } catch (error) {
         reject(error);

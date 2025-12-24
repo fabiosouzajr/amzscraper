@@ -1483,6 +1483,28 @@
   font-size: 0.9rem;
 }
 
+.success-message {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  border-left: 4px solid #4caf50;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .auth-button {
   width: 100%;
   padding: 0.75rem;
@@ -1671,6 +1693,13 @@
   border: 1px solid #ff9900;
 }
 
+.all-products-item {
+  font-weight: 600;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+}
+
 .list-name {
   flex: 1;
   color: #232f3e;
@@ -1810,8 +1839,17 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   min-width: 200px;
+  max-width: 300px;
   max-height: 300px;
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.add-to-list-dropdown.dropdown-up {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
 }
 
 .list-option {
@@ -1853,6 +1891,47 @@
   font-size: 0.9rem;
 }
 
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-button {
+  background: #ff9900;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+  min-width: 100px;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: #e68900;
+}
+
+.pagination-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination-info {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .product-list-layout {
@@ -1866,6 +1945,15 @@
 
   .lists-sidebar {
     position: static;
+  }
+  
+  .pagination {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .pagination-info {
+    order: -1;
   }
 }
 

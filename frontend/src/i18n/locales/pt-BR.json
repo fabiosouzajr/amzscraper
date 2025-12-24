@@ -41,6 +41,7 @@
     "loading": "Carregando produtos...",
     "failedToLoad": "Falha ao carregar produtos",
     "failedToAdd": "Falha ao adicionar produto",
+    "addedSuccessfully": "Produto '{{name}}' adicionado com sucesso!",
     "failedToDelete": "Falha ao excluir produto",
     "confirmDelete": "Tem certeza de que deseja remover este produto?",
     "importASINs": "Importar ASINs",
@@ -128,7 +129,13 @@
     "noLists": "Ainda não há listas. Crie sua primeira lista!",
     "confirmDelete": "Tem certeza de que deseja excluir esta lista?",
     "rename": "Renomear",
-    "delete": "Excluir"
+    "delete": "Excluir",
+    "allProducts": "Todos os Produtos"
+  },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Próxima",
+    "pageInfo": "Página {{page}} de {{totalPages}} ({{total}} no total)"
   },
   "common": {
     "language": "Idioma",

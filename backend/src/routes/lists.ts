@@ -166,8 +166,8 @@ router.post('/:id/products', async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Verify product exists
-    const product = await dbService.getProductById(productId);
+    // Verify product exists and belongs to user
+    const product = await dbService.getProductById(productId, req.userId);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }

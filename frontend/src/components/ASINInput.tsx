@@ -5,9 +5,10 @@ interface ASINInputProps {
   onAdd: (asin: string) => Promise<void>;
   isValidating?: boolean;
   error?: string | null;
+  successMessage?: string | null;
 }
 
-export function ASINInput({ onAdd, isValidating = false, error }: ASINInputProps) {
+export function ASINInput({ onAdd, isValidating = false, error, successMessage }: ASINInputProps) {
   const { t } = useTranslation();
   const [asin, setAsin] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,9 +55,10 @@ export function ASINInput({ onAdd, isValidating = false, error }: ASINInputProps
           type="submit"
           disabled={!isValid || isSubmitting || isValidating || asin.trim() === ''}
         >
-          {isSubmitting ? t('asinInput.adding') : t('asinInput.addProduct')}
+          {isSubmitting || isValidating ? t('asinInput.adding') : t('asinInput.addProduct')}
         </button>
       </div>
+      {successMessage && <div className="success-message">{successMessage}</div>}
       {error && <div className="error-message">{error}</div>}
       {!isValid && asin.trim() !== '' && (
         <div className="error-message">{t('asinInput.invalidFormat')}</div>

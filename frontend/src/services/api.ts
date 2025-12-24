@@ -140,10 +140,19 @@ export const api = {
   },
 
   // Products
-  async getProducts(categoryFilter?: string): Promise<Product[]> {
-    const url = categoryFilter 
-      ? `${API_BASE_URL}/products?category=${encodeURIComponent(categoryFilter)}`
-      : `${API_BASE_URL}/products`;
+  async getProducts(categoryFilter?: string, page?: number, pageSize?: number): Promise<{ products: Product[]; pagination: { page: number; pageSize: number; totalCount: number; totalPages: number } }> {
+    const params = new URLSearchParams();
+    if (categoryFilter) {
+      params.append('category', categoryFilter);
+    }
+    if (page) {
+      params.append('page', page.toString());
+    }
+    if (pageSize) {
+      params.append('pageSize', pageSize.toString());
+    }
+    
+    const url = `${API_BASE_URL}/products${params.toString() ? '?' + params.toString() : ''}`;
     const response = await fetch(url, {
       headers: getAuthHeaders(),
     });

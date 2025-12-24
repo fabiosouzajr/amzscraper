@@ -5,11 +5,12 @@ import { UserList } from '../types';
 import { useTranslation } from 'react-i18next';
 
 interface ListsSidebarProps {
-  onListClick?: (listId: number) => void;
+  onListClick?: (listId: number | null) => void;
   selectedListId?: number | null;
+  onListChange?: () => void; // Callback when lists are created/updated/deleted
 }
 
-export function ListsSidebar({ onListClick, selectedListId }: ListsSidebarProps) {
+export function ListsSidebar({ onListClick, selectedListId, onListChange }: ListsSidebarProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [lists, setLists] = useState<UserList[]>([]);
@@ -53,6 +54,8 @@ export function ListsSidebar({ onListClick, selectedListId }: ListsSidebarProps)
       setLists([...lists, newList]);
       setNewListName('');
       setShowCreateForm(false);
+      // Notify parent component that lists have changed
+      onListChange?.();
     } catch (err: any) {
       setError(err.message || 'Failed to create list');
     } finally {
@@ -69,8 +72,10 @@ export function ListsSidebar({ onListClick, selectedListId }: ListsSidebarProps)
       await api.deleteList(listId);
       setLists(lists.filter(list => list.id !== listId));
       if (selectedListId === listId && onListClick) {
-        onListClick(-1); // Clear selection
+        onListClick(null); // Clear selection
       }
+      // Notify parent component that lists have changed
+      onListChange?.();
     } catch (err: any) {
       setError(err.message || 'Failed to delete list');
     }
@@ -96,6 +101,8 @@ export function ListsSidebar({ onListClick, selectedListId }: ListsSidebarProps)
       setLists(lists.map(list => list.id === listId ? updated : list));
       setEditingListId(null);
       setEditingName('');
+      // Notify parent component that lists have changed
+      onListChange?.();
     } catch (err: any) {
       setError(err.message || 'Failed to update list');
     }
@@ -150,6 +157,16 @@ export function ListsSidebar({ onListClick, selectedListId }: ListsSidebarProps)
         <div className="loading">{t('lists.loading')}</div>
       ) : (
         <div className="lists-list">
+          {/* All Products option */}
+          <div
+            className={`list-item all-products-item ${selectedListId === null ? 'selected' : ''}`}
+            onClick={() => onListClick?.(null)}
+          >
+            <div className="list-name">
+              {t('lists.allProducts')}
+            </div>
+          </div>
+          
           {lists.length === 0 ? (
             <p className="empty-state">{t('lists.noLists')}</p>
           ) : (

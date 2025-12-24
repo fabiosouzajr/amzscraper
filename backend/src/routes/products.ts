@@ -9,19 +9,41 @@ const router = Router();
 // All product routes require authentication
 router.use(authenticate);
 
-// GET /api/products - List all products (with optional category filter)
+// GET /api/products - List all products (with optional category filter and pagination)
 // Includes list memberships for the authenticated user
 router.get('/', async (req: Request, res: Response) => {
   try {
     const categoryFilter = req.query.category as string | undefined;
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 20;
     const authReq = req as AuthRequest;
     
     if (!authReq.userId) {
       return res.status(401).json({ error: 'Authentication required' });
     }
     
-    const products = await dbService.getProductsWithLists(authReq.userId, categoryFilter);
-    res.json(products);
+    // Validate pagination parameters
+    const validPage = Math.max(1, page);
+    const validPageSize = Math.min(Math.max(1, pageSize), 100); // Max 100 items per page
+    const offset = (validPage - 1) * validPageSize;
+    
+    // Get products and total count
+    const [products, totalCount] = await Promise.all([
+      dbService.getProductsWithLists(authReq.userId, categoryFilter, validPageSize, offset),
+      dbService.getProductsCount(authReq.userId, categoryFilter)
+    ]);
+    
+    const totalPages = Math.ceil(totalCount / validPageSize);
+    
+    res.json({
+      products,
+      pagination: {
+        page: validPage,
+        pageSize: validPageSize,
+        totalCount,
+        totalPages
+      }
+    });
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).json({ error: 'Failed to fetch products' });

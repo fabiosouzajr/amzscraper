@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { Product, Category, UserList } from '../types';
@@ -19,11 +19,17 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategoryFilter);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [importing, setImporting] = useState(false);
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
   const [lists, setLists] = useState<UserList[]>([]);
   const [addingToListProductId, setAddingToListProductId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const [importProgress, setImportProgress] = useState<{
     current: number;
     total: number;
@@ -59,15 +65,18 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
     }
   };
 
-  const loadProducts = async () => {
+  const loadProducts = async (page: number = currentPage) => {
     try {
       setLoading(true);
-      const data = await api.getProducts(selectedCategory || undefined);
+      const response = await api.getProducts(selectedCategory || undefined, page, pageSize);
       // Sort products alphabetically by description
-      const sorted = [...data].sort((a, b) => 
+      const sorted = [...response.products].sort((a, b) => 
         a.description.localeCompare(b.description, undefined, { sensitivity: 'base' })
       );
       setProducts(sorted);
+      setTotalPages(response.pagination.totalPages);
+      setTotalCount(response.pagination.totalCount);
+      setCurrentPage(response.pagination.page);
       setError(null);
     } catch (err) {
       setError(t('products.failedToLoad'));
@@ -91,8 +100,67 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   }, [initialCategoryFilter, user]);
 
   useEffect(() => {
-    loadProducts();
+    setCurrentPage(1); // Reset to first page when category changes
+    loadProducts(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
+
+  // Adjust dropdown position to stay in viewport
+  const adjustDropdownPosition = (productId: number) => {
+    const dropdown = dropdownRefs.current[productId];
+    if (!dropdown) return;
+
+    // Get button position to calculate dropdown position
+    const container = dropdown.parentElement;
+    if (!container) return;
+
+    const button = container.querySelector('.add-to-list-button') as HTMLElement;
+    if (!button) return;
+
+    const buttonRect = button.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    
+    // Calculate available space
+    const spaceBelow = viewportHeight - buttonRect.bottom;
+    const spaceAbove = buttonRect.top;
+    const estimatedDropdownHeight = Math.min(300, lists.length * 50 + 20); // Estimate based on list count
+    
+    // If not enough space below but enough above, flip upward
+    if (spaceBelow < estimatedDropdownHeight && spaceAbove > estimatedDropdownHeight) {
+      dropdown.classList.add('dropdown-up');
+      // Adjust max-height to fit available space above
+      const maxHeight = Math.min(300, spaceAbove - 20);
+      dropdown.style.maxHeight = `${maxHeight}px`;
+    } else {
+      dropdown.classList.remove('dropdown-up');
+      // Adjust max-height to fit available space below
+      const maxHeight = Math.min(300, spaceBelow - 20);
+      dropdown.style.maxHeight = `${maxHeight}px`;
+    }
+  };
+
+  // Adjust dropdown positions when window is resized or scrolled
+  useEffect(() => {
+    const handleResize = () => {
+      if (addingToListProductId !== null) {
+        adjustDropdownPosition(addingToListProductId);
+      }
+    };
+
+    const handleScroll = () => {
+      if (addingToListProductId !== null) {
+        adjustDropdownPosition(addingToListProductId);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleScroll, true);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll, true);
+    };
+  }, [addingToListProductId]);
 
   const handleCategoryClick = (categoryName: string) => {
     setSelectedCategory(categoryName);
@@ -105,9 +173,17 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   const handleAddProduct = async (asin: string) => {
     setIsValidating(true);
     setError(null);
+    setSuccessMessage(null);
     try {
-      await api.addProduct(asin);
-      await loadProducts();
+      const product = await api.addProduct(asin);
+      setSuccessMessage(t('products.addedSuccessfully', { name: product.description || asin }));
+      // Reload first page to show the new product (new products appear at the top)
+      setCurrentPage(1);
+      await loadProducts(1);
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
     } catch (err: any) {
       setError(err.message || t('products.failedToAdd'));
       throw err;
@@ -122,21 +198,29 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
     }
     try {
       await api.deleteProduct(id);
-      await loadProducts();
+      // If we're on a page that might be empty after deletion, go to previous page
+      const currentProductsOnPage = filteredProducts.length;
+      if (currentProductsOnPage === 1 && currentPage > 1) {
+        const newPage = currentPage - 1;
+        setCurrentPage(newPage);
+        await loadProducts(newPage);
+      } else {
+        await loadProducts(currentPage);
+      }
     } catch (err) {
       setError(t('products.failedToDelete'));
       console.error(err);
     }
   };
 
-  const handleListClick = (listId: number) => {
-    setSelectedListId(listId === -1 ? null : listId);
+  const handleListClick = (listId: number | null) => {
+    setSelectedListId(listId);
   };
 
   const handleAddToList = async (productId: number, listId: number) => {
     try {
       await api.addProductToList(listId, productId);
-      await loadProducts();
+      await loadProducts(currentPage);
       setAddingToListProductId(null);
     } catch (err: any) {
       setError(err.message || t('products.failedToAddToList'));
@@ -146,7 +230,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   const handleRemoveFromList = async (productId: number, listId: number) => {
     try {
       await api.removeProductFromList(listId, productId);
-      await loadProducts();
+      await loadProducts(currentPage);
     } catch (err: any) {
       setError(err.message || t('products.failedToRemoveFromList'));
     }
@@ -222,7 +306,8 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
           failed: results.failed,
           skipped: results.skipped,
         });
-        await loadProducts();
+        setCurrentPage(1);
+        await loadProducts(1);
       } else {
         // Handle streaming response (Server-Sent Events)
         const reader = response.body?.getReader();
@@ -261,8 +346,9 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                         skipped: data.skipped,
                       });
                       importCompleted = true;
-                      // Reload products to show newly imported ones
-                      await loadProducts();
+                      // Reload first page to show newly imported ones
+                      setCurrentPage(1);
+                      await loadProducts(1);
                     } else if (data.status === 'error') {
                       const errorMsg = data.error || t('products.failedToImport');
                       console.error('Import error:', errorMsg);
@@ -317,6 +403,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
             <ListsSidebar
               onListClick={handleListClick}
               selectedListId={selectedListId}
+              onListChange={loadLists}
             />
           </div>
         )}
@@ -387,12 +474,12 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
       
       <div className="add-product-section">
         <h3>{t('products.addNew')}</h3>
-        <ASINInput onAdd={handleAddProduct} isValidating={isValidating} error={error} />
+        <ASINInput onAdd={handleAddProduct} isValidating={isValidating} error={error} successMessage={successMessage} />
       </div>
 
       <div className="products-section">
         <div className="products-section-header">
-          <h3>{t('products.trackedProducts')} ({filteredProducts.length}{selectedListId ? ` / ${products.length}` : ''})</h3>
+          <h3>{t('products.trackedProducts')} ({selectedListId ? filteredProducts.length : totalCount}{selectedListId ? ` / ${totalCount}` : ''})</h3>
           <div className="category-filter">
             <label htmlFor="category-filter">{t('products.filterByCategory')}:</label>
             <select
@@ -478,14 +565,24 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                     <div className="add-to-list-container">
                       <button
                         className="add-to-list-button"
-                        onClick={() => setAddingToListProductId(
-                          addingToListProductId === product.id ? null : product.id
-                        )}
+                        onClick={() => {
+                          const newState = addingToListProductId === product.id ? null : product.id;
+                          setAddingToListProductId(newState);
+                          // Adjust dropdown position after state update
+                          if (newState !== null) {
+                            setTimeout(() => {
+                              adjustDropdownPosition(product.id);
+                            }, 0);
+                          }
+                        }}
                       >
                         {t('products.addToList')}
                       </button>
                       {addingToListProductId === product.id && (
-                        <div className="add-to-list-dropdown">
+                        <div 
+                          ref={(el) => { dropdownRefs.current[product.id] = el; }}
+                          className="add-to-list-dropdown"
+                        >
                           {lists.length === 0 ? (
                             <div className="no-lists-message">{t('products.noListsAvailable')}</div>
                           ) : (
@@ -523,6 +620,39 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        
+        {/* Pagination */}
+        {!selectedListId && totalPages > 1 && (
+          <div className="pagination">
+            <button
+              onClick={() => {
+                const newPage = currentPage - 1;
+                setCurrentPage(newPage);
+                loadProducts(newPage);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              disabled={currentPage === 1}
+              className="pagination-button"
+            >
+              {t('pagination.previous')}
+            </button>
+            <span className="pagination-info">
+              {t('pagination.pageInfo', { page: currentPage, totalPages, total: totalCount })}
+            </span>
+            <button
+              onClick={() => {
+                const newPage = currentPage + 1;
+                setCurrentPage(newPage);
+                loadProducts(newPage);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              disabled={currentPage === totalPages}
+              className="pagination-button"
+            >
+              {t('pagination.next')}
+            </button>
           </div>
         )}
       </div>
