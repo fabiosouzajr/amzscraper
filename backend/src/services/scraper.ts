@@ -122,52 +122,210 @@ export class ScraperService {
         let wholePart: string | null = null;
         let fractionPart: string | null = null;
         
-        // Method 1: Try to find visible price elements in the main price container
+        // Method 1: Prioritize .a-price.priceToPay (main product price) - most specific
         try {
-          // Wait for main price container
-          await page.waitForSelector('#corePriceDisplay_desktop_feature_div, #corePrice_feature_div, .a-price.priceToPay', { timeout: 10000, state: 'visible' });
+          // Wait for the specific priceToPay element first
+          await page.waitForSelector('.a-price.priceToPay', { timeout: 10000, state: 'visible' }).catch(() => null);
           
-          // Find visible price whole and fraction parts within the price container
-          const visiblePriceData = await page.evaluate(() => {
+          // Find price within .a-price.priceToPay container (this is the main product price)
+          // When logged in, Amazon may show Pix discount prices, so we need to find the actual displayed price
+          const priceToPayData = await page.evaluate(() => {
             // @ts-ignore - browser context
-            const priceContainer = document.querySelector('#corePriceDisplay_desktop_feature_div, #corePrice_feature_div, .a-price.priceToPay');
-            if (!priceContainer) return null;
+            const priceToPay = document.querySelector('.a-price.priceToPay');
+            if (!priceToPay) return null;
             
-            // Find visible whole and fraction parts within this container
-            // @ts-ignore
-            const wholeEls = priceContainer.querySelectorAll('span.a-price-whole');
-            // @ts-ignore
-            const fractionEls = priceContainer.querySelectorAll('span.a-price-fraction');
+            // Strategy: Look for all price elements in the priceToPay container and find the most prominent one
+            // When there's a Pix discount, Amazon often shows multiple prices, and we want the displayed one
             
-            // Find first visible elements
-            for (let i = 0; i < wholeEls.length; i++) {
+            // First, collect all price elements within priceToPay
+            // @ts-ignore
+            const allPriceElements: any[] = [];
+            
+            // Get all .a-offscreen prices within priceToPay
+            // @ts-ignore
+            const offscreenPrices = priceToPay.querySelectorAll('.a-offscreen');
+            offscreenPrices.forEach((el: any) => {
               // @ts-ignore
-              if (wholeEls[i].offsetParent !== null) {
+              const text = el.textContent?.trim();
+              if (text && text.includes('R$')) {
                 // @ts-ignore
-                const wholeText = wholeEls[i].textContent?.trim();
-                // @ts-ignore
-                const fractionText = fractionEls[i]?.textContent?.trim();
-                if (wholeText) {
-                  return { whole: wholeText, fraction: fractionText || '' };
+                const match = text.match(/R\$\s*([\d.,]+)/);
+                if (match) {
+                  // Check if this is the visible/active price (not a crossed-out old price)
+                  // @ts-ignore
+                  const parent = el.parentElement;
+                  // @ts-ignore
+                  const isStrikethrough = parent?.classList.contains('a-text-price') || 
+                                          // @ts-ignore
+                                          parent?.querySelector('.a-text-strike') !== null;
+                  // @ts-ignore
+                  const isVisible = parent?.offsetParent !== null;
+                  
+                  if (isVisible && !isStrikethrough) {
+                    allPriceElements.push({
+                      text: match[1],
+                      source: 'offscreen',
+                      // @ts-ignore
+                      fontSize: window.getComputedStyle(parent || el).fontSize,
+                      // @ts-ignore
+                      fontWeight: window.getComputedStyle(parent || el).fontWeight
+                    });
+                  }
                 }
               }
+            });
+            
+            // Also get visible whole/fraction prices
+            // @ts-ignore
+            const wholeEl = priceToPay.querySelector('span.a-price-whole');
+            // @ts-ignore
+            const fractionEl = priceToPay.querySelector('span.a-price-fraction');
+            
+            if (wholeEl) {
+              // @ts-ignore
+              const wholeText = wholeEl.textContent?.trim();
+              // @ts-ignore
+              const fractionText = fractionEl ? fractionEl.textContent?.trim() : '';
+              // @ts-ignore
+              const isVisible = wholeEl.offsetParent !== null;
+              // @ts-ignore
+              const parent = wholeEl.closest('.a-price');
+              // @ts-ignore
+              const isStrikethrough = parent?.classList.contains('a-text-price') || 
+                                       // @ts-ignore
+                                       parent?.querySelector('.a-text-strike') !== null;
+              
+              if (wholeText && isVisible && !isStrikethrough) {
+                allPriceElements.push({
+                  whole: wholeText,
+                  fraction: fractionText || '',
+                  source: 'visible',
+                  // @ts-ignore
+                  fontSize: window.getComputedStyle(wholeEl).fontSize,
+                  // @ts-ignore
+                  fontWeight: window.getComputedStyle(wholeEl).fontWeight
+                });
+              }
             }
+            
+            // If we found multiple prices, prioritize the one with larger font size (most prominent)
+            if (allPriceElements.length > 0) {
+              // Sort by font size (larger = more prominent)
+              allPriceElements.sort((a, b) => {
+                const sizeA = parseFloat(a.fontSize) || 0;
+                const sizeB = parseFloat(b.fontSize) || 0;
+                return sizeB - sizeA; // Descending order
+              });
+              
+              // Return the most prominent price
+              return allPriceElements[0];
+            }
+            
             return null;
           });
           
-          if (visiblePriceData) {
-            wholePart = visiblePriceData.whole;
-            fractionPart = visiblePriceData.fraction;
-            priceMethod = 'visible price container';
-            console.log(`✓ Found price using method: ${priceMethod}`);
-            console.log(`  Raw wholePart: "${wholePart}", raw fractionPart: "${fractionPart}"`);
-            priceFound = true;
+          if (priceToPayData) {
+            if (priceToPayData.source === 'offscreen') {
+              // Parse from offscreen text like "377,88"
+              const priceStr = priceToPayData.text.replace(/\./g, '').replace(',', '.');
+              price = parseFloat(priceStr);
+              if (!isNaN(price)) {
+                priceMethod = '.a-price.priceToPay .a-offscreen';
+                console.log(`✓ Found price using method: ${priceMethod} (R$ ${price.toFixed(2)})`);
+                priceFound = true;
+              }
+            } else {
+              wholePart = priceToPayData.whole;
+              fractionPart = priceToPayData.fraction;
+              priceMethod = '.a-price.priceToPay visible';
+              console.log(`✓ Found price using method: ${priceMethod}`);
+              console.log(`  Raw wholePart: "${wholePart}", raw fractionPart: "${fractionPart}"`);
+              priceFound = true;
+            }
           }
         } catch (error) {
-          console.log('✗ Main price container not found, trying alternative methods...');
+          console.log('✗ .a-price.priceToPay not found, trying alternative methods...');
         }
         
-        // Method 2: Find any visible price whole/fraction elements if Method 1 failed
+        // Method 2: Try main price containers if priceToPay not found
+        if (!priceFound) {
+          try {
+            // Wait for main price container
+            await page.waitForSelector('#corePriceDisplay_desktop_feature_div, #corePrice_feature_div', { timeout: 10000, state: 'visible' });
+            
+            // Find visible price whole and fraction parts within the price container
+            const visiblePriceData = await page.evaluate(() => {
+              // @ts-ignore - browser context
+              // Try corePriceDisplay_desktop_feature_div first (most common)
+              let priceContainer = document.querySelector('#corePriceDisplay_desktop_feature_div');
+              if (!priceContainer) {
+                // @ts-ignore
+                priceContainer = document.querySelector('#corePrice_feature_div');
+              }
+              if (!priceContainer) return null;
+              
+              // First try offscreen price within the container
+              // @ts-ignore
+              const offscreen = priceContainer.querySelector('.a-price .a-offscreen');
+              if (offscreen) {
+                // @ts-ignore
+                const offscreenText = offscreen.textContent?.trim();
+                if (offscreenText && offscreenText.includes('R$')) {
+                  // @ts-ignore
+                  const match = offscreenText.match(/R\$\s*([\d.,]+)/);
+                  if (match) {
+                    return { source: 'offscreen', text: match[1] };
+                  }
+                }
+              }
+              
+              // Fallback to visible whole/fraction parts
+              // @ts-ignore
+              const wholeEls = priceContainer.querySelectorAll('span.a-price-whole');
+              // @ts-ignore
+              const fractionEls = priceContainer.querySelectorAll('span.a-price-fraction');
+              
+              // Find first visible elements
+              for (let i = 0; i < wholeEls.length; i++) {
+                // @ts-ignore
+                if (wholeEls[i].offsetParent !== null) {
+                  // @ts-ignore
+                  const wholeText = wholeEls[i].textContent?.trim();
+                  // @ts-ignore
+                  const fractionText = fractionEls[i]?.textContent?.trim();
+                  if (wholeText) {
+                    return { source: 'visible', whole: wholeText, fraction: fractionText || '' };
+                  }
+                }
+              }
+              return null;
+            });
+            
+            if (visiblePriceData) {
+              if (visiblePriceData.source === 'offscreen') {
+                // Parse from offscreen text
+                const priceStr = visiblePriceData.text.replace(/\./g, '').replace(',', '.');
+                price = parseFloat(priceStr);
+                if (!isNaN(price)) {
+                  priceMethod = 'corePrice container .a-offscreen';
+                  console.log(`✓ Found price using method: ${priceMethod} (R$ ${price.toFixed(2)})`);
+                  priceFound = true;
+                }
+              } else {
+                wholePart = visiblePriceData.whole;
+                fractionPart = visiblePriceData.fraction;
+                priceMethod = 'corePrice container visible';
+                console.log(`✓ Found price using method: ${priceMethod}`);
+                console.log(`  Raw wholePart: "${wholePart}", raw fractionPart: "${fractionPart}"`);
+                priceFound = true;
+              }
+            }
+          } catch (error) {
+            console.log('✗ Main price container not found, trying alternative methods...');
+          }
+        }
+        
+        // Method 3: Find any visible price whole/fraction elements if previous methods failed
         if (!priceFound) {
           try {
             await page.waitForSelector('span.a-price-whole', { timeout: 10000, state: 'visible' });
@@ -208,7 +366,7 @@ export class ScraperService {
           }
         }
         
-        // Method 3: Fallback to .a-offscreen if visible elements not found
+        // Method 4: Fallback to .a-offscreen if visible elements not found
         if (!priceFound) {
           const priceText = await page.textContent('.a-price .a-offscreen').catch(() => null);
           if (priceText && priceText.trim()) {
@@ -232,38 +390,45 @@ export class ScraperService {
           throw new Error('Price not found - no visible price elements detected');
         }
         
-        if (!wholePart) {
-          throw new Error('Price whole part not found');
-        }
+        // If price was already extracted from offscreen, skip the wholePart/fractionPart parsing
+        if (priceFound && price !== undefined && !isNaN(price)) {
+          // Price already extracted from offscreen, continue
+          console.log(`✓ Price already extracted: R$ ${price.toFixed(2)}`);
+        } else {
+          // Need to parse from wholePart/fractionPart
+          if (!wholePart) {
+            throw new Error('Price whole part not found');
+          }
 
-        // Clean the whole part
-        // Brazilian prices use: dots (.) as thousands separators, comma (,) as decimal separator
-        // Example: "1.234,56" means 1234.56
-        // wholePart might be "1.498," (with trailing comma) or "1.498" (without)
-        // fractionPart is "33" or "90" etc.
-        let cleanedWhole = wholePart.replace(/[^\d,.]/g, ''); // Remove non-digit/comma/dot chars
-        
-        // Remove trailing comma if present (it's just a visual separator, not part of the number)
-        cleanedWhole = cleanedWhole.replace(/,$/, '');
-        
-        // Remove all dots (they are thousands separators in Brazilian format)
-        // Example: "1.498" -> "1498"
-        cleanedWhole = cleanedWhole.replace(/\./g, '');
-        
-        const cleanedFraction = fractionPart ? fractionPart.replace(/[^\d]/g, '') : '00';
-        
-        // Combine whole and fraction parts with a single dot as decimal separator
-        // Example: "1498" + "33" -> "1498.33"
-        const priceString = `${cleanedWhole}.${cleanedFraction}`;
-        price = parseFloat(priceString);
-        
-        if (isNaN(price)) {
-          throw new Error(`Invalid price format: ${priceString} (from wholePart: "${wholePart}", fractionPart: "${fractionPart}")`);
+          // Clean the whole part
+          // Brazilian prices use: dots (.) as thousands separators, comma (,) as decimal separator
+          // Example: "1.234,56" means 1234.56
+          // wholePart might be "1.498," (with trailing comma) or "1.498" (without)
+          // fractionPart is "33" or "90" etc.
+          let cleanedWhole = wholePart.replace(/[^\d,.]/g, ''); // Remove non-digit/comma/dot chars
+          
+          // Remove trailing comma if present (it's just a visual separator, not part of the number)
+          cleanedWhole = cleanedWhole.replace(/,$/, '');
+          
+          // Remove all dots (they are thousands separators in Brazilian format)
+          // Example: "1.498" -> "1498"
+          cleanedWhole = cleanedWhole.replace(/\./g, '');
+          
+          const cleanedFraction = fractionPart ? fractionPart.replace(/[^\d]/g, '') : '00';
+          
+          // Combine whole and fraction parts with a single dot as decimal separator
+          // Example: "1498" + "33" -> "1498.33"
+          const priceString = `${cleanedWhole}.${cleanedFraction}`;
+          price = parseFloat(priceString);
+          
+          if (isNaN(price)) {
+            throw new Error(`Invalid price format: ${priceString} (from wholePart: "${wholePart}", fractionPart: "${fractionPart}")`);
+          }
+          
+          console.log(`  Cleaned wholePart: "${cleanedWhole}", cleanedFraction: "${cleanedFraction}"`);
+          console.log(`  Final price string: "${priceString}"`);
+          console.log(`✓ Extracted price using method "${priceMethod}": R$ ${price.toFixed(2)}`);
         }
-        
-        console.log(`  Cleaned wholePart: "${cleanedWhole}", cleanedFraction: "${cleanedFraction}"`);
-        console.log(`  Final price string: "${priceString}"`);
-        console.log(`✓ Extracted price using method "${priceMethod}": R$ ${price.toFixed(2)}`);
       } catch (error) {
         console.error(`✗ Error extracting price for ASIN ${asin}:`, error);
         throw new Error('Price not found or invalid format');
