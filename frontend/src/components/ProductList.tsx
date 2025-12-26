@@ -220,7 +220,26 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   const handleAddToList = async (productId: number, listId: number) => {
     try {
       await api.addProductToList(listId, productId);
-      await loadProducts(currentPage);
+      
+      // Update the product's lists in state without reloading all products
+      const listToAdd = lists.find(l => l.id === listId);
+      if (listToAdd) {
+        setProducts(prevProducts => 
+          prevProducts.map(product => 
+            product.id === productId
+              ? {
+                  ...product,
+                  lists: product.lists 
+                    ? product.lists.some(l => l.id === listId)
+                      ? product.lists // Already in list, don't add duplicate
+                      : [...product.lists, listToAdd]
+                    : [listToAdd]
+                }
+              : product
+          )
+        );
+      }
+      
       setAddingToListProductId(null);
     } catch (err: any) {
       setError(err.message || t('products.failedToAddToList'));
@@ -230,7 +249,21 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   const handleRemoveFromList = async (productId: number, listId: number) => {
     try {
       await api.removeProductFromList(listId, productId);
-      await loadProducts(currentPage);
+      
+      // Update the product's lists in state without reloading all products
+      setProducts(prevProducts => 
+        prevProducts.map(product => 
+          product.id === productId
+            ? {
+                ...product,
+                lists: (() => {
+                  const updatedLists = product.lists?.filter(l => l.id !== listId) || [];
+                  return updatedLists.length > 0 ? updatedLists : undefined;
+                })()
+              }
+            : product
+        )
+      );
     } catch (err: any) {
       setError(err.message || t('products.failedToRemoveFromList'));
     }

@@ -68,7 +68,8 @@
     "title": "Buscar Produtos",
     "placeholder": "Buscar produtos por nome ou ASIN...",
     "searching": "Buscando...",
-    "noResults": "Nenhum produto encontrado"
+    "noResults": "Nenhum produto encontrado",
+    "noProducts": "Nenhum produto disponível"
   },
   "productDetail": {
     "back": "← Voltar",
@@ -110,7 +111,17 @@
     "exportASINsDescription": "Exporte todos os ASINs rastreados para um arquivo CSV com uma única coluna contendo apenas os ASINs.",
     "failedToLoad": "Falha ao carregar informações do banco de dados",
     "failedToExport": "Falha ao exportar ASINs",
-    "failedToExportDatabase": "Falha ao exportar banco de dados"
+    "failedToExportDatabase": "Falha ao exportar banco de dados",
+    "account": "Conta",
+    "currentPassword": "Senha Atual",
+    "newPassword": "Nova Senha",
+    "confirmPassword": "Confirmar Senha",
+    "changePassword": "Alterar Senha",
+    "changingPassword": "Alterando...",
+    "passwordChanged": "Senha alterada com sucesso",
+    "failedToChangePassword": "Falha ao alterar senha",
+    "passwordMismatch": "A nova senha e a confirmação não coincidem",
+    "passwordTooShort": "A senha deve ter pelo menos 6 caracteres"
   },
   "auth": {
     "login": "Entrar",

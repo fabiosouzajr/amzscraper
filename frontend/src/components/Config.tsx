@@ -15,6 +15,13 @@ export function Config() {
   const [error, setError] = useState<string | null>(null);
   const [dbInfo, setDbInfo] = useState<DatabaseInfo | null>(null);
   const [loadingDbInfo, setLoadingDbInfo] = useState(true);
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
 
   useEffect(() => {
     loadDatabaseInfo();
@@ -99,6 +106,41 @@ export function Config() {
     }
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setPasswordSuccess(null);
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setError(t('config.passwordMismatch'));
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      setError(t('config.passwordTooShort'));
+      return;
+    }
+
+    try {
+      setChangingPassword(true);
+      await api.changePassword(passwordForm.currentPassword, passwordForm.newPassword);
+      setPasswordSuccess(t('config.passwordChanged'));
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        setPasswordSuccess(null);
+      }, 5000);
+    } catch (err: any) {
+      setError(err.message || t('config.failedToChangePassword'));
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
   return (
     <div className="config-page">
       <h2>{t('config.title')}</h2>
@@ -151,6 +193,55 @@ export function Config() {
             {t('config.exportASINsDescription')}
           </p>
         </div>
+      </div>
+
+      <div className="config-section">
+        <h3>{t('config.account')}</h3>
+        <form onSubmit={handleChangePassword} className="password-change-form">
+          <div className="form-group">
+            <label htmlFor="currentPassword">{t('config.currentPassword')}</label>
+            <input
+              type="password"
+              id="currentPassword"
+              value={passwordForm.currentPassword}
+              onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+              required
+              disabled={changingPassword}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="newPassword">{t('config.newPassword')}</label>
+            <input
+              type="password"
+              id="newPassword"
+              value={passwordForm.newPassword}
+              onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+              required
+              minLength={6}
+              disabled={changingPassword}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="confirmPassword">{t('config.confirmPassword')}</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={passwordForm.confirmPassword}
+              onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+              required
+              minLength={6}
+              disabled={changingPassword}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={changingPassword}
+            className="change-password-button"
+          >
+            {changingPassword ? t('config.changingPassword') : t('config.changePassword')}
+          </button>
+          {passwordSuccess && <div className="success-message">{passwordSuccess}</div>}
+        </form>
       </div>
 
       {error && <div className="error-message">{error}</div>}

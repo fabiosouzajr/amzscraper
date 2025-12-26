@@ -788,6 +788,24 @@ export class DatabaseService {
     });
   }
 
+  async updateUserPassword(userId: number, newPassword: string): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const passwordHash = await bcrypt.hash(newPassword, 10);
+        const sql = 'UPDATE users SET password_hash = ? WHERE id = ?';
+        this.db.run(sql, [passwordHash, userId], function(err) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(this.changes > 0);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   async getUserById(id: number): Promise<User | null> {
     return new Promise((resolve, reject) => {
       const sql = 'SELECT id, username, created_at FROM users WHERE id = ?';

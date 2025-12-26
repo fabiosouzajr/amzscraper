@@ -966,6 +966,33 @@
   margin: 0;
 }
 
+.password-change-form {
+  max-width: 500px;
+  margin-top: 1rem;
+}
+
+.change-password-button {
+  background: #232f3e;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
+}
+
+.change-password-button:hover:not(:disabled) {
+  background: #1a2532;
+}
+
+.change-password-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .database-info {
   margin-bottom: 1.5rem;
   padding: 1rem;
@@ -1777,8 +1804,8 @@
 
 .list-badge {
   display: inline-block;
-  background: #e3f2fd;
-  color: #1976d2;
+  background: #efe1f7;
+  color: #8f0ba0;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   margin: 0.25rem 0.25rem 0.25rem 0;

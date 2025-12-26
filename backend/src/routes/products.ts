@@ -114,7 +114,16 @@ router.get('/:id', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Product not found' });
     }
     const priceHistory = await dbService.getPriceHistory(id);
-    res.json({ ...product, price_history: priceHistory });
+    
+    // Add list memberships
+    const lists = await dbService.getProductLists(id, authReq.userId);
+    const productWithLists = {
+      ...product,
+      lists: lists.length > 0 ? lists : undefined,
+      price_history: priceHistory
+    };
+    
+    res.json(productWithLists);
   } catch (error) {
     console.error('Error fetching product:', error);
     res.status(500).json({ error: 'Failed to fetch product' });

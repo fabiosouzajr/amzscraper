@@ -74,6 +74,17 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
           <span className="date-badge">
             {t('productDetail.added')}: {new Date(product.created_at).toLocaleDateString()}
           </span>
+          {product.lists && product.lists.length > 0 && (
+            <div className="product-lists">
+              <span className="lists-label">{t('products.inLists')}: </span>
+              {product.lists.map((list, idx) => (
+                <span key={list.id} className="list-badge">
+                  {list.name}
+                  {idx < product.lists!.length - 1 && ', '}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

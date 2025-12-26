@@ -68,7 +68,8 @@
     "title": "Search Products",
     "placeholder": "Search products by name or ASIN...",
     "searching": "Searching...",
-    "noResults": "No products found"
+    "noResults": "No products found",
+    "noProducts": "No products available"
   },
   "productDetail": {
     "back": "← Back",
@@ -110,7 +111,17 @@
     "exportASINsDescription": "Export all tracked ASINs to a CSV file with a single column containing only the ASINs.",
     "failedToLoad": "Failed to load database information",
     "failedToExport": "Failed to export ASINs",
-    "failedToExportDatabase": "Failed to export database"
+    "failedToExportDatabase": "Failed to export database",
+    "account": "Account",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "changePassword": "Change Password",
+    "changingPassword": "Changing...",
+    "passwordChanged": "Password changed successfully",
+    "failedToChangePassword": "Failed to change password",
+    "passwordMismatch": "New password and confirm password do not match",
+    "passwordTooShort": "Password must be at least 6 characters"
   },
   "auth": {
     "login": "Login",

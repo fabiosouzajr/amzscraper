@@ -68,6 +68,18 @@ export const api = {
     return response.json();
   },
 
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to change password');
+    }
+  },
+
   // Lists
   async getLists(): Promise<UserList[]> {
     const response = await fetch(`${API_BASE_URL}/lists`, {
