@@ -28,9 +28,10 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Start server
-app.listen(PORT, () => {
+// Start server - listen on all interfaces (0.0.0.0) to allow Tailscale access
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Server accessible on all interfaces (including Tailscale)`);
   
   // Start scheduler for automatic daily updates
   schedulerService.start();
