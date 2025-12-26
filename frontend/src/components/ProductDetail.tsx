@@ -3,17 +3,37 @@ import { useTranslation } from 'react-i18next';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { api } from '../services/api';
 import { ProductWithPrice } from '../types';
+import { formatDate, formatDateTime } from '../utils/dateFormat';
+import { formatPrice, formatPercentage } from '../utils/numberFormat';
 
 interface ProductDetailProps {
   productId: number;
   onBack: () => void;
+  onNavigate?: (productId: number) => void;
 }
 
-export function ProductDetail({ productId, onBack }: ProductDetailProps) {
+export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailProps) {
   const { t } = useTranslation();
   const [product, setProduct] = useState<ProductWithPrice | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortedProductIds, setSortedProductIds] = useState<number[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number>(-1);
+
+  useEffect(() => {
+    const loadSortedIds = async () => {
+      try {
+        const ids = await api.getSortedProductIds();
+        setSortedProductIds(ids);
+        const index = ids.indexOf(productId);
+        setCurrentIndex(index);
+      } catch (err) {
+        console.error('Failed to load sorted product IDs:', err);
+      }
+    };
+
+    loadSortedIds();
+  }, [productId]);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -22,6 +42,9 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
         const data = await api.getProduct(productId);
         setProduct(data);
         setError(null);
+        // Update current index when product changes
+        const index = sortedProductIds.indexOf(productId);
+        setCurrentIndex(index);
       } catch (err) {
         setError(t('productDetail.failedToLoad'));
         console.error(err);
@@ -31,7 +54,7 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
     };
 
     loadProduct();
-  }, [productId]);
+  }, [productId, sortedProductIds, t]);
 
   if (loading) {
     return <div className="loading">{t('productDetail.loading')}</div>;
@@ -49,16 +72,67 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
   // Get price history for chart
   const chartData = product.price_history && product.price_history.length > 0
     ? product.price_history.map((ph) => ({
-        date: new Date(ph.date).toLocaleDateString(),
+        date: formatDate(ph.date),
         price: ph.price
       }))
     : [];
 
+  const handlePrevious = () => {
+    if (currentIndex > 0 && sortedProductIds.length > 0) {
+      const prevId = sortedProductIds[currentIndex - 1];
+      if (onNavigate) {
+        onNavigate(prevId);
+      }
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex >= 0 && currentIndex < sortedProductIds.length - 1) {
+      const nextId = sortedProductIds[currentIndex + 1];
+      if (onNavigate) {
+        onNavigate(nextId);
+      }
+    }
+  };
+
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex >= 0 && currentIndex < sortedProductIds.length - 1;
+
   return (
     <div className="product-detail">
-      <button onClick={onBack} className="back-button">{t('productDetail.back')}</button>
+      <div className="product-detail-header">
+        <button onClick={onBack} className="back-button">{t('productDetail.back')}</button>
+        <div className="product-navigation">
+          <button 
+            onClick={handlePrevious} 
+            className="nav-button prev-button"
+            disabled={!hasPrevious}
+          >
+            {t('productDetail.previous')}
+          </button>
+          <button 
+            onClick={handleNext} 
+            className="nav-button next-button"
+            disabled={!hasNext}
+          >
+            {t('productDetail.next')}
+          </button>
+        </div>
+      </div>
       
       <div className="product-header">
+        {product.categories && product.categories.length > 0 && (
+          <div className="product-categories">
+            {product.categories.map((cat, idx) => (
+              <span key={cat.id}>
+                <span className="category-badge">
+                  {cat.name}
+                </span>
+                {idx < product.categories!.length - 1 && ' > '}
+              </span>
+            ))}
+          </div>
+        )}
         <h2>
           <a
             href={`https://www.amazon.com.br/dp/${product.asin}`}
@@ -72,7 +146,7 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
         <div className="product-meta">
           <span className="asin-badge">{t('productDetail.asin')}: {product.asin}</span>
           <span className="date-badge">
-            {t('productDetail.added')}: {new Date(product.created_at).toLocaleDateString()}
+            {t('productDetail.added')}: {formatDate(product.created_at)}
           </span>
           {product.lists && product.lists.length > 0 && (
             <div className="product-lists">
@@ -93,19 +167,19 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
           <>
             <div className="current-price">
               <span className="label">{t('productDetail.currentPrice')}</span>
-              <span className="value">R$ {product.current_price.toFixed(2)}</span>
+              <span className="value">{formatPrice(product.current_price)}</span>
             </div>
             {product.previous_price !== undefined && (
               <div className="price-comparison">
                 <div className="previous-price">
                   <span className="label">{t('productDetail.previousPrice')}</span>
-                  <span className="value">R$ {product.previous_price.toFixed(2)}</span>
+                  <span className="value">{formatPrice(product.previous_price)}</span>
                 </div>
                 {product.price_drop !== undefined && product.price_drop > 0 && (
                   <div className="price-drop">
                     <span className="label">{t('productDetail.priceDrop')}</span>
                     <span className="value positive">
-                      -R$ {product.price_drop.toFixed(2)} ({product.price_drop_percentage?.toFixed(1)}%)
+                      -{formatPrice(product.price_drop)} ({product.price_drop_percentage !== undefined ? formatPercentage(product.price_drop_percentage) : ''})
                     </span>
                   </div>
                 )}
@@ -113,7 +187,7 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
             )}
             {product.last_updated && (
               <div className="last-updated">
-                {t('productDetail.lastUpdated')}: {new Date(product.last_updated).toLocaleString()}
+                {t('productDetail.lastUpdated')}: {formatDateTime(product.last_updated)}
               </div>
             )}
           </>
@@ -125,12 +199,12 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
       {chartData.length > 0 && (
         <div className="price-chart">
           <h3>{t('productDetail.priceHistory')}</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={220}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip formatter={(value: number) => `R$ ${value.toFixed(2)}`} />
+              <Tooltip formatter={(value: number) => formatPrice(value)} />
               <Legend />
               <Line type="monotone" dataKey="price" stroke="#8884d8" strokeWidth={2} />
             </LineChart>
@@ -151,8 +225,8 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
             <tbody>
               {product.price_history.map((ph) => (
                 <tr key={ph.id}>
-                  <td>{new Date(ph.date).toLocaleString()}</td>
-                  <td>R$ {ph.price.toFixed(2)}</td>
+                  <td>{formatDateTime(ph.date)}</td>
+                  <td>{formatPrice(ph.price)}</td>
                 </tr>
               ))}
             </tbody>

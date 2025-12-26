@@ -96,6 +96,23 @@ router.get('/categories', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/products/ids/sorted - Get all product IDs sorted alphabetically
+router.get('/ids/sorted', async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthRequest;
+    
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const productIds = await dbService.getAllProductIdsSorted(authReq.userId);
+    res.json({ productIds });
+  } catch (error) {
+    console.error('Error fetching sorted product IDs:', error);
+    res.status(500).json({ error: 'Failed to fetch product IDs' });
+  }
+});
+
 // GET /api/products/:id - Get product with price history
 router.get('/:id', async (req: Request, res: Response) => {
   try {

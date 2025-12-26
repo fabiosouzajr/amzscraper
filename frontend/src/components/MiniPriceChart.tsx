@@ -1,5 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { PriceHistory } from '../types';
+import { formatDateShort } from '../utils/dateFormat';
+import { formatPrice } from '../utils/numberFormat';
 
 interface MiniPriceChartProps {
   priceHistory: PriceHistory[];
@@ -14,7 +16,7 @@ export function MiniPriceChart({ priceHistory, height = 80 }: MiniPriceChartProp
   // Prepare data for the chart - limit to last 20 data points for performance
   const recentHistory = priceHistory.slice(-20);
   const chartData = recentHistory.map((ph) => ({
-    date: new Date(ph.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    date: formatDateShort(ph.date),
     price: ph.price
   }));
 
@@ -38,7 +40,7 @@ export function MiniPriceChart({ priceHistory, height = 80 }: MiniPriceChartProp
             domain={[minPrice - padding, maxPrice + padding]}
           />
           <Tooltip 
-            formatter={(value: number) => `R$ ${value.toFixed(2)}`}
+            formatter={(value: number) => formatPrice(value)}
             labelStyle={{ fontSize: '11px' }}
             contentStyle={{ fontSize: '12px', padding: '5px' }}
           />

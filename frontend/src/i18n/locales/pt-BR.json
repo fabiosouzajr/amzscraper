@@ -9,13 +9,18 @@
     "loading": "Carregando..."
   },
   "dashboard": {
-    "title": "Painel de Quedas de Preço",
+    "title": "Painel de Mudanças de Preço",
+    "priceDrops": "Quedas de Preço",
+    "priceIncreases": "Aumentos de Preço",
     "updatePrices": "Atualizar Preços Agora",
     "updating": "Atualizando...",
     "loading": "Carregando painel...",
     "noPriceDrops": "Ainda não há quedas de preço para exibir.",
     "noPriceDropsHint": "Adicione alguns produtos e aguarde as atualizações de preço, ou clique em \"Atualizar Preços Agora\" para verificar imediatamente.",
+    "noPriceChanges": "Ainda não há mudanças de preço para exibir.",
+    "noPriceChangesHint": "Adicione alguns produtos e aguarde as atualizações de preço, ou clique em \"Atualizar Preços Agora\" para verificar imediatamente.",
     "off": "OFF",
+    "up": "AUMENTO",
     "previous": "Anterior",
     "current": "Atual",
     "updated": "Atualizado",
@@ -26,7 +31,7 @@
     "comparing": "Comparando preços...",
     "finalizing": "Finalizando atualizações...",
     "updateComplete": "Atualização concluída! Atualizando painel...",
-    "failedToLoad": "Falha ao carregar quedas de preço",
+    "failedToLoad": "Falha ao carregar mudanças de preço",
     "failedToUpdate": "Falha ao iniciar atualização de preços"
   },
   "products": {
@@ -73,6 +78,8 @@
   },
   "productDetail": {
     "back": "← Voltar",
+    "previous": "Anterior",
+    "next": "Próximo",
     "asin": "ASIN",
     "added": "Adicionado",
     "currentPrice": "Preço Atual:",

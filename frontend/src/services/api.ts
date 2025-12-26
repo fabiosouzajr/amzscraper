@@ -184,6 +184,17 @@ export const api = {
     return response.json();
   },
 
+  async getSortedProductIds(): Promise<number[]> {
+    const response = await fetch(`${API_BASE_URL}/products/ids/sorted`, {
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch sorted product IDs');
+    }
+    const data = await response.json();
+    return data.productIds;
+  },
+
   async searchProducts(query: string, categoryFilter?: string): Promise<Product[]> {
     const url = categoryFilter
       ? `${API_BASE_URL}/products/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(categoryFilter)}`
@@ -241,14 +252,74 @@ export const api = {
     return response.json();
   },
 
+  async getPriceIncreases(limit: number = 10): Promise<PriceDrop[]> {
+    const response = await fetch(`${API_BASE_URL}/dashboard/increases?limit=${limit}`, {
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch price increases');
+    }
+    return response.json();
+  },
+
   // Prices
-  async updatePrices(): Promise<void> {
+  async updatePrices(
+    onProgress?: (progress: {
+      status: string;
+      progress?: number;
+      current?: number;
+      total?: number;
+      currentProduct?: string;
+      updated?: number;
+      skipped?: number;
+      errors?: number;
+      error?: string;
+    }) => void
+  ): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/prices/update`, {
       method: 'POST',
       headers: getAuthHeaders(),
     });
+    
     if (!response.ok) {
       throw new Error('Failed to trigger price update');
+    }
+
+    if (!response.body) {
+      throw new Error('No response body');
+    }
+
+    // Handle Server-Sent Events stream
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) {
+          break;
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.substring(6));
+              onProgress?.(data);
+            } catch (e) {
+              console.error('Error parsing progress data:', e);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error reading price update stream:', error);
+      throw error;
     }
   },
 

@@ -49,10 +49,16 @@
 }
 
 .progress-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-size: 0.85rem;
-  color: #999;
-  text-align: center;
+  color: white;
   font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .dashboard-header h1 {
@@ -80,10 +86,44 @@
   cursor: not-allowed;
 }
 
+.price-changes-section {
+  margin-bottom: 2.5rem;
+}
+
+.price-changes-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  color: #232f3e;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.price-changes-section {
+  margin-bottom: 2.5rem;
+}
+
+.price-changes-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  color: #232f3e;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
 .price-drops-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -92,16 +132,41 @@
 .price-drop-card {
   background: white;
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1.25rem;
+  padding-bottom: 0.75rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: transform 0.2s, box-shadow 0.2s;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .price-drop-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.price-increase-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  padding-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.price-increase-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
@@ -116,15 +181,65 @@
 }
 
 .drop-percentage {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold;
   color: #d32f2f;
 }
 
 .drop-amount {
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #388e3c;
+}
+
+.increase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.increase-percentage {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #388e3c;
+}
+
+.increase-amount {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d32f2f;
+}
+
+.price.current.increase {
+  color: #d32f2f;
+}
+
+.increase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.increase-percentage {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #388e3c;
+}
+
+.increase-amount {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d32f2f;
+}
+
+.price.current.increase {
+  color: #d32f2f;
 }
 
 .product-info {
@@ -732,7 +847,7 @@
 .product-detail {
   background: white;
   border-radius: 8px;
-  padding: 2rem;
+  padding: 1rem 1.25rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   width: 100%;
   max-width: 100%;
@@ -740,15 +855,23 @@
   overflow-x: hidden;
 }
 
+.product-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .back-button {
   background: #666;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 4px;
   cursor: pointer;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: background 0.2s;
 }
 
@@ -756,50 +879,97 @@
   background: #555;
 }
 
+.product-navigation {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+  min-width: 70px;
+}
+
+.nav-button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.nav-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .product-header {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.product-header .product-categories {
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  align-items: center;
+}
+
+.product-header .product-categories .category-badge {
+  display: inline-block;
+  padding: 0.2rem 0.4rem;
+  background: #e8f4f8;
+  color: #2162a1;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
 .product-header h2 {
   color: #232f3e;
-  margin-bottom: 1rem;
-  line-height: 1.4;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+  font-size: 1.25rem;
 }
 
 .product-meta {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .asin-badge, .date-badge {
   background: #f0f0f0;
-  padding: 0.5rem 1rem;
+  padding: 0.35rem 0.75rem;
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #666;
 }
 
 .price-info {
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .current-price {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .current-price .label {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #666;
 }
 
 .current-price .value {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: bold;
   color: #232f3e;
 }
@@ -807,70 +977,77 @@
 .price-comparison {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1rem;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 
 .previous-price, .price-drop {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem;
+  padding: 0.5rem 0.75rem;
   background: #f9f9f9;
   border-radius: 4px;
 }
 
 .previous-price .label, .price-drop .label {
   color: #666;
+  font-size: 0.9rem;
 }
 
 .previous-price .value {
   text-decoration: line-through;
   color: #999;
+  font-size: 0.9rem;
 }
 
 .price-drop .value.positive {
   color: #388e3c;
   font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .last-updated {
-  margin-top: 1rem;
-  font-size: 0.9rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
   color: #666;
 }
 
 .no-price-data {
-  padding: 2rem;
+  padding: 1.5rem;
   text-align: center;
   color: #666;
+  font-size: 0.9rem;
 }
 
 .price-chart {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 2px solid #f0f0f0;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f0f0f0;
 }
 
 .price-chart h3 {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   color: #232f3e;
+  font-size: 1.1rem;
+}
+
+.price-chart .recharts-wrapper {
+  margin-top: 0.5rem;
 }
 
 .price-history-table {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 2px solid #f0f0f0;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f0f0f0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .price-history-table h3 {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   color: #232f3e;
-}
-
-.price-history-table {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  font-size: 1.1rem;
 }
 
 .price-history-table table {
@@ -881,15 +1058,17 @@
 
 .price-history-table th,
 .price-history-table td {
-  padding: 0.75rem;
+  padding: 0.5rem 0.75rem;
   text-align: left;
   border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9rem;
 }
 
 .price-history-table th {
   background: #f9f9f9;
   font-weight: 600;
   color: #232f3e;
+  font-size: 0.85rem;
 }
 
 .price-history-table tr:hover {
@@ -1192,11 +1371,21 @@
 
   /* Product Detail */
   .product-detail {
-    padding: 1rem;
+    padding: 0.75rem;
+  }
+
+  .product-detail-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .product-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
   }
 
   .product-header h2 {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
   }
 
   .product-meta {
@@ -1204,13 +1393,28 @@
     gap: 0.5rem;
   }
 
+  .price-info {
+    margin-bottom: 1rem;
+  }
+
   .current-price {
     flex-direction: column;
     align-items: flex-start;
+    margin-bottom: 0.5rem;
   }
 
   .current-price .value {
     font-size: 1.5rem;
+  }
+
+  .price-chart {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+
+  .price-history-table {
+    margin-top: 1rem;
+    padding-top: 1rem;
   }
 
   /* Config */

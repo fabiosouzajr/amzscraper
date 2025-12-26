@@ -9,13 +9,18 @@
     "loading": "Loading..."
   },
   "dashboard": {
-    "title": "Price Drop Dashboard",
+    "title": "Price Change Dashboard",
+    "priceDrops": "Price Drops",
+    "priceIncreases": "Price Increases",
     "updatePrices": "Update Prices Now",
     "updating": "Updating...",
     "loading": "Loading dashboard...",
     "noPriceDrops": "No price drops to display yet.",
     "noPriceDropsHint": "Add some products and wait for price updates, or click \"Update Prices Now\" to check immediately.",
+    "noPriceChanges": "No price changes to display yet.",
+    "noPriceChangesHint": "Add some products and wait for price updates, or click \"Update Prices Now\" to check immediately.",
     "off": "OFF",
+    "up": "UP",
     "previous": "Previous",
     "current": "Current",
     "updated": "Updated",
@@ -26,7 +31,7 @@
     "comparing": "Comparing prices...",
     "finalizing": "Finalizing updates...",
     "updateComplete": "Update complete! Refreshing dashboard...",
-    "failedToLoad": "Failed to load price drops",
+    "failedToLoad": "Failed to load price changes",
     "failedToUpdate": "Failed to trigger price update"
   },
   "products": {
@@ -73,6 +78,8 @@
   },
   "productDetail": {
     "back": "← Back",
+    "previous": "Previous",
+    "next": "Next",
     "asin": "ASIN",
     "added": "Added",
     "currentPrice": "Current Price:",

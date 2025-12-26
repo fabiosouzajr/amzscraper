@@ -710,7 +710,78 @@ export class DatabaseService {
           );
           // Filter out null values
           resolve(drops.filter((drop): drop is PriceDrop => drop !== null));
-          resolve(drops);
+        }
+      });
+    });
+  }
+
+  async getBiggestPriceIncreases(userId: number, limit: number = 10): Promise<PriceDrop[]> {
+    return new Promise((resolve, reject) => {
+      const sql = `
+        SELECT 
+          p.id,
+          p.asin,
+          p.description,
+          p.created_at,
+          current.price as current_price,
+          previous.price as previous_price,
+          (current.price - previous.price) as price_drop,
+          ((current.price - previous.price) / previous.price * 100) as price_drop_percentage,
+          current.date as last_updated
+        FROM products p
+        INNER JOIN price_history current ON p.id = current.product_id
+        INNER JOIN price_history previous ON p.id = previous.product_id
+        WHERE p.user_id = ?
+        AND current.id = (
+          SELECT id FROM price_history 
+          WHERE product_id = p.id 
+          ORDER BY date DESC LIMIT 1
+        )
+        AND previous.id = (
+          SELECT id FROM price_history 
+          WHERE product_id = p.id 
+          AND id != current.id
+          ORDER BY date DESC LIMIT 1
+        )
+        AND previous.price < current.price
+        ORDER BY price_drop_percentage DESC
+        LIMIT ?
+      `;
+
+      this.db.all(sql, [userId, limit], async (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          // Fetch price history and categories for each product
+          const dbService = this;
+          const increases: PriceDrop[] = await Promise.all(
+            rows.map(async (row) => {
+              const priceHistory = await dbService.getPriceHistory(row.id);
+              const categories = await dbService.getProductCategories(row.id);
+              // Verify product belongs to user (already filtered in SQL, but double-check)
+              const product = await dbService.getProductById(row.id, userId);
+              if (!product) {
+                return null;
+              }
+              return {
+                product: {
+                  id: row.id,
+                  asin: row.asin,
+                  description: row.description,
+                  categories: categories.length > 0 ? categories : undefined,
+                  created_at: row.created_at
+                },
+                current_price: row.current_price,
+                previous_price: row.previous_price,
+                price_drop: row.price_drop,
+                price_drop_percentage: row.price_drop_percentage,
+                last_updated: row.last_updated,
+                price_history: priceHistory
+              };
+            })
+          );
+          // Filter out null values
+          resolve(increases.filter((increase): increase is PriceDrop => increase !== null));
         }
       });
     });
@@ -823,6 +894,23 @@ export class DatabaseService {
           username: row.username,
           created_at: row.created_at
         });
+      });
+    });
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT id, username, created_at FROM users';
+      this.db.all(sql, [], (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(rows.map(row => ({
+          id: row.id,
+          username: row.username,
+          created_at: row.created_at
+        })));
       });
     });
   }
@@ -1054,6 +1142,29 @@ export class DatabaseService {
             return;
           }
           resolve(row ? row.count : 0);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  async getAllProductIdsSorted(userId: number): Promise<number[]> {
+    return new Promise((resolve, reject) => {
+      try {
+        const sql = `
+          SELECT id
+          FROM products
+          WHERE user_id = ?
+          ORDER BY LOWER(description) ASC
+        `;
+        
+        this.db.all(sql, [userId], (err, rows: { id: number }[]) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(rows.map(row => row.id));
         });
       } catch (error) {
         reject(error);

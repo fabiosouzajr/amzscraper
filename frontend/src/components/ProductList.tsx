@@ -4,6 +4,7 @@ import { api } from '../services/api';
 import { Product, Category, UserList } from '../types';
 import { ASINInput } from './ASINInput';
 import { ListsSidebar } from './ListsSidebar';
+import { formatDate } from '../utils/dateFormat';
 import { useAuth } from '../contexts/AuthContext';
 
 interface ProductListProps {
@@ -590,7 +591,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                     </div>
                   )}
                   <div className="product-date">
-                    {t('products.added')}: {new Date(product.created_at).toLocaleDateString()}
+                    {t('products.added')}: {formatDate(product.created_at)}
                   </div>
                 </div>
                 <div className="product-actions">

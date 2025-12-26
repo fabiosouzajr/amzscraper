@@ -1,3 +1,6 @@
+// Import logger first to add timestamps to all console output
+import './utils/logger';
+
 import express from 'express';
 import cors from 'cors';
 import productsRouter from './routes/products';

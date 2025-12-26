@@ -25,6 +25,12 @@ function AppContent() {
     setCurrentView('detail');
   };
 
+  const handleNavigateProduct = (productId: number) => {
+    // Create a minimal product object with just the ID for navigation
+    setSelectedProduct({ id: productId } as Product);
+    setCurrentView('detail');
+  };
+
   const handleCategoryClick = (categoryName: string) => {
     setInitialCategoryFilter(categoryName);
     setCurrentView('products');
@@ -95,6 +101,7 @@ function AppContent() {
           <ProductDetail
             productId={selectedProduct.id}
             onBack={() => setCurrentView('search')}
+            onNavigate={handleNavigateProduct}
           />
         )}
         {currentView === 'config' && <Config />}
