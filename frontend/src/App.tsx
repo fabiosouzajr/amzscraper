@@ -22,7 +22,7 @@ function AppContent() {
 
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
-    setCurrentView('detail');
+    // Don't change view - stay in search view to show side by side
   };
 
   const handleNavigateProduct = (productId: number) => {
@@ -94,7 +94,23 @@ function AppContent() {
         {currentView === 'search' && (
           <div className="search-view">
             <h2>{t('search.title')}</h2>
-            <ProductSearch onSelectProduct={handleSelectProduct} />
+            <div className="search-layout">
+              <div className="search-list-container">
+                <ProductSearch 
+                  onSelectProduct={handleSelectProduct} 
+                  selectedProductId={selectedProduct?.id}
+                />
+              </div>
+              {selectedProduct && (
+                <div className="search-detail-container">
+                  <ProductDetail
+                    productId={selectedProduct.id}
+                    onBack={() => setSelectedProduct(null)}
+                    onNavigate={handleNavigateProduct}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         )}
         {currentView === 'detail' && selectedProduct && (

@@ -101,7 +101,6 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
   return (
     <div className="product-detail">
       <div className="product-detail-header">
-        <button onClick={onBack} className="back-button">{t('productDetail.back')}</button>
         <div className="product-navigation">
           <button 
             onClick={handlePrevious} 
@@ -121,6 +120,23 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
       </div>
       
       <div className="product-header">
+        <div className="product-meta">
+          <span className="asin-badge">{t('productDetail.asin')}: {product.asin}</span>
+          <span className="date-badge">
+            {t('productDetail.added')}: {formatDate(product.created_at)}
+          </span>
+          {product.lists && product.lists.length > 0 && (
+            <div className="product-lists">
+              <span className="lists-label">{t('products.inLists')}: </span>
+              {product.lists.map((list, idx) => (
+                <span key={list.id} className="list-badge">
+                  {list.name}
+                  {idx < product.lists!.length - 1 && ', '}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
         {product.categories && product.categories.length > 0 && (
           <div className="product-categories">
             {product.categories.map((cat, idx) => (
@@ -143,23 +159,6 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
             {product.description}
           </a>
         </h2>
-        <div className="product-meta">
-          <span className="asin-badge">{t('productDetail.asin')}: {product.asin}</span>
-          <span className="date-badge">
-            {t('productDetail.added')}: {formatDate(product.created_at)}
-          </span>
-          {product.lists && product.lists.length > 0 && (
-            <div className="product-lists">
-              <span className="lists-label">{t('products.inLists')}: </span>
-              {product.lists.map((list, idx) => (
-                <span key={list.id} className="list-badge">
-                  {list.name}
-                  {idx < product.lists!.length - 1 && ', '}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
 
       <div className="price-info">

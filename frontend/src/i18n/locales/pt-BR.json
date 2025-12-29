@@ -104,6 +104,7 @@
   },
   "config": {
     "title": "Configuração",
+    "dashboard": "Painel",
     "database": "Banco de Dados",
     "totalProducts": "Total de Produtos:",
     "databaseSize": "Tamanho do Banco de Dados:",
@@ -116,6 +117,11 @@
     "exportASINs": "Exportar ASINs",
     "exportingASINs": "Exportando...",
     "exportASINsDescription": "Exporte todos os ASINs rastreados para um arquivo CSV com uma única coluna contendo apenas os ASINs.",
+    "exportDescription": "Exporte seus dados em vários formatos",
+    "accountDescription": "Gerencie as configurações da sua conta e senha",
+    "viewDetails": "Ver Detalhes",
+    "exportData": "Exportar Dados",
+    "manageAccount": "Gerenciar Conta",
     "failedToLoad": "Falha ao carregar informações do banco de dados",
     "failedToExport": "Falha ao exportar ASINs",
     "failedToExportDatabase": "Falha ao exportar banco de dados",
@@ -128,7 +134,11 @@
     "passwordChanged": "Senha alterada com sucesso",
     "failedToChangePassword": "Falha ao alterar senha",
     "passwordMismatch": "A nova senha e a confirmação não coincidem",
-    "passwordTooShort": "A senha deve ter pelo menos 6 caracteres"
+    "passwordTooShort": "A senha deve ter pelo menos 6 caracteres",
+    "unsavedChanges": "Alterações Não Salvas",
+    "unsavedChangesMessage": "Você tem alterações não salvas. Tem certeza de que deseja descartá-las?",
+    "discardChanges": "Descartar Alterações",
+    "cancel": "Cancelar"
   },
   "auth": {
     "login": "Entrar",

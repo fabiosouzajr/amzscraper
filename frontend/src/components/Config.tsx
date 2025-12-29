@@ -22,6 +22,10 @@ export function Config() {
     newPassword: '',
     confirmPassword: ''
   });
+  const [activeSection, setActiveSection] = useState<string>('dashboard');
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingSection, setPendingSection] = useState<string | null>(null);
 
   useEffect(() => {
     loadDatabaseInfo();
@@ -141,110 +145,285 @@ export function Config() {
     }
   };
 
+  // Check if password form has unsaved changes
+  useEffect(() => {
+    const hasChanges = passwordForm.currentPassword !== '' || 
+                      passwordForm.newPassword !== '' || 
+                      passwordForm.confirmPassword !== '';
+    setHasUnsavedChanges(hasChanges);
+  }, [passwordForm]);
+
+  const handleSectionChange = (sectionId: string) => {
+    if (hasUnsavedChanges && activeSection === 'account') {
+      setPendingSection(sectionId);
+      setShowConfirmDialog(true);
+    } else {
+      setActiveSection(sectionId);
+    }
+  };
+
+  const handleConfirmNavigation = () => {
+    if (pendingSection) {
+      setActiveSection(pendingSection);
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      setHasUnsavedChanges(false);
+    }
+    setShowConfirmDialog(false);
+    setPendingSection(null);
+  };
+
+  const handleCancelNavigation = () => {
+    setShowConfirmDialog(false);
+    setPendingSection(null);
+  };
+
   return (
     <div className="config-page">
       <h2>{t('config.title')}</h2>
       
-      <div className="config-section">
-        <h3>{t('config.database')}</h3>
-        <div className="database-info">
-          {loadingDbInfo ? (
-            <p className="config-description">{t('config.loadingInfo')}</p>
-          ) : dbInfo ? (
-            <>
-              <div className="database-stat">
-                <span className="stat-label">{t('config.totalProducts')}</span>
-                <span className="stat-value">{dbInfo.productCount}</span>
+      <div className="config-layout">
+        <div className="config-sidebar">
+          <nav className="config-nav">
+            <button
+              onClick={() => handleSectionChange('dashboard')}
+              className={`config-nav-link ${activeSection === 'dashboard' ? 'active' : ''}`}
+            >
+              {t('config.dashboard')}
+            </button>
+            <button
+              onClick={() => handleSectionChange('database')}
+              className={`config-nav-link ${activeSection === 'database' ? 'active' : ''}`}
+            >
+              {t('config.database')}
+            </button>
+            <button
+              onClick={() => handleSectionChange('data-export')}
+              className={`config-nav-link ${activeSection === 'data-export' ? 'active' : ''}`}
+            >
+              {t('config.dataExport')}
+            </button>
+            <button
+              onClick={() => handleSectionChange('account')}
+              className={`config-nav-link ${activeSection === 'account' ? 'active' : ''}`}
+            >
+              {t('config.account')}
+            </button>
+          </nav>
+        </div>
+        
+        <div className="config-content">
+          {activeSection === 'dashboard' && (
+            <div className="config-dashboard">
+              <h3>{t('config.dashboard')}</h3>
+              <div className="dashboard-grid">
+                <div className="dashboard-card">
+                  <div className="dashboard-card-header">
+                    <h4>{t('config.database')}</h4>
+                  </div>
+                  <div className="dashboard-card-content">
+                    {loadingDbInfo ? (
+                      <p className="config-description">{t('config.loadingInfo')}</p>
+                    ) : dbInfo ? (
+                      <>
+                        <div className="dashboard-stat">
+                          <span className="stat-label">{t('config.totalProducts')}</span>
+                          <span className="stat-value">{dbInfo.productCount}</span>
+                        </div>
+                        <div className="dashboard-stat">
+                          <span className="stat-label">{t('config.databaseSize')}</span>
+                          <span className="stat-value">{dbInfo.databaseSizeFormatted}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="config-description">{t('config.unableToLoad')}</p>
+                    )}
+                  </div>
+                  <div className="dashboard-card-actions">
+                    <button
+                      onClick={() => handleSectionChange('database')}
+                      className="dashboard-action-button"
+                    >
+                      {t('config.viewDetails')}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="dashboard-card">
+                  <div className="dashboard-card-header">
+                    <h4>{t('config.dataExport')}</h4>
+                  </div>
+                  <div className="dashboard-card-content">
+                    <p className="config-description">
+                      {t('config.exportDescription')}
+                    </p>
+                  </div>
+                  <div className="dashboard-card-actions">
+                    <button
+                      onClick={() => handleSectionChange('data-export')}
+                      className="dashboard-action-button"
+                    >
+                      {t('config.exportData')}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="dashboard-card">
+                  <div className="dashboard-card-header">
+                    <h4>{t('config.account')}</h4>
+                  </div>
+                  <div className="dashboard-card-content">
+                    <p className="config-description">
+                      {t('config.accountDescription')}
+                    </p>
+                  </div>
+                  <div className="dashboard-card-actions">
+                    <button
+                      onClick={() => handleSectionChange('account')}
+                      className="dashboard-action-button"
+                    >
+                      {t('config.manageAccount')}
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="database-stat">
-                <span className="stat-label">{t('config.databaseSize')}</span>
-                <span className="stat-value">{dbInfo.databaseSizeFormatted}</span>
-              </div>
-            </>
-          ) : (
-            <p className="config-description">{t('config.unableToLoad')}</p>
+            </div>
           )}
-        </div>
-        <div className="config-actions">
-          <button
-            onClick={handleExportDatabase}
-            disabled={exportingDb || loadingDbInfo}
-            className="export-button"
-          >
-            {exportingDb ? t('config.exportingDatabase') : t('config.exportDatabase')}
-          </button>
-          <p className="config-description">
-            {t('config.exportDatabaseDescription')}
-          </p>
+
+          {activeSection === 'database' && (
+            <div id="database" className="config-section">
+            <h3>{t('config.database')}</h3>
+            <div className="database-info">
+              {loadingDbInfo ? (
+                <p className="config-description">{t('config.loadingInfo')}</p>
+              ) : dbInfo ? (
+                <>
+                  <div className="database-stat">
+                    <span className="stat-label">{t('config.totalProducts')}</span>
+                    <span className="stat-value">{dbInfo.productCount}</span>
+                  </div>
+                  <div className="database-stat">
+                    <span className="stat-label">{t('config.databaseSize')}</span>
+                    <span className="stat-value">{dbInfo.databaseSizeFormatted}</span>
+                  </div>
+                </>
+              ) : (
+                <p className="config-description">{t('config.unableToLoad')}</p>
+              )}
+            </div>
+            <div className="config-actions">
+              <button
+                onClick={handleExportDatabase}
+                disabled={exportingDb || loadingDbInfo}
+                className="export-button"
+              >
+                {exportingDb ? t('config.exportingDatabase') : t('config.exportDatabase')}
+              </button>
+              <p className="config-description">
+                {t('config.exportDatabaseDescription')}
+              </p>
+            </div>
+            </div>
+          )}
+
+          {activeSection === 'data-export' && (
+            <div id="data-export" className="config-section">
+            <h3>{t('config.dataExport')}</h3>
+            <div className="config-actions">
+              <button
+                onClick={handleExportASINs}
+                disabled={exporting}
+                className="export-button"
+              >
+                {exporting ? t('config.exportingASINs') : t('config.exportASINs')}
+              </button>
+              <p className="config-description">
+                {t('config.exportASINsDescription')}
+              </p>
+            </div>
+            </div>
+          )}
+
+          {activeSection === 'account' && (
+            <div id="account" className="config-section">
+            <h3>{t('config.account')}</h3>
+            <form onSubmit={handleChangePassword} className="password-change-form">
+              <div className="form-group">
+                <label htmlFor="currentPassword">{t('config.currentPassword')}</label>
+                <input
+                  type="password"
+                  id="currentPassword"
+                  value={passwordForm.currentPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                  required
+                  disabled={changingPassword}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="newPassword">{t('config.newPassword')}</label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  value={passwordForm.newPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                  required
+                  minLength={6}
+                  disabled={changingPassword}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="confirmPassword">{t('config.confirmPassword')}</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  value={passwordForm.confirmPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                  required
+                  minLength={6}
+                  disabled={changingPassword}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={changingPassword}
+                className="change-password-button"
+              >
+                {changingPassword ? t('config.changingPassword') : t('config.changePassword')}
+              </button>
+              {passwordSuccess && <div className="success-message">{passwordSuccess}</div>}
+            </form>
+          </div>
+          )}
+
+          {error && <div className="error-message">{error}</div>}
         </div>
       </div>
 
-      <div className="config-section">
-        <h3>{t('config.dataExport')}</h3>
-        <div className="config-actions">
-          <button
-            onClick={handleExportASINs}
-            disabled={exporting}
-            className="export-button"
-          >
-            {exporting ? t('config.exportingASINs') : t('config.exportASINs')}
-          </button>
-          <p className="config-description">
-            {t('config.exportASINsDescription')}
-          </p>
+      {showConfirmDialog && (
+        <div className="confirm-dialog-overlay">
+          <div className="confirm-dialog">
+            <h3>{t('config.unsavedChanges')}</h3>
+            <p>{t('config.unsavedChangesMessage')}</p>
+            <div className="confirm-dialog-actions">
+              <button
+                onClick={handleCancelNavigation}
+                className="confirm-dialog-button cancel"
+              >
+                {t('config.cancel')}
+              </button>
+              <button
+                onClick={handleConfirmNavigation}
+                className="confirm-dialog-button confirm"
+              >
+                {t('config.discardChanges')}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="config-section">
-        <h3>{t('config.account')}</h3>
-        <form onSubmit={handleChangePassword} className="password-change-form">
-          <div className="form-group">
-            <label htmlFor="currentPassword">{t('config.currentPassword')}</label>
-            <input
-              type="password"
-              id="currentPassword"
-              value={passwordForm.currentPassword}
-              onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-              required
-              disabled={changingPassword}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="newPassword">{t('config.newPassword')}</label>
-            <input
-              type="password"
-              id="newPassword"
-              value={passwordForm.newPassword}
-              onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-              required
-              minLength={6}
-              disabled={changingPassword}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="confirmPassword">{t('config.confirmPassword')}</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={passwordForm.confirmPassword}
-              onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-              required
-              minLength={6}
-              disabled={changingPassword}
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={changingPassword}
-            className="change-password-button"
-          >
-            {changingPassword ? t('config.changingPassword') : t('config.changePassword')}
-          </button>
-          {passwordSuccess && <div className="success-message">{passwordSuccess}</div>}
-        </form>
-      </div>
-
-      {error && <div className="error-message">{error}</div>}
+      )}
     </div>
   );
 }

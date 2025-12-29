@@ -104,6 +104,7 @@
   },
   "config": {
     "title": "Configuration",
+    "dashboard": "Dashboard",
     "database": "Database",
     "totalProducts": "Total Products:",
     "databaseSize": "Database Size:",
@@ -116,6 +117,11 @@
     "exportASINs": "Export ASINs",
     "exportingASINs": "Exporting...",
     "exportASINsDescription": "Export all tracked ASINs to a CSV file with a single column containing only the ASINs.",
+    "exportDescription": "Export your data in various formats",
+    "accountDescription": "Manage your account settings and password",
+    "viewDetails": "View Details",
+    "exportData": "Export Data",
+    "manageAccount": "Manage Account",
     "failedToLoad": "Failed to load database information",
     "failedToExport": "Failed to export ASINs",
     "failedToExportDatabase": "Failed to export database",
@@ -128,7 +134,11 @@
     "passwordChanged": "Password changed successfully",
     "failedToChangePassword": "Failed to change password",
     "passwordMismatch": "New password and confirm password do not match",
-    "passwordTooShort": "Password must be at least 6 characters"
+    "passwordTooShort": "Password must be at least 6 characters",
+    "unsavedChanges": "Unsaved Changes",
+    "unsavedChangesMessage": "You have unsaved changes. Are you sure you want to discard them?",
+    "discardChanges": "Discard Changes",
+    "cancel": "Cancel"
   },
   "auth": {
     "login": "Login",

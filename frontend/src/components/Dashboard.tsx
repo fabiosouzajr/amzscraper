@@ -162,11 +162,13 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                 {priceDrops.map((drop) => (
                   <div key={drop.product.id} className="price-drop-card">
                     <div className="drop-header">
-                      <div className="drop-percentage">
-                        {formatPercentage(drop.price_drop_percentage)} {t('dashboard.off')}
-                      </div>
-                      <div className="drop-amount">
-                        -{formatPrice(drop.price_drop)}
+                      <div className="drop-header-content">
+                        <div className="drop-amount">
+                          -{formatPrice(drop.price_drop)}
+                        </div>
+                        <div className="drop-percentage">
+                          {formatPercentage(drop.price_drop_percentage)} {t('dashboard.off')}
+                        </div>
                       </div>
                     </div>
                     <div className="product-info">
@@ -231,11 +233,13 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                 {priceIncreases.map((increase) => (
                   <div key={increase.product.id} className="price-increase-card">
                     <div className="increase-header">
-                      <div className="increase-percentage">
-                        +{formatPercentage(increase.price_drop_percentage)} {t('dashboard.up')}
-                      </div>
-                      <div className="increase-amount">
-                        +{formatPrice(increase.price_drop)}
+                      <div className="increase-header-content">
+                        <div className="increase-amount">
+                          +{formatPrice(increase.price_drop)}
+                        </div>
+                        <div className="increase-percentage">
+                          +{formatPercentage(increase.price_drop_percentage)} {t('dashboard.up')}
+                        </div>
                       </div>
                     </div>
                     <div className="product-info">

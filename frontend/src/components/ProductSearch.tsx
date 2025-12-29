@@ -5,9 +5,10 @@ import { Product } from '../types';
 
 interface ProductSearchProps {
   onSelectProduct: (product: Product) => void;
+  selectedProductId?: number;
 }
 
-export function ProductSearch({ onSelectProduct }: ProductSearchProps) {
+export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSearchProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Product[]>([]);
@@ -102,7 +103,7 @@ export function ProductSearch({ onSelectProduct }: ProductSearchProps) {
             {results.map((product) => (
               <div
                 key={product.id}
-                className="search-result-item"
+                className={`search-result-item ${selectedProductId === product.id ? 'selected' : ''}`}
                 onClick={() => {
                   onSelectProduct(product);
                   if (isSearchMode) {
@@ -121,17 +122,6 @@ export function ProductSearch({ onSelectProduct }: ProductSearchProps) {
                 >
                   {product.description}
                 </a>
-                {product.lists && product.lists.length > 0 && (
-                  <div className="product-lists">
-                    <span className="lists-label">{t('products.inLists')}: </span>
-                    {product.lists.map((list, idx) => (
-                      <span key={list.id} className="list-badge">
-                        {list.name}
-                        {idx < product.lists!.length - 1 && ', '}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
             ))}
           </div>
