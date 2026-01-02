@@ -145,6 +145,8 @@
     "register": "Registrar",
     "username": "Nome de usuário",
     "password": "Senha",
+    "verifyPassword": "Confirmar Senha",
+    "passwordMismatch": "As senhas não coincidem",
     "loading": "Carregando...",
     "switchToRegister": "Não tem uma conta? Registrar",
     "switchToLogin": "Já tem uma conta? Entrar"

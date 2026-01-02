@@ -145,6 +145,8 @@
     "register": "Register",
     "username": "Username",
     "password": "Password",
+    "verifyPassword": "Verify Password",
+    "passwordMismatch": "Passwords do not match",
     "loading": "Loading...",
     "switchToRegister": "Don't have an account? Register",
     "switchToLogin": "Already have an account? Login"

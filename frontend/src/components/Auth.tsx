@@ -8,12 +8,20 @@ export function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [verifyPassword, setVerifyPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // Validate passwords match when registering
+    if (!isLogin && password !== verifyPassword) {
+      setError(t('auth.passwordMismatch'));
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -58,6 +66,20 @@ export function Auth() {
               disabled={loading}
             />
           </div>
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="verifyPassword">{t('auth.verifyPassword')}</label>
+              <input
+                id="verifyPassword"
+                type="password"
+                value={verifyPassword}
+                onChange={(e) => setVerifyPassword(e.target.value)}
+                required
+                minLength={6}
+                disabled={loading}
+              />
+            </div>
+          )}
           {error && <div className="error-message">{error}</div>}
           <button type="submit" disabled={loading} className="auth-button">
             {loading ? t('auth.loading') : (isLogin ? t('auth.login') : t('auth.register'))}
@@ -69,6 +91,8 @@ export function Auth() {
             onClick={() => {
               setIsLogin(!isLogin);
               setError(null);
+              setPassword('');
+              setVerifyPassword('');
             }}
             className="link-button"
           >
