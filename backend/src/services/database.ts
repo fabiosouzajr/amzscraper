@@ -144,46 +144,74 @@ export class DatabaseService {
 
       const hasAvailable = columns.some(col => col.name === 'available');
       const hasUnavailableReason = columns.some(col => col.name === 'unavailable_reason');
+      const priceColumn = columns.find(col => col.name === 'price');
+      const hasPriceNullable = priceColumn?.notnull === 0;
 
-      if (!hasAvailable || !hasUnavailableReason) {
-        console.log('Migrating price_history table: adding availability columns...');
+      // If we need to make price nullable or add new columns, we need to recreate the table
+      const needsRecreation = !hasPriceNullable || !hasAvailable || !hasUnavailableReason;
 
-        // SQLite doesn't support adding columns with NOT NULL easily, so we add them as nullable
-        const migrations: string[] = [];
+      if (needsRecreation) {
+        console.log('Migrating price_history table: recreating with new schema...');
 
-        if (!hasAvailable) {
-          migrations.push('ALTER TABLE price_history ADD COLUMN available BOOLEAN DEFAULT 1');
-        }
-        if (!hasUnavailableReason) {
-          migrations.push('ALTER TABLE price_history ADD COLUMN unavailable_reason TEXT');
-        }
+        // Step 1: Create new table with correct schema
+        this.db.run(`
+          CREATE TABLE price_history_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            price REAL,
+            available BOOLEAN DEFAULT 1,
+            unavailable_reason TEXT,
+            date DATETIME DEFAULT CURRENT_TIMESTAMP,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (product_id) REFERENCES products(id)
+          )
+        `, (err) => {
+          if (err) {
+            console.error('Error creating new price_history table:', err);
+            callback();
+            return;
+          }
 
-        // Also need to allow price to be NULL
-        const hasPriceNullable = columns.find(col => col.name === 'price')?.notnull === 0;
-        if (!hasPriceNullable) {
-          console.log('Note: price column cannot be changed to nullable in existing table. New records will handle NULL prices.');
-        }
+          // Step 2: Copy existing data
+          const copyColumns = hasAvailable && hasUnavailableReason
+            ? 'id, product_id, price, available, unavailable_reason, date, created_at'
+            : hasAvailable
+            ? 'id, product_id, price, available, NULL as unavailable_reason, date, created_at'
+            : 'id, product_id, price, 1 as available, NULL as unavailable_reason, date, created_at';
 
-        // Execute migrations
-        let completed = 0;
-        migrations.forEach(migration => {
-          this.db.run(migration, (err) => {
+          this.db.run(`
+            INSERT INTO price_history_new (${copyColumns})
+            SELECT ${copyColumns}
+            FROM price_history
+          `, (err) => {
             if (err) {
-              console.error('Error running migration:', migration, err);
-            } else {
-              console.log('✓ Migration completed:', migration);
-            }
-            completed++;
-            if (completed === migrations.length) {
-              console.log('price_history table migration completed successfully.');
+              console.error('Error copying price_history data:', err);
               callback();
+              return;
             }
+
+            // Step 3: Drop old table
+            this.db.run('DROP TABLE price_history', (err) => {
+              if (err) {
+                console.error('Error dropping old price_history table:', err);
+                callback();
+                return;
+              }
+
+              // Step 4: Rename new table
+              this.db.run('ALTER TABLE price_history_new RENAME TO price_history', (err) => {
+                if (err) {
+                  console.error('Error renaming price_history table:', err);
+                  callback();
+                  return;
+                }
+
+                console.log('✓ price_history table migration completed successfully.');
+                callback();
+              });
+            });
           });
         });
-
-        if (migrations.length === 0) {
-          callback();
-        }
       } else {
         callback();
       }

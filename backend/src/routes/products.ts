@@ -179,9 +179,14 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Save product with categories for this user
     const product = await dbService.addProduct(authReq.userId, normalizedASIN, scrapedData.description, scrapedData.categories);
-    
-    // Save initial price
-    await dbService.addPriceHistory(product.id, scrapedData.price);
+
+    // Save initial price (with availability information)
+    await dbService.addPriceHistory(
+      product.id,
+      scrapedData.price,
+      scrapedData.available,
+      scrapedData.unavailableReason
+    );
 
     res.status(201).json(product);
   } catch (error) {
