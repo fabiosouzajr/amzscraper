@@ -110,9 +110,74 @@ export class ScraperService {
       description = description.trim();
       console.log(`Found product using selector "${selectorUsed}": ${description.substring(0, 60)}...`);
 
+      // Check product availability before extracting price
+      console.log('Checking product availability...');
+      const availabilityCheck = await page.evaluate(() => {
+        // @ts-ignore - browser context
+        const bodyText = document.body.textContent || '';
+
+        // Check for common unavailability messages in Portuguese
+        const unavailablePatterns = [
+          /não\s+disponível/i,
+          /indisponível/i,
+          /fora\s+de\s+estoque/i,
+          /esgotado/i,
+          /produto\s+não\s+encontrado/i,
+          /temporariamente\s+fora\s+de\s+estoque/i,
+          /sem\s+estoque/i,
+          /currently\s+unavailable/i,
+          /out\s+of\s+stock/i
+        ];
+
+        for (const pattern of unavailablePatterns) {
+          if (pattern.test(bodyText)) {
+            // Try to find the specific message
+            const match = bodyText.match(pattern);
+            return {
+              available: false,
+              reason: match ? match[0] : 'Produto não disponível'
+            };
+          }
+        }
+
+        // Check for availability message in specific divs
+        // @ts-ignore - browser context
+        const availabilityDiv = document.querySelector('#availability, .availability');
+        if (availabilityDiv) {
+          const availText = availabilityDiv.textContent || '';
+          for (const pattern of unavailablePatterns) {
+            if (pattern.test(availText)) {
+              const match = availText.match(pattern);
+              return {
+                available: false,
+                reason: match ? match[0] : 'Produto não disponível'
+              };
+            }
+          }
+        }
+
+        return { available: true };
+      });
+
+      if (!availabilityCheck.available) {
+        console.log(`⚠ Product is unavailable: ${availabilityCheck.reason}`);
+        const result = {
+          asin,
+          description,
+          price: null,
+          available: false,
+          unavailableReason: availabilityCheck.reason,
+          categories: []
+        };
+        await page.close();
+        return result;
+      }
+
+      console.log('✓ Product is available');
+
       // Extract price - wait for price elements
       // Try multiple selectors as Amazon can have different price formats
-      let price: number;
+      let price: number | null = null;
       let priceMethod: string = '';
       try {
         console.log('Extracting price...');
@@ -378,11 +443,15 @@ export class ScraperService {
               if (!isNaN(price)) {
                 priceMethod = '.a-price .a-offscreen';
                 console.log(`✓ Found price using method: ${priceMethod} (R$ ${price.toFixed(2)})`);
-                return {
+                const result = {
                   asin,
                   description,
-                  price
+                  price,
+                  available: true,
+                  categories: []
                 };
+                await page.close();
+                return result;
               }
             }
           }
@@ -391,7 +460,7 @@ export class ScraperService {
         }
         
         // If price was already extracted from offscreen, skip the wholePart/fractionPart parsing
-        if (priceFound && price !== undefined && !isNaN(price)) {
+        if (priceFound && price !== null && price !== undefined && !isNaN(price)) {
           // Price already extracted from offscreen, continue
           console.log(`✓ Price already extracted: R$ ${price.toFixed(2)}`);
         } else {
@@ -517,10 +586,26 @@ export class ScraperService {
         // Category extraction failure should not block product scraping
       }
 
+      // Final validation - if we still don't have a price at this point, mark as unavailable
+      if (price === null) {
+        console.log('⚠ Could not extract price - marking as unavailable');
+        const result = {
+          asin,
+          description,
+          price: null,
+          available: false,
+          unavailableReason: 'Preço não encontrado',
+          categories: categories.length > 0 ? categories : undefined
+        };
+        await page.close();
+        return result;
+      }
+
       const result = {
         asin,
         description,
         price,
+        available: true,
         categories: categories.length > 0 ? categories : undefined
       };
       await page.close();

@@ -16,7 +16,9 @@ export interface Category {
 export interface PriceHistory {
   id: number;
   product_id: number;
-  price: number;
+  price: number | null;
+  available: boolean;
+  unavailable_reason?: string;
   date: string;
   created_at: string;
 }
@@ -32,7 +34,9 @@ export interface ProductWithPrice extends Product {
 export interface ScrapedProductData {
   asin: string;
   description: string;
-  price: number;
+  price: number | null;
+  available: boolean;
+  unavailableReason?: string;
   categories?: string[];
 }
 

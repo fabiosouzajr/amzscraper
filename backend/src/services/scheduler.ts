@@ -101,31 +101,36 @@ export class SchedulerService {
           
           const scrapedData = await scraperService.scrapeProduct(product.asin);
           const lastPrice = await dbService.getLastPrice(product.id);
-          
+
           // Update categories if they have changed or were missing
           if (scrapedData.categories && scrapedData.categories.length > 0) {
             const currentCategories = product.categories || [];
             const currentCategoryNames = currentCategories.map(c => c.name).join(' > ');
             const newCategoryNames = scrapedData.categories.join(' > ');
-            
+
             if (currentCategoryNames !== newCategoryNames) {
               await dbService.setProductCategories(product.id, scrapedData.categories);
               console.log(`  ✓ Categories updated: "${newCategoryNames}"`);
             }
           }
-          
-          if (lastPrice === null || scrapedData.price !== lastPrice) {
-            await dbService.addPriceHistory(product.id, scrapedData.price);
+
+          // Check if product is unavailable
+          if (!scrapedData.available) {
+            await dbService.addPriceHistory(product.id, null, false, scrapedData.unavailableReason);
+            console.log(`  ⚠ Product unavailable: ${scrapedData.unavailableReason}`);
+            updated++;
+          } else if (lastPrice === null || scrapedData.price !== lastPrice) {
+            await dbService.addPriceHistory(product.id, scrapedData.price, true);
             if (lastPrice === null) {
-              console.log(`  ✓ Price recorded: ${scrapedData.price} (first price)`);
-            } else if (scrapedData.price < lastPrice) {
-              console.log(`  ✓ Price dropped: ${scrapedData.price} (previous: ${lastPrice})`);
-            } else {
-              console.log(`  ✓ Price increased: ${scrapedData.price} (previous: ${lastPrice})`);
+              console.log(`  ✓ Price recorded: R$ ${scrapedData.price?.toFixed(2)} (first price)`);
+            } else if (scrapedData.price && lastPrice && scrapedData.price < lastPrice) {
+              console.log(`  ✓ Price dropped: R$ ${scrapedData.price.toFixed(2)} (previous: R$ ${lastPrice.toFixed(2)})`);
+            } else if (scrapedData.price && lastPrice) {
+              console.log(`  ✓ Price increased: R$ ${scrapedData.price.toFixed(2)} (previous: R$ ${lastPrice.toFixed(2)})`);
             }
             updated++;
           } else {
-            console.log(`  - Price unchanged: ${scrapedData.price}`);
+            console.log(`  - Price unchanged: R$ ${scrapedData.price?.toFixed(2)}`);
             skipped++;
           }
           
@@ -193,31 +198,36 @@ export class SchedulerService {
             
             const scrapedData = await scraperService.scrapeProduct(product.asin);
             const lastPrice = await dbService.getLastPrice(product.id);
-            
+
             // Update categories if they have changed or were missing
             if (scrapedData.categories && scrapedData.categories.length > 0) {
               const currentCategories = product.categories || [];
               const currentCategoryNames = currentCategories.map(c => c.name).join(' > ');
               const newCategoryNames = scrapedData.categories.join(' > ');
-              
+
               if (currentCategoryNames !== newCategoryNames) {
                 await dbService.setProductCategories(product.id, scrapedData.categories);
                 console.log(`    ✓ Categories updated: "${newCategoryNames}"`);
               }
             }
-            
-            if (lastPrice === null || scrapedData.price !== lastPrice) {
-              await dbService.addPriceHistory(product.id, scrapedData.price);
+
+            // Check if product is unavailable
+            if (!scrapedData.available) {
+              await dbService.addPriceHistory(product.id, null, false, scrapedData.unavailableReason);
+              console.log(`    ⚠ Product unavailable: ${scrapedData.unavailableReason}`);
+              updated++;
+            } else if (lastPrice === null || scrapedData.price !== lastPrice) {
+              await dbService.addPriceHistory(product.id, scrapedData.price, true);
               if (lastPrice === null) {
-                console.log(`    ✓ Price recorded: ${scrapedData.price} (first price)`);
-              } else if (scrapedData.price < lastPrice) {
-                console.log(`    ✓ Price dropped: ${scrapedData.price} (previous: ${lastPrice})`);
-              } else {
-                console.log(`    ✓ Price increased: ${scrapedData.price} (previous: ${lastPrice})`);
+                console.log(`    ✓ Price recorded: R$ ${scrapedData.price?.toFixed(2)} (first price)`);
+              } else if (scrapedData.price && lastPrice && scrapedData.price < lastPrice) {
+                console.log(`    ✓ Price dropped: R$ ${scrapedData.price.toFixed(2)} (previous: R$ ${lastPrice.toFixed(2)})`);
+              } else if (scrapedData.price && lastPrice) {
+                console.log(`    ✓ Price increased: R$ ${scrapedData.price.toFixed(2)} (previous: R$ ${lastPrice.toFixed(2)})`);
               }
               updated++;
             } else {
-              console.log(`    - Price unchanged: ${scrapedData.price}`);
+              console.log(`    - Price unchanged: R$ ${scrapedData.price?.toFixed(2)}`);
               skipped++;
             }
             

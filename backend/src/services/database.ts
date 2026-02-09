@@ -66,7 +66,9 @@ export class DatabaseService {
       CREATE TABLE IF NOT EXISTS price_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         product_id INTEGER NOT NULL,
-        price REAL NOT NULL,
+        price REAL,
+        available BOOLEAN DEFAULT 1,
+        unavailable_reason TEXT,
         date DATETIME DEFAULT CURRENT_TIMESTAMP,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (product_id) REFERENCES products(id)
@@ -108,24 +110,83 @@ export class DatabaseService {
       this.db.run(createUsersTable);
       this.db.run(createCategoriesTable);
       this.db.run(createProductCategoriesTable);
-      this.db.run(createPriceHistoryTable);
       this.db.run(createUserListsTable);
       this.db.run(createProductListsTable);
-      
-      // Check if products table needs migration (this will create it if needed)
-      this.checkAndMigrateProductsTable(() => {
-        // Create indexes after migration is complete
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_id ON price_history(product_id)');
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_asin ON products(asin)');
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_products_user ON products(user_id)');
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_category_name ON categories(name)');
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_product ON product_categories(product_id)');
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_category ON product_categories(category_id)');
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_level ON product_categories(level)');
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_user_lists_user ON user_lists(user_id)');
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_product ON product_lists(product_id)');
-        this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_list ON product_lists(list_id)');
+
+      // Check if price_history table needs migration for availability columns
+      this.checkAndMigratePriceHistoryTable(() => {
+        // Check if products table needs migration (this will create it if needed)
+        this.checkAndMigrateProductsTable(() => {
+          // Create indexes after migration is complete
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_id ON price_history(product_id)');
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_asin ON products(asin)');
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_products_user ON products(user_id)');
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_category_name ON categories(name)');
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_product ON product_categories(product_id)');
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_category ON product_categories(category_id)');
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_level ON product_categories(level)');
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_user_lists_user ON user_lists(user_id)');
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_product ON product_lists(product_id)');
+          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_list ON product_lists(list_id)');
+        });
       });
+    });
+  }
+
+  private checkAndMigratePriceHistoryTable(callback: () => void): void {
+    // Check if price_history table has availability columns
+    this.db.all("PRAGMA table_info(price_history)", (err, columns: any[]) => {
+      if (err) {
+        console.error('Error checking price_history table info:', err);
+        callback();
+        return;
+      }
+
+      const hasAvailable = columns.some(col => col.name === 'available');
+      const hasUnavailableReason = columns.some(col => col.name === 'unavailable_reason');
+
+      if (!hasAvailable || !hasUnavailableReason) {
+        console.log('Migrating price_history table: adding availability columns...');
+
+        // SQLite doesn't support adding columns with NOT NULL easily, so we add them as nullable
+        const migrations: string[] = [];
+
+        if (!hasAvailable) {
+          migrations.push('ALTER TABLE price_history ADD COLUMN available BOOLEAN DEFAULT 1');
+        }
+        if (!hasUnavailableReason) {
+          migrations.push('ALTER TABLE price_history ADD COLUMN unavailable_reason TEXT');
+        }
+
+        // Also need to allow price to be NULL
+        const hasPriceNullable = columns.find(col => col.name === 'price')?.notnull === 0;
+        if (!hasPriceNullable) {
+          console.log('Note: price column cannot be changed to nullable in existing table. New records will handle NULL prices.');
+        }
+
+        // Execute migrations
+        let completed = 0;
+        migrations.forEach(migration => {
+          this.db.run(migration, (err) => {
+            if (err) {
+              console.error('Error running migration:', migration, err);
+            } else {
+              console.log('✓ Migration completed:', migration);
+            }
+            completed++;
+            if (completed === migrations.length) {
+              console.log('price_history table migration completed successfully.');
+              callback();
+            }
+          });
+        });
+
+        if (migrations.length === 0) {
+          callback();
+        }
+      } else {
+        callback();
+      }
     });
   }
 
@@ -576,21 +637,22 @@ export class DatabaseService {
   // Price history operations
   async getLastPrice(productId: number): Promise<number | null> {
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT price FROM price_history WHERE product_id = ? ORDER BY date DESC LIMIT 1';
-      this.db.get(sql, [productId], (err, row: { price: number } | undefined) => {
+      const sql = 'SELECT price, available FROM price_history WHERE product_id = ? ORDER BY date DESC LIMIT 1';
+      this.db.get(sql, [productId], (err, row: { price: number | null; available: number } | undefined) => {
         if (err) {
           reject(err);
         } else {
-          resolve(row ? row.price : null);
+          // Only return price if product is available
+          resolve(row && row.available ? row.price : null);
         }
       });
     });
   }
 
-  async addPriceHistory(productId: number, price: number): Promise<PriceHistory> {
+  async addPriceHistory(productId: number, price: number | null, available: boolean = true, unavailableReason?: string): Promise<PriceHistory> {
     return new Promise((resolve, reject) => {
-      const sql = 'INSERT INTO price_history (product_id, price) VALUES (?, ?)';
-      this.db.run(sql, [productId, price], function(err) {
+      const sql = 'INSERT INTO price_history (product_id, price, available, unavailable_reason) VALUES (?, ?, ?, ?)';
+      this.db.run(sql, [productId, price, available ? 1 : 0, unavailableReason || null], function(err) {
         if (err) {
           reject(err);
         } else {
@@ -598,6 +660,8 @@ export class DatabaseService {
             id: this.lastID,
             product_id: productId,
             price,
+            available,
+            unavailable_reason: unavailableReason,
             date: new Date().toISOString(),
             created_at: new Date().toISOString()
           });
