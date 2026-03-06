@@ -30,7 +30,8 @@ function formatNumberWithSeparators(value: number, decimals: number = 2): string
  * For Portuguese: R$ 1.234,56
  * For English: R$ 1,234.56
  */
-export function formatPrice(value: number): string {
+export function formatPrice(value: number | null | undefined): string {
+  if (value == null) return '-';
   return `R$ ${formatNumberWithSeparators(value, 2)}`;
 }
 

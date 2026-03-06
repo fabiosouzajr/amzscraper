@@ -142,6 +142,28 @@ export class DatabaseService {
         return;
       }
 
+      // Table doesn't exist yet — create it with the final schema directly
+      if (!columns || columns.length === 0) {
+        this.db.run(`
+          CREATE TABLE IF NOT EXISTS price_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            price REAL,
+            available BOOLEAN DEFAULT 1,
+            unavailable_reason TEXT,
+            date DATETIME DEFAULT CURRENT_TIMESTAMP,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (product_id) REFERENCES products(id)
+          )
+        `, (err) => {
+          if (err) {
+            console.error('Error creating price_history table:', err);
+          }
+          callback();
+        });
+        return;
+      }
+
       const hasAvailable = columns.some(col => col.name === 'available');
       const hasUnavailableReason = columns.some(col => col.name === 'unavailable_reason');
       const priceColumn = columns.find(col => col.name === 'price');
@@ -152,6 +174,9 @@ export class DatabaseService {
 
       if (needsRecreation) {
         console.log('Migrating price_history table: recreating with new schema...');
+
+        // Step 0: Drop leftover temp table from a previous failed migration
+        this.db.run('DROP TABLE IF EXISTS price_history_new');
 
         // Step 1: Create new table with correct schema
         this.db.run(`
@@ -173,15 +198,16 @@ export class DatabaseService {
           }
 
           // Step 2: Copy existing data
-          const copyColumns = hasAvailable && hasUnavailableReason
+          const insertColumns = 'id, product_id, price, available, unavailable_reason, date, created_at';
+          const selectColumns = hasAvailable && hasUnavailableReason
             ? 'id, product_id, price, available, unavailable_reason, date, created_at'
             : hasAvailable
-            ? 'id, product_id, price, available, NULL as unavailable_reason, date, created_at'
-            : 'id, product_id, price, 1 as available, NULL as unavailable_reason, date, created_at';
+            ? 'id, product_id, price, available, NULL, date, created_at'
+            : 'id, product_id, price, 1, NULL, date, created_at';
 
           this.db.run(`
-            INSERT INTO price_history_new (${copyColumns})
-            SELECT ${copyColumns}
+            INSERT INTO price_history_new (${insertColumns})
+            SELECT ${selectColumns}
             FROM price_history
           `, (err) => {
             if (err) {

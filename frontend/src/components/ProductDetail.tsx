@@ -162,13 +162,13 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
       </div>
 
       <div className="price-info">
-        {product.current_price !== undefined ? (
+        {product.current_price != null ? (
           <>
             <div className="current-price">
               <span className="label">{t('productDetail.currentPrice')}</span>
               <span className="value">{formatPrice(product.current_price)}</span>
             </div>
-            {product.previous_price !== undefined && (
+            {product.previous_price != null && (
               <div className="price-comparison">
                 <div className="previous-price">
                   <span className="label">{t('productDetail.previousPrice')}</span>

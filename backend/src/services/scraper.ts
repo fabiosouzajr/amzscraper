@@ -113,10 +113,7 @@ export class ScraperService {
       // Check product availability before extracting price
       console.log('Checking product availability...');
       const availabilityCheck = await page.evaluate(() => {
-        // @ts-ignore - browser context
-        const bodyText = document.body.textContent || '';
-
-        // Check for common unavailability messages in Portuguese
+        // Check for common unavailability messages in Portuguese and English
         const unavailablePatterns = [
           /não\s+disponível/i,
           /indisponível/i,
@@ -129,18 +126,10 @@ export class ScraperService {
           /out\s+of\s+stock/i
         ];
 
-        for (const pattern of unavailablePatterns) {
-          if (pattern.test(bodyText)) {
-            // Try to find the specific message
-            const match = bodyText.match(pattern);
-            return {
-              available: false,
-              reason: match ? match[0] : 'Produto não disponível'
-            };
-          }
-        }
-
-        // Check for availability message in specific divs
+        // Priority 1: Check the #availability element — this is Amazon's dedicated
+        // availability indicator for the main product. Only check here to avoid
+        // false positives from body text (related products, ads, etc. often
+        // contain "out of stock" text for *other* products).
         // @ts-ignore - browser context
         const availabilityDiv = document.querySelector('#availability, .availability');
         if (availabilityDiv) {
@@ -148,6 +137,28 @@ export class ScraperService {
           for (const pattern of unavailablePatterns) {
             if (pattern.test(availText)) {
               const match = availText.match(pattern);
+              return {
+                available: false,
+                reason: match ? match[0] : 'Produto não disponível'
+              };
+            }
+          }
+          // #availability element found and no unavailable pattern matched → available
+          return { available: true };
+        }
+
+        // Priority 2: No #availability element — fall back to checking a narrow
+        // set of known unavailability containers (not the whole body).
+        // @ts-ignore - browser context
+        const narrowContainers = document.querySelectorAll(
+          '#outOfStock, #availability-brief, .availabilityInsideBuyBox_feature_div, #buybox-see-all-buying-choices'
+        );
+        for (let i = 0; i < narrowContainers.length; i++) {
+          // @ts-ignore
+          const containerText = narrowContainers[i].textContent || '';
+          for (const pattern of unavailablePatterns) {
+            if (pattern.test(containerText)) {
+              const match = containerText.match(pattern);
               return {
                 available: false,
                 reason: match ? match[0] : 'Produto não disponível'
