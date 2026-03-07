@@ -7,7 +7,10 @@ npm run dev        # Dev server with hot reload (ts-node-dev, port 3000)
 npm run build      # Compile TypeScript to ./dist/
 npm start          # Production: run compiled JS from ./dist/server.js
 npm run watch      # TypeScript watch mode
+npm install        # Install dependencies + Playwright browsers (Firefox + Chromium) via postinstall
 ```
+
+**Note**: The `postinstall` script automatically installs Playwright browsers after `npm install`. This ensures the scraper has the required browsers for web scraping.
 
 No test runner configured. Files in `test/` are debug/analysis utilities, not test suites.
 
@@ -47,7 +50,8 @@ src/
 ## Environment Variables
 
 ```
-PORT=3000                    # Server port (default: 3000)
+PORT=3000                    # Primary server port (default: 3000)
+PORT_FALLBACK=3001           # Fallback port if PORT is in use (default: 3001)
 JWT_SECRET=<secret>          # JWT signing key (MUST change from default in production)
 ```
 

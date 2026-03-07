@@ -18,7 +18,7 @@ export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSea
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [isSearchMode, setIsSearchMode] = useState(false);
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   const loadRecentProducts = async (page: number = 1) => {
     try {

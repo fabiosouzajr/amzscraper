@@ -31,12 +31,10 @@ export function formatDate(date: Date | string): string {
  */
 export function formatDateTime(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  const language = i18n.language || 'en';
-  
   const datePart = formatDate(dateObj);
   const hours = dateObj.getHours().toString().padStart(2, '0');
   const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-  
+
   return `${datePart} ${hours}:${minutes}`;
 }
 

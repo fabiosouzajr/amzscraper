@@ -18,16 +18,19 @@ Each package has its own `CLAUDE.md` with detailed architecture notes.
 
 ```bash
 # Backend (terminal 1)
-cd backend && npm install && npm run dev    # Express on port 3000
+cd backend && npm install && npm run dev    # Express on port 3000 (installs Playwright browsers automatically)
 
 # Frontend (terminal 2)
 cd frontend && npm install && npm run dev   # Vite on port 5174, proxies /api to :3000
 ```
 
+**Note**: The backend `npm install` automatically installs Playwright browsers (Firefox + Chromium) via a postinstall script.
+
 ## Environment Variables
 
 ```
-PORT=3000              # Backend port (default: 3000)
+PORT=3000              # Backend primary port (default: 3000)
+PORT_FALLBACK=3001     # Backend fallback port if PORT is in use (default: 3001)
 JWT_SECRET=<secret>    # Backend JWT key (MUST change from default)
 ```
 

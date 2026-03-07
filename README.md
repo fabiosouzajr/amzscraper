@@ -36,7 +36,7 @@ A full-stack TypeScript web application that tracks Amazon product prices, store
 - Node.js (v18 or higher)
 - npm or yarn
 - Git
-- Playwright browsers (Firefox and Chromium) - installed automatically by install script
+- Playwright browsers (Firefox and Chromium) - installed automatically via postinstall script
 
 ## Quick Start
 
@@ -81,11 +81,10 @@ git clone <repository-url>
 cd amzscraper
 ```
 
-2. Install backend dependencies:
+2. Install backend dependencies (includes automatic Playwright browser installation):
 ```bash
 cd backend
 npm install
-npx playwright install firefox chromium
 cd ..
 ```
 
@@ -124,6 +123,8 @@ chmod +x install.sh
 - `0`: All requirements met
 - `1`: Some requirements missing
 
+**Note**: The backend `npm install` automatically runs a postinstall script that installs Playwright browsers (Firefox and Chromium). This happens automatically, so you don't need to run manual playwright install commands.
+
 ## Run Script (`run.sh`)
 
 The `run.sh` script starts both backend and frontend servers with custom port configuration.
@@ -146,6 +147,8 @@ chmod +x run.sh
 ### Prompts:
 1. **Backend port**: Default is `3030` (press Enter for default)
 2. **Frontend port**: Default is `5174` (press Enter for default)
+
+**Note**: The `run.sh` script defaults to port `3030`, but the backend's internal default is `3000` with automatic failover to `3001` if port `3000` is in use.
 
 ### Output:
 - Process IDs (PIDs) for both services
@@ -180,18 +183,26 @@ If Tailscale is detected, the script automatically displays:
 ### Port Configuration
 
 **Default Ports:**
-- Backend: `3030` (configurable via `run.sh` or `PORT` environment variable)
-- Frontend: `5174` (configurable via `run.sh` or Vite config)
+- Backend: `3000` (with automatic fallback to `3001` if port is in use)
+- Frontend: `5174` (configurable via Vite config)
 
 **Using Environment Variables:**
 ```bash
+# Set primary port (default: 3000)
 export PORT=3030
+
+# Set fallback port (default: 3001)
+export PORT_FALLBACK=3031
+
 cd backend
 npm run dev
 ```
 
+**Automatic Port Failover:**
+The backend automatically falls back to the fallback port if the primary port is already in use. This is handled by the `portManager.ts` utility and requires no manual configuration.
+
 **Using run.sh:**
-The script prompts for ports and validates them automatically.
+The script prompts for ports and validates them automatically. Note that `run.sh` defaults to port `3030`, but the backend's internal default is `3000` with `3001` as fallback.
 
 **Frontend Proxy:**
 The frontend Vite configuration proxies `/api` requests to the backend. Update `frontend/vite.config.ts` if you change the backend port:
@@ -199,7 +210,7 @@ The frontend Vite configuration proxies `/api` requests to the backend. Update `
 ```typescript
 proxy: {
   '/api': {
-    target: 'http://localhost:3030',  // Update this
+    target: 'http://localhost:3000',  // Update this to match your backend port
     changeOrigin: true
   }
 }
@@ -450,6 +461,7 @@ Switch languages using the language selector in the navigation bar. All UI text 
 - The scraper uses Playwright to navigate Amazon pages and extract product information
 - Price history is only stored when the current price is lower than the previous price
 - The app scrapes Amazon Brazil (amazon.com.br) - modify the URL in `scraper.ts` for other regions
+- **Automatic Port Failover**: The backend automatically falls back to port 3001 if port 3000 is in use, requiring no manual configuration
 - Rate limiting: The scraper includes delays between requests to avoid being blocked
 - User data is isolated - each user only sees their own products and lists
 - Passwords are hashed using bcrypt before storage
@@ -469,6 +481,11 @@ nvm use 18
 
 **Playwright browser not found:**
 ```bash
+# Option 1: Re-run npm install to trigger the postinstall script
+cd backend
+npm install
+
+# Option 2: Manual installation
 cd backend
 npx playwright install firefox chromium
 ```
@@ -481,8 +498,9 @@ npx playwright install firefox chromium
 ### Runtime Issues
 
 **Port already in use:**
-- Use `run.sh` to specify different ports
-- Or manually set `PORT` environment variable for backend
+- The backend automatically falls back to port 3001 if port 3000 is in use
+- You can also use `run.sh` to specify different ports
+- Or manually set `PORT` and `PORT_FALLBACK` environment variables for backend
 - Update `vite.config.ts` for frontend port
 
 **Database errors:**
