@@ -1,5 +1,5 @@
 import sqlite3 from 'sqlite3';
-import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserWithPasswordHash, UserList, AuditLog, SystemConfig } from '../models/types';
+import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserWithPasswordHash, UserList, AuditLog, SystemConfig, UserRole } from '../models/types';
 import path from 'path';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
@@ -991,6 +991,43 @@ export class DatabaseService {
       } catch (error) {
         reject(error);
       }
+    });
+  }
+
+  async createAdminUser(username: string, password: string): Promise<User> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const passwordHash = await bcrypt.hash(password, 10);
+        const sql = 'INSERT INTO users (username, password_hash, role) VALUES (?, ?, "ADMIN")';
+        this.db.run(sql, [username, passwordHash], function(err) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve({
+            id: this.lastID,
+            username,
+            role: 'ADMIN',
+            is_disabled: false,
+            created_at: new Date().toISOString()
+          });
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  async setUserRole(userId: number, role: UserRole): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const sql = 'UPDATE users SET role = ? WHERE id = ?';
+      this.db.run(sql, [role, userId], function(err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(this.changes > 0);
+      });
     });
   }
 

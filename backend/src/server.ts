@@ -11,6 +11,7 @@ import authRouter from './routes/auth';
 import listsRouter from './routes/lists';
 import { schedulerService } from './services/scheduler';
 import { getAvailablePort } from './utils/portManager';
+import { dbService } from './services/database';
 
 async function startServer() {
   const app = express();
@@ -18,6 +19,25 @@ async function startServer() {
   // Middleware
   app.use(cors());
   app.use(express.json());
+
+  // Ensure initial admin exists
+  const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME;
+  const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
+
+  if (initialAdminUsername && initialAdminPassword) {
+    try {
+      const existingAdmin = await dbService.getUserByUsername(initialAdminUsername);
+      if (!existingAdmin) {
+        await dbService.createAdminUser(initialAdminUsername, initialAdminPassword);
+        console.log(`✓ Initial admin user created: ${initialAdminUsername}`);
+      } else if (existingAdmin.role !== 'ADMIN') {
+        await dbService.setUserRole(existingAdmin.id, 'ADMIN');
+        console.log(`✓ Existing user promoted to admin: ${initialAdminUsername}`);
+      }
+    } catch (error) {
+      console.error('Error ensuring initial admin exists:', error);
+    }
+  }
 
   // Routes
   app.use('/api/auth', authRouter);
