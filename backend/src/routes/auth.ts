@@ -36,6 +36,8 @@ router.post('/register', async (req: Request, res: Response) => {
       user: {
         id: user.id,
         username: user.username,
+        role: user.role,
+        is_disabled: user.is_disabled,
         created_at: user.created_at
       },
       token
@@ -65,12 +67,18 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    if (user.is_disabled) {
+      return res.status(403).json({ error: 'Account is disabled' });
+    }
+
     const token = generateToken(user.id, user.username);
 
     res.json({
       user: {
         id: user.id,
         username: user.username,
+        role: user.role,
+        is_disabled: user.is_disabled,
         created_at: user.created_at
       },
       token

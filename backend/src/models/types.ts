@@ -50,10 +50,19 @@ export interface PriceDrop {
   price_history?: PriceHistory[];
 }
 
+export type UserRole = 'USER' | 'ADMIN';
+
 export interface User {
   id: number;
   username: string;
+  role: UserRole;
+  is_disabled: boolean;
+  disabled_at?: string;
   created_at: string;
+}
+
+export interface UserWithPasswordHash extends User {
+  password_hash: string;
 }
 
 export interface UserList {

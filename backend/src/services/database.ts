@@ -1,5 +1,5 @@
 import sqlite3 from 'sqlite3';
-import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserList } from '../models/types';
+import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserWithPasswordHash, UserList } from '../models/types';
 import path from 'path';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
@@ -80,7 +80,11 @@ export class DatabaseService {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        role TEXT NOT NULL DEFAULT 'USER',
+        is_disabled INTEGER NOT NULL DEFAULT 0,
+        disabled_at DATETIME,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        CHECK (role IN ('USER', 'ADMIN'))
       )
     `;
 
@@ -113,21 +117,24 @@ export class DatabaseService {
       this.db.run(createUserListsTable);
       this.db.run(createProductListsTable);
 
-      // Check if price_history table needs migration for availability columns
-      this.checkAndMigratePriceHistoryTable(() => {
-        // Check if products table needs migration (this will create it if needed)
-        this.checkAndMigrateProductsTable(() => {
-          // Create indexes after migration is complete
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_id ON price_history(product_id)');
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_asin ON products(asin)');
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_products_user ON products(user_id)');
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_category_name ON categories(name)');
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_product ON product_categories(product_id)');
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_category ON product_categories(category_id)');
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_level ON product_categories(level)');
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_user_lists_user ON user_lists(user_id)');
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_product ON product_lists(product_id)');
-          this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_list ON product_lists(list_id)');
+      // Check if users table needs migration for role and is_disabled columns
+      this.checkAndMigrateUsersTable(() => {
+        // Check if price_history table needs migration for availability columns
+        this.checkAndMigratePriceHistoryTable(() => {
+          // Check if products table needs migration (this will create it if needed)
+          this.checkAndMigrateProductsTable(() => {
+            // Create indexes after migration is complete
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_product_id ON price_history(product_id)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_asin ON products(asin)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_products_user ON products(user_id)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_category_name ON categories(name)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_product ON product_categories(product_id)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_category ON product_categories(category_id)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_product_category_level ON product_categories(level)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_user_lists_user ON user_lists(user_id)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_product ON product_lists(product_id)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_list ON product_lists(list_id)');
+          });
         });
       });
     });
@@ -946,6 +953,8 @@ export class DatabaseService {
           resolve({
             id: this.lastID,
             username,
+            role: 'USER',
+            is_disabled: false,
             created_at: new Date().toISOString()
           });
         });
@@ -955,7 +964,7 @@ export class DatabaseService {
     });
   }
 
-  async getUserByUsername(username: string): Promise<(User & { password_hash: string }) | null> {
+  async getUserByUsername(username: string): Promise<UserWithPasswordHash | null> {
     return new Promise((resolve, reject) => {
       const sql = 'SELECT * FROM users WHERE username = ?';
       this.db.get(sql, [username], (err, row: any) => {
@@ -970,6 +979,9 @@ export class DatabaseService {
         resolve({
           id: row.id,
           username: row.username,
+          role: row.role,
+          is_disabled: !!row.is_disabled,
+          disabled_at: row.disabled_at,
           password_hash: row.password_hash,
           created_at: row.created_at
         });
@@ -997,7 +1009,7 @@ export class DatabaseService {
 
   async getUserById(id: number): Promise<User | null> {
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT id, username, created_at FROM users WHERE id = ?';
+      const sql = 'SELECT id, username, role, is_disabled, disabled_at, created_at FROM users WHERE id = ?';
       this.db.get(sql, [id], (err, row: any) => {
         if (err) {
           reject(err);
@@ -1010,6 +1022,9 @@ export class DatabaseService {
         resolve({
           id: row.id,
           username: row.username,
+          role: row.role,
+          is_disabled: !!row.is_disabled,
+          disabled_at: row.disabled_at,
           created_at: row.created_at
         });
       });
@@ -1018,7 +1033,7 @@ export class DatabaseService {
 
   async getAllUsers(): Promise<User[]> {
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT id, username, created_at FROM users';
+      const sql = 'SELECT id, username, role, is_disabled, disabled_at, created_at FROM users';
       this.db.all(sql, [], (err, rows: any[]) => {
         if (err) {
           reject(err);
@@ -1027,6 +1042,9 @@ export class DatabaseService {
         resolve(rows.map(row => ({
           id: row.id,
           username: row.username,
+          role: row.role,
+          is_disabled: !!row.is_disabled,
+          disabled_at: row.disabled_at,
           created_at: row.created_at
         })));
       });
@@ -1319,12 +1337,68 @@ export class DatabaseService {
               };
             })
           );
-          
+
           resolve(products);
         });
       } catch (error) {
         reject(error);
       }
+    });
+  }
+
+  private checkAndMigrateUsersTable(callback: () => void): void {
+    this.db.all("PRAGMA table_info(users)", (err, columns: any[]) => {
+      if (err) {
+        console.error('Error checking users table info:', err);
+        callback();
+        return;
+      }
+
+      const columnNames = columns.map(col => col.name);
+      const migrations: Array<{ name: string; sql: string }> = [];
+
+      // Add role column if missing
+      if (!columnNames.includes('role')) {
+        migrations.push({
+          name: 'role',
+          sql: 'ALTER TABLE users ADD COLUMN role TEXT DEFAULT "USER"'
+        });
+      }
+
+      // Add is_disabled column if missing
+      if (!columnNames.includes('is_disabled')) {
+        migrations.push({
+          name: 'is_disabled',
+          sql: 'ALTER TABLE users ADD COLUMN is_disabled INTEGER DEFAULT 0'
+        });
+      }
+
+      // Add disabled_at column if missing
+      if (!columnNames.includes('disabled_at')) {
+        migrations.push({
+          name: 'disabled_at',
+          sql: 'ALTER TABLE users ADD COLUMN disabled_at DATETIME'
+        });
+      }
+
+      if (migrations.length === 0) {
+        callback();
+        return;
+      }
+
+      console.log(`Migrating users table with ${migrations.length} column(s)`);
+      this.db.serialize(() => {
+        migrations.forEach(migration => {
+          this.db.run(migration.sql, (err) => {
+            if (err) {
+              console.error(`Error adding column ${migration.name}:`, err);
+            } else {
+              console.log(`  Added column ${migration.name}`);
+            }
+          });
+        });
+        callback();
+      });
     });
   }
 }

@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { dbService } from '../services/database';
+import { User } from '../models/types';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 export interface AuthRequest extends Request {
   userId?: number;
-  user?: { id: number; username: string };
+  user?: User;
 }
 
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -23,14 +24,19 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     try {
       const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; username: string };
       const user = await dbService.getUserById(decoded.userId);
-      
+
       if (!user) {
         res.status(401).json({ error: 'Invalid token' });
         return;
       }
 
+      if (user.is_disabled) {
+        res.status(403).json({ error: 'Account is disabled' });
+        return;
+      }
+
       req.userId = user.id;
-      req.user = { id: user.id, username: user.username };
+      req.user = user;
       next();
     } catch (error) {
       res.status(401).json({ error: 'Invalid token' });
@@ -62,10 +68,11 @@ export const optionalAuthenticate = async (req: AuthRequest, res: Response, next
     try {
       const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; username: string };
       const user = await dbService.getUserById(decoded.userId);
-      
-      if (user) {
+
+      // Only set user if they exist and are not disabled
+      if (user && !user.is_disabled) {
         req.userId = user.id;
-        req.user = { id: user.id, username: user.username };
+        req.user = user;
       }
     } catch (error) {
       // Invalid token, continue without authentication
