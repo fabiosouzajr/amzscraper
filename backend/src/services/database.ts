@@ -1,5 +1,5 @@
 import sqlite3 from 'sqlite3';
-import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserWithPasswordHash, UserList, AuditLog } from '../models/types';
+import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserWithPasswordHash, UserList, AuditLog, SystemConfig } from '../models/types';
 import path from 'path';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
@@ -122,6 +122,17 @@ export class DatabaseService {
       )
     `;
 
+    const createSystemConfigTable = `
+      CREATE TABLE IF NOT EXISTS system_config (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        description TEXT,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_by INTEGER,
+        FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+      )
+    `;
+
     this.db.serialize(() => {
       // Create other tables first (users must exist before products due to foreign key)
       this.db.run(createUsersTable);
@@ -130,6 +141,7 @@ export class DatabaseService {
       this.db.run(createProductCategoriesTable);
       this.db.run(createUserListsTable);
       this.db.run(createProductListsTable);
+      this.db.run(createSystemConfigTable);
 
       // Check if users table needs migration for role and is_disabled columns
       this.checkAndMigrateUsersTable(() => {
@@ -151,6 +163,7 @@ export class DatabaseService {
             this.db.run('CREATE INDEX IF NOT EXISTS idx_audit_log_admin ON audit_log(admin_user_id)');
             this.db.run('CREATE INDEX IF NOT EXISTS idx_audit_log_created ON audit_log(created_at)');
             this.db.run('CREATE INDEX IF NOT EXISTS idx_audit_log_target ON audit_log(target_type, target_id)');
+            this.initializeSystemConfig();
           });
         });
       });
@@ -1487,6 +1500,83 @@ export class DatabaseService {
           target_id: row.target_id,
           details: row.details,
           created_at: row.created_at
+        })));
+      });
+    });
+  }
+
+  private initializeSystemConfig(): void {
+    const defaults = [
+      { key: 'quota_max_products', value: '100', description: 'Max products per user' },
+      { key: 'quota_max_lists', value: '20', description: 'Max lists per user' },
+      { key: 'scheduler_enabled', value: 'true', description: 'Enable automatic price updates' },
+      { key: 'scheduler_cron', value: '0 0 * * *', description: 'Cron schedule for price updates' }
+    ];
+
+    defaults.forEach(config => {
+      const sql = `
+        INSERT OR IGNORE INTO system_config (key, value, description)
+        VALUES (?, ?, ?)
+      `;
+      this.db.run(sql, [config.key, config.value, config.description], (err) => {
+        if (err) {
+          console.error(`Error inserting default system config for key '${config.key}':`, err);
+        }
+      });
+    });
+  }
+
+  async getConfig(key: string): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT value FROM system_config WHERE key = ?';
+      this.db.get(sql, [key], (err, row: any) => {
+        if (err) {
+          console.error(`Error getting system config for key '${key}':`, err);
+          reject(err);
+          return;
+        }
+        resolve(row?.value || null);
+      });
+    });
+  }
+
+  async setConfig(
+    key: string,
+    value: string,
+    updatedBy: number
+  ): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const sql = `
+        UPDATE system_config
+        SET value = ?, updated_at = CURRENT_TIMESTAMP, updated_by = ?
+        WHERE key = ?
+      `;
+      this.db.run(sql, [value, updatedBy, key], function(err) {
+        if (err) {
+          console.error(`Error setting system config for key '${key}':`, err);
+          reject(err);
+          return;
+        }
+        resolve(this.changes > 0);
+      });
+    });
+  }
+
+  async getAllConfig(): Promise<SystemConfig[]> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM system_config ORDER BY key';
+      this.db.all(sql, [], (err, rows: any[]) => {
+        if (err) {
+          console.error('Error getting all system config:', err);
+          reject(err);
+          return;
+        }
+        resolve(rows.map(row => ({
+          key: row.key,
+          value: row.value,
+          description: row.description,
+          updated_at: row.updated_at,
+          updated_by: row.updated_by
         })));
       });
     });

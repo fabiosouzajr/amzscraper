@@ -83,3 +83,11 @@ export interface AuditLog {
   created_at: string;
 }
 
+export interface SystemConfig {
+  key: string;
+  value: string;
+  description: string;
+  updated_at: string;
+  updated_by?: number;
+}
+
