@@ -22,7 +22,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     const token = authHeader.substring(7);
     
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; username: string };
+      const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; username: string; role?: string };
       const user = await dbService.getUserById(decoded.userId);
 
       if (!user) {
@@ -48,8 +48,12 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   }
 };
 
-export const generateToken = (userId: number, username: string): string => {
-  return jwt.sign({ userId, username }, JWT_SECRET, { expiresIn: '7d' });
+export const generateToken = (user: User): string => {
+  return jwt.sign(
+    { userId: user.id, username: user.username, role: user.role },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
 };
 
 // Optional authentication - doesn't fail if no token, but sets user if token is valid
@@ -66,7 +70,7 @@ export const optionalAuthenticate = async (req: AuthRequest, res: Response, next
     const token = authHeader.substring(7);
     
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; username: string };
+      const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; username: string; role?: string };
       const user = await dbService.getUserById(decoded.userId);
 
       // Only set user if they exist and are not disabled

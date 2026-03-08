@@ -30,7 +30,7 @@ router.post('/register', async (req: Request, res: Response) => {
 
     // Create user
     const user = await dbService.createUser(username, password);
-    const token = generateToken(user.id, user.username);
+    const token = generateToken(user);
 
     res.status(201).json({
       user: {
@@ -71,7 +71,7 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Account is disabled' });
     }
 
-    const token = generateToken(user.id, user.username);
+    const token = generateToken(user);
 
     res.json({
       user: {
