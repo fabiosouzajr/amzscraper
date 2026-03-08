@@ -1,5 +1,5 @@
 import sqlite3 from 'sqlite3';
-import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserWithPasswordHash, UserList } from '../models/types';
+import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserWithPasswordHash, UserList, AuditLog } from '../models/types';
 import path from 'path';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
@@ -109,9 +109,23 @@ export class DatabaseService {
       )
     `;
 
+    const createAuditLogTable = `
+      CREATE TABLE IF NOT EXISTS audit_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        admin_user_id INTEGER NOT NULL,
+        action TEXT NOT NULL,
+        target_type TEXT,
+        target_id INTEGER,
+        details TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (admin_user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    `;
+
     this.db.serialize(() => {
       // Create other tables first (users must exist before products due to foreign key)
       this.db.run(createUsersTable);
+      this.db.run(createAuditLogTable);
       this.db.run(createCategoriesTable);
       this.db.run(createProductCategoriesTable);
       this.db.run(createUserListsTable);
@@ -134,6 +148,9 @@ export class DatabaseService {
             this.db.run('CREATE INDEX IF NOT EXISTS idx_user_lists_user ON user_lists(user_id)');
             this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_product ON product_lists(product_id)');
             this.db.run('CREATE INDEX IF NOT EXISTS idx_product_lists_list ON product_lists(list_id)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_audit_log_admin ON audit_log(admin_user_id)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_audit_log_created ON audit_log(created_at)');
+            this.db.run('CREATE INDEX IF NOT EXISTS idx_audit_log_target ON audit_log(target_type, target_id)');
           });
         });
       });
@@ -1398,6 +1415,79 @@ export class DatabaseService {
           });
         });
         callback();
+      });
+    });
+  }
+
+  async logAudit(
+    adminUserId: number,
+    action: string,
+    targetType?: string,
+    targetId?: number,
+    details?: string
+  ): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const sql = `
+        INSERT INTO audit_log (admin_user_id, action, target_type, target_id, details)
+        VALUES (?, ?, ?, ?, ?)
+      `;
+      this.db.run(
+        sql,
+        [adminUserId, action, targetType || null, targetId || null, details || null],
+        function(err) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(this.lastID);
+        }
+      );
+    });
+  }
+
+  async getAuditLogs(
+    limit: number = 100,
+    offset: number = 0,
+    targetType?: string,
+    adminUserId?: number
+  ): Promise<AuditLog[]> {
+    return new Promise((resolve, reject) => {
+      let sql = `
+        SELECT a.*, u.username as admin_username
+        FROM audit_log a
+        JOIN users u ON a.admin_user_id = u.id
+        WHERE 1=1
+      `;
+      const params: any[] = [];
+
+      if (targetType) {
+        sql += ' AND a.target_type = ?';
+        params.push(targetType);
+      }
+
+      if (adminUserId) {
+        sql += ' AND a.admin_user_id = ?';
+        params.push(adminUserId);
+      }
+
+      sql += ' ORDER BY a.created_at DESC LIMIT ? OFFSET ?';
+      params.push(limit, offset);
+
+      this.db.all(sql, params, (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(rows.map(row => ({
+          id: row.id,
+          admin_user_id: row.admin_user_id,
+          admin_username: row.admin_username,
+          action: row.action,
+          target_type: row.target_type,
+          target_id: row.target_id,
+          details: row.details,
+          created_at: row.created_at
+        })));
       });
     });
   }
