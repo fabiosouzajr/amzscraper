@@ -91,3 +91,18 @@ export interface SystemConfig {
   updated_by?: number;
 }
 
+export interface UserStats {
+  product_count: number;
+  list_count: number;
+  price_history_count: number;
+}
+
+export interface SystemStats {
+  total_users: number;
+  total_admins: number;
+  disabled_users: number;
+  total_products: number;
+  active_users: number;
+  total_price_history: number;
+}
+

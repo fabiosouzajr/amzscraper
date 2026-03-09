@@ -1,5 +1,5 @@
 import sqlite3 from 'sqlite3';
-import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserWithPasswordHash, UserList, AuditLog, SystemConfig, UserRole } from '../models/types';
+import { Product, Category, PriceHistory, ProductWithPrice, PriceDrop, User, UserWithPasswordHash, UserList, AuditLog, SystemConfig, UserRole, UserStats, SystemStats } from '../models/types';
 import path from 'path';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
@@ -1615,6 +1615,118 @@ export class DatabaseService {
           updated_at: row.updated_at,
           updated_by: row.updated_by
         })));
+      });
+    });
+  }
+
+  async getUserStats(userId: number): Promise<UserStats> {
+    return new Promise((resolve, reject) => {
+      const sql = `
+        SELECT
+          COUNT(DISTINCT p.id) as product_count,
+          COUNT(DISTINCT l.id) as list_count,
+          COUNT(DISTINCT ph.id) as price_history_count
+        FROM users u
+        LEFT JOIN products p ON u.id = p.user_id
+        LEFT JOIN user_lists l ON u.id = l.user_id
+        LEFT JOIN price_history ph ON p.id = ph.product_id
+        WHERE u.id = ?
+        GROUP BY u.id
+      `;
+      this.db.get(sql, [userId], (err, row: any) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve({
+          product_count: row?.product_count || 0,
+          list_count: row?.list_count || 0,
+          price_history_count: row?.price_history_count || 0
+        });
+      });
+    });
+  }
+
+  async createUserWithRole(username: string, password: string, role: string): Promise<User> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Validate role is a valid UserRole
+        if (!['USER', 'ADMIN'].includes(role)) {
+          reject(new Error('Invalid role: must be USER or ADMIN'));
+          return;
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+        const sql = 'INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)';
+        this.db.run(sql, [username, passwordHash, role], function(err) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve({
+            id: this.lastID,
+            username,
+            role: role as any, // Validated above, will be converted to UserRole by database CHECK constraint
+            is_disabled: false,
+            created_at: new Date().toISOString()
+          });
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  async disableUser(userId: number): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const sql = 'UPDATE users SET is_disabled = 1, disabled_at = CURRENT_TIMESTAMP WHERE id = ?';
+      this.db.run(sql, [userId], function(err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(this.changes > 0);
+      });
+    });
+  }
+
+  async enableUser(userId: number): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const sql = 'UPDATE users SET is_disabled = 0, disabled_at = NULL WHERE id = ?';
+      this.db.run(sql, [userId], function(err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(this.changes > 0);
+      });
+    });
+  }
+
+  async getSystemStats(): Promise<SystemStats> {
+    return new Promise((resolve, reject) => {
+      const sql = `
+        SELECT
+          (SELECT COUNT(*) FROM users) as total_users,
+          (SELECT COUNT(*) FROM users WHERE role = 'ADMIN') as total_admins,
+          (SELECT COUNT(*) FROM users WHERE is_disabled = 1) as disabled_users,
+          (SELECT COUNT(*) FROM products) as total_products,
+          (SELECT COUNT(DISTINCT user_id) FROM products) as active_users,
+          (SELECT COUNT(*) FROM price_history) as total_price_history
+      `;
+      this.db.get(sql, [], (err, row: any) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve({
+          total_users: row?.total_users || 0,
+          total_admins: row?.total_admins || 0,
+          disabled_users: row?.disabled_users || 0,
+          total_products: row?.total_products || 0,
+          active_users: row?.active_users || 0,
+          total_price_history: row?.total_price_history || 0
+        });
       });
     });
   }
