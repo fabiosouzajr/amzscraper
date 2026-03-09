@@ -5,13 +5,14 @@ import { ProductList } from './components/ProductList';
 import { ProductSearch } from './components/ProductSearch';
 import { ProductDetail } from './components/ProductDetail';
 import { Config } from './components/Config';
+import { AdminPanel } from './components/AdminPanel';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { Auth } from './components/Auth';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Product } from './types';
 import './App.css';
 
-type View = 'dashboard' | 'products' | 'search' | 'detail' | 'config';
+type View = 'dashboard' | 'products' | 'search' | 'detail' | 'config' | 'admin';
 
 function AppContent() {
   const { t } = useTranslation();
@@ -73,6 +74,14 @@ function AppContent() {
           >
             {t('app.config')}
           </button>
+          {user && user.role === 'ADMIN' && (
+            <button
+              onClick={() => setCurrentView('admin')}
+              className={currentView === 'admin' ? 'active' : ''}
+            >
+              {t('app.admin')}
+            </button>
+          )}
           <div className="user-info">
             <span className="username">{user.username}</span>
             <button onClick={logout} className="logout-button">
@@ -121,6 +130,7 @@ function AppContent() {
           />
         )}
         {currentView === 'config' && <Config />}
+        {currentView === 'admin' && <AdminPanel />}
       </main>
     </div>
   );

@@ -5,6 +5,7 @@
     "products": "Produtos",
     "search": "Buscar",
     "config": "Configuração",
+    "admin": "Admin",
     "logout": "Sair",
     "loading": "Carregando..."
   },
@@ -173,5 +174,14 @@
     "portuguese": "Português",
     "cancel": "Cancelar",
     "save": "Salvar"
+  },
+  "admin": {
+    "title": "Painel de Administração",
+    "tabs": {
+      "users": "Usuários",
+      "stats": "Estatísticas",
+      "config": "Configuração",
+      "audit": "Log de Auditoria"
+    }
   }
 }

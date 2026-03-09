@@ -2482,3 +2482,51 @@
   }
 }
 
+/* Admin Panel Styles */
+.admin-panel {
+  padding: 2rem;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #232f3e;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e7e9ed;
+}
+
+.admin-tab {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #565959;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+
+.admin-tab:hover {
+  color: #232f3e;
+  background-color: #f7f8fa;
+}
+
+.admin-tab.active {
+  color: #ff9900;
+  border-bottom-color: #ff9900;
+  font-weight: 600;
+}
+
+.admin-content {
+  padding-top: 1rem;
+}
+
