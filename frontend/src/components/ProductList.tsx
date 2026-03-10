@@ -539,6 +539,16 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
           <div className="products-list">
             {filteredProducts.map((product) => (
               <div key={product.id} className="product-list-item">
+                <div className="product-thumbnail-wrapper">
+                  <img
+                    src={`https://images-na.ssl-images-amazon.com/images/P/${product.asin}.01._SCLZZZZZZZ_.jpg`}
+                    alt={product.description}
+                    className="product-thumbnail"
+                    onError={(e) => {
+                      (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                </div>
                 <div className="product-info">
                   {product.categories && product.categories.length > 0 && (
                     <div className="product-categories">

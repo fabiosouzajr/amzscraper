@@ -673,6 +673,20 @@
   background: #f9f9f9;
 }
 
+.product-thumbnail-wrapper {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  margin-right: 0.75rem;
+}
+
+.product-thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
 .product-card {
   background: white;
   border-radius: 8px;
@@ -1379,6 +1393,37 @@
   margin: 0;
 }
 
+.account-info-card {
+  background: #f8f9fa;
+  border: 1px solid #d5d9d9;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  max-width: 500px;
+}
+
+.account-info-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.4rem 0;
+}
+
+.account-info-row + .account-info-row {
+  border-top: 1px solid #e8eaed;
+}
+
+.account-info-label {
+  color: #565959;
+  font-size: 0.875rem;
+  min-width: 110px;
+}
+
+.account-info-value {
+  color: #232f3e;
+  font-weight: 500;
+}
+
 .password-change-form {
   max-width: 500px;
   margin-top: 1rem;
@@ -2066,6 +2111,27 @@
 .username {
   color: #232f3e;
   font-weight: 500;
+}
+
+.username-button {
+  background: none;
+  border: none;
+  color: #232f3e;
+  font-weight: 500;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.username-button:hover {
+  background: rgba(255, 153, 0, 0.12);
+  color: #ff9900;
+}
+
+.username-button.active {
+  color: #ff9900;
 }
 
 .logout-button {
@@ -3014,5 +3080,4 @@
   outline: none;
   border-color: #ff9900;
   box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
-}
 }
