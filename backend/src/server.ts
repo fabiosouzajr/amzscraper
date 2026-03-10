@@ -21,25 +21,6 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
 
-  // Ensure initial admin exists
-  const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME;
-  const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
-
-  if (initialAdminUsername && initialAdminPassword) {
-    try {
-      const existingAdmin = await dbService.getUserByUsername(initialAdminUsername);
-      if (!existingAdmin) {
-        await dbService.createAdminUser(initialAdminUsername, initialAdminPassword);
-        console.log(`✓ Initial admin user created: ${initialAdminUsername}`);
-      } else if (existingAdmin.role !== 'ADMIN') {
-        await dbService.setUserRole(existingAdmin.id, 'ADMIN');
-        console.log(`✓ Existing user promoted to admin: ${initialAdminUsername}`);
-      }
-    } catch (error) {
-      console.error('Error ensuring initial admin exists:', error);
-    }
-  }
-
   // Routes
   app.use('/api/auth', authRouter);
   app.use('/api/lists', listsRouter);
@@ -70,6 +51,25 @@ async function startServer() {
 
     // Wait for DB tables/migrations to finish before starting the scheduler
     await dbService.ready;
+
+    // Ensure initial admin exists (must run after DB is ready)
+    const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME;
+    const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
+
+    if (initialAdminUsername && initialAdminPassword) {
+      try {
+        const existingAdmin = await dbService.getUserByUsername(initialAdminUsername);
+        if (!existingAdmin) {
+          await dbService.createAdminUser(initialAdminUsername, initialAdminPassword);
+          console.log(`✓ Initial admin user created: ${initialAdminUsername}`);
+        } else if (existingAdmin.role !== 'ADMIN') {
+          await dbService.setUserRole(existingAdmin.id, 'ADMIN');
+          console.log(`✓ Existing user promoted to admin: ${initialAdminUsername}`);
+        }
+      } catch (error) {
+        console.error('Error ensuring initial admin exists:', error);
+      }
+    }
 
     // Start scheduler for automatic daily updates
     schedulerService.start();
