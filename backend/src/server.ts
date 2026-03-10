@@ -64,9 +64,12 @@ async function startServer() {
   }
 
   // Start server - listen on all interfaces (0.0.0.0) to allow Tailscale access
-  const server = app.listen(PORT, '0.0.0.0', () => {
+  const server = app.listen(PORT, '0.0.0.0', async () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Server accessible on all interfaces (including Tailscale)`);
+
+    // Wait for DB tables/migrations to finish before starting the scheduler
+    await dbService.ready;
 
     // Start scheduler for automatic daily updates
     schedulerService.start();

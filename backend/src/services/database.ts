@@ -12,8 +12,13 @@ const DB_DIR = path.dirname(DB_PATH);
 
 export class DatabaseService {
   private db: sqlite3.Database;
+  readonly ready: Promise<void>;
+  private resolveReady!: () => void;
 
   constructor() {
+    this.ready = new Promise<void>((resolve) => {
+      this.resolveReady = resolve;
+    });
     // Ensure database directory exists
     if (!fs.existsSync(DB_DIR)) {
       fs.mkdirSync(DB_DIR, { recursive: true });
@@ -1613,6 +1618,7 @@ export class DatabaseService {
         }
       });
     });
+    this.resolveReady();
   }
 
   async getConfig(key: string): Promise<string | null> {
