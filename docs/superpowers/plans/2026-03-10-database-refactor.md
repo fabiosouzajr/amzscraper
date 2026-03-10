@@ -1390,104 +1390,11 @@ git commit -m "refactor: add admin-repo (audit log, system config)"
 
 This is the capstone task. The new `database.ts` replaces the 1,861-line class with a ~70-line coordinator. All public methods come from the repos via `Object.assign`.
 
-- [ ] **Step 1: Replace `backend/src/services/database.ts` entirely**
+- [ ] **Step 1: Replace `backend/src/services/database.ts` entirely with the following content**
 
-```ts
-import sqlite3 from 'sqlite3';
-import path from 'path';
-import fs from 'fs';
+> **Key pattern:** `const db = new sqlite3.Database(DB_PATH, async (err) => { ... })` — assign to `const db` *before* the callback so `db` is captured in the closure and available inside the async body. Do NOT use `arguments[0]` (unavailable in arrow/async functions).
 
-import { createMigrations } from './db/migrations';
-import { createProductRepo, ProductRepo } from './db/product-repo';
-import { createUserRepo, UserRepo } from './db/user-repo';
-import { createListRepo, ListRepo } from './db/list-repo';
-import { createAdminRepo, AdminRepo } from './db/admin-repo';
 
-// DB file lives at <project-root>/database/products.db
-// __dirname is backend/src/services (source) or backend/dist/services (compiled)
-const DB_PATH = path.resolve(__dirname, '../../../database/products.db');
-const DB_DIR = path.dirname(DB_PATH);
-
-// The public interface of dbService is the union of all four repos.
-type AllRepos = ProductRepo & UserRepo & ListRepo & AdminRepo;
-
-export class DatabaseService {
-  readonly ready: Promise<void>;
-  private resolveReady!: () => void;
-  // Index signature allows Object.assign to spread repo methods onto this instance
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-
-  constructor() {
-    this.ready = new Promise<void>((resolve) => {
-      this.resolveReady = resolve;
-    });
-
-    if (!fs.existsSync(DB_DIR)) {
-      fs.mkdirSync(DB_DIR, { recursive: true });
-      console.log(`Created database directory: ${DB_DIR}`);
-    }
-
-    new sqlite3.Database(DB_PATH, async (err) => {
-      if (err) {
-        console.error('Error opening database:', err);
-        return;
-      }
-      console.log('Connected to SQLite database');
-      try {
-        const db = arguments[0] as sqlite3.Database; // captured in callback
-        await createMigrations(db).run();
-
-        // admin-repo owns getConfig; pass it to repos that need quota checks
-        const adminRepo = createAdminRepo(db);
-        const getConfig = adminRepo.getConfig.bind(adminRepo);
-
-        Object.assign(this, createProductRepo(db, getConfig));
-        Object.assign(this, createUserRepo(db));
-        Object.assign(this, createListRepo(db, getConfig));
-        Object.assign(this, adminRepo);
-
-        this.resolveReady();
-      } catch (migrationErr) {
-        console.error('Database migration failed:', migrationErr);
-        // Do NOT resolve — server will hang at `await dbService.ready` and surface the error
-      }
-    });
-  }
-}
-
-// Re-typed singleton: callers see the full method surface without `any`
-export const dbService = new DatabaseService() as DatabaseService & AllRepos;
-```
-
-> **Implementation note:** The `arguments[0]` trick inside an async callback does NOT work — `arguments` is not available in arrow functions or async functions. Use the pattern below instead. Replace the `new sqlite3.Database(...)` block with:
-
-```ts
-    const db = new sqlite3.Database(DB_PATH, async (err) => {
-      if (err) {
-        console.error('Error opening database:', err);
-        return;
-      }
-      console.log('Connected to SQLite database');
-      try {
-        await createMigrations(db).run();
-
-        const adminRepo = createAdminRepo(db);
-        const getConfig = adminRepo.getConfig.bind(adminRepo);
-
-        Object.assign(this, createProductRepo(db, getConfig));
-        Object.assign(this, createUserRepo(db));
-        Object.assign(this, createListRepo(db, getConfig));
-        Object.assign(this, adminRepo);
-
-        this.resolveReady();
-      } catch (migrationErr) {
-        console.error('Database migration failed:', migrationErr);
-      }
-    });
-```
-
-The full corrected file content is:
 
 ```ts
 import sqlite3 from 'sqlite3';
