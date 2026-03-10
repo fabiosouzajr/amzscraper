@@ -1,3 +1,6 @@
+// Load .env before anything else
+import 'dotenv/config';
+
 // Import logger first to add timestamps to all console output
 import './utils/logger';
 
