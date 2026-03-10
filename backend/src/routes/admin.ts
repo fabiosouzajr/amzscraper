@@ -3,8 +3,21 @@ import { AuthRequest } from '../middleware/auth';
 import { requireAdmin } from '../middleware/admin';
 import { dbService } from '../services/database';
 import bcrypt from 'bcrypt';
+import rateLimit from 'express-rate-limit';
+
+// Rate limiting for admin endpoints
+const adminRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each admin to 100 requests per 15 minutes
+  message: { error: 'Too many requests from this admin account, please try again later' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const router = Router();
+
+// Apply rate limiting to all admin routes
+router.use(adminRateLimit);
 
 // All routes require admin authentication
 router.use(requireAdmin);
