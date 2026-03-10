@@ -1573,7 +1573,9 @@ System scheduler started successfully
 
 No `SQLITE_ERROR: no such table` errors. No `Error setting up user schedulers` errors.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 4: Confirm the old 1,861-line class body is gone** — the file should now contain only the ~50-line facade shown in Step 1. Verify with `wc -l backend/src/services/database.ts` (expect ≤ 60 lines).
+
+- [ ] **Step 5: Commit**
 
 ```bash
 git add backend/src/services/database.ts
@@ -1600,10 +1602,18 @@ wc -l backend/src/services/database.ts backend/src/services/db/*.ts
 
 Expected: `database.ts` ≈ 50 lines; no individual repo file exceeds 600 lines.
 
-- [ ] **Step 3: Final commit**
+- [ ] **Step 3: End-to-end smoke test** — with the dev server running from Task 7 Step 3, confirm a route responds:
 
 ```bash
-git add -A
+curl -s http://localhost:3000/health
+```
+
+Expected: `{"status":"ok"}`
+
+- [ ] **Step 4: Final commit**
+
+```bash
+git add backend/src/services/
 git commit -m "refactor: complete database.ts split into focused repo modules
 
 - migrations.ts: flat async/await schema migrations
