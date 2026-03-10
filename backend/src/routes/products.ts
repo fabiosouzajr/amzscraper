@@ -191,6 +191,9 @@ router.post('/', async (req: Request, res: Response) => {
     res.status(201).json(product);
   } catch (error) {
     console.error('Error adding product:', error);
+    if (error instanceof Error && (error as any).code === 'QUOTA_EXCEEDED') {
+      return res.status(429).json({ error: error.message, code: 'QUOTA_EXCEEDED' });
+    }
     res.status(500).json({ error: 'Failed to add product: ' + (error instanceof Error ? error.message : 'Unknown error') });
   }
 });

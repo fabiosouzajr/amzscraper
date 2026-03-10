@@ -501,6 +501,18 @@ export class DatabaseService {
   async addProduct(userId: number, asin: string, description: string, categories?: string[]): Promise<Product> {
     return new Promise(async (resolve, reject) => {
       try {
+        // Check quota before adding product
+        const currentCount = await this.getProductCount(userId);
+        const maxQuota = await this.getConfig('quota_max_products');
+        const quotaLimit = maxQuota ? parseInt(maxQuota) : 100; // Default 100 if not set
+
+        if (currentCount >= quotaLimit) {
+          const error = new Error(`Quota exceeded: User has ${currentCount} products, maximum allowed is ${quotaLimit}`);
+          (error as any).code = 'QUOTA_EXCEEDED';
+          reject(error);
+          return;
+        }
+
         const sql = 'INSERT INTO products (user_id, asin, description) VALUES (?, ?, ?)';
         const dbService = this; // Capture this for async operations
         this.db.run(sql, [userId, asin, description], async function(err) {
@@ -508,21 +520,21 @@ export class DatabaseService {
             reject(err);
             return;
           }
-          
+
           const productId = this.lastID;
-          
+
           // Set categories if provided
           if (categories && categories.length > 0) {
             await dbService.setProductCategories(productId, categories);
           }
-          
+
           // Get product with categories
           const product = await dbService.getProductById(productId, userId);
           if (!product) {
             reject(new Error('Failed to retrieve created product'));
             return;
           }
-          
+
           resolve(product);
         });
       } catch (error) {
@@ -955,6 +967,19 @@ export class DatabaseService {
     });
   }
 
+  async getListCount(userId: number): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT COUNT(*) as count FROM user_lists WHERE user_id = ?';
+      this.db.get(sql, [userId], (err, row: { count: number } | undefined) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row ? row.count : 0);
+        }
+      });
+    });
+  }
+
   getDatabasePath(): string {
     return DB_PATH;
   }
@@ -1120,20 +1145,36 @@ export class DatabaseService {
 
   // List operations
   async createList(userId: number, name: string): Promise<UserList> {
-    return new Promise((resolve, reject) => {
-      const sql = 'INSERT INTO user_lists (user_id, name) VALUES (?, ?)';
-      this.db.run(sql, [userId, name], function(err) {
-        if (err) {
-          reject(err);
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Check quota before creating list
+        const currentCount = await this.getListCount(userId);
+        const maxQuota = await this.getConfig('quota_max_lists');
+        const quotaLimit = maxQuota ? parseInt(maxQuota) : 20; // Default 20 if not set
+
+        if (currentCount >= quotaLimit) {
+          const error = new Error(`Quota exceeded: User has ${currentCount} lists, maximum allowed is ${quotaLimit}`);
+          (error as any).code = 'QUOTA_EXCEEDED';
+          reject(error);
           return;
         }
-        resolve({
-          id: this.lastID,
-          user_id: userId,
-          name,
-          created_at: new Date().toISOString()
+
+        const sql = 'INSERT INTO user_lists (user_id, name) VALUES (?, ?)';
+        this.db.run(sql, [userId, name], function(err) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve({
+            id: this.lastID,
+            user_id: userId,
+            name,
+            created_at: new Date().toISOString()
+          });
         });
-      });
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 

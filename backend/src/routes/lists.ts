@@ -44,6 +44,9 @@ router.post('/', async (req: AuthRequest, res: Response) => {
       const list = await dbService.createList(req.userId, trimmedName);
       res.status(201).json(list);
     } catch (error: any) {
+      if (error.code === 'QUOTA_EXCEEDED') {
+        return res.status(429).json({ error: error.message, code: 'QUOTA_EXCEEDED' });
+      }
       if (error.message && error.message.includes('UNIQUE constraint')) {
         return res.status(409).json({ error: 'A list with this name already exists' });
       }
