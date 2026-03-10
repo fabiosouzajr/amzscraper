@@ -3,28 +3,63 @@ import { dbService } from './database';
 import { scraperService } from './scraper';
 
 export class SchedulerService {
-  private cronJob: cron.ScheduledTask | null = null;
+  private systemCronJob: cron.ScheduledTask | null = null;
+  private userCronJobs: Map<number, cron.ScheduledTask> = new Map();
   private isUpdating: boolean = false;
 
   start(schedule: string = '0 0 * * *'): void {
     // Default: run daily at midnight
-    if (this.cronJob) {
+    if (this.systemCronJob) {
       this.stop();
     }
 
-    console.log(`Starting scheduler with schedule: ${schedule}`);
-    this.cronJob = cron.schedule(schedule, async () => {
+    // Start system-level scheduler
+    console.log(`Starting system scheduler with schedule: ${schedule}`);
+    this.systemCronJob = cron.schedule(schedule, async () => {
       await this.updateAllPrices();
     });
+    console.log('System scheduler started successfully');
 
-    console.log('Scheduler started successfully');
+    // Start user-specific schedulers
+    this.setupUserSchedulers();
   }
 
   stop(): void {
-    if (this.cronJob) {
-      this.cronJob.stop();
-      this.cronJob = null;
-      console.log('Scheduler stopped');
+    if (this.systemCronJob) {
+      this.systemCronJob.stop();
+      this.systemCronJob = null;
+      console.log('System scheduler stopped');
+    }
+
+    // Stop all user schedulers
+    for (const [userId, job] of this.userCronJobs) {
+      job.stop();
+    }
+    this.userCronJobs.clear();
+    console.log(`Stopped ${this.userCronJobs.size} user scheduler(s)`);
+  }
+
+  async setupUserSchedulers(): Promise<void> {
+    try {
+      const usersWithSchedules = await dbService.getUsersWithEnabledSchedules();
+      console.log(`Found ${usersWithSchedules.length} user(s) with enabled schedules`);
+
+      // Stop existing user schedulers
+      for (const [userId, job] of this.userCronJobs) {
+        job.stop();
+      }
+      this.userCronJobs.clear();
+
+      // Start new user schedulers
+      for (const userSchedule of usersWithSchedules) {
+        console.log(`Setting up scheduler for user ${userSchedule.user_id} with cron: ${userSchedule.cron_expression}`);
+        const job = cron.schedule(userSchedule.cron_expression, async () => {
+          await this.updateUserPrices(userSchedule.user_id);
+        });
+        this.userCronJobs.set(userSchedule.user_id, job);
+      }
+    } catch (error) {
+      console.error('Error setting up user schedulers:', error);
     }
   }
 
@@ -144,8 +179,8 @@ export class SchedulerService {
 
       const completionMessage = `Price update completed for user ${user.username}: ${updated} updated, ${skipped} skipped, ${errors} errors`;
       console.log(completionMessage);
-      onProgress?.({ 
-        status: 'completed', 
+      onProgress?.({
+        status: 'completed',
         progress: 100,
         total: totalProducts,
         current: totalProducts,
@@ -153,6 +188,9 @@ export class SchedulerService {
         skipped,
         errors
       });
+
+      // Update last_run_at timestamp for user's schedule
+      await dbService.updateUserScheduleLastRun(userId);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error('Error during price update:', error);
@@ -255,7 +293,7 @@ export class SchedulerService {
   }
 
   isRunning(): boolean {
-    return this.cronJob !== null;
+    return this.systemCronJob !== null;
   }
 }
 

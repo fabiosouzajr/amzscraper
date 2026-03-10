@@ -91,6 +91,13 @@ export interface SystemConfig {
   updated_by?: number;
 }
 
+export interface UserSchedule {
+  user_id: number;
+  cron_expression: string | null;
+  enabled: boolean;
+  last_run_at: string | null;
+}
+
 export interface UserStats {
   product_count: number;
   list_count: number;

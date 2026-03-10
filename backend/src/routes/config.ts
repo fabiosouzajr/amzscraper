@@ -257,4 +257,64 @@ router.get('/export-database', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/config/schedule - Get user's schedule
+router.get('/schedule', async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthRequest;
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const schedule = await dbService.getUserSchedule(authReq.userId);
+    res.json(schedule || {
+      cron_expression: null,
+      enabled: false,
+      last_run_at: null
+    });
+  } catch (error) {
+    console.error('Error getting user schedule:', error);
+    res.status(500).json({ error: 'Failed to get user schedule' });
+  }
+});
+
+// PUT /api/config/schedule - Update user's schedule
+router.put('/schedule', async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthRequest;
+    if (!authReq.userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const { cron_expression, enabled } = req.body;
+
+    // Validate cron expression format (basic validation)
+    if (cron_expression !== null && cron_expression !== undefined) {
+      if (typeof cron_expression !== 'string') {
+        return res.status(400).json({ error: 'cron_expression must be a string' });
+      }
+      // Basic cron format validation: 5-6 space-separated parts
+      const parts = cron_expression.trim().split(/\s+/);
+      if (parts.length < 5 || parts.length > 6) {
+        return res.status(400).json({ error: 'Invalid cron expression format' });
+      }
+    }
+
+    if (typeof enabled !== 'boolean') {
+      return res.status(400).json({ error: 'enabled must be a boolean' });
+    }
+
+    await dbService.setUserSchedule(
+      authReq.userId,
+      cron_expression || null,
+      enabled
+    );
+
+    const updatedSchedule = await dbService.getUserSchedule(authReq.userId);
+    res.json(updatedSchedule);
+  } catch (error) {
+    console.error('Error updating user schedule:', error);
+    res.status(500).json({ error: 'Failed to update user schedule' });
+  }
+});
+
 export default router;

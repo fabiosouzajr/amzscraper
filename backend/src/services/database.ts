@@ -133,6 +133,16 @@ export class DatabaseService {
       )
     `;
 
+    const createUserScheduleTable = `
+      CREATE TABLE IF NOT EXISTS user_schedule (
+        user_id INTEGER PRIMARY KEY,
+        cron_expression TEXT,
+        enabled INTEGER DEFAULT 0,
+        last_run_at DATETIME,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    `;
+
     this.db.serialize(() => {
       // Create other tables first (users must exist before products due to foreign key)
       this.db.run(createUsersTable);
@@ -142,6 +152,7 @@ export class DatabaseService {
       this.db.run(createUserListsTable);
       this.db.run(createProductListsTable);
       this.db.run(createSystemConfigTable);
+      this.db.run(createUserScheduleTable);
 
       // Check if users table needs migration for role and is_disabled columns
       this.checkAndMigrateUsersTable(() => {
@@ -1656,6 +1667,72 @@ export class DatabaseService {
           updated_at: row.updated_at,
           updated_by: row.updated_by
         })));
+      });
+    });
+  }
+
+  // User schedule operations
+  async getUserSchedule(userId: number): Promise<{ cron_expression: string | null; enabled: boolean; last_run_at: string | null } | null> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT cron_expression, enabled, last_run_at FROM user_schedule WHERE user_id = ?';
+      this.db.get(sql, [userId], (err, row: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row ? {
+            cron_expression: row.cron_expression,
+            enabled: row.enabled === 1,
+            last_run_at: row.last_run_at
+          } : null);
+        }
+      });
+    });
+  }
+
+  async setUserSchedule(userId: number, cronExpression: string, enabled: boolean): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const sql = `
+        INSERT INTO user_schedule (user_id, cron_expression, enabled)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET
+          cron_expression = excluded.cron_expression,
+          enabled = excluded.enabled
+      `;
+      this.db.run(sql, [userId, cronExpression, enabled ? 1 : 0], function(err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  async updateUserScheduleLastRun(userId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const sql = 'UPDATE user_schedule SET last_run_at = CURRENT_TIMESTAMP WHERE user_id = ?';
+      this.db.run(sql, [userId], function(err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  async getUsersWithEnabledSchedules(): Promise<Array<{ user_id: number; cron_expression: string }>> {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT user_id, cron_expression FROM user_schedule WHERE enabled = 1 AND cron_expression IS NOT NULL';
+      this.db.all(sql, [], (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows.map(row => ({
+            user_id: row.user_id,
+            cron_expression: row.cron_expression
+          })));
+        }
       });
     });
   }
