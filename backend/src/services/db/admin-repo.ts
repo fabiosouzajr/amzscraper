@@ -42,12 +42,16 @@ export function createAdminRepo(db: sqlite3.Database) {
       } = {}
     ): Promise<AuditLog[]> {
       const { limit = 50, offset = 0, adminUserId, action, targetType } = options;
-      let sql = 'SELECT * FROM audit_log WHERE 1=1';
+      let sql = `
+        SELECT al.*, u.username as admin_username
+        FROM audit_log al
+        LEFT JOIN users u ON al.admin_user_id = u.id
+        WHERE 1=1`;
       const params: unknown[] = [];
-      if (adminUserId !== undefined) { sql += ' AND admin_user_id = ?'; params.push(adminUserId); }
-      if (action)     { sql += ' AND action = ?';      params.push(action); }
-      if (targetType) { sql += ' AND target_type = ?'; params.push(targetType); }
-      sql += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+      if (adminUserId !== undefined) { sql += ' AND al.admin_user_id = ?'; params.push(adminUserId); }
+      if (action)     { sql += ' AND al.action = ?';      params.push(action); }
+      if (targetType) { sql += ' AND al.target_type = ?'; params.push(targetType); }
+      sql += ' ORDER BY al.created_at DESC LIMIT ? OFFSET ?';
       params.push(limit, offset);
       return dbAll<AuditLog>(db, sql, params);
     },

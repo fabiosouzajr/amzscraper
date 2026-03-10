@@ -107,13 +107,26 @@ export function createUserRepo(db: sqlite3.Database) {
     },
 
     async getAllUsers(): Promise<User[]> {
-      const rows = await dbAll<any>(db, 'SELECT * FROM users ORDER BY created_at ASC');
+      const rows = await dbAll<any>(db, `
+        SELECT
+          u.id, u.username, u.role, u.is_disabled, u.created_at,
+          (SELECT COUNT(*) FROM products WHERE user_id = u.id) as product_count,
+          (SELECT COUNT(*) FROM user_lists WHERE user_id = u.id) as list_count,
+          (SELECT COUNT(*) FROM price_history ph
+           JOIN products p ON ph.product_id = p.id
+           WHERE p.user_id = u.id) as price_history_count
+        FROM users u
+        ORDER BY u.created_at ASC
+      `);
       return rows.map((r) => ({
         id: r.id,
         username: r.username,
         role: r.role as UserRole,
         is_disabled: Boolean(r.is_disabled),
         created_at: r.created_at,
+        product_count: r.product_count ?? 0,
+        list_count: r.list_count ?? 0,
+        price_history_count: r.price_history_count ?? 0,
       }));
     },
 
