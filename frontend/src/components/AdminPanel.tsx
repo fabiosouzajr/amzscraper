@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import { UserManagement } from './admin/UserManagement';
+import { SystemStats } from './admin/SystemStats';
+import { SystemConfig } from './admin/SystemConfig';
+import { AuditLog } from './admin/AuditLog';
 
 type AdminTab = 'users' | 'stats' | 'config' | 'audit';
 
@@ -53,21 +57,4 @@ export function AdminPanel() {
       </main>
     </div>
   );
-}
-
-// Placeholder components - implement in subsequent tasks
-function UserManagement() {
-  return <div>Users management coming soon...</div>;
-}
-
-function SystemStats() {
-  return <div>System stats coming soon...</div>;
-}
-
-function SystemConfig() {
-  return <div>System config coming soon...</div>;
-}
-
-function AuditLog() {
-  return <div>Audit log coming soon...</div>;
 }

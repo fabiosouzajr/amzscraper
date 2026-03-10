@@ -346,3 +346,88 @@ export const api = {
   },
 };
 
+// Admin API methods
+export const adminApi = {
+  getUsers: async (limit = 50, offset = 0, search?: string): Promise<User[]> => {
+    const params = new URLSearchParams({ limit: limit.toString(), offset: offset.toString() });
+    if (search) params.append('search', search);
+    const response = await fetch(`${API_BASE_URL}/admin/users?${params}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch users');
+    return response.json();
+  },
+
+  getUserStats: async (userId: number): Promise<User> => {
+    const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch user stats');
+    return response.json();
+  },
+
+  createUser: async (username: string, password: string, role: string): Promise<User> => {
+    const response = await fetch(`${API_BASE_URL}/admin/users`, {
+      method: 'POST',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, role })
+    });
+    if (!response.ok) throw new Error('Failed to create user');
+    return response.json();
+  },
+
+  disableUser: async (userId: number): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/disable`, {
+      method: 'PATCH',
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to disable user');
+    return response.json();
+  },
+
+  enableUser: async (userId: number): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/enable`, {
+      method: 'PATCH',
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to enable user');
+    return response.json();
+  },
+
+  resetPassword: async (userId: number, newPassword: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/reset-password`, {
+      method: 'POST',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newPassword })
+    });
+    if (!response.ok) throw new Error('Failed to reset password');
+    return response.json();
+  },
+
+  getSystemStats: async (): Promise<import('../types').SystemStats> => {
+    const response = await fetch(`${API_BASE_URL}/admin/stats`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch system stats');
+    return response.json();
+  },
+
+  getAllConfig: async (): Promise<import('../types').SystemConfig[]> => {
+    const response = await fetch(`${API_BASE_URL}/admin/config`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch config');
+    return response.json();
+  },
+
+  updateConfig: async (key: string, value: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/admin/config/${key}`, {
+      method: 'PUT',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ value })
+    });
+    if (!response.ok) throw new Error('Failed to update config');
+    return response.json();
+  }
+};
+

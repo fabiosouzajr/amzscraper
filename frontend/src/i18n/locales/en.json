@@ -182,6 +182,28 @@
       "stats": "Stats",
       "config": "Config",
       "audit": "Audit Log"
+    },
+    "audit": {
+      "title": "Audit Log",
+      "timestamp": "Timestamp",
+      "admin": "Admin",
+      "action": "Action",
+      "target": "Target",
+      "targetId": "Target ID",
+      "details": "Details",
+      "allTypes": "All Types",
+      "typeUser": "Users",
+      "typeConfig": "Config",
+      "typeProduct": "Products",
+      "action-create": "Create",
+      "action-delete": "Delete",
+      "action-update": "Update",
+      "allUsers": "All Users",
+      "target-none": "-",
+      "target-user": "User",
+      "target-config": "Config",
+      "target-product": "Product",
+      "confirmUpdate": "Are you sure you want to update?"
     }
   }
 }

@@ -182,6 +182,28 @@
       "stats": "Estatísticas",
       "config": "Configuração",
       "audit": "Log de Auditoria"
+    },
+    "audit": {
+      "title": "Log de Auditoria",
+      "timestamp": "Data/Hora",
+      "admin": "Admin",
+      "action": "Ação",
+      "target": "Alvo",
+      "targetId": "ID do Alvo",
+      "details": "Detalhes",
+      "allTypes": "Todos os Tipos",
+      "typeUser": "Usuários",
+      "typeConfig": "Configuração",
+      "typeProduct": "Produtos",
+      "action-create": "Criar",
+      "action-delete": "Excluir",
+      "action-update": "Atualizar",
+      "allUsers": "Todos os Usuários",
+      "target-none": "-",
+      "target-user": "Usuário",
+      "target-config": "Configuração",
+      "target-product": "Produto",
+      "confirmUpdate": "Tem certeza que deseja atualizar?"
     }
   }
 }

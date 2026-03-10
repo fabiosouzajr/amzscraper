@@ -57,3 +57,14 @@ export interface UserList {
   created_at: string;
 }
 
+export interface AuditLog {
+  id: number;
+  admin_user_id: number;
+  admin_username: string;
+  action: string;
+  target_type?: string;
+  target_id?: number;
+  details?: string;
+  created_at: string;
+}
+
