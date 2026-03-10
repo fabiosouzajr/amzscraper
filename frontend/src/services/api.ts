@@ -355,10 +355,11 @@ export const adminApi = {
       headers: getAuthHeaders()
     });
     if (!response.ok) throw new Error('Failed to fetch users');
-    return response.json();
+    const data = await response.json();
+    return data.users;
   },
 
-  getUserStats: async (userId: number): Promise<User> => {
+  getUserStats: async (userId: number): Promise<import('../types').UserStats> => {
     const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
       headers: getAuthHeaders()
     });
@@ -402,6 +403,26 @@ export const adminApi = {
     });
     if (!response.ok) throw new Error('Failed to reset password');
     return response.json();
+  },
+
+  getAuditLogs: async (limit = 100, offset = 0, targetType?: string, adminUserId?: number): Promise<import('../types').AuditLog[]> => {
+    const params = new URLSearchParams({ limit: limit.toString(), offset: offset.toString() });
+    if (targetType) params.append('target_type', targetType);
+    if (adminUserId !== undefined) params.append('admin_user_id', adminUserId.toString());
+    const response = await fetch(`${API_BASE_URL}/admin/audit?${params}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch audit logs');
+    return response.json();
+  },
+
+  setConfig: async (key: string, value: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/admin/config/${key}`, {
+      method: 'PUT',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ value })
+    });
+    if (!response.ok) throw new Error('Failed to update config');
   },
 
   getSystemStats: async (): Promise<import('../types').SystemStats> => {

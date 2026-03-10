@@ -21,7 +21,7 @@ export function UserManagement() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const data = await adminApi.getUsers(searchQuery);
+      const data = await adminApi.getUsers(50, 0, searchQuery || undefined);
       setUsers(data);
     } catch (error) {
       console.error('Failed to load users:', error);
@@ -33,7 +33,7 @@ export function UserManagement() {
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await adminApi.createUser(newUser.username, newUser.password);
+      await adminApi.createUser(newUser.username, newUser.password, 'USER');
       setNewUser({ username: '', password: '' });
       setShowCreateModal(false);
       loadUsers();

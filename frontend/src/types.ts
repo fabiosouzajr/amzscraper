@@ -42,12 +42,39 @@ export interface PriceDrop {
 
 export type UserRole = 'USER' | 'ADMIN';
 
+export interface UserStats {
+  product_count: number;
+  list_count: number;
+  price_history_count: number;
+}
+
+export interface SystemStats {
+  total_users: number;
+  total_admins: number;
+  disabled_users: number;
+  total_products: number;
+  active_users: number;
+  total_price_history: number;
+}
+
+export interface SystemConfig {
+  key: string;
+  value: string;
+  description?: string;
+  updated_at?: string;
+  updated_by?: number;
+}
+
 export interface User {
   id: number;
   username: string;
   role: UserRole;
   is_disabled?: boolean;
   created_at: string;
+  product_count?: number;
+  list_count?: number;
+  price_history_count?: number;
+  stats?: UserStats;
 }
 
 export interface UserList {

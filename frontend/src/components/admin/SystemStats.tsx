@@ -105,7 +105,7 @@ export function SystemStats() {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {userDistributionData.map((entry, index) => (
+                {userDistributionData.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
