@@ -836,10 +836,18 @@
 }
 
 .search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   padding: 1rem;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
   transition: background 0.2s;
+}
+
+.search-result-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .search-result-item:hover {
@@ -979,6 +987,26 @@
 
 .price-info {
   margin-bottom: 0.5rem;
+}
+
+.price-info-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.price-data {
+  flex: 1;
+}
+
+.product-thumbnail-wrapper--lg {
+  width: 120px;
+  height: 120px;
+}
+
+.product-thumbnail-wrapper--lg .product-thumbnail {
+  width: 120px;
+  height: 120px;
 }
 
 .current-price {

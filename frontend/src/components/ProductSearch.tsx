@@ -112,16 +112,28 @@ export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSea
                   }
                 }}
               >
-                <div className="result-asin">{product.asin}</div>
-                <a
-                  href={`https://www.amazon.com.br/dp/${product.asin}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="result-description product-link"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {product.description}
-                </a>
+                <div className="product-thumbnail-wrapper">
+                  <img
+                    src={`https://images-na.ssl-images-amazon.com/images/P/${product.asin}.01._SCLZZZZZZZ_.jpg`}
+                    alt={product.description}
+                    className="product-thumbnail"
+                    onError={(e) => {
+                      (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+                <div className="search-result-info">
+                  <div className="result-asin">{product.asin}</div>
+                  <a
+                    href={`https://www.amazon.com.br/dp/${product.asin}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="result-description product-link"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {product.description}
+                  </a>
+                </div>
               </div>
             ))}
           </div>

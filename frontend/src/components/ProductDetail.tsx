@@ -162,37 +162,51 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
       </div>
 
       <div className="price-info">
-        {product.current_price != null ? (
-          <>
-            <div className="current-price">
-              <span className="label">{t('productDetail.currentPrice')}</span>
-              <span className="value">{formatPrice(product.current_price)}</span>
-            </div>
-            {product.previous_price != null && (
-              <div className="price-comparison">
-                <div className="previous-price">
-                  <span className="label">{t('productDetail.previousPrice')}</span>
-                  <span className="value">{formatPrice(product.previous_price)}</span>
+        <div className="price-info-body">
+          <div className="product-thumbnail-wrapper product-thumbnail-wrapper--lg">
+            <img
+              src={`https://images-na.ssl-images-amazon.com/images/P/${product.asin}.01._SCLZZZZZZZ_.jpg`}
+              alt={product.description}
+              className="product-thumbnail"
+              onError={(e) => {
+                (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+              }}
+            />
+          </div>
+          <div className="price-data">
+            {product.current_price != null ? (
+              <>
+                <div className="current-price">
+                  <span className="label">{t('productDetail.currentPrice')}</span>
+                  <span className="value">{formatPrice(product.current_price)}</span>
                 </div>
-                {product.price_drop !== undefined && product.price_drop > 0 && (
-                  <div className="price-drop">
-                    <span className="label">{t('productDetail.priceDrop')}</span>
-                    <span className="value positive">
-                      -{formatPrice(product.price_drop)} ({product.price_drop_percentage !== undefined ? formatPercentage(product.price_drop_percentage) : ''})
-                    </span>
+                {product.previous_price != null && (
+                  <div className="price-comparison">
+                    <div className="previous-price">
+                      <span className="label">{t('productDetail.previousPrice')}</span>
+                      <span className="value">{formatPrice(product.previous_price)}</span>
+                    </div>
+                    {product.price_drop !== undefined && product.price_drop > 0 && (
+                      <div className="price-drop">
+                        <span className="label">{t('productDetail.priceDrop')}</span>
+                        <span className="value positive">
+                          -{formatPrice(product.price_drop)} ({product.price_drop_percentage !== undefined ? formatPercentage(product.price_drop_percentage) : ''})
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
+                {product.last_updated && (
+                  <div className="last-updated">
+                    {t('productDetail.lastUpdated')}: {formatDateTime(product.last_updated)}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="no-price-data">{t('productDetail.noPriceData')}</div>
             )}
-            {product.last_updated && (
-              <div className="last-updated">
-                {t('productDetail.lastUpdated')}: {formatDateTime(product.last_updated)}
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="no-price-data">{t('productDetail.noPriceData')}</div>
-        )}
+          </div>
+        </div>
       </div>
 
       {chartData.length > 0 && (
