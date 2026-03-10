@@ -299,7 +299,7 @@ router.get('/audit', async (req: AuthRequest, res: Response): Promise<void | Res
     const targetType = req.query.target_type as string;
     const adminUserId = req.query.admin_user_id ? parseInt(req.query.admin_user_id as string) : undefined;
 
-    const logs = await dbService.getAuditLogs(limit, offset, targetType, adminUserId);
+    const logs = await dbService.getAuditLogs({ limit, offset, targetType, adminUserId });
     res.json(logs);
   } catch (error) {
     console.error('Error fetching audit logs:', error);
