@@ -183,6 +183,27 @@
       "config": "Config",
       "audit": "Audit Log"
     },
+    "config":{
+      "title": "System Configuration",
+      "confirmUpdate": "Confirm Update?",
+      "quotaMaxProducts": "",
+      "quotaMaxLists": "",
+      "schedulerEnabled": "",
+      "schedulerCron": "",
+      "edit": "edit"
+    },
+    "users": {
+      "title": "user administration",
+      "username": "Username",
+      "role": "role",
+      "status": "status",
+      "products": "Products",
+      "lists": "Lists",
+      "failedToLoadStats": "Failed Loading Stats",
+      "priceHistory":"Price History",
+      "created" : ""
+
+    },
     "audit": {
       "title": "Audit Log",
       "timestamp": "Timestamp",
@@ -204,6 +225,17 @@
       "target-config": "Config",
       "target-product": "Product",
       "confirmUpdate": "Are you sure you want to update?"
+    },
+    "stats": {
+      "activeUsers" : "Active User(s)",
+      "totalUsers" : "Users",
+      "totalProducts" :"Total Products:",
+      "totalAdmins" : "Admins",
+      "disabledUsers" : "Disabled Users",
+      "products" : "Products",
+      "users" : "Users",
+      "priceHistory" :"Price History"
+
     }
   }
 }
