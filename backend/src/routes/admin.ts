@@ -3,6 +3,7 @@ import { AuthRequest } from '../middleware/auth';
 import { requireAdmin } from '../middleware/admin';
 import { dbService } from '../services/database';
 import bcrypt from 'bcrypt';
+import { validateUsername, validatePassword, validateIntegerId } from '../utils/validation';
 import rateLimit from 'express-rate-limit';
 
 // Rate limiting for admin endpoints
@@ -89,16 +90,17 @@ router.post('/users', async (req: AuthRequest, res: Response): Promise<void | Re
   try {
     const { username, password, role } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password are required' });
+    // Validate input using validation utilities
+    if (!validateUsername(username)) {
+      return res.status(400).json({ error: 'Username must be 3-30 characters and contain only alphanumeric, underscore, or dash' });
     }
 
-    if (username.length < 3) {
-      return res.status(400).json({ error: 'Username must be at least 3 characters' });
-    }
-
-    if (password.length < 6) {
+    if (!validatePassword(password)) {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    if (role && !['USER', 'ADMIN'].includes(role.toUpperCase())) {
+      return res.status(400).json({ error: 'Role must be either USER or ADMIN' });
     }
 
     // Check if user already exists
@@ -108,7 +110,7 @@ router.post('/users', async (req: AuthRequest, res: Response): Promise<void | Re
     }
 
     // Create user with specified role (default to USER)
-    const user = await dbService.createUserWithRole(username, password, role || 'USER');
+    const user = await dbService.createUserWithRole(username, password, role?.toUpperCase() || 'USER');
 
     // Log audit
     const adminUserId = ensureAuthenticated(req, res);
@@ -117,7 +119,7 @@ router.post('/users', async (req: AuthRequest, res: Response): Promise<void | Re
       'CREATE_USER',
       'USER',
       user.id,
-      `Created user ${username} with role ${role || 'USER'}`
+      `Created user ${username} with role ${role?.toUpperCase() || 'USER'}`
     );
 
     res.status(201).json(user);
@@ -201,7 +203,11 @@ router.post('/users/:id/reset-password', async (req: AuthRequest, res: Response)
       return res.status(400).json({ error: 'New password is required' });
     }
 
-    if (newPassword.length < 6) {
+    if (!validateIntegerId(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    if (!validatePassword(newPassword)) {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
