@@ -14,7 +14,7 @@ export function AdminPanel() {
   const [activeTab, setActiveTab] = useState<AdminTab>('users');
 
   if (!user || user.role !== 'ADMIN') {
-    return <div>Access denied</div>;
+    return <div>{t('admin.accessDenied')}</div>;
   }
 
   return (

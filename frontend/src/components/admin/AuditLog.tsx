@@ -87,7 +87,7 @@ export function AuditLog() {
       </div>
 
       {loading ? (
-        <div className="loading">Loading...</div>
+        <div className="loading">{t('admin.audit.loading')}</div>
       ) : (
         <table className="admin-table">
           <thead>
@@ -103,7 +103,7 @@ export function AuditLog() {
           <tbody>
             {filteredLogs.length === 0 ? (
               <tr>
-                <td colSpan={6}>No audit logs found</td>
+                <td colSpan={6}>{t('admin.audit.noLogsFound')}</td>
               </tr>
             ) : (
               filteredLogs.map((log) => (

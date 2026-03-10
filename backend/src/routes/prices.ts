@@ -39,6 +39,7 @@ router.post('/update', async (req: AuthRequest, res: Response) => {
       updated?: number;
       skipped?: number;
       errors?: number;
+      errorMessage?: string;
     }) => {
       res.write(`data: ${JSON.stringify(progress)}\n\n`);
     };
@@ -53,7 +54,7 @@ router.post('/update', async (req: AuthRequest, res: Response) => {
         console.error('Error in price update:', error);
         sendProgress({ 
           status: 'error', 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+          errorMessage: error instanceof Error ? error.message : 'Unknown error'
         });
         res.end();
       });

@@ -127,6 +127,9 @@
     "failedToExport": "Failed to export ASINs",
     "failedToExportDatabase": "Failed to export database",
     "account": "Account",
+    "username": "Username",
+    "role": "Role",
+    "memberSince": "Member since",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
@@ -177,35 +180,59 @@
   },
   "admin": {
     "title": "Admin Panel",
+    "accessDenied": "Access denied",
     "tabs": {
       "users": "Users",
       "stats": "Stats",
       "config": "Config",
       "audit": "Audit Log"
     },
-    "config":{
+    "config": {
       "title": "System Configuration",
-      "confirmUpdate": "Confirm Update?",
-      "quotaMaxProducts": "",
-      "quotaMaxLists": "",
-      "schedulerEnabled": "",
-      "schedulerCron": "",
-      "edit": "edit"
+      "confirmUpdate": "Are you sure you want to update \"{{key}}\"?",
+      "quotaMaxProducts": "Max Products per User",
+      "quotaMaxLists": "Max Lists per User",
+      "schedulerEnabled": "Scheduler Enabled",
+      "schedulerCron": "Scheduler Cron Expression",
+      "edit": "Edit",
+      "loading": "Loading...",
+      "noConfigFound": "No configuration found",
+      "tableKey": "Setting",
+      "tableValue": "Value",
+      "tableDescription": "Description",
+      "tableActions": "Actions"
     },
     "users": {
-      "title": "user administration",
+      "title": "User Administration",
+      "loading": "Loading...",
       "username": "Username",
-      "role": "role",
-      "status": "status",
+      "role": "Role",
+      "status": "Status",
       "products": "Products",
       "lists": "Lists",
-      "failedToLoadStats": "Failed Loading Stats",
-      "priceHistory":"Price History",
-      "created" : ""
-
+      "priceHistory": "Price History",
+      "createdAt": "Created At",
+      "actions": "Actions",
+      "failedToLoadStats": "Failed to load statistics",
+      "createUser": "Create User",
+      "searchPlaceholder": "Search users...",
+      "disabled": "Disabled",
+      "active": "Active",
+      "viewStats": "View Stats",
+      "enable": "Enable",
+      "disable": "Disable",
+      "newPassword": "New Password",
+      "passwordPlaceholder": "Minimum 6 characters",
+      "userStats": "Stats: {{username}}",
+      "noUsersFound": "No users found",
+      "confirmDisable": "Are you sure you want to disable this user?",
+      "confirmResetPassword": "Are you sure you want to reset the password for this user?",
+      "passwordReset": "Password reset successfully"
     },
     "audit": {
       "title": "Audit Log",
+      "loading": "Loading...",
+      "noLogsFound": "No audit logs found",
       "timestamp": "Timestamp",
       "admin": "Admin",
       "action": "Action",
@@ -227,15 +254,22 @@
       "confirmUpdate": "Are you sure you want to update?"
     },
     "stats": {
-      "activeUsers" : "Active User(s)",
-      "totalUsers" : "Users",
-      "totalProducts" :"Total Products:",
-      "totalAdmins" : "Admins",
-      "disabledUsers" : "Disabled Users",
-      "products" : "Products",
-      "users" : "Users",
-      "priceHistory" :"Price History"
-
+      "title": "System Statistics",
+      "loading": "Loading...",
+      "failedToLoad": "Failed to load statistics",
+      "activeUsers": "Active User(s)",
+      "totalUsers": "Users",
+      "totalProducts": "Total Products",
+      "totalAdmins": "Admins",
+      "disabledUsers": "Disabled Users",
+      "products": "Products",
+      "users": "Users",
+      "priceHistory": "Price History",
+      "admins": "Admins",
+      "regularUsers": "Regular Users",
+      "totalPriceHistory": "Total Price History",
+      "overviewChart": "Overview",
+      "userDistribution": "User Distribution"
     }
   }
 }

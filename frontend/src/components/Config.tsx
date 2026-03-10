@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 interface DatabaseInfo {
   productCount: number;
@@ -10,6 +11,7 @@ interface DatabaseInfo {
 
 export function Config() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [exporting, setExporting] = useState(false);
   const [exportingDb, setExportingDb] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -350,6 +352,22 @@ export function Config() {
           {activeSection === 'account' && (
             <div id="account" className="config-section">
             <h3>{t('config.account')}</h3>
+            {user && (
+              <div className="account-info-card">
+                <div className="account-info-row">
+                  <span className="account-info-label">{t('config.username')}</span>
+                  <span className="account-info-value">{user.username}</span>
+                </div>
+                <div className="account-info-row">
+                  <span className="account-info-label">{t('config.role')}</span>
+                  <span className={`role-badge role-${user.role?.toLowerCase()}`}>{user.role}</span>
+                </div>
+                <div className="account-info-row">
+                  <span className="account-info-label">{t('config.memberSince')}</span>
+                  <span className="account-info-value">{new Date(user.created_at).toLocaleDateString()}</span>
+                </div>
+              </div>
+            )}
             <form onSubmit={handleChangePassword} className="password-change-form">
               <div className="form-group">
                 <label htmlFor="currentPassword">{t('config.currentPassword')}</label>

@@ -19,6 +19,10 @@ export class DatabaseService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 
+  getDatabasePath(): string {
+    return DB_PATH;
+  }
+
   constructor() {
     this.ready = new Promise<void>((resolve) => {
       this.resolveReady = resolve;

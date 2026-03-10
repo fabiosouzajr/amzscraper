@@ -123,7 +123,7 @@ export function UserManagement() {
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={8}>No users found</td>
+                <td colSpan={8}>{t('admin.users.noUsersFound')}</td>
               </tr>
             ) : (
               users.map((user) => (

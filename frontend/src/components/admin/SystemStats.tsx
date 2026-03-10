@@ -27,11 +27,11 @@ export function SystemStats() {
   };
 
   if (loading) {
-    return <div className="loading">{t('admin.users.loading')}</div>;
+    return <div className="loading">{t('admin.stats.loading')}</div>;
   }
 
   if (!stats) {
-    return <div>{t('admin.users.failedToLoadStats')}</div>;
+    return <div>{t('admin.stats.failedToLoad')}</div>;
   }
 
   // Prepare data for charts

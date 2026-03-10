@@ -89,7 +89,7 @@ export function SystemConfig() {
   };
 
   if (loading) {
-    return <div className="loading">{t('admin.users.loading')}</div>;
+    return <div className="loading">{t('admin.config.loading')}</div>;
   }
 
   return (
@@ -101,16 +101,16 @@ export function SystemConfig() {
       <table className="admin-table">
         <thead>
           <tr>
-            <th>{t('admin.config.title')}</th>
-            <th>{t('admin.config.title')}</th>
-            <th>{t('admin.config.title')}</th>
-            <th>{t('admin.config.title')}</th>
+            <th>{t('admin.config.tableKey')}</th>
+            <th>{t('admin.config.tableValue')}</th>
+            <th>{t('admin.config.tableDescription')}</th>
+            <th>{t('admin.config.tableActions')}</th>
           </tr>
         </thead>
         <tbody>
           {configs.length === 0 ? (
             <tr>
-              <td colSpan={4}>No configuration found</td>
+              <td colSpan={4}>{t('admin.config.noConfigFound')}</td>
             </tr>
           ) : (
             configs.map((config) => (

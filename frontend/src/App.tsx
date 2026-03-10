@@ -83,7 +83,13 @@ function AppContent() {
             </button>
           )}
           <div className="user-info">
-            <span className="username">{user.username}</span>
+            <button
+              className={`username-button ${currentView === 'config' ? 'active' : ''}`}
+              onClick={() => setCurrentView('config')}
+              title={user.username}
+            >
+              {user.username}
+            </button>
             <button onClick={logout} className="logout-button">
               {t('app.logout')}
             </button>
