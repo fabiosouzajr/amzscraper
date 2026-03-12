@@ -9,7 +9,10 @@ implement named lists so user can better organize products.
 
 
 There are several issues that need to be addressed:
+
+## asins import process feedback
 1 Once the user begins the process of importing ASINS (products), if the user clicks away there is no more feedback of the process. Fix this in order to provide the user with feedback until the process finishes.
+## Export data error
 2 explain why the "export data" feature throws the errors and fix it:
 GET http://localhost:5174/api/config/export-asins 401 (Unauthorized)
 handleExportASINs @ Config.tsx:54
@@ -30,6 +33,8 @@ dispatchEvent @ chunk-LPF6KSF2.js?v=027594c8:5478
 dispatchDiscreteEvent @ chunk-LPF6KSF2.js?v=027594c8:5455
 installHook.js:1 Export error: Error: Authentication required
     at handleExportASINs (Config.tsx:58:15)
+
+## frontend enhancements
 3 in the "manage products" page:
 - move the "Manage Products" to the center of the page
 - stylize the "import ASINS" button, adding an icon with indication of csv file, and move it above the "lists" component
@@ -37,4 +42,6 @@ installHook.js:1 Export error: Error: Authentication required
 - change the category filter to display the category list with a tree like structure.
 4 in the "Search Products" page:
 - implement the newly modified category filter above the search textbox
-in the 
+
+
+
