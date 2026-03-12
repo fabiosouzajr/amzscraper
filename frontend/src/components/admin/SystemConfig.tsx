@@ -31,15 +31,32 @@ export function SystemConfig() {
     }
   };
 
+  // Convert "M H * * *" daily cron to "HH:MM"
+  const cronToTime = (cron: string): string => {
+    const parts = cron.trim().split(/\s+/);
+    if (parts.length < 2) return '00:00';
+    const minute = parseInt(parts[0], 10);
+    const hour = parseInt(parts[1], 10);
+    if (isNaN(minute) || isNaN(hour)) return '00:00';
+    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+  };
+
+  // Convert "HH:MM" back to "M H * * *" daily cron
+  const timeToCron = (time: string): string => {
+    const [h, m] = time.split(':').map(Number);
+    return `${m ?? 0} ${h ?? 0} * * *`;
+  };
+
   const handleEdit = (config: ConfigItem) => {
     setEditingKey(config.key);
-    setEditValue(config.value);
+    setEditValue(config.key === 'scheduler_cron' ? cronToTime(config.value) : config.value);
   };
 
   const handleSave = async (key: string) => {
     if (!confirm(t('admin.config.confirmUpdate', { key }))) return;
     try {
-      await adminApi.setConfig(key, editValue);
+      const valueToSave = key === 'scheduler_cron' ? timeToCron(editValue) : editValue;
+      await adminApi.setConfig(key, valueToSave);
       setEditingKey(null);
       loadConfigs();
     } catch (error) {
@@ -54,16 +71,26 @@ export function SystemConfig() {
 
   const getConfigLabel = (key: string) => {
     const labels: Record<string, string> = {
-      'quota.max_products': t('admin.config.quotaMaxProducts'),
-      'quota.max_lists': t('admin.config.quotaMaxLists'),
-      'scheduler.enabled': t('admin.config.schedulerEnabled'),
-      'scheduler.cron': t('admin.config.schedulerCron')
+      'quota_max_products': t('admin.config.quotaMaxProducts'),
+      'quota_max_lists': t('admin.config.quotaMaxLists'),
+      'scheduler_enabled': t('admin.config.schedulerEnabled'),
+      'scheduler_cron': t('admin.config.schedulerCron')
     };
     return labels[key] || key;
   };
 
   const renderValueInput = (config: ConfigItem) => {
     if (editingKey === config.key) {
+      if (config.key === 'scheduler_cron') {
+        return (
+          <input
+            type="time"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            className="config-input"
+          />
+        );
+      }
       const isBoolean = config.value.toLowerCase() === 'true' || config.value.toLowerCase() === 'false';
       if (isBoolean) {
         return (
@@ -85,7 +112,8 @@ export function SystemConfig() {
         />
       );
     }
-    return <span className="config-value">{config.value}</span>;
+    const displayValue = config.key === 'scheduler_cron' ? cronToTime(config.value) : config.value;
+    return <span className="config-value">{displayValue}</span>;
   };
 
   if (loading) {

@@ -292,24 +292,21 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
           </div>
         )}
         <div className="product-list-content">
-          {/* Add product + category filter side by side */}
-          <div className="add-and-filter-row">
-            <div className="add-product-section">
-              <h3>{t('products.addNew')}</h3>
-              <ASINInput onAdd={handleAddProduct} isValidating={isValidating} error={error} successMessage={successMessage} />
-            </div>
-            <div className="category-filter-panel">
-              <label className="category-filter-label">{t('products.filterByCategory')}:</label>
-              <CategoryTreeFilter
-                selectedCategory={selectedCategory}
-                onChange={setSelectedCategory}
-              />
-            </div>
+          <div className="add-product-section">
+            <h3>{t('products.addNew')}</h3>
+            <ASINInput onAdd={handleAddProduct} isValidating={isValidating} error={error} successMessage={successMessage} />
           </div>
 
           <div className="products-section">
             <div className="products-section-header">
               <h3>{t('products.trackedProducts')} ({selectedListId ? filteredProducts.length : totalCount}{selectedListId ? ` / ${totalCount}` : ''})</h3>
+              <div className="category-filter-panel">
+                <label className="category-filter-label">{t('products.filterByCategory')}:</label>
+                <CategoryTreeFilter
+                  selectedCategory={selectedCategory}
+                  onChange={setSelectedCategory}
+                />
+              </div>
             </div>
             {filteredProducts.length === 0 ? (
               <p className="empty-state">
