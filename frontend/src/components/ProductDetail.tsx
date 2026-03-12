@@ -69,9 +69,9 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
     );
   }
 
-  // Get price history for chart
+  // Get price history for chart - reverse DESC array to chronological order (oldest left, newest right)
   const chartData = product.price_history && product.price_history.length > 0
-    ? product.price_history.map((ph) => ({
+    ? [...product.price_history].reverse().map((ph) => ({
         date: formatDate(ph.date),
         price: ph.price
       }))

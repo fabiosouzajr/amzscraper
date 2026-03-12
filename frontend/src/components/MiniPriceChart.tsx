@@ -13,8 +13,8 @@ export function MiniPriceChart({ priceHistory, height = 80 }: MiniPriceChartProp
     return null;
   }
 
-  // Prepare data for the chart - limit to last 20 data points for performance
-  const recentHistory = priceHistory.slice(-20);
+  // Prepare data for the chart - take 20 most recent (array is DESC from API), reverse to chronological order
+  const recentHistory = priceHistory.slice(0, 20).reverse();
   const chartData = recentHistory.map((ph) => ({
     date: formatDateShort(ph.date),
     price: ph.price
