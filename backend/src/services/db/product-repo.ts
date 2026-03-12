@@ -55,6 +55,53 @@ export function createProductRepo(
       return rows.map((r) => ({ ...r, level: 0 }));
     },
 
+    async getCategoryTree(): Promise<{ id: number; name: string; children: { id: number; name: string }[] }[]> {
+      // Get all parent→child relationships from co-occurrence in product breadcrumbs
+      const edges = await dbAll<{ parent_id: number; parent_name: string; child_id: number; child_name: string }>(
+        db,
+        `SELECT DISTINCT
+           pc1.category_id AS parent_id, c1.name AS parent_name,
+           pc2.category_id AS child_id,  c2.name AS child_name
+         FROM product_categories pc1
+         JOIN categories c1 ON c1.id = pc1.category_id
+         JOIN product_categories pc2 ON pc2.product_id = pc1.product_id
+                                     AND pc2.level = pc1.level + 1
+         JOIN categories c2 ON c2.id = pc2.category_id
+         ORDER BY c1.name, c2.name`,
+        []
+      );
+
+      // Find all IDs that appear as a child (they are not root nodes)
+      const childIds = new Set(edges.map(e => e.child_id));
+
+      // Build map: parent_id -> { id, name, children[] }
+      const nodeMap = new Map<number, { id: number; name: string; children: { id: number; name: string }[] }>();
+      for (const edge of edges) {
+        if (!nodeMap.has(edge.parent_id)) {
+          nodeMap.set(edge.parent_id, { id: edge.parent_id, name: edge.parent_name, children: [] });
+        }
+        const parent = nodeMap.get(edge.parent_id)!;
+        if (!parent.children.some(c => c.id === edge.child_id)) {
+          parent.children.push({ id: edge.child_id, name: edge.child_name });
+        }
+      }
+
+      // Root nodes = nodes that appear as parent but never as a child
+      const roots = Array.from(nodeMap.values()).filter(n => !childIds.has(n.id));
+
+      // Also include orphan categories (no relationships at all) as roots
+      const allCats = await dbAll<{ id: number; name: string }>(db, 'SELECT id, name FROM categories ORDER BY name ASC', []);
+      const seenIds = new Set([...nodeMap.keys(), ...childIds]);
+      for (const cat of allCats) {
+        if (!seenIds.has(cat.id)) {
+          roots.push({ id: cat.id, name: cat.name, children: [] });
+        }
+      }
+
+      roots.sort((a, b) => a.name.localeCompare(b.name));
+      return roots;
+    },
+
     async addProduct(
       userId: number, asin: string, description: string, categories?: string[]
     ): Promise<Product> {

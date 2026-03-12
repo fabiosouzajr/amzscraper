@@ -4,6 +4,12 @@ export interface Category {
   level: number;
 }
 
+export interface CategoryTreeNode {
+  id: number;
+  name: string;
+  children: { id: number; name: string }[];
+}
+
 export interface Product {
   id: number;
   asin: string;

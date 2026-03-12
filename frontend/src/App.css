@@ -3109,3 +3109,285 @@
   border-color: #ff9900;
   box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
 }
+
+/* ── Import Progress Banner (global, persists across views) ─────────────── */
+.import-progress-banner {
+  background: #232f3e;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.import-progress-banner-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.import-progress-banner-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.import-banner-asin {
+  font-family: monospace;
+  color: #ff9900;
+  font-weight: 600;
+}
+
+.import-progress-banner-bar-wrapper {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.import-progress-banner-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #ff9900 0%, #ffaa00 100%);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.import-progress-banner-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.import-progress-banner-stats .progress-stat {
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+}
+
+.import-progress-banner-stats .progress-stat.success { color: #6fcf8e; }
+.import-progress-banner-stats .progress-stat.skipped  { color: #ff9900; }
+.import-progress-banner-stats .progress-stat.failed   { color: #ff6b6b; }
+
+/* ── ProductList title centered ─────────────────────────────────────────── */
+.product-list-title {
+  text-align: center;
+  color: #232f3e;
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+/* ── Import button (CSV styled) above layout ────────────────────────────── */
+.import-button-csv {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #232f3e;
+  color: white;
+  border: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.import-button-csv:hover:not(:disabled) {
+  background: #1a2532;
+  transform: translateY(-1px);
+}
+
+.import-button-csv.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.csv-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ── Add product + category filter side by side ─────────────────────────── */
+.add-and-filter-row {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.add-and-filter-row .add-product-section {
+  flex: 0 0 calc(50% - 0.75rem);
+  min-width: 260px;
+  max-width: 480px;
+  margin-bottom: 0;
+}
+
+.category-filter-panel {
+  flex: 0 0 calc(50% - 0.75rem);
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-top: 0.35rem;
+}
+
+.category-filter-label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+/* ── Category Tree Filter (shared between ProductList and ProductSearch) ─── */
+.cat-tree-filter {
+  position: relative;
+  width: 100%;
+}
+
+.cat-tree-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0.9rem;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s;
+  gap: 0.5rem;
+  font-family: inherit;
+  color: #333;
+}
+
+.cat-tree-trigger:hover,
+.cat-tree-trigger:focus {
+  outline: none;
+  border-color: #ff9900;
+}
+
+.cat-tree-trigger.has-value {
+  border-color: #ff9900;
+  color: #232f3e;
+  font-weight: 500;
+}
+
+.cat-tree-trigger-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cat-tree-trigger-arrow {
+  font-size: 0.65rem;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.cat-tree-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  z-index: 200;
+  overflow: hidden;
+}
+
+.cat-tree-all-row {
+  padding: 0.55rem 0.9rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: #555;
+  border-bottom: 1px solid #eee;
+  transition: background 0.15s;
+}
+
+.cat-tree-all-row:hover { background: #f5f5f5; }
+.cat-tree-all-row.selected {
+  background: #fff3e0;
+  color: #ff9900;
+  font-weight: 600;
+}
+
+.cat-tree-scroll {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.cat-tree-node { }
+
+.cat-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 34px;
+  transition: background 0.15s;
+}
+
+.cat-tree-row:hover { background: #f5f5f5; }
+
+.cat-tree-row.selected {
+  background: #fff3e0;
+}
+
+.cat-tree-expand {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  font-size: 0.7rem;
+  color: #999;
+  flex-shrink: 0;
+  line-height: 1;
+  width: 16px;
+}
+
+.cat-tree-leaf-icon {
+  width: 16px;
+  text-align: center;
+  color: #ccc;
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+.cat-tree-label {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #333;
+  text-align: left;
+  padding: 0.4rem 0.5rem 0.4rem 0;
+  flex: 1;
+  font-family: inherit;
+}
+
+.cat-tree-row.selected .cat-tree-label {
+  color: #e07800;
+  font-weight: 600;
+}
+
+.cat-tree-label:hover { color: #1a4d7a; }
+
+/* ── Search page category filter ────────────────────────────────────────── */
+.search-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
+}

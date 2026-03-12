@@ -96,6 +96,17 @@ router.get('/categories', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/products/categories/tree - Get categories as a hierarchy tree
+router.get('/categories/tree', async (req: Request, res: Response) => {
+  try {
+    const tree = await dbService.getCategoryTree();
+    res.json(tree);
+  } catch (error) {
+    console.error('Error fetching category tree:', error);
+    res.status(500).json({ error: 'Failed to fetch category tree' });
+  }
+});
+
 // GET /api/products/ids/sorted - Get all product IDs sorted alphabetically
 router.get('/ids/sorted', async (req: Request, res: Response) => {
   try {

@@ -50,8 +50,11 @@ export function Config() {
     try {
       setExporting(true);
       setError(null);
-      
-      const response = await fetch('/api/config/export-asins');
+
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('/api/config/export-asins', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
       
       if (!response.ok) {
         const errorData = await response.json();

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { Product } from '../types';
+import { CategoryTreeFilter } from './CategoryTreeFilter';
 
 interface ProductSearchProps {
   onSelectProduct: (product: Product) => void;
@@ -11,6 +12,7 @@ interface ProductSearchProps {
 export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSearchProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [results, setResults] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,10 +22,10 @@ export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSea
   const [isSearchMode, setIsSearchMode] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const loadRecentProducts = async (page: number = 1) => {
+  const loadRecentProducts = async (page: number = 1, category?: string) => {
     try {
       setLoading(true);
-      const response = await api.getProducts(undefined, page, pageSize);
+      const response = await api.getProducts(category || selectedCategory || undefined, page, pageSize);
       setResults(response.products);
       setTotalPages(response.pagination.totalPages);
       setTotalCount(response.pagination.totalCount);
@@ -37,13 +39,11 @@ export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSea
   };
 
   useEffect(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (query.trim() === '') {
       setIsSearchMode(false);
-      loadRecentProducts(1);
+      loadRecentProducts(1, selectedCategory);
       setCurrentPage(1);
       return;
     }
@@ -52,7 +52,7 @@ export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSea
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
       try {
-        const data = await api.searchProducts(query);
+        const data = await api.searchProducts(query, selectedCategory || undefined);
         setResults(data);
         setTotalPages(1);
         setTotalCount(data.length);
@@ -68,12 +68,10 @@ export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSea
     }, 300);
 
     return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
+      if (debounceRef.current) clearTimeout(debounceRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  }, [query, selectedCategory]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -83,6 +81,13 @@ export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSea
 
   return (
     <div className="product-search">
+      <div className="search-filters">
+        <label className="category-filter-label">{t('products.filterByCategory')}:</label>
+        <CategoryTreeFilter
+          selectedCategory={selectedCategory}
+          onChange={(cat) => { setSelectedCategory(cat); setCurrentPage(1); }}
+        />
+      </div>
       <input
         type="text"
         value={query}
@@ -163,4 +168,3 @@ export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSea
     </div>
   );
 }
-

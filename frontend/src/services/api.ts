@@ -1,4 +1,4 @@
-import { Product, ProductWithPrice, PriceDrop, Category, User, UserList } from '../types';
+import { Product, ProductWithPrice, PriceDrop, Category, CategoryTreeNode, User, UserList } from '../types';
 
 const API_BASE_URL = '/api';
 
@@ -214,6 +214,16 @@ export const api = {
     });
     if (!response.ok) {
       throw new Error('Failed to fetch categories');
+    }
+    return response.json();
+  },
+
+  async getCategoryTree(): Promise<CategoryTreeNode[]> {
+    const response = await fetch(`${API_BASE_URL}/products/categories/tree`, {
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch category tree');
     }
     return response.json();
   },

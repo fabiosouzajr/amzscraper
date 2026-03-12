@@ -9,10 +9,52 @@ import { AdminPanel } from './components/AdminPanel';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { Auth } from './components/Auth';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ImportProvider, useImport } from './contexts/ImportContext';
 import { Product } from './types';
 import './App.css';
 
 type View = 'dashboard' | 'products' | 'search' | 'detail' | 'config' | 'admin';
+
+function ImportProgressBanner() {
+  const { t } = useTranslation();
+  const { importing, importProgress } = useImport();
+
+  if (!importing || !importProgress) return null;
+
+  const percent = importProgress.total > 0
+    ? Math.round((importProgress.current / importProgress.total) * 100)
+    : 0;
+
+  return (
+    <div className="import-progress-banner">
+      <div className="import-progress-banner-inner">
+        <div className="import-progress-banner-text">
+          {importProgress.status === 'starting' && t('products.importStarting')}
+          {importProgress.status === 'processing' && (
+            <>
+              {t('products.importProcessing', {
+                current: importProgress.current,
+                total: importProgress.total,
+              })}
+              {importProgress.currentASIN && (
+                <span className="import-banner-asin"> ({importProgress.currentASIN})</span>
+              )}
+            </>
+          )}
+          {importProgress.status === 'completed' && t('products.importCompleted')}
+        </div>
+        <div className="import-progress-banner-bar-wrapper">
+          <div className="import-progress-banner-bar" style={{ width: `${percent}%` }} />
+        </div>
+        <div className="import-progress-banner-stats">
+          <span className="progress-stat success">{t('products.importSuccess')}: {importProgress.success}</span>
+          <span className="progress-stat skipped">{t('products.importSkipped')}: {importProgress.skipped}</span>
+          <span className="progress-stat failed">{t('products.importFailed')}: {importProgress.failed}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function AppContent() {
   const { t } = useTranslation();
@@ -23,11 +65,9 @@ function AppContent() {
 
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
-    // Don't change view - stay in search view to show side by side
   };
 
   const handleNavigateProduct = (productId: number) => {
-    // Create a minimal product object with just the ID for navigation
     setSelectedProduct({ id: productId } as Product);
     setCurrentView('detail');
   };
@@ -98,10 +138,12 @@ function AppContent() {
         </div>
       </nav>
 
+      <ImportProgressBanner />
+
       <main className="main-content">
         {currentView === 'dashboard' && <Dashboard onCategoryClick={handleCategoryClick} />}
         {currentView === 'products' && (
-          <ProductList 
+          <ProductList
             initialCategoryFilter={initialCategoryFilter}
             onFilterApplied={() => setInitialCategoryFilter('')}
           />
@@ -111,8 +153,8 @@ function AppContent() {
             <h2>{t('search.title')}</h2>
             <div className="search-layout">
               <div className="search-list-container">
-                <ProductSearch 
-                  onSelectProduct={handleSelectProduct} 
+                <ProductSearch
+                  onSelectProduct={handleSelectProduct}
                   selectedProductId={selectedProduct?.id}
                 />
               </div>
@@ -145,10 +187,11 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <ImportProvider>
+        <AppContent />
+      </ImportProvider>
     </AuthProvider>
   );
 }
 
 export default App;
-
