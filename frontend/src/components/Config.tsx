@@ -212,10 +212,16 @@ export function Config() {
               {t('config.dataExport')}
             </button>
             <button
-              onClick={() => handleSectionChange('account')}
-              className={`config-nav-link ${activeSection === 'account' ? 'active' : ''}`}
+              onClick={() => handleSectionChange('notifications')}
+              className={`config-nav-link ${activeSection === 'notifications' ? 'active' : ''}`}
             >
-              {t('config.account')}
+              {t('config.notifications')}
+            </button>
+            <button
+              onClick={() => handleSectionChange('notifications')}
+              className={`config-nav-link ${activeSection === 'notifications' ? 'active' : ''}`}
+            >
+              {t('config.notifications')}
             </button>
           </nav>
         </div>

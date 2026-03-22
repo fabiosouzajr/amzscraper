@@ -307,4 +307,48 @@ router.get('/audit', async (req: AuthRequest, res: Response): Promise<void | Res
   }
 });
 
+// ---------------------------------------------------------------------------
+// Admin Notification Endpoints
+// ---------------------------------------------------------------------------
+
+// GET /api/admin/notifications/channels - List all channels with user info
+router.get('/notifications/channels', async (req: AuthRequest, res: Response): Promise<void | Response> => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 50;
+    const offset = parseInt(req.query.offset as string) || 0;
+    const channels = await dbService.getAllNotificationChannels(limit, offset);
+    res.json(channels);
+  } catch (error) {
+    console.error('Error fetching admin notification channels:', error);
+    res.status(500).json({ error: 'Failed to fetch notification channels' });
+  }
+});
+
+// GET /api/admin/notifications/rules - List all rules with user/product info
+router.get('/notifications/rules', async (req: AuthRequest, res: Response): Promise<void | Response> => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 50;
+    const offset = parseInt(req.query.offset as string) || 0;
+    const rules = await dbService.getAllNotificationRules(limit, offset);
+    res.json(rules);
+  } catch (error) {
+    console.error('Error fetching admin notification rules:', error);
+    res.status(500).json({ error: 'Failed to fetch notification rules' });
+  }
+});
+
+// GET /api/admin/notifications/history - View all notification delivery history
+router.get('/notifications/history', async (req: AuthRequest, res: Response): Promise<void | Response> => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 100;
+    const offset = parseInt(req.query.offset as string) || 0;
+    const userId = req.query.userId ? parseInt(req.query.userId as string) : undefined;
+    const history = await dbService.getAllNotificationHistory(limit, offset, userId);
+    res.json(history);
+  } catch (error) {
+    console.error('Error fetching admin notification history:', error);
+    res.status(500).json({ error: 'Failed to fetch notification history' });
+  }
+});
+
 export default router;

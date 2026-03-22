@@ -113,3 +113,85 @@ export interface SystemStats {
   total_price_history: number;
 }
 
+// Notification types
+export type NotificationChannelType = 'email' | 'telegram' | 'discord';
+
+export interface EmailConfig {
+  smtp_host: string;
+  smtp_port: number;
+  smtp_secure: boolean;
+  smtp_user: string;
+  smtp_pass: string;
+  from_address: string;
+  to_address: string;
+}
+
+export interface TelegramConfig {
+  bot_token: string;
+  chat_id: string;
+}
+
+export interface DiscordConfig {
+  webhook_url: string;
+}
+
+export interface NotificationChannel {
+  id: number;
+  user_id: number;
+  type: NotificationChannelType;
+  name: string;
+  config: EmailConfig | TelegramConfig | DiscordConfig;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NotificationChannelWithUser extends NotificationChannel {
+  username: string;
+  role: UserRole;
+  is_disabled: boolean;
+}
+
+export type NotificationRuleType = 'lowest_in_days' | 'below_threshold' | 'percentage_drop';
+
+export interface LowestInDaysParams { days: number; }
+export interface BelowThresholdParams { threshold: number; }
+export interface PercentageDropParams { percentage: number; window_days: number; }
+
+export interface NotificationRule {
+  id: number;
+  user_id: number;
+  product_id: number | null;
+  channel_id: number;
+  type: NotificationRuleType;
+  params: LowestInDaysParams | BelowThresholdParams | PercentageDropParams;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NotificationRuleWithUser extends NotificationRule {
+  username: string;
+  product_description?: string;
+  channel_name: string;
+}
+
+export interface NotificationLogEntry {
+  id: number;
+  user_id: number;
+  rule_id: number;
+  product_id: number;
+  channel_id: number;
+  trigger_type: string;
+  message: string;
+  status: 'sent' | 'failed';
+  error_message: string | null;
+  created_at: string;
+}
+
+export interface NotificationLogEntryWithUser extends NotificationLogEntry {
+  username: string;
+  product_description?: string;
+  channel_name: string;
+}
+

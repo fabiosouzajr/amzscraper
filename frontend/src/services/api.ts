@@ -459,6 +459,131 @@ export const adminApi = {
     });
     if (!response.ok) throw new Error('Failed to update config');
     return response.json();
-  }
+  },
+
+  // Admin notification API methods
+  async getNotificationChannels(limit?: number, offset?: number): Promise<NotificationChannelWithUser[]> {
+    const params = new URLSearchParams({ limit: (limit || 50).toString(), offset: (offset || 0).toString() });
+    const response = await fetch(`${API_BASE_URL}/admin/notifications/channels?${params}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch admin notification channels');
+    return response.json();
+  },
+
+  async getNotificationRules(limit?: number, offset?: number): Promise<NotificationRuleWithUser[]> {
+    const params = new URLSearchParams({ limit: (limit || 50).toString(), offset: (offset || 0).toString() });
+    const response = await fetch(`${API_BASE_URL}/admin/notifications/rules?${params}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch admin notification rules');
+    return response.json();
+  },
+
+  async getNotificationHistory(limit?: number, offset?: number, userId?: number): Promise<NotificationLogEntryWithUser[]> {
+    const params = new URLSearchParams({ limit: (limit || 100).toString(), offset: (offset || 0).toString() });
+    if (userId !== undefined) params.append('userId', userId.toString());
+    const response = await fetch(`${API_BASE_URL}/admin/notifications/history?${params}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch admin notification history');
+    return response.json();
+  },
+};
+
+
+// Notification API methods
+notifications: {
+  async getChannels(): Promise<NotificationChannel[]> {
+    const response = await fetch(`${API_BASE_URL}/notifications/channels`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch notification channels');
+    return response.json();
+  },
+
+  async createChannel(data: { type: NotificationChannelType; name: string; config: EmailConfig | TelegramConfig | DiscordConfig }): Promise<NotificationChannel> {
+    const response = await fetch(`${API_BASE_URL}/notifications/channels`, {
+      method: 'POST',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, config: typeof data.config === 'string' ? data.config : JSON.stringify(data.config) })
+    });
+    if (!response.ok) throw new Error('Failed to create notification channel');
+    return response.json();
+  },
+
+  async updateChannel(id: number, data: { name?: string; config?: string | object; enabled?: boolean }): Promise<NotificationChannel> {
+    const response = await fetch(`${API_BASE_URL}/notifications/channels/${id}`, {
+      method: 'PUT',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error('Failed to update notification channel');
+    return response.json();
+  },
+
+  async deleteChannel(id: number): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/notifications/channels/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to delete notification channel');
+  },
+
+  async testChannel(id: number): Promise<{ success: boolean; error?: string }> {
+    const response = await fetch(`${API_BASE_URL}/notifications/channels/${id}/test`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to test notification channel');
+    return response.json();
+  },
+
+  async getRules(productId?: number): Promise<NotificationRule[]> {
+    const params = productId ? `?productId=${productId}` : '';
+    const response = await fetch(`${API_BASE_URL}/notifications/rules${params}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch notification rules');
+    return response.json();
+  },
+
+  async createRule(data: { product_id?: number | null; channel_id: number; type: NotificationRuleType; params: LowestInDaysParams | BelowThresholdParams | PercentageDropParams }): Promise<NotificationRule> {
+    const response = await fetch(`${API_BASE_URL}/notifications/rules`, {
+      method: 'POST',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, params: typeof data.params === 'string' ? data.params : JSON.stringify(data.params) })
+    });
+    if (!response.ok) throw new Error('Failed to create notification rule');
+    return response.json();
+  },
+
+  async updateRule(id: number, data: { channel_id?: number; type?: NotificationRuleType; params?: string | object; enabled?: boolean }): Promise<NotificationRule> {
+    const response = await fetch(`${API_BASE_URL}/notifications/rules/${id}`, {
+      method: 'PUT',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error('Failed to update notification rule');
+    return response.json();
+  },
+
+  async deleteRule(id: number): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/notifications/rules/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to delete notification rule');
+  },
+
+  async getHistory(limit?: number): Promise<NotificationLogEntry[]> {
+    const params = limit ? `?limit=${limit}` : '';
+    const response = await fetch(`${API_BASE_URL}/notifications/history${params}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Failed to fetch notification history');
+    return response.json();
+  },
+};
 };
 

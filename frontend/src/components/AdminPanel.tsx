@@ -5,8 +5,9 @@ import { UserManagement } from './admin/UserManagement';
 import { SystemStats } from './admin/SystemStats';
 import { SystemConfig } from './admin/SystemConfig';
 import { AuditLog } from './admin/AuditLog';
+import { AdminNotifications } from './admin/Notifications';
 
-type AdminTab = 'users' | 'stats' | 'config' | 'audit';
+type AdminTab = 'users' | 'stats' | 'config' | 'audit' | 'notifications';
 
 export function AdminPanel() {
   const { t } = useTranslation();
@@ -46,6 +47,12 @@ export function AdminPanel() {
           >
             {t('admin.tabs.audit')}
           </button>
+          <button
+            className={`admin-tab ${activeTab === 'notifications' ? 'active' : ''}`}
+            onClick={() => setActiveTab('notifications')}
+          >
+            {t('admin.tabs.notifications')}
+          </button>
         </nav>
       </header>
 
@@ -54,6 +61,7 @@ export function AdminPanel() {
         {activeTab === 'stats' && <SystemStats />}
         {activeTab === 'config' && <SystemConfig />}
         {activeTab === 'audit' && <AuditLog />}
+        {activeTab === 'notifications' && <AdminNotifications />}
       </main>
     </div>
   );

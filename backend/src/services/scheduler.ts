@@ -1,6 +1,7 @@
 import * as cron from 'node-cron';
 import { dbService } from './database';
 import { scraperService } from './scraper';
+import { notificationEvaluator } from './notification-evaluator';
 
 export class SchedulerService {
   private systemCronJob: cron.ScheduledTask | null = null;
@@ -164,6 +165,10 @@ export class SchedulerService {
             } else if (scrapedData.price && lastPrice) {
               console.log(`  ✓ Price increased: R$ ${scrapedData.price.toFixed(2)} (previous: R$ ${lastPrice.toFixed(2)})`);
             }
+            // Evaluate notifications after price update
+            if (scrapedData.price !== null) {
+              await notificationEvaluator.evaluateProduct(userId, product.id, scrapedData.price);
+            }
             updated++;
           } else {
             console.log(`  - Price unchanged: R$ ${scrapedData.price?.toFixed(2)}`);
@@ -263,6 +268,10 @@ export class SchedulerService {
                 console.log(`    ✓ Price dropped: R$ ${scrapedData.price.toFixed(2)} (previous: R$ ${lastPrice.toFixed(2)})`);
               } else if (scrapedData.price && lastPrice) {
                 console.log(`    ✓ Price increased: R$ ${scrapedData.price.toFixed(2)} (previous: R$ ${lastPrice.toFixed(2)})`);
+              }
+              // Evaluate notifications after price update
+              if (scrapedData.price !== null) {
+                await notificationEvaluator.evaluateProduct(user.id, product.id, scrapedData.price);
               }
               updated++;
             } else {

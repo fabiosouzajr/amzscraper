@@ -13,6 +13,7 @@ import configRouter from './routes/config';
 import authRouter from './routes/auth';
 import listsRouter from './routes/lists';
 import adminRouter from './routes/admin';
+import notificationsRouter from './routes/notifications';
 import { schedulerService } from './services/scheduler';
 import { getAvailablePort } from './utils/portManager';
 import { dbService } from './services/database';
@@ -32,6 +33,7 @@ async function startServer() {
   app.use('/api/dashboard', dashboardRouter);
   app.use('/api/config', configRouter);
   app.use('/api/admin', adminRouter);
+  app.use('/api/notifications', notificationsRouter);
 
   // Health check
   app.get('/health', (req, res) => {

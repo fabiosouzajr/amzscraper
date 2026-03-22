@@ -82,6 +82,53 @@ const DDL = {
       last_run_at DATETIME,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )`,
+
+  notificationChannels: `
+    CREATE TABLE IF NOT EXISTS notification_channels (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('email', 'telegram', 'discord')),
+      name TEXT NOT NULL,
+      config TEXT NOT NULL,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )`,
+
+  notificationRules: `
+    CREATE TABLE IF NOT EXISTS notification_rules (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      product_id INTEGER,
+      channel_id INTEGER NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('lowest_in_days', 'below_threshold', 'percentage_drop')),
+      params TEXT NOT NULL,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+      FOREIGN KEY (channel_id) REFERENCES notification_channels(id) ON DELETE CASCADE
+    )`,
+
+  notificationLog: `
+    CREATE TABLE IF NOT EXISTS notification_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      rule_id INTEGER NOT NULL,
+      product_id INTEGER NOT NULL,
+      channel_id INTEGER NOT NULL,
+      trigger_type TEXT NOT NULL,
+      message TEXT NOT NULL,
+      status TEXT NOT NULL CHECK(status IN ('sent', 'failed')),
+      error_message TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (rule_id) REFERENCES notification_rules(id) ON DELETE CASCADE,
+      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+      FOREIGN KEY (channel_id) REFERENCES notification_channels(id) ON DELETE CASCADE
+    )`,
 };
 
 // ---------------------------------------------------------------------------
@@ -98,6 +145,9 @@ async function createBaseTables(db: sqlite3.Database): Promise<void> {
     DDL.productLists,
     DDL.systemConfig,
     DDL.userSchedule,
+    DDL.notificationChannels,
+    DDL.notificationRules,
+    DDL.notificationLog,
   ]) {
     await dbRun(db, sql);
   }
@@ -260,6 +310,11 @@ async function createIndexes(db: sqlite3.Database): Promise<void> {
     'CREATE INDEX IF NOT EXISTS idx_audit_log_admin ON audit_log(admin_user_id)',
     'CREATE INDEX IF NOT EXISTS idx_audit_log_created ON audit_log(created_at)',
     'CREATE INDEX IF NOT EXISTS idx_audit_log_target ON audit_log(target_type, target_id)',
+    'CREATE INDEX IF NOT EXISTS idx_notification_channels_user ON notification_channels(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_notification_rules_user ON notification_rules(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_notification_rules_product ON notification_rules(product_id)',
+    'CREATE INDEX IF NOT EXISTS idx_notification_log_user ON notification_log(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_notification_log_rule_product ON notification_log(rule_id, product_id)',
   ]) {
     await dbRun(db, sql);
   }
@@ -273,6 +328,8 @@ async function initializeSystemConfig(db: sqlite3.Database): Promise<void> {
   const defaults = [
     { key: 'quota_max_products', value: '100', description: 'Max products per user' },
     { key: 'quota_max_lists', value: '20', description: 'Max lists per user' },
+    { key: 'quota_max_notification_channels', value: '5', description: 'Max notification channels per user' },
+    { key: 'quota_max_notification_rules', value: '20', description: 'Max notification rules per user' },
     { key: 'scheduler_enabled', value: 'true', description: 'Enable automatic price updates' },
     { key: 'scheduler_cron', value: '0 0 * * *', description: 'Cron schedule for price updates' },
   ];
