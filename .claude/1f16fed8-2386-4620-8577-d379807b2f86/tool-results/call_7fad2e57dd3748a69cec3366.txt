@@ -1,0 +1,563 @@
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-24-    if (!user) return;
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-25-    setLoading(true);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-26-    try {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-27-      switch (activeTab) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-28-        case 'channels':
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:29:          await api.notifications.getChannels();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-30-          break;
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-31-        case 'rules':
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:32:          await api.notifications.getRules();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-33-          break;
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-34-        case 'history':
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:35:          await api.notifications.getHistory(100);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-36-          break;
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-37-      }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-38-    } catch (error) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:39:      console.error('Failed to load notifications:', error);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-40-    } finally {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-41-      setLoading(false);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-42-    }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-43-  };
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-44-
+--
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-56-    { id: 1, status: 'sent', channel_name: 'Work Email', product_description: 'Test Product' },
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-57-  ];
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-58-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-59-  const handleCreateChannel = async (data: any) => {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-60-    try {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:61:      await api.notifications.createChannel(data);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-62-      setShowChannelForm(false);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-63-      loadData();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-64-    } catch (error: any) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:65:      alert(t('notifications.channels.createFailed') + ': ' + (error as Error).message);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-66-    }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-67-  };
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-68-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-69-  const handleUpdateChannel = async (data: any) => {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-70-    try {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:71:      await api.notifications.updateChannel(editingChannel.id, data);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-72-      setShowChannelForm(false);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-73-      setEditingChannel(null);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-74-      loadData();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-75-    } catch (error: any) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:76:      alert(t('notifications.channels.updateFailed') + ': ' + (error as Error).message);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-77-    }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-78-  };
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-79-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-80-  const handleDeleteChannel = async (id: number) => {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:81:    if (!confirm(t('notifications.channels.confirmDelete'))) return;
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-82-    try {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:83:      await api.notifications.deleteChannel(id);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-84-      loadData();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-85-    } catch (error: any) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:86:      alert(t('notifications.channels.deleteFailed') + ': ' + (error as Error).message);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-87-    }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-88-  };
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-89-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-90-  const handleTestChannel = async (id: number) => {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-91-    try {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:92:      const result = await api.notifications.testChannel(id);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-93-      if (result.success) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:94:        alert(t('notifications.channels.testSuccess'));
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-95-      } else {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:96:        alert(t('notifications.channels.testFailed') + ': ' + result.error);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-97-      }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-98-    } catch (error: any) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-99-      alert('Failed to test channel: ' + error);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-100-    }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-101-  };
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-102-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-103-  const handleCreateRule = async (data: any) => {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-104-    try {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:105:      await api.notifications.createRule(data);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-106-      setShowRuleForm(false);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-107-      loadData();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-108-    } catch (error: any) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:109:      alert(t('notifications.rules.createFailed') + ': ' + (error as Error).message);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-110-    }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-111-  };
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-112-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-113-  const handleUpdateRule = async (data: any) => {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-114-    try {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:115:      await api.notifications.updateRule(editingRule.id, data);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-116-      setShowRuleForm(false);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-117-      setEditingRule(null);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-118-      loadData();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-119-    } catch (error: any) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:120:      alert(t('notifications.rules.updateFailed') + ': ' + (error as Error).message);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-121-    }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-122-  };
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-123-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-124-  const handleDeleteRule = async (id: number) => {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:125:    if (!confirm(t('notifications.rules.confirmDelete'))) return;
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-126-    try {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:127:      await api.notifications.deleteRule(id);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-128-      loadData();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-129-    } catch (error: any) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:130:      alert(t('notifications.rules.deleteFailed') + ': ' + (error as Error).message);
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-131-    }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-132-  };
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-133-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-134-  if (!user) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:135:    return <div className="notifications-section">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:136:      <p>{t('notifications.pleaseLogin')}</p>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-137-    </div>;
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-138-  }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-139-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-140-  return (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:141:    <div className="notifications-section">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:142:      <h2>{t('notifications.title')}</h2>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-143-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-144-      {/* Tabs */}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:145:      <nav className="notifications-tabs">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-146-        <button
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:147:          className={`notifications-tab ${activeTab === 'channels' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-148-          onClick={() => setActiveTab('channels')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-149-        >
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:150:          {t('notifications.channels.title')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-151-        </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-152-        <button
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:153:          className={`notifications-tab ${activeTab === 'rules' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-154-          onClick={() => setActiveTab('rules')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-155-        >
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:156:          {t('notifications.rules.title')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-157-        </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-158-        <button
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:159:          className={`notifications-tab ${activeTab === 'history' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-160-          onClick={() => setActiveTab('history')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-161-        >
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:162:          {t('notifications.history.title')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-163-        </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-164-      </nav>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-165-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-166-      {loading ? (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-167-        <div className="loading">{t('common.loading')}</div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-168-      ) : (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-169-        <>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-170-          {/* Channels Tab */}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-171-          {activeTab === 'channels' && (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:172:            <div className="notifications-content">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:173:              <div className="notifications-header">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:174:                <h3>{t('notifications.channels.title')}</h3>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-175-                <button className="btn btn-primary" onClick={() => setShowChannelForm(true)}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:176:                  {t('notifications.channels.add')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-177-                </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-178-              </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-179-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:180:              <table className="notifications-table">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-181-                <thead>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-182-                  <tr>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:183:                    <th>{t('notifications.channels.name')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:184:                    <th>{t('notifications.channels.type')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:185:                    <th>{t('notifications.channels.enabled')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:186:                    <th>{t('notifications.channels.actions')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-187-                  </tr>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-188-                </thead>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-189-                <tbody>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-190-                  {channels.map((channel: any) => (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-191-                    <tr key={channel.id}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-192-                      <td>{channel.name}</td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:193:                      <td>{t(`notifications.channels.type.${channel.type}`)}</td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-194-                      <td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-195-                        <button
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-196-                          className={`toggle-button ${channel.enabled ? 'on' : 'off'}`}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-197-                          onClick={() => handleUpdateChannel(channel.id, { enabled: !channel.enabled })}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-198-                        >
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-199-                          {channel.enabled ? '🟢' : '⚪'}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-200-                        </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-201-                      </td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-202-                      <td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-203-                        <button className="btn btn-small" onClick={() => setEditingChannel(channel)}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:204:                          {t('notifications.channels.edit')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-205-                        </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-206-                        <button className="btn btn-small btn-danger" onClick={() => handleDeleteChannel(channel.id)}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-207-                          {t('common.delete')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-208-                        </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-209-                      </td>
+--
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-214-            </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-215-          )}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-216-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-217-          {/* Global Rules Tab */}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-218-          {activeTab === 'rules' && (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:219:            <div className="notifications-content">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:220:              <div className="notifications-header">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:221:                <h3>{t('notifications.rules.title')}</h3>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-222-                <button className="btn btn-primary" onClick={() => setShowRuleForm(true)}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:223:                  {t('notifications.rules.add')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-224-                </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-225-              </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-226-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:227:              <table className="notifications-table">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-228-                <thead>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-229-                  <tr>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:230:                    <th>{t('notifications.rules.type')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:231:                    <th>{t('notifications.rules.params')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:232:                    <th>{t('notifications.rules.channel')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:233:                    <th>{t('notifications.rules.enabled')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:234:                    <th>{t('notifications.rules.actions')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-235-                  </tr>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-236-                </thead>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-237-                <tbody>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-238-                  {rules.map((rule: any) => (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-239-                    <tr key={rule.id}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:240:                      <td>{t(`notifications.rules.type.${rule.type}`)}</td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-241-                      <td>{JSON.stringify(rule.params)}</td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-242-                      <td>-</td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-243-                      <td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-244-                        <button
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-245-                          className={`toggle-button ${rule.enabled ? 'on' : 'off'}`}
+--
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-248-                          {rule.enabled ? '🟢' : '⚪'}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-249-                        </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-250-                      </td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-251-                      <td>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-252-                        <button className="btn btn-small" onClick={() => setEditingRule(rule)}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:253:                          {t('notifications.rules.edit')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-254-                        </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-255-                        <button className="btn btn-small btn-danger" onClick={() => handleDeleteRule(rule.id)}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-256-                          {t('common.delete')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-257-                        </button>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-258-                      </td>
+--
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-263-            </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-264-          )}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-265-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-266-          {/* History Tab */}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-267-          {activeTab === 'history' && (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:268:            <div className="notifications-content">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:269:              <h3>{t('notifications.history.title')}</h3>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:270:              <table className="notifications-table">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-271-                <thead>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-272-                  <tr>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:273:                    <th>{t('notifications.history.date')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:274:                    <th>{t('notifications.history.product')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:275:                    <th>{t('notifications.history.trigger')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:276:                    <th>{t('notifications.history.channel')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:277:                    <th>{t('notifications.history.status')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-278-                  </tr>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-279-                </thead>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-280-                <tbody>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-281-                  {history.map((entry: any) => (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-282-                    <tr key={entry.id}>
+--
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-301-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-302-      {/* Channel Form Modal */}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-303-      {showChannelForm && (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-304-        <div className="modal-overlay">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-305-          <div className="modal">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:306:            <h3>{editingChannel ? t('notifications.channels.edit') : t('notifications.channels.add')}</h3>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-307-            <form
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-308-              onSubmit={(e: React.FormEvent) => {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-309-                e.preventDefault();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-310-                if (editingChannel) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-311-                  handleUpdateChannel(editingChannel);
+--
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-325-                  });
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-326-                }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-327-              }}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-328-            >
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-329-              <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:330:                <label>{t('notifications.channels.type')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-331-                <select name="type" defaultValue={editingChannel?.type || 'email'}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:332:                  <option value="email">{t('notifications.channels.type.email')}</option>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:333:                  <option value="telegram">{t('notifications.channels.type.telegram')}</option>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:334:                  <option value="discord">{t('notifications.channels.type.discord')}</option>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-335-                </select>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-336-              </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-337-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-338-              <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:339:                <label>{t('notifications.channels.name')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-340-                <input type="text" name="name" defaultValue={editingChannel?.name || ''} required />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-341-              </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-342-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-343-              {/* Email config */}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-344-              <div className="channel-config email-config">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-345-                <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:346:                  <label>{t('notifications.channels.email.smtpHost')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-347-                  <input type="text" name="smtp_host" defaultValue={editingChannel?.config?.smtp_host || ''} required />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-348-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-349-                <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:350:                  <label>{t('notifications.channels.email.smtpPort')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-351-                  <input type="number" name="smtp_port" defaultValue={editingChannel?.config?.smtp_port || '587'} required />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-352-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-353-                <div className="form-group checkbox">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-354-                  <label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-355-                    <input type="checkbox" name="smtp_secure" defaultChecked={true} />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:356:                    {t('notifications.channels.email.smtpSecure')}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-357-                  </label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-358-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-359-                <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:360:                  <label>{t('notifications.channels.email.smtpUser')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-361-                  <input type="text" name="smtp_user" defaultValue={editingChannel?.config?.smtp_user || ''} required />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-362-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-363-                <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:364:                  <label>{t('notifications.channels.email.smtpPass')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-365-                  <input type="password" name="smtp_pass" defaultValue={editingChannel?.config?.smtp_pass || ''} required />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-366-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-367-                <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:368:                  <label>{t('notifications.channels.email.fromAddress')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-369-                  <input type="email" name="from_address" defaultValue={editingChannel?.config?.from_address || ''} required />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-370-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-371-                <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:372:                  <label>{t('notifications.channels.email.toAddress')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-373-                  <input type="email" name="to_address" defaultValue={editingChannel?.config?.to_address || ''} required />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-374-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-375-              </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-376-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-377-              {/* Telegram config */}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-378-              <div className="channel-config telegram-config" style={{ display: 'none' }}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-379-                <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:380:                  <label>{t('notifications.channels.telegram.botToken')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-381-                  <input type="text" name="bot_token" defaultValue={editingChannel?.config?.bot_token || ''} />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-382-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-383-                <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:384:                  <label>{t('notifications.channels.telegram.chatId')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-385-                  <input type="text" name="chat_id" defaultValue={editingChannel?.config?.chat_id || ''} />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-386-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-387-              </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-388-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-389-              {/* Discord config */}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-390-              <div className="channel-config discord-config" style={{ display: 'none' }}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-391-                <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:392:                  <label>{t('notifications.channels.discord.webhookUrl')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-393-                  <input type="url" name="webhook_url" defaultValue={editingChannel?.config?.webhook_url || ''} />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-394-                </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-395-              </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-396-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-397-              <div className="modal-actions">
+--
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-409-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-410-      {/* Rule Form Modal */}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-411-      {showRuleForm && (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-412-        <div className="modal-overlay">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-413-          <div className="modal">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:414:            <h3>{editingRule ? t('notifications.rules.edit') : t('notifications.rules.add')}</h3>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-415-            <form
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-416-              onSubmit={(e: React.FormEvent) => {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-417-                e.preventDefault();
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-418-                if (editingRule) {
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-419-                  handleUpdateRule(editingRule);
+--
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-425-                  });
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-426-                }
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-427-              }}
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-428-            >
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-429-              <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:430:                <label>{t('notifications.rules.type')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-431-                <select name="type" defaultValue={editingRule?.type || 'lowest_in_days'}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:432:                  <option value="lowest_in_days">{t('notifications.rules.type.lowestInDays')}</option>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:433:                  <option value="below_threshold">{t('notifications.rules.type.belowThreshold')}</option>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:434:                  <option value="percentage_drop">{t('notifications.rules.type.percentageDrop')}</option>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-435-                </select>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-436-              </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-437-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-438-              <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:439:                <label>{t('notifications.rules.params')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-440-                <input type="text" name="params" defaultValue={editingRule?.params || ''} required />
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-441-              </div>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-442-
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-443-              <div className="form-group">
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx:444:                <label>{t('notifications.rules.channel')}</label>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-445-                <select name="channel_id" required>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-446-                  <option value="">Select a channel...</option>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-447-                  {channels.filter((c: any) => c.enabled).map((channel: any) => (
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-448-                    <option key={channel.id} value={channel.id}>
+/home/fabio/git/amzscraper/frontend/src/components/Notifications.tsx-449-                      {channel.name}
+--
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-210-              className={`config-nav-link ${activeSection === 'data-export' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-211-            >
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-212-              {t('config.dataExport')}
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-213-            </button>
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-214-            <button
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx:215:              onClick={() => handleSectionChange('notifications')}
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx:216:              className={`config-nav-link ${activeSection === 'notifications' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-217-            >
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx:218:              {t('config.notifications')}
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-219-            </button>
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-220-            <button
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx:221:              onClick={() => handleSectionChange('notifications')}
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx:222:              className={`config-nav-link ${activeSection === 'notifications' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-223-            >
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx:224:              {t('config.notifications')}
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-225-            </button>
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-226-          </nav>
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-227-        </div>
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-228-        
+/home/fabio/git/amzscraper/frontend/src/components/Config.tsx-229-        <div className="config-content">
+--
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-5-import { SystemStats } from './admin/SystemStats';
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-6-import { SystemConfig } from './admin/SystemConfig';
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-7-import { AuditLog } from './admin/AuditLog';
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-8-import { AdminNotifications } from './admin/Notifications';
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-9-
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx:10:type AdminTab = 'users' | 'stats' | 'config' | 'audit' | 'notifications';
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-11-
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-12-export function AdminPanel() {
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-13-  const { t } = useTranslation();
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-14-  const { user } = useAuth();
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-15-  const [activeTab, setActiveTab] = useState<AdminTab>('users');
+--
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-46-            onClick={() => setActiveTab('audit')}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-47-          >
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-48-            {t('admin.tabs.audit')}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-49-          </button>
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-50-          <button
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx:51:            className={`admin-tab ${activeTab === 'notifications' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx:52:            onClick={() => setActiveTab('notifications')}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-53-          >
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx:54:            {t('admin.tabs.notifications')}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-55-          </button>
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-56-        </nav>
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-57-      </header>
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-58-
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-59-      <main className="admin-content">
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-60-        {activeTab === 'users' && <UserManagement />}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-61-        {activeTab === 'stats' && <SystemStats />}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-62-        {activeTab === 'config' && <SystemConfig />}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-63-        {activeTab === 'audit' && <AuditLog />}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx:64:        {activeTab === 'notifications' && <AdminNotifications />}
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-65-      </main>
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-66-    </div>
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-67-  );
+/home/fabio/git/amzscraper/frontend/src/components/AdminPanel.tsx-68-}
+--
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-28-          const history = await adminApi.getNotificationHistory();
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-29-          setData(history);
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-30-          break;
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-31-      }
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-32-    } catch (error) {
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:33:      console.error('Failed to load notifications:', error);
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-34-    } finally {
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-35-      setLoading(false);
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-36-    }
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-37-  };
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-38-
+--
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-40-    return <div className="loading">{t('common.loading')}</div>;
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-41-  }
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-42-
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-43-  return (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-44-    <div className="admin-section">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:45:      <h2>{t('admin.notifications.title')}</h2>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-46-
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-47-      {/* Tabs */}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-48-      <nav className="admin-tabs">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-49-        <button
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-50-          className={`admin-tab ${activeTab === 'channels' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-51-          onClick={() => setActiveTab('channels')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-52-        >
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:53:          {t('admin.notifications.channels')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-54-        </button>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-55-        <button
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-56-          className={`admin-tab ${activeTab === 'rules' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-57-          onClick={() => setActiveTab('rules')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-58-        >
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:59:          {t('admin.notifications.rules')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-60-        </button>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-61-        <button
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-62-          className={`admin-tab ${activeTab === 'history' ? 'active' : ''}`}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-63-          onClick={() => setActiveTab('history')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-64-        >
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:65:          {t('admin.notifications.history')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-66-        </button>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-67-      </nav>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-68-
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-69-      {/* Channels Tab */}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-70-      {activeTab === 'channels' && (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-71-        <table className="admin-table">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-72-          <thead>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-73-            <tr>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:74:              <th>{t('admin.notifications.username')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:75:              <th>{t('admin.notifications.type')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:76:              <th>{t('admin.notifications.name')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:77:              <th>{t('admin.notifications.status')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:78:              <th>{t('admin.notifications.actions')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-79-            </tr>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-80-          </thead>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-81-          <tbody>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-82-            {data && data.map((channel: any) => (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-83-              <tr key={channel.id}>
+--
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-94-                </td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-95-                <td>{channel.name}</td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-96-                <td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-97-                  {channel.is_disabled ? (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-98-                    <span className="status-badge status-disabled">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:99:                      {t('admin.notifications.disabled')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-100-                    </span>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-101-                  ) : (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-102-                    <span className="status-badge status-active">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:103:                      {t('admin.notifications.enabled')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-104-                    </span>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-105-                  )}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-106-                </td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-107-                <td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-108-                  <button className="btn btn-small" onClick={() => {}}>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:109:                    {t('admin.notifications.viewUser')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-110-                  </button>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-111-                </td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-112-              </tr>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-113-            ))}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-114-          </tbody>
+--
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-118-      {/* Rules Tab */}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-119-      {activeTab === 'rules' && (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-120-        <table className="admin-table">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-121-          <thead>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-122-            <tr>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:123:              <th>{t('admin.notifications.username')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:124:              <th>{t('admin.notifications.product')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:125:              <th>{t('admin.notifications.type')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:126:              <th>{t('admin.notifications.params')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:127:              <th>{t('admin.notifications.channel')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:128:              <th>{t('admin.notifications.status')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:129:              <th>{t('admin.notifications.actions')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-130-            </tr>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-131-          </thead>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-132-          <tbody>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-133-            {data && data.map((rule: any) => (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-134-              <tr key={rule.id}>
+--
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-142-                <td>{JSON.stringify(rule.params)}</td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-143-                <td>{rule.channel_name}</td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-144-                <td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-145-                  {rule.enabled ? (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-146-                    <span className="status-badge status-active">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:147:                      {t('admin.notifications.enabled')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-148-                    </span>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-149-                  ) : (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-150-                    <span className="status-badge status-disabled">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:151:                      {t('admin.notifications.disabled')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-152-                    </span>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-153-                  )}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-154-                </td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-155-                <td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-156-                  <button className="btn btn-small">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:157:                    {t('admin.notifications.edit')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-158-                  </button>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-159-                  <button className="btn btn-small btn-danger">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:160:                    {t('admin.notifications.delete')}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-161-                  </button>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-162-                </td>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-163-              </tr>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-164-            ))}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-165-          </tbody>
+--
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-169-      {/* History Tab */}
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-170-      {activeTab === 'history' && (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-171-        <table className="admin-table">
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-172-          <thead>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-173-            <tr>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:174:              <th>{t('admin.notifications.date')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:175:              <th>{t('admin.notifications.username')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:176:              <th>{t('admin.notifications.product')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:177:              <th>{t('admin.notifications.trigger')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:178:              <th>{t('admin.notifications.channel')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:179:              <th>{t('admin.notifications.status')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx:180:              <th>{t('admin.notifications.message')}</th>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-181-            </tr>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-182-          </thead>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-183-          <tbody>
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-184-            {data && data.map((entry: any) => (
+/home/fabio/git/amzscraper/frontend/src/components/admin/Notifications.tsx-185-              <tr key={entry.id}>
