@@ -4,7 +4,7 @@ import { Dashboard } from './components/Dashboard';
 import { ProductList } from './components/ProductList';
 import { ProductSearch } from './components/ProductSearch';
 import { ProductDetail } from './components/ProductDetail';
-import { Config } from './components/Config';
+import { Config } from './components/config';
 import { AdminPanel } from './components/AdminPanel';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { Auth } from './components/Auth';
