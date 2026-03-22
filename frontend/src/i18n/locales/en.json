@@ -142,7 +142,8 @@
     "unsavedChanges": "Unsaved Changes",
     "unsavedChangesMessage": "You have unsaved changes. Are you sure you want to discard them?",
     "discardChanges": "Discard Changes",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "notifications": "Notifications"
   },
   "auth": {
     "login": "Login",
@@ -185,7 +186,8 @@
       "users": "Users",
       "stats": "Stats",
       "config": "Config",
-      "audit": "Audit Log"
+      "audit": "Audit Log",
+      "notifications": "Notifications"
     },
     "config": {
       "title": "System Configuration",
@@ -270,6 +272,107 @@
       "totalPriceHistory": "Total Price History",
       "overviewChart": "Overview",
       "userDistribution": "User Distribution"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "channels": "Channels",
+      "rules": "Rules",
+      "history": "History",
+      "username": "Username",
+      "role": "Role",
+      "type": "Type",
+      "name": "Name",
+      "status": "Status",
+      "actions": "Actions",
+      "disabled": "Disabled",
+      "enabled": "Enabled",
+      "viewUser": "View User",
+      "product": "Product",
+      "params": "Parameters",
+      "channel": "Channel",
+      "edit": "Edit",
+      "delete": "Delete",
+      "date": "Date",
+      "trigger": "Trigger",
+      "message": "Message",
+      "noData": "No data found"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "pleaseLogin": "Please login to manage notifications",
+    "channels": {
+      "title": "Channels",
+      "add": "Add Channel",
+      "edit": "Edit Channel",
+      "name": "Name",
+      "type": "Type",
+      "enabled": "Enabled",
+      "actions": "Actions",
+      "test": "Test",
+      "noChannels": "No channels configured yet. Add one to get started.",
+      "createFailed": "Failed to save channel",
+      "deleteFailed": "Failed to delete channel",
+      "testSuccess": "Test notification sent successfully!",
+      "testFailed": "Test failed",
+      "channelTypes": {
+        "email": "Email",
+        "telegram": "Telegram",
+        "discord": "Discord"
+      },
+      "email": {
+        "smtpHost": "SMTP Host",
+        "smtpPort": "SMTP Port",
+        "smtpSecure": "Use SSL/TLS",
+        "smtpUser": "SMTP Username",
+        "smtpPass": "SMTP Password",
+        "fromAddress": "From Address",
+        "toAddress": "To Address"
+      },
+      "telegram": {
+        "botToken": "Bot Token",
+        "chatId": "Chat ID"
+      },
+      "discord": {
+        "webhookUrl": "Webhook URL"
+      }
+    },
+    "rules": {
+      "title": "Global Rules",
+      "add": "Add Rule",
+      "edit": "Edit Rule",
+      "type": "Type",
+      "params": "Parameters",
+      "channel": "Channel",
+      "enabled": "Enabled",
+      "actions": "Actions",
+      "noRules": "No rules configured yet.",
+      "createFailed": "Failed to save rule",
+      "allProducts": "All Products (global rule)",
+      "days": "Days",
+      "threshold": "Threshold (R$)",
+      "percentage": "Percentage (%)",
+      "windowDays": "Window (days)",
+      "ruleTypes": {
+        "lowestInDays": "Lowest price in N days",
+        "belowThreshold": "Price below threshold",
+        "percentageDrop": "Percentage price drop"
+      }
+    },
+    "history": {
+      "title": "History",
+      "date": "Date",
+      "product": "Product",
+      "trigger": "Trigger",
+      "channel": "Channel",
+      "status": "Status",
+      "message": "Message",
+      "noHistory": "No notification history yet."
+    },
+    "product": {
+      "title": "Notification Rules",
+      "noRules": "No notification rules for this product.",
+      "addRule": "Add Rule"
     }
   }
 }

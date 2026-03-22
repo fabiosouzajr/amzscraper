@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { Notifications } from './Notifications';
 
 interface DatabaseInfo {
   productCount: number;
@@ -218,10 +219,10 @@ export function Config() {
               {t('config.notifications')}
             </button>
             <button
-              onClick={() => handleSectionChange('notifications')}
-              className={`config-nav-link ${activeSection === 'notifications' ? 'active' : ''}`}
+              onClick={() => handleSectionChange('account')}
+              className={`config-nav-link ${activeSection === 'account' ? 'active' : ''}`}
             >
-              {t('config.notifications')}
+              {t('config.account')}
             </button>
           </nav>
         </div>
@@ -355,6 +356,12 @@ export function Config() {
                 {t('config.exportASINsDescription')}
               </p>
             </div>
+            </div>
+          )}
+
+          {activeSection === 'notifications' && (
+            <div id="notifications" className="config-section">
+              <Notifications />
             </div>
           )}
 

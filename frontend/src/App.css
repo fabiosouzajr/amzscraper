@@ -3374,3 +3374,359 @@
   gap: 0.4rem;
   margin-bottom: 0.85rem;
 }
+
+/* ========================================
+   Notification Components
+   ======================================== */
+
+/* Notifications section wrapper */
+.notifications-section {
+  padding: 0;
+}
+
+/* Tab navigation */
+.notifications-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 1.5rem;
+}
+
+.notifications-tab {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #555;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.notifications-tab:hover {
+  color: #232f3e;
+}
+
+.notifications-tab.active {
+  color: #232f3e;
+  border-bottom-color: #ff9900;
+  font-weight: 600;
+}
+
+/* Notifications header row */
+.notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.notifications-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #232f3e;
+}
+
+/* Notifications table */
+.notifications-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.notifications-table th {
+  background: #f8f8f8;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  color: #555;
+  font-weight: 600;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+.notifications-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.notifications-table tr:last-child td {
+  border-bottom: none;
+}
+
+.notifications-table tr:hover td {
+  background: #fafafa;
+}
+
+/* Channel type badges */
+.channel-type-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.channel-type-badge.type-email {
+  background: #e8f4f8;
+  color: #0077b6;
+}
+
+.channel-type-badge.type-telegram {
+  background: #e8f0fe;
+  color: #2563eb;
+}
+
+.channel-type-badge.type-discord {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+/* Rule type badges */
+.rule-type-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rule-type-badge.type-lowest_in_days {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.rule-type-badge.type-below_threshold {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.rule-type-badge.type-percentage_drop {
+  background: #fce8e8;
+  color: #c0392b;
+}
+
+/* Status badges for notification log */
+.status-badge.status-sent {
+  background: #e6f4ea;
+  color: #1e7e34;
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-badge.status-failed {
+  background: #fce8e8;
+  color: #c0392b;
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Toggle buttons */
+.toggle-button {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+
+.toggle-button.enabled {
+  border-color: #28a745;
+  color: #28a745;
+  background: #f0fff4;
+}
+
+.toggle-button.disabled {
+  border-color: #aaa;
+  color: #aaa;
+  background: #f8f8f8;
+}
+
+.toggle-button:hover {
+  opacity: 0.8;
+}
+
+/* Button utilities */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.btn-primary {
+  background: #ff9900;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #e68900;
+}
+
+.btn-small {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.82rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.btn-small:hover {
+  background: #f5f5f5;
+}
+
+.btn-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.btn-danger:hover {
+  background: #fce8e8;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #888;
+  font-size: 0.95rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal h3 {
+  margin: 0 0 1.25rem 0;
+  font-size: 1.1rem;
+  color: #232f3e;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Form groups inside modal */
+.modal .form-group {
+  margin-bottom: 1rem;
+}
+
+.modal .form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 0.3rem;
+}
+
+.modal .form-group input,
+.modal .form-group select {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.modal .form-group input:focus,
+.modal .form-group select:focus {
+  outline: none;
+  border-color: #ff9900;
+  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
+}
+
+.modal .form-group.checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.modal .form-group.checkbox input[type="checkbox"] {
+  width: auto;
+}
+
+/* Test result inline message */
+.test-result {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.test-result.success {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.test-result.error {
+  background: #fce8e8;
+  color: #c0392b;
+}
+
+/* Error text (inline in table cells) */
+.error-text {
+  color: #c0392b;
+  font-size: 0.85rem;
+}
+
+/* Product notifications section */
+.product-notifications {
+  margin-top: 2rem;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 1.5rem;
+}
+
+.product-notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.product-notifications-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #232f3e;
+}

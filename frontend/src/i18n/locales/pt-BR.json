@@ -142,7 +142,8 @@
     "unsavedChanges": "Alterações Não Salvas",
     "unsavedChangesMessage": "Você tem alterações não salvas. Tem certeza de que deseja descartá-las?",
     "discardChanges": "Descartar Alterações",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "notifications": "Notificações"
   },
   "auth": {
     "login": "Entrar",
@@ -185,7 +186,8 @@
       "users": "Usuários",
       "stats": "Estatísticas",
       "config": "Configuração",
-      "audit": "Log de Auditoria"
+      "audit": "Log de Auditoria",
+      "notifications": "Notificações"
     },
     "config": {
       "title": "Configuração do Sistema",
@@ -270,6 +272,107 @@
       "totalPriceHistory": "Total do Histórico de Preços",
       "overviewChart": "Visão Geral",
       "userDistribution": "Distribuição de Usuários"
+    },
+    "notifications": {
+      "title": "Notificações",
+      "channels": "Canais",
+      "rules": "Regras",
+      "history": "Histórico",
+      "username": "Usuário",
+      "role": "Função",
+      "type": "Tipo",
+      "name": "Nome",
+      "status": "Status",
+      "actions": "Ações",
+      "disabled": "Desativado",
+      "enabled": "Ativado",
+      "viewUser": "Ver Usuário",
+      "product": "Produto",
+      "params": "Parâmetros",
+      "channel": "Canal",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "date": "Data",
+      "trigger": "Gatilho",
+      "message": "Mensagem",
+      "noData": "Nenhum dado encontrado"
+    }
+  },
+  "notifications": {
+    "title": "Notificações",
+    "pleaseLogin": "Faça login para gerenciar notificações",
+    "channels": {
+      "title": "Canais",
+      "add": "Adicionar Canal",
+      "edit": "Editar Canal",
+      "name": "Nome",
+      "type": "Tipo",
+      "enabled": "Ativo",
+      "actions": "Ações",
+      "test": "Testar",
+      "noChannels": "Nenhum canal configurado. Adicione um para começar.",
+      "createFailed": "Falha ao salvar canal",
+      "deleteFailed": "Falha ao excluir canal",
+      "testSuccess": "Notificação de teste enviada com sucesso!",
+      "testFailed": "Falha no teste",
+      "channelTypes": {
+        "email": "Email",
+        "telegram": "Telegram",
+        "discord": "Discord"
+      },
+      "email": {
+        "smtpHost": "Servidor SMTP",
+        "smtpPort": "Porta SMTP",
+        "smtpSecure": "Usar SSL/TLS",
+        "smtpUser": "Usuário SMTP",
+        "smtpPass": "Senha SMTP",
+        "fromAddress": "Endereço de origem",
+        "toAddress": "Endereço de destino"
+      },
+      "telegram": {
+        "botToken": "Token do Bot",
+        "chatId": "ID do Chat"
+      },
+      "discord": {
+        "webhookUrl": "URL do Webhook"
+      }
+    },
+    "rules": {
+      "title": "Regras Globais",
+      "add": "Adicionar Regra",
+      "edit": "Editar Regra",
+      "type": "Tipo",
+      "params": "Parâmetros",
+      "channel": "Canal",
+      "enabled": "Ativo",
+      "actions": "Ações",
+      "noRules": "Nenhuma regra configurada.",
+      "createFailed": "Falha ao salvar regra",
+      "allProducts": "Todos os produtos (regra global)",
+      "days": "Dias",
+      "threshold": "Limite (R$)",
+      "percentage": "Porcentagem (%)",
+      "windowDays": "Janela (dias)",
+      "ruleTypes": {
+        "lowestInDays": "Menor preço em N dias",
+        "belowThreshold": "Preço abaixo do limite",
+        "percentageDrop": "Queda percentual de preço"
+      }
+    },
+    "history": {
+      "title": "Histórico",
+      "date": "Data",
+      "product": "Produto",
+      "trigger": "Gatilho",
+      "channel": "Canal",
+      "status": "Status",
+      "message": "Mensagem",
+      "noHistory": "Nenhum histórico de notificações ainda."
+    },
+    "product": {
+      "title": "Regras de Notificação",
+      "noRules": "Nenhuma regra de notificação para este produto.",
+      "addRule": "Adicionar Regra"
     }
   }
 }

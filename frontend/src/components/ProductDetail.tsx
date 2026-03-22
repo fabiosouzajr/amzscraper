@@ -5,6 +5,7 @@ import { api } from '../services/api';
 import { ProductWithPrice } from '../types';
 import { formatDate, formatDateTime } from '../utils/dateFormat';
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
+import { ProductNotifications } from './ProductNotifications';
 
 interface ProductDetailProps {
   productId: number;
@@ -246,6 +247,8 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
           </table>
         </div>
       )}
+
+      <ProductNotifications productId={product.id} />
     </div>
   );
 }
