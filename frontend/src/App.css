@@ -336,6 +336,30 @@
   border-top: 1px solid #f0f0f0;
 }
 
+/* Category badge button wrapper (for design-system Badge with click) */
+.category-badge-btn {
+  background: none;
+  border: none;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font: inherit;
+  color: inherit;
+}
+
+.category-badge-btn:hover {
+  background: rgba(33, 98, 161, 0.1);
+  transform: translateY(-1px);
+}
+
+.category-badge-btn:active {
+  transform: translateY(0);
+}
+
 /* Product List */
 .product-list {
   width: 100%;

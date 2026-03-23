@@ -5,6 +5,7 @@ import { PriceDrop } from '../types';
 import { MiniPriceChart } from './MiniPriceChart';
 import { formatDateTime } from '../utils/dateFormat';
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
+import { Card, Button, ProgressBar, Badge, EmptyState } from '../design-system';
 
 interface DashboardProps {
   onCategoryClick: (categoryName: string) => void;
@@ -47,7 +48,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
     setUpdateProgress(0);
     setUpdateStatus(t('dashboard.startingUpdate'));
     setError(null);
-    
+
     try {
       // Start the update with real-time progress updates
       await api.updatePrices((progress) => {
@@ -75,7 +76,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
             break;
           case 'completed':
             setUpdateStatus(
-              t('dashboard.updateComplete') + 
+              t('dashboard.updateComplete') +
               (progress.updated !== undefined || progress.skipped !== undefined || progress.errors !== undefined
                 ? ` - ${progress.updated || 0} updated, ${progress.skipped || 0} skipped, ${progress.errors || 0} errors`
                 : '')
@@ -124,35 +125,35 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1>{t('dashboard.title')}</h1>
-        <button
+        <Button
           onClick={handleUpdatePrices}
           disabled={updating}
-          className="update-button"
+          variant="primary"
+          size="md"
         >
           {updating ? t('dashboard.updating') : t('dashboard.updatePrices')}
-        </button>
+        </Button>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
       {updating && (
-        <div className="update-progress-container">
-          <div className="progress-bar-wrapper">
-            <div 
-              className="progress-bar" 
-              style={{ width: `${updateProgress}%` }}
-            ></div>
-            <div className="progress-percentage">{updateProgress}%</div>
-          </div>
+        <Card elevation={1} padding="md">
+          <ProgressBar
+            value={updateProgress}
+            variant="primary"
+            size="md"
+          />
           <div className="progress-status">{updateStatus}</div>
-        </div>
+        </Card>
       )}
 
       {priceDrops.length === 0 && priceIncreases.length === 0 ? (
-        <div className="empty-state">
-          <p>{t('dashboard.noPriceChanges')}</p>
-          <p>{t('dashboard.noPriceChangesHint')}</p>
-        </div>
+        <EmptyState
+          title={t('dashboard.noPriceChanges')}
+          description={t('dashboard.noPriceChangesHint')}
+          variant="no-data"
+        />
       ) : (
         <>
           {priceDrops.length > 0 && (
@@ -160,14 +161,20 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
               <h2 className="section-title">{t('dashboard.priceDrops')}</h2>
               <div className="price-drops-grid">
                 {priceDrops.map((drop) => (
-                  <div key={drop.product.id} className="price-drop-card">
+                  <Card
+                    key={drop.product.id}
+                    elevation={1}
+                    padding="sm"
+                    onClick={() => onCategoryClick('')}
+                    className="price-drop-card"
+                  >
                     <div className="drop-header">
                       <div className="drop-header-content">
-                        <div className="drop-amount">
-                          -{formatPrice(drop.price_drop)}
-                        </div>
                         <div className="drop-percentage">
-                          {formatPercentage(drop.price_drop_percentage)} {t('dashboard.off')}
+                          {formatPercentage(drop.price_drop_percentage)}
+                        </div>
+                        <div className="drop-amount">
+                          {formatPrice(drop.price_drop)}
                         </div>
                       </div>
                     </div>
@@ -178,7 +185,8 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                           {drop.product.categories.map((cat, idx) => (
                             <span key={cat.id}>
                               <button
-                                className="category-badge category-filter-button"
+                                type="button"
+                                className="category-badge-btn"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -186,7 +194,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                                 }}
                                 title={t('dashboard.filterBy', { category: cat.name })}
                               >
-                                {cat.name}
+                                <Badge variant="info" size="sm">{cat.name}</Badge>
                               </button>
                               {idx < drop.product.categories!.length - 1 && ' > '}
                             </span>
@@ -197,7 +205,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                         href={`https://www.amazon.com.br/dp/${drop.product.asin}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="product-description product-link"
+                        className="product-link"
                       >
                         {drop.product.description}
                       </a>
@@ -206,21 +214,21 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                           <MiniPriceChart priceHistory={drop.price_history} />
                         </div>
                       )}
+                      <div className="price-info">
+                        <div className="price-row">
+                          <span className="label">{t('dashboard.previous')}:</span>
+                          <span className="price previous">{formatPrice(drop.previous_price)}</span>
+                        </div>
+                        <div className="price-row">
+                          <span className="label">{t('dashboard.current')}:</span>
+                          <span className="price current">{formatPrice(drop.current_price)}</span>
+                        </div>
+                        <div className="last-updated">
+                          {t('dashboard.updated')}: {formatDateTime(drop.last_updated)}
+                        </div>
+                      </div>
                     </div>
-                    <div className="price-info">
-                      <div className="price-row">
-                        <span className="label">{t('dashboard.previous')}:</span>
-                        <span className="price previous">{formatPrice(drop.previous_price)}</span>
-                      </div>
-                      <div className="price-row">
-                        <span className="label">{t('dashboard.current')}:</span>
-                        <span className="price current">{formatPrice(drop.current_price)}</span>
-                      </div>
-                      <div className="last-updated">
-                        {t('dashboard.updated')}: {formatDateTime(drop.last_updated)}
-                      </div>
-                    </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </div>
@@ -231,14 +239,20 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
               <h2 className="section-title">{t('dashboard.priceIncreases')}</h2>
               <div className="price-drops-grid">
                 {priceIncreases.map((increase) => (
-                  <div key={increase.product.id} className="price-increase-card">
+                  <Card
+                    key={increase.product.id}
+                    elevation={1}
+                    padding="sm"
+                    onClick={() => onCategoryClick('')}
+                    className="price-increase-card"
+                  >
                     <div className="increase-header">
                       <div className="increase-header-content">
-                        <div className="increase-amount">
-                          +{formatPrice(increase.price_drop)}
-                        </div>
                         <div className="increase-percentage">
-                          +{formatPercentage(increase.price_drop_percentage)} {t('dashboard.up')}
+                          {formatPercentage(increase.price_drop_percentage)}
+                        </div>
+                        <div className="increase-amount">
+                          {formatPrice(increase.price_drop)}
                         </div>
                       </div>
                     </div>
@@ -249,7 +263,8 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                           {increase.product.categories.map((cat, idx) => (
                             <span key={cat.id}>
                               <button
-                                className="category-badge category-filter-button"
+                                type="button"
+                                className="category-badge-btn"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -257,7 +272,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                                 }}
                                 title={t('dashboard.filterBy', { category: cat.name })}
                               >
-                                {cat.name}
+                                <Badge variant="info" size="sm">{cat.name}</Badge>
                               </button>
                               {idx < increase.product.categories!.length - 1 && ' > '}
                             </span>
@@ -268,7 +283,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                         href={`https://www.amazon.com.br/dp/${increase.product.asin}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="product-description product-link"
+                        className="product-link"
                       >
                         {increase.product.description}
                       </a>
@@ -277,21 +292,21 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                           <MiniPriceChart priceHistory={increase.price_history} />
                         </div>
                       )}
+                      <div className="price-info">
+                        <div className="price-row">
+                          <span className="label">{t('dashboard.previous')}:</span>
+                          <span className="price previous">{formatPrice(increase.previous_price)}</span>
+                        </div>
+                        <div className="price-row">
+                          <span className="label">{t('dashboard.current')}:</span>
+                          <span className="price current increase">{formatPrice(increase.current_price)}</span>
+                        </div>
+                        <div className="last-updated">
+                          {t('dashboard.updated')}: {formatDateTime(increase.last_updated)}
+                        </div>
+                      </div>
                     </div>
-                    <div className="price-info">
-                      <div className="price-row">
-                        <span className="label">{t('dashboard.previous')}:</span>
-                        <span className="price previous">{formatPrice(increase.previous_price)}</span>
-                      </div>
-                      <div className="price-row">
-                        <span className="label">{t('dashboard.current')}:</span>
-                        <span className="price current increase">{formatPrice(increase.current_price)}</span>
-                      </div>
-                      <div className="last-updated">
-                        {t('dashboard.updated')}: {formatDateTime(increase.last_updated)}
-                      </div>
-                    </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </div>
@@ -301,4 +316,3 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
     </div>
   );
 }
-

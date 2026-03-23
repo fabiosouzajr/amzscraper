@@ -1,0 +1,208 @@
+/* ========================================
+   ProgressBar Component Styles
+   Uses design tokens from tokens.css
+   ======================================== */
+
+/* ========================================
+   PROGRESS BAR
+   ======================================== */
+
+.progressBar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-inset);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.fill {
+  position: relative;
+  height: 100%;
+  background-color: var(--color-accent-primary);
+  border-radius: var(--radius-pill);
+  transition: width var(--duration-normal) var(--ease-default);
+}
+
+.progressBar.animate .fill {
+  transition: width var(--duration-normal) var(--ease-default);
+}
+
+.progressBar.noAnimate .fill {
+  transition: none;
+}
+
+/* Glow effect for large size */
+.glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  border-radius: inherit;
+  animation: shimmer 1.5s infinite linear;
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.indeterminate .fill {
+  width: 40% !important;
+  animation: indeterminate 1.2s infinite ease-in-out;
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ========================================
+   SIZES
+   ======================================== */
+
+.sm .track {
+  height: 8px;
+}
+
+.md .track {
+  height: 12px;
+}
+
+.lg .track {
+  height: 16px;
+}
+
+/* ========================================
+   VARIANTS
+   ======================================== */
+
+.primary .fill {
+  background: linear-gradient(90deg, var(--color-accent-primary) 0%, var(--color-accent-hover) 100%);
+}
+
+.success .fill {
+  background: linear-gradient(90deg, var(--color-success) 0%, #236b3e 100%);
+}
+
+.danger .fill {
+  background: linear-gradient(90deg, var(--color-danger) 0%, #9e2b16 100%);
+}
+
+.warning .fill {
+  background: linear-gradient(90deg, var(--color-warning) 0%, #9c6002 100%);
+}
+
+.info .fill {
+  background: linear-gradient(90deg, var(--color-info) 0%, #22568e 100%);
+}
+
+/* ========================================
+   LABEL
+   ======================================== */
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* ========================================
+   LINEAR PROGRESS (thin variant)
+   ======================================== */
+
+.linearProgress {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-bg-inset);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.linearFill {
+  height: 100%;
+  background-color: var(--color-accent-primary);
+  border-radius: var(--radius-pill);
+  transition: width var(--duration-normal) var(--ease-default);
+}
+
+.linearProgress.animate .linearFill {
+  transition: width var(--duration-normal) var(--ease-default);
+}
+
+.linearProgress.noAnimate .linearFill {
+  transition: none;
+}
+
+.linearProgress.indeterminate .linearFill {
+  width: 30% !important;
+  animation: indeterminate 1s infinite ease-in-out;
+}
+
+/* ========================================
+   LINEAR VARIANTS
+   ======================================== */
+
+.linearProgress.primary .linearFill {
+  background: var(--color-accent-primary);
+}
+
+.linearProgress.success .linearFill {
+  background: var(--color-success);
+}
+
+.linearProgress.danger .linearFill {
+  background: var(--color-danger);
+}
+
+.linearProgress.warning .linearFill {
+  background: var(--color-warning);
+}
+
+.linearProgress.info .linearFill {
+  background: var(--color-info);
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .fill,
+  .linearFill {
+    transition: none;
+  }
+
+  .fill,
+  .linearFill,
+  .glow {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,253 @@
+/* ========================================
+   Design Tokens — Amazon Price Tracker
+   ========================================
+
+   Design direction: Warm Functional Minimalism
+   - Single source of truth for all visual decisions
+   - No magic numbers in component styles
+   - Semantic colors for meaning, not decoration
+   - Built on a 4px spacing grid
+
+   Import this in main.tsx before any other styles.
+   ======================================== */
+
+:root {
+  /* ========================================
+     COLOR PALETTE
+     ======================================== */
+
+  /* SURFACES */
+  --color-bg-primary: #fafaf8;      /* Warm off-white (page background) */
+  --color-bg-secondary: #f3f2ee;    /* Warm light gray (cards, sections) */
+  --color-bg-elevated: #ffffff;       /* Pure white (modals, floating elements) */
+  --color-bg-inset: #edecea;         /* Subtle inset (inputs, code blocks) */
+
+  /* TEXT */
+  --color-text-primary: #1a1a18;    /* Warm near-black (headings, body) */
+  --color-text-secondary: #6b6966;  /* Warm medium gray (descriptions, labels) */
+  --color-text-tertiary: #9c9891;   /* Warm light gray (placeholders, timestamps) */
+  --color-text-inverse: #fafaf8;     /* Light text on dark backgrounds */
+
+  /* INTERACTIVE */
+  --color-accent-primary: #d4622b;   /* Warm amber-orange (primary CTA, links) */
+  --color-accent-hover: #b8521f;     /* Darker amber (hover state) */
+  --color-accent-subtle: #fdf0e8;    /* Pale amber (accent backgrounds, selection) */
+
+  /* SEMANTIC (functional — these carry meaning) */
+  --color-success: #2d8a4e;         /* Price drop / positive change */
+  --color-success-subtle: #edf7f0;   /* Success background */
+  --color-danger: #c4361c;          /* Price increase / error / destructive */
+  --color-danger-subtle: #fef1ee;     /* Danger background */
+  --color-info: #2b6cb0;             /* Informational / links */
+  --color-info-subtle: #ebf4ff;       /* Info background */
+  --color-warning: #c27803;          /* Caution / pending */
+  --color-warning-subtle: #fff8e1;    /* Warning background */
+
+  /* BORDERS & DIVIDERS */
+  --color-border-primary: #e5e3df;   /* Default border */
+  --color-border-secondary: #d1cfc9; /* Stronger separation */
+  --color-border-focus: #d4622b;      /* Focus rings (matches accent) */
+
+  /* LEGACY COLORS (for gradual migration) */
+  --color-amazon-navy: #232f3e;       /* Amazon dark blue */
+  --color-amazon-orange: #ff9900;     /* Amazon orange */
+  --color-amazon-orange-hover: #e68900;
+
+  /* ========================================
+     TYPOGRAPHY
+     ======================================== */
+
+  /* FONTS (will be set via @font-face or Google Fonts) */
+  --font-display: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', Monaco, 'Cascadia Code', monospace;
+
+  /* TYPE SCALE (fluid, clamp-based for responsiveness) */
+  --font-size-xs: clamp(0.6875rem, 0.65rem + 0.1vw, 0.75rem);     /* 11-12px */
+  --font-size-sm: clamp(0.75rem, 0.7rem + 0.15vw, 0.875rem);      /* 12-14px */
+  --font-size-base: clamp(0.875rem, 0.825rem + 0.15vw, 1rem);     /* 14-16px */
+  --font-size-md: clamp(1rem, 0.925rem + 0.2vw, 1.125rem);       /* 16-18px */
+  --font-size-lg: clamp(1.125rem, 1rem + 0.35vw, 1.375rem);      /* 18-22px */
+  --font-size-xl: clamp(1.375rem, 1.15rem + 0.6vw, 1.75rem);      /* 22-28px */
+  --font-size-2xl: clamp(1.75rem, 1.4rem + 0.95vw, 2.375rem);    /* 28-38px */
+  --font-size-3xl: clamp(2rem, 1.75rem + 1.25vw, 3rem);          /* 32-48px */
+
+  /* WEIGHTS */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* LINE HEIGHTS */
+  --line-height-tight: 1.2;    /* Headings */
+  --line-height-normal: 1.5;   /* Body text */
+  --line-height-relaxed: 1.7;  /* Long-form text */
+
+  /* ========================================
+     SPACING SYSTEM (4px grid)
+     ======================================== */
+
+  --space-0: 0;
+  --space-1: 4px;    /* Tight inline gaps */
+  --space-2: 8px;    /* Icon-to-text, badge padding */
+  --space-3: 12px;   /* Input padding, small card padding */
+  --space-4: 16px;   /* Standard gap, card padding */
+  --space-5: 20px;
+  --space-6: 24px;   /* Section padding, card gaps */
+  --space-8: 32px;   /* Section margins */
+  --space-10: 40px;
+  --space-12: 48px;  /* Page section separation */
+  --space-16: 64px;  /* Major section breaks */
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ========================================
+     BORDER RADIUS
+     ======================================== */
+
+  --radius-xs: 3px;   /* Small elements, badges */
+  --radius-sm: 6px;   /* Inputs, small buttons */
+  --radius-md: 10px;  /* Default for cards, buttons */
+  --radius-lg: 16px;  /* Large cards, modals */
+  --radius-xl: 24px;  /* Extra large cards */
+  --radius-pill: 9999px; /* Fully rounded (tags, pills) */
+
+  /* ========================================
+     ELEVATION & SHADOWS
+     ======================================== */
+
+  /* Shadows (warm, subtle) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.05), 0 16px 48px rgba(0, 0, 0, 0.08);
+
+  /* ELEVATION HIERARCHY (background + shadow) */
+  --elevation-0-bg: var(--color-bg-primary);
+  --elevation-0-shadow: none;
+
+  --elevation-1-bg: var(--color-bg-secondary);
+  --elevation-1-shadow: var(--shadow-sm);
+
+  --elevation-2-bg: var(--color-bg-elevated);
+  --elevation-2-shadow: var(--shadow-lg);
+
+  --elevation-3-bg: var(--color-bg-elevated);
+  --elevation-3-shadow: var(--shadow-xl);
+
+  /* ========================================
+     MOTION & ANIMATION
+     ======================================== */
+
+  /* Timing */
+  --duration-instant: 50ms;
+  --duration-fast: 100ms;    /* Hover, focus, color changes */
+  --duration-normal: 200ms;  /* Expand/collapse, fade in/out */
+  --duration-slow: 350ms;    /* Sheet slide, modal entrance */
+  --duration-slower: 500ms;
+
+  /* Easing */
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);        /* General transitions */
+  --ease-enter: cubic-bezier(0, 0, 0.2, 1);           /* Elements entering */
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);            /* Elements leaving */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);    /* Playful bounce */
+  --ease-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* ========================================
+     Z-INDEX SCALE
+     ======================================== */
+
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 1000;
+  --z-tooltip: 1100;
+  --z-toast: 1200;
+
+  /* ========================================
+     LAYOUT
+     ======================================== */
+
+  /* Breakpoints (for reference, media queries use standard values) */
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1400px;
+
+  /* Container widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1600px;
+
+  /* Sidebar widths */
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 48px;
+
+  /* Detail panel width */
+  --detail-panel-width: 400px;
+
+  /* Bottom nav height (mobile) */
+  --bottom-nav-height: 56px;
+
+  /* ========================================
+     COMPONENT-SPECIFIC TOKENS
+     ======================================== */
+
+  /* Buttons */
+  --button-height-sm: 32px;
+  --button-height-md: 40px;
+  --button-height-lg: 48px;
+
+  /* Inputs */
+  --input-height-sm: 32px;
+  --input-height-md: 40px;
+  --input-height-lg: 48px;
+
+  /* Badge */
+  --badge-height-sm: 20px;
+  --badge-height-md: 24px;
+
+  /* ========================================
+     ACCESSIBILITY
+     ======================================== */
+
+  /* Focus ring */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--color-accent-primary);
+
+  /* Minimum touch target (WCAG 2.5.8) */
+  --touch-target-min: 44px;
+
+  /* Color contrast (WCAG AA reference) */
+  --contrast-aa-normal: 4.5;   /* For normal text (< 18pt) */
+  --contrast-aa-large: 3;       /* For large text (>= 18pt or bold >= 14pt) */
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+
+    --ease-default: linear;
+    --ease-enter: linear;
+    --ease-exit: linear;
+    --ease-spring: linear;
+  }
+}
+
+/* ========================================
+   DARK MODE (future expansion)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  /* Dark mode tokens will be defined here when needed */
+  /* For now, keep light mode as default */
+}

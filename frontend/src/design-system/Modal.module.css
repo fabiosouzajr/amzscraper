@@ -1,0 +1,213 @@
+/* ========================================
+   Modal Component Styles
+   Uses design tokens from tokens.css
+   ======================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(26, 26, 24, 0.6); /* tinted with text-primary */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: var(--z-modal);
+  animation: fadeIn var(--duration-normal) var(--ease-enter);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   MODAL
+   ======================================== */
+
+.modal {
+  background-color: var(--color-bg-elevated);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: scaleIn var(--duration-normal) var(--ease-enter);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   SIZES
+   ======================================== */
+
+.sm {
+  width: 320px;
+}
+
+.md {
+  width: 480px;
+}
+
+.lg {
+  width: 640px;
+}
+
+.xl {
+  width: 800px;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+/* ========================================
+   CLOSE BUTTON
+   ======================================== */
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition:
+    background-color var(--duration-fast) var(--ease-default),
+    color var(--duration-fast) var(--ease-default);
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  background-color: var(--color-bg-inset);
+  color: var(--color-text-primary);
+}
+
+.closeButton:active {
+  background-color: var(--color-bg-secondary);
+}
+
+.closeButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+}
+
+/* ========================================
+   CONTENT
+   ======================================== */
+
+.content {
+  padding: var(--space-5);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.content + .footer {
+  padding-top: var(--space-4);
+}
+
+/* No header - content gets full padding */
+/* Note: :has() pseudo-class for browsers that support it */
+@supports selector(:has(*)) {
+  .modal:not(:has(.header)) .content {
+    padding-top: var(--space-5);
+  }
+}
+
+/* Fallback: add a class when no header is needed */
+.modal.noHeader .content {
+  padding-top: var(--space-5);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--color-border-primary);
+  background-color: var(--color-bg-secondary);
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .modal {
+    animation: none;
+  }
+
+  .closeButton {
+    transition: none;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: var(--breakpoint-mobile)) {
+  .overlay {
+    padding: var(--space-2);
+    align-items: flex-end; /* Sheet-like on mobile */
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 85vh;
+    animation: slideUp var(--duration-slow) var(--ease-enter);
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
