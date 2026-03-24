@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../services/api';
 import type { User } from '../../types';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 
 export function UserManagement() {
   const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebouncedValue(searchQuery, 300);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -16,12 +18,12 @@ export function UserManagement() {
 
   useEffect(() => {
     loadUsers();
-  }, [searchQuery]);
+  }, [debouncedSearch]);
 
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const data = await adminApi.getUsers(50, 0, searchQuery || undefined);
+      const data = await adminApi.getUsers(50, 0, debouncedSearch || undefined);
       setUsers(data);
     } catch (error) {
       console.error('Failed to load users:', error);

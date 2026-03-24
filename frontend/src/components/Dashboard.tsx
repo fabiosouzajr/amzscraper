@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { PriceDrop } from '../types';
@@ -10,6 +10,92 @@ import { Card, Button, ProgressBar, Badge, EmptyState } from '../design-system';
 interface DashboardProps {
   onCategoryClick: (categoryName: string) => void;
 }
+
+interface PriceChangeCardProps {
+  item: PriceDrop;
+  variant: 'drop' | 'increase';
+  onCategoryClick: (categoryName: string) => void;
+}
+
+const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onCategoryClick }: PriceChangeCardProps) {
+  const { t } = useTranslation();
+  const cardClass = variant === 'drop' ? 'price-drop-card' : 'price-increase-card';
+  const headerClass = variant === 'drop' ? 'drop-header' : 'increase-header';
+  const headerContentClass = variant === 'drop' ? 'drop-header-content' : 'increase-header-content';
+  const percentageClass = variant === 'drop' ? 'drop-percentage' : 'increase-percentage';
+  const amountClass = variant === 'drop' ? 'drop-amount' : 'increase-amount';
+  const currentPriceClass = variant === 'drop' ? 'price current' : 'price current increase';
+
+  return (
+    <Card
+      elevation={1}
+      padding="sm"
+      onClick={() => onCategoryClick('')}
+      className={cardClass}
+    >
+      <div className={headerClass}>
+        <div className={headerContentClass}>
+          <div className={percentageClass}>
+            {formatPercentage(item.price_drop_percentage)}
+          </div>
+          <div className={amountClass}>
+            {formatPrice(item.price_drop)}
+          </div>
+        </div>
+      </div>
+      <div className="product-info">
+        <div className="product-asin">{item.product.asin}</div>
+        {item.product.categories && item.product.categories.length > 0 && (
+          <div className="product-categories">
+            {item.product.categories.map((cat, idx) => (
+              <span key={cat.id}>
+                <button
+                  type="button"
+                  className="category-badge-btn"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onCategoryClick(cat.name);
+                  }}
+                  title={t('dashboard.filterBy', { category: cat.name })}
+                >
+                  <Badge variant="info" size="sm">{cat.name}</Badge>
+                </button>
+                {idx < item.product.categories!.length - 1 && ' > '}
+              </span>
+            ))}
+          </div>
+        )}
+        <a
+          href={`https://www.amazon.com.br/dp/${item.product.asin}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="product-link"
+        >
+          {item.product.description}
+        </a>
+        {item.price_history && item.price_history.length > 0 && (
+          <div className="mini-chart-container">
+            <MiniPriceChart priceHistory={item.price_history} />
+          </div>
+        )}
+        <div className="price-info">
+          <div className="price-row">
+            <span className="label">{t('dashboard.previous')}:</span>
+            <span className="price previous">{formatPrice(item.previous_price)}</span>
+          </div>
+          <div className="price-row">
+            <span className="label">{t('dashboard.current')}:</span>
+            <span className={currentPriceClass}>{formatPrice(item.current_price)}</span>
+          </div>
+          <div className="last-updated">
+            {t('dashboard.updated')}: {formatDateTime(item.last_updated)}
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+});
 
 export function Dashboard({ onCategoryClick }: DashboardProps) {
   const { t } = useTranslation();
@@ -161,74 +247,12 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
               <h2 className="section-title">{t('dashboard.priceDrops')}</h2>
               <div className="price-drops-grid">
                 {priceDrops.map((drop) => (
-                  <Card
+                  <PriceChangeCard
                     key={drop.product.id}
-                    elevation={1}
-                    padding="sm"
-                    onClick={() => onCategoryClick('')}
-                    className="price-drop-card"
-                  >
-                    <div className="drop-header">
-                      <div className="drop-header-content">
-                        <div className="drop-percentage">
-                          {formatPercentage(drop.price_drop_percentage)}
-                        </div>
-                        <div className="drop-amount">
-                          {formatPrice(drop.price_drop)}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="product-info">
-                      <div className="product-asin">{drop.product.asin}</div>
-                      {drop.product.categories && drop.product.categories.length > 0 && (
-                        <div className="product-categories">
-                          {drop.product.categories.map((cat, idx) => (
-                            <span key={cat.id}>
-                              <button
-                                type="button"
-                                className="category-badge-btn"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  onCategoryClick(cat.name);
-                                }}
-                                title={t('dashboard.filterBy', { category: cat.name })}
-                              >
-                                <Badge variant="info" size="sm">{cat.name}</Badge>
-                              </button>
-                              {idx < drop.product.categories!.length - 1 && ' > '}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <a
-                        href={`https://www.amazon.com.br/dp/${drop.product.asin}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="product-link"
-                      >
-                        {drop.product.description}
-                      </a>
-                      {drop.price_history && drop.price_history.length > 0 && (
-                        <div className="mini-chart-container">
-                          <MiniPriceChart priceHistory={drop.price_history} />
-                        </div>
-                      )}
-                      <div className="price-info">
-                        <div className="price-row">
-                          <span className="label">{t('dashboard.previous')}:</span>
-                          <span className="price previous">{formatPrice(drop.previous_price)}</span>
-                        </div>
-                        <div className="price-row">
-                          <span className="label">{t('dashboard.current')}:</span>
-                          <span className="price current">{formatPrice(drop.current_price)}</span>
-                        </div>
-                        <div className="last-updated">
-                          {t('dashboard.updated')}: {formatDateTime(drop.last_updated)}
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
+                    item={drop}
+                    variant="drop"
+                    onCategoryClick={onCategoryClick}
+                  />
                 ))}
               </div>
             </div>
@@ -239,74 +263,12 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
               <h2 className="section-title">{t('dashboard.priceIncreases')}</h2>
               <div className="price-drops-grid">
                 {priceIncreases.map((increase) => (
-                  <Card
+                  <PriceChangeCard
                     key={increase.product.id}
-                    elevation={1}
-                    padding="sm"
-                    onClick={() => onCategoryClick('')}
-                    className="price-increase-card"
-                  >
-                    <div className="increase-header">
-                      <div className="increase-header-content">
-                        <div className="increase-percentage">
-                          {formatPercentage(increase.price_drop_percentage)}
-                        </div>
-                        <div className="increase-amount">
-                          {formatPrice(increase.price_drop)}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="product-info">
-                      <div className="product-asin">{increase.product.asin}</div>
-                      {increase.product.categories && increase.product.categories.length > 0 && (
-                        <div className="product-categories">
-                          {increase.product.categories.map((cat, idx) => (
-                            <span key={cat.id}>
-                              <button
-                                type="button"
-                                className="category-badge-btn"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  onCategoryClick(cat.name);
-                                }}
-                                title={t('dashboard.filterBy', { category: cat.name })}
-                              >
-                                <Badge variant="info" size="sm">{cat.name}</Badge>
-                              </button>
-                              {idx < increase.product.categories!.length - 1 && ' > '}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <a
-                        href={`https://www.amazon.com.br/dp/${increase.product.asin}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="product-link"
-                      >
-                        {increase.product.description}
-                      </a>
-                      {increase.price_history && increase.price_history.length > 0 && (
-                        <div className="mini-chart-container">
-                          <MiniPriceChart priceHistory={increase.price_history} />
-                        </div>
-                      )}
-                      <div className="price-info">
-                        <div className="price-row">
-                          <span className="label">{t('dashboard.previous')}:</span>
-                          <span className="price previous">{formatPrice(increase.previous_price)}</span>
-                        </div>
-                        <div className="price-row">
-                          <span className="label">{t('dashboard.current')}:</span>
-                          <span className="price current increase">{formatPrice(increase.current_price)}</span>
-                        </div>
-                        <div className="last-updated">
-                          {t('dashboard.updated')}: {formatDateTime(increase.last_updated)}
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
+                    item={increase}
+                    variant="increase"
+                    onCategoryClick={onCategoryClick}
+                  />
                 ))}
               </div>
             </div>

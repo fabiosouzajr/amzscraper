@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { Product, UserList } from '../types';
@@ -48,10 +48,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
     try {
       setLoading(true);
       const response = await api.getProducts(selectedCategory || undefined, page, pageSize);
-      const sorted = [...response.products].sort((a, b) =>
-        a.description.localeCompare(b.description, undefined, { sensitivity: 'base' })
-      );
-      setProducts(sorted);
+      setProducts(response.products);
       setTotalPages(response.pagination.totalPages);
       setTotalCount(response.pagination.totalCount);
       setCurrentPage(response.pagination.page);
@@ -123,7 +120,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
     };
   }, [addingToListProductId]);
 
-  const handleCategoryClick = (categoryName: string) => setSelectedCategory(categoryName);
+  const handleCategoryClick = useCallback((categoryName: string) => setSelectedCategory(categoryName), []);
 
   const handleAddProduct = async (asin: string) => {
     setIsValidating(true);
@@ -143,11 +140,13 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
     }
   };
 
-  const handleDeleteProduct = async (id: number) => {
+  const handleDeleteProduct = useCallback(async (id: number) => {
     if (!confirm(t('products.confirmDelete'))) return;
     try {
       await api.deleteProduct(id);
-      const currentProductsOnPage = filteredProducts.length;
+      const currentProductsOnPage = selectedListId
+        ? products.filter(p => p.lists?.some(l => l.id === selectedListId)).length
+        : products.length;
       if (currentProductsOnPage === 1 && currentPage > 1) {
         const newPage = currentPage - 1;
         setCurrentPage(newPage);
@@ -159,11 +158,19 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
       setError(t('products.failedToDelete'));
       console.error(err);
     }
-  };
+  }, [products, selectedListId, currentPage]);
 
   const handleListClick = (listId: number | null) => setSelectedListId(listId);
 
-  const handleAddToList = async (productId: number, listId: number) => {
+  const handleToggleDropdown = useCallback((productId: number) => {
+    const newState = addingToListProductId === productId ? null : productId;
+    setAddingToListProductId(newState);
+    if (newState !== null) {
+      setTimeout(() => adjustDropdownPosition(productId), 0);
+    }
+  }, [addingToListProductId]);
+
+  const handleAddToList = useCallback(async (productId: number, listId: number) => {
     try {
       await api.addProductToList(listId, productId);
       const listToAdd = lists.find(l => l.id === listId);
@@ -187,7 +194,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
     } catch (err: any) {
       setError(err.message || t('products.failedToAddToList'));
     }
-  };
+  }, [lists]);
 
   const handleRemoveFromList = async (productId: number, listId: number) => {
     try {
@@ -386,13 +393,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                         <div className="add-to-list-container">
                           <button
                             className="add-to-list-button"
-                            onClick={() => {
-                              const newState = addingToListProductId === product.id ? null : product.id;
-                              setAddingToListProductId(newState);
-                              if (newState !== null) {
-                                setTimeout(() => adjustDropdownPosition(product.id), 0);
-                              }
-                            }}
+                            onClick={() => handleToggleDropdown(product.id)}
                           >
                             {t('products.addToList')}
                           </button>

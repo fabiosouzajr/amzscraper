@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { CategoryTreeNode } from '../types';
@@ -9,7 +9,7 @@ interface CategoryTreeFilterProps {
 }
 
 // Recursive node for the dropdown tree
-function TreeNode({
+const TreeNode = React.memo(function TreeNode({
   node,
   depth,
   selectedCategory,
@@ -63,7 +63,7 @@ function TreeNode({
       )}
     </div>
   );
-}
+});
 
 export function CategoryTreeFilter({ selectedCategory, onChange }: CategoryTreeFilterProps) {
   const { t } = useTranslation();

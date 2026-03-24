@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+const PriceChart = lazy(() => import('./PriceChart'));
 import { api } from '../services/api';
 import { ProductWithPrice } from '../types';
 import { formatDate, formatDateTime } from '../utils/dateFormat';
@@ -213,16 +214,9 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
       {chartData.length > 0 && (
         <div className="price-chart">
           <h3>{t('productDetail.priceHistory')}</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip formatter={(value: number) => formatPrice(value)} />
-              <Legend />
-              <Line type="monotone" dataKey="price" stroke="#8884d8" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
+          <Suspense fallback={<div className="chart-loading">Loading chart...</div>}>
+            <PriceChart data={chartData} />
+          </Suspense>
         </div>
       )}
       
