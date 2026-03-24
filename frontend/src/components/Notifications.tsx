@@ -14,6 +14,7 @@ import {
   BelowThresholdParams,
   PercentageDropParams,
 } from '../types';
+import { Modal, Button } from '../design-system';
 
 type TabType = 'channels' | 'rules' | 'history';
 
@@ -125,9 +126,12 @@ function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h3>{channel ? t('notifications.channels.edit') : t('notifications.channels.add')}</h3>
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      title={channel ? t('notifications.channels.edit') : t('notifications.channels.add')}
+      size="md"
+    >
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>{t('notifications.channels.type')}</label>
@@ -223,13 +227,12 @@ function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
                 {testing ? '...' : t('notifications.channels.test')}
               </button>
             )}
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
+            <Button type="submit" variant="primary" disabled={submitting}>
               {submitting ? '...' : t('common.save')}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </Modal>
   );
 }
 
@@ -287,9 +290,12 @@ function RuleForm({ rule, channels, onClose, onSaved }: RuleFormProps) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h3>{rule ? t('notifications.rules.edit') : t('notifications.rules.add')}</h3>
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      title={rule ? t('notifications.rules.edit') : t('notifications.rules.add')}
+      size="md"
+    >
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>{t('notifications.rules.type')}</label>
@@ -340,16 +346,15 @@ function RuleForm({ rule, channels, onClose, onSaved }: RuleFormProps) {
           {error && <div className="error-message">{error}</div>}
 
           <div className="modal-actions">
-            <button type="button" onClick={onClose} disabled={submitting}>
+            <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>
               {t('common.cancel')}
-            </button>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
+            </Button>
+            <Button type="submit" variant="primary" disabled={submitting}>
               {submitting ? '...' : t('common.save')}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </Modal>
   );
 }
 
@@ -424,7 +429,7 @@ export function Notifications() {
   };
 
   const handleDeleteChannel = async (id: number) => {
-    if (!window.confirm('Delete this channel?')) return;
+    if (!window.confirm(t('notifications.channels.confirmDelete'))) return;
     try {
       await api.notifications.deleteChannel(id);
       await loadChannels();
@@ -443,7 +448,7 @@ export function Notifications() {
   };
 
   const handleDeleteRule = async (id: number) => {
-    if (!window.confirm('Delete this rule?')) return;
+    if (!window.confirm(t('notifications.rules.confirmDelete'))) return;
     try {
       await api.notifications.deleteRule(id);
       await loadRules();
@@ -542,7 +547,7 @@ export function Notifications() {
                             className="btn btn-small btn-danger"
                             onClick={() => handleDeleteChannel(channel.id)}
                           >
-                            Delete
+                            {t('notifications.delete')}
                           </button>
                         </td>
                       </tr>
@@ -609,7 +614,7 @@ export function Notifications() {
                             className="btn btn-small btn-danger"
                             onClick={() => handleDeleteRule(rule.id)}
                           >
-                            Delete
+                            {t('notifications.delete')}
                           </button>
                         </td>
                       </tr>

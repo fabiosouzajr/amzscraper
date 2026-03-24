@@ -177,7 +177,9 @@
     "english": "English",
     "portuguese": "Português",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "skipToContent": "Skip to main content",
+    "dismiss": "Dismiss"
   },
   "admin": {
     "title": "Admin Panel",
@@ -313,6 +315,7 @@
       "noChannels": "No channels configured yet. Add one to get started.",
       "createFailed": "Failed to save channel",
       "deleteFailed": "Failed to delete channel",
+      "confirmDelete": "Are you sure you want to delete this channel?",
       "testSuccess": "Test notification sent successfully!",
       "testFailed": "Test failed",
       "channelTypes": {
@@ -348,6 +351,7 @@
       "actions": "Actions",
       "noRules": "No rules configured yet.",
       "createFailed": "Failed to save rule",
+      "confirmDelete": "Are you sure you want to delete this rule?",
       "allProducts": "All Products (global rule)",
       "days": "Days",
       "threshold": "Threshold (R$)",

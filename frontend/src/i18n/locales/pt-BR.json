@@ -177,7 +177,9 @@
     "english": "English",
     "portuguese": "Português",
     "cancel": "Cancelar",
-    "save": "Salvar"
+    "save": "Salvar",
+    "skipToContent": "Pular para o conteúdo principal",
+    "dismiss": "Descartar"
   },
   "admin": {
     "title": "Painel de Administração",
@@ -313,6 +315,7 @@
       "noChannels": "Nenhum canal configurado. Adicione um para começar.",
       "createFailed": "Falha ao salvar canal",
       "deleteFailed": "Falha ao excluir canal",
+      "confirmDelete": "Tem certeza que deseja excluir este canal?",
       "testSuccess": "Notificação de teste enviada com sucesso!",
       "testFailed": "Falha no teste",
       "channelTypes": {
@@ -348,6 +351,7 @@
       "actions": "Ações",
       "noRules": "Nenhuma regra configurada.",
       "createFailed": "Falha ao salvar regra",
+      "confirmDelete": "Tem certeza que deseja excluir esta regra?",
       "allProducts": "Todos os produtos (regra global)",
       "days": "Dias",
       "threshold": "Limite (R$)",

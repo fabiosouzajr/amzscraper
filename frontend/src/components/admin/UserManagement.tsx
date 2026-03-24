@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../services/api';
 import type { User } from '../../types';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
+import { Modal, Button, Input, Badge } from '../../design-system';
 
 export function UserManagement() {
   const { t } = useTranslation();
@@ -92,9 +93,9 @@ export function UserManagement() {
     <div className="user-management">
       <div className="user-management-header">
         <h2>{t('admin.users.title')}</h2>
-        <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
+        <Button onClick={() => setShowCreateModal(true)} variant="primary">
           {t('admin.users.createUser')}
-        </button>
+        </Button>
       </div>
 
       <div className="search-box">
@@ -132,40 +133,43 @@ export function UserManagement() {
                 <tr key={user.id}>
                   <td>{user.username}</td>
                   <td>
-                    <span className={`role-badge role-${user.role?.toLowerCase()}`}>
+                    <Badge variant={user.role === 'ADMIN' ? 'info' : 'neutral'}>
                       {user.role}
-                    </span>
+                    </Badge>
                   </td>
                   <td>
-                    <span className={`status-badge status-${user.is_disabled ? 'disabled' : 'active'}`}>
+                    <Badge variant={user.is_disabled ? 'danger' : 'success'}>
                       {user.is_disabled ? t('admin.users.disabled') : t('admin.users.active')}
-                    </span>
+                    </Badge>
                   </td>
                   <td>{user.product_count || 0}</td>
                   <td>{user.list_count || 0}</td>
                   <td>{user.price_history_count || 0}</td>
                   <td>{new Date(user.created_at).toLocaleDateString()}</td>
                   <td>
-                    <button
-                      className="btn btn-small"
+                    <Button
+                      size="sm"
+                      variant="secondary"
                       onClick={() => handleViewStats(user)}
                     >
                       {t('admin.users.viewStats')}
-                    </button>
+                    </Button>
                     {user.is_disabled ? (
-                      <button
-                        className="btn btn-small btn-success"
+                      <Button
+                        size="sm"
+                        variant="primary"
                         onClick={() => handleEnableUser(user.id)}
                       >
                         {t('admin.users.enable')}
-                      </button>
+                      </Button>
                     ) : (
-                      <button
-                        className="btn btn-small btn-danger"
+                      <Button
+                        size="sm"
+                        variant="danger"
                         onClick={() => handleDisableUser(user.id)}
                       >
                         {t('admin.users.disable')}
-                      </button>
+                      </Button>
                     )}
                   </td>
                 </tr>
@@ -176,70 +180,76 @@ export function UserManagement() {
       )}
 
       {/* Create User Modal */}
-      {showCreateModal && (
-        <div className="modal" onClick={() => setShowCreateModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>{t('admin.users.createUser')}</h3>
-            <form onSubmit={handleCreateUser}>
-              <div className="form-group">
-                <label>{t('auth.username')}</label>
-                <input
-                  type="text"
-                  required
-                  minLength={3}
-                  value={newUser.username}
-                  onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-                />
-              </div>
-              <div className="form-group">
-                <label>{t('admin.users.newPassword')}</label>
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  placeholder={t('admin.users.passwordPlaceholder')}
-                  value={newUser.password}
-                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                />
-              </div>
-              <div className="modal-actions">
-                <button type="button" onClick={() => setShowCreateModal(false)}>
-                  {t('common.cancel')}
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  {t('common.save')}
-                </button>
-              </div>
-            </form>
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        title={t('admin.users.createUser')}
+        size="md"
+      >
+        <form onSubmit={handleCreateUser}>
+          <div className="form-group">
+            <label>{t('auth.username')}</label>
+            <Input
+              type="text"
+              required
+              minLength={3}
+              value={newUser.username}
+              onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+            />
           </div>
-        </div>
-      )}
+          <div className="form-group">
+            <label>{t('admin.users.newPassword')}</label>
+            <Input
+              type="password"
+              required
+              minLength={6}
+              placeholder={t('admin.users.passwordPlaceholder')}
+              value={newUser.password}
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+            />
+          </div>
+          <div className="modal-actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setShowCreateModal(false)}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button type="submit" variant="primary">
+              {t('common.save')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {/* User Stats Modal */}
-      {showStatsModal && selectedUser && (
-        <div className="modal" onClick={() => setShowStatsModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>{t('admin.users.userStats', { username: selectedUser.username })}</h3>
-            {selectedUser.stats && (
-              <div className="user-stats-grid">
-                <div className="stat-card">
-                  <h4>{t('admin.users.products')}</h4>
-                  <p className="stat-value">{selectedUser.stats.product_count}</p>
-                </div>
-                <div className="stat-card">
-                  <h4>{t('admin.users.lists')}</h4>
-                  <p className="stat-value">{selectedUser.stats.list_count}</p>
-                </div>
-                <div className="stat-card">
-                  <h4>{t('admin.users.priceHistory')}</h4>
-                  <p className="stat-value">{selectedUser.stats.price_history_count}</p>
-                </div>
+      <Modal
+        isOpen={showStatsModal && selectedUser !== null}
+        onClose={() => setShowStatsModal(false)}
+        title={t('admin.users.userStats', { username: selectedUser?.username || '' })}
+        size="md"
+      >
+        {selectedUser && selectedUser.stats && (
+          <>
+            <div className="user-stats-grid">
+              <div className="stat-card">
+                <h4>{t('admin.users.products')}</h4>
+                <p className="stat-value">{selectedUser.stats.product_count}</p>
               </div>
-            )}
+              <div className="stat-card">
+                <h4>{t('admin.users.lists')}</h4>
+                <p className="stat-value">{selectedUser.stats.list_count}</p>
+              </div>
+              <div className="stat-card">
+                <h4>{t('admin.users.priceHistory')}</h4>
+                <p className="stat-value">{selectedUser.stats.price_history_count}</p>
+              </div>
+            </div>
             <div className="user-actions">
               <div className="form-group">
                 <label>{t('admin.users.newPassword')}</label>
-                <input
+                <Input
                   type="password"
                   minLength={6}
                   placeholder={t('admin.users.passwordPlaceholder')}
@@ -249,18 +259,22 @@ export function UserManagement() {
               </div>
               <form onSubmit={handleResetPassword}>
                 <div className="modal-actions">
-                  <button type="button" onClick={() => setShowStatsModal(false)}>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setShowStatsModal(false)}
+                  >
                     {t('common.cancel')}
-                  </button>
-                  <button type="submit" className="btn btn-primary">
+                  </Button>
+                  <Button type="submit" variant="primary">
                     {t('common.save')}
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
     </div>
   );
 }
