@@ -173,7 +173,7 @@ export interface NotificationRule {
 export interface NotificationRuleWithUser extends NotificationRule {
   username: string;
   product_description?: string;
-  channel_name: string;
+  channel_name?: string;
 }
 
 export interface NotificationLogEntry {
@@ -192,6 +192,6 @@ export interface NotificationLogEntry {
 export interface NotificationLogEntryWithUser extends NotificationLogEntry {
   username: string;
   product_description?: string;
-  channel_name: string;
+  channel_name?: string;
 }
 
