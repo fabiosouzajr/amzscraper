@@ -40,7 +40,7 @@ Merge functionality from `ProductList.tsx` and `ProductSearch.tsx`:
 - Product list with pagination (adjustable 10/20/50)
 - On product select: open `Sheet` panel (desktop) or full-screen (mobile)
 
-### Step 1.4: Implement Settings Page
+### ✅ Step 1.4: Implement Settings Page
 
 **New File**: `frontend/src/components/SettingsPage.tsx`
 
@@ -54,7 +54,7 @@ Consolidate `Config` and `AdminPanel` functionality:
 
 All navigation uses `useNavigate` and `Link`. No more `setCurrentView` state switching.
 
-### Step 1.6: Update ProductDetail for Sheet Pattern
+### ✅ Step 1.6: Update ProductDetail for Sheet Pattern
 
 **File**: `frontend/src/components/ProductDetail.tsx`
 
@@ -89,7 +89,7 @@ Mobile card view:
 - Visible: thumbnail, title, current price, sparkline
 - Tap to expand: categories, ASIN, list, full price history
 
-### Step 2.3: Replace Category Filter with Accessible Component
+### ✅ Step 2.3: Replace Category Filter with Accessible Component
 
 **File**: `frontend/src/components/CategoryFilter.tsx` (new)
 
