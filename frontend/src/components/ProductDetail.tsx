@@ -8,20 +8,29 @@ import { formatDate, formatDateTime } from '../utils/dateFormat';
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
 import { ProductNotifications } from './ProductNotifications';
 import { Badge } from '../design-system';
+import { useSwipeToDismiss } from '../hooks';
 
 interface ProductDetailProps {
   productId: number;
-  onBack: () => void;
+  onBack?: () => void;
+  onClose?: () => void;
   onNavigate?: (productId: number) => void;
+  isSheet?: boolean;
 }
 
-export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailProps) {
+export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet = false }: ProductDetailProps) {
   const { t } = useTranslation();
   const [product, setProduct] = useState<ProductWithPrice | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortedProductIds, setSortedProductIds] = useState<number[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
+
+  const swipeRef = useSwipeToDismiss(() => {
+    if (onClose) {
+      onClose();
+    }
+  }).ref as React.RefObject<HTMLDivElement>;
 
   useEffect(() => {
     const loadSortedIds = async () => {
@@ -67,7 +76,7 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
     return (
       <div className="error">
         <p>{error || t('productDetail.notFound')}</p>
-        <button onClick={onBack}>{t('productDetail.goBack')}</button>
+        {onBack && <button onClick={onBack}>{t('productDetail.goBack')}</button>}
       </div>
     );
   }
@@ -102,26 +111,28 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
   const hasNext = currentIndex >= 0 && currentIndex < sortedProductIds.length - 1;
 
   return (
-    <div className="product-detail">
-      <div className="product-detail-header">
-        <div className="product-navigation">
-          <button 
-            onClick={handlePrevious} 
-            className="nav-button prev-button"
-            disabled={!hasPrevious}
-          >
-            {t('productDetail.previous')}
-          </button>
-          <button 
-            onClick={handleNext} 
-            className="nav-button next-button"
-            disabled={!hasNext}
-          >
-            {t('productDetail.next')}
-          </button>
+    <div className="product-detail" ref={swipeRef}>
+      {!isSheet && (
+        <div className="product-detail-header">
+          <div className="product-navigation">
+            <button
+              onClick={handlePrevious}
+              className="nav-button prev-button"
+              disabled={!hasPrevious}
+            >
+              {t('productDetail.previous')}
+            </button>
+            <button
+              onClick={handleNext}
+              className="nav-button next-button"
+              disabled={!hasNext}
+            >
+              {t('productDetail.next')}
+            </button>
+          </div>
         </div>
-      </div>
-      
+      )}
+
       <div className="product-header">
         <div className="product-meta">
           <Badge variant="neutral" size="sm">
