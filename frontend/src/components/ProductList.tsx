@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import { Product, UserList } from '../types';
 import { ASINInput } from './ASINInput';
 import { ListsSidebar } from './ListsSidebar';
-import { CategoryTreeFilter } from './CategoryTreeFilter';
+import { CategoryFilter } from './CategoryFilter';
 import { formatDate } from '../utils/dateFormat';
 import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
@@ -320,7 +320,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
               <h3>{t('products.trackedProducts')} ({selectedListId ? filteredProducts.length : totalCount}{selectedListId ? ` / ${totalCount}` : ''})</h3>
               <div className="category-filter-panel">
                 <label className="category-filter-label">{t('products.filterByCategory')}:</label>
-                <CategoryTreeFilter
+                <CategoryFilter
                   selectedCategory={selectedCategory}
                   onChange={setSelectedCategory}
                 />

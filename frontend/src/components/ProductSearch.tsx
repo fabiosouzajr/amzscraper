@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { Product } from '../types';
-import { CategoryTreeFilter } from './CategoryTreeFilter';
+import { CategoryFilter } from './CategoryFilter';
 
 interface ProductSearchProps {
   onSelectProduct: (product: Product) => void;
@@ -83,7 +83,7 @@ export function ProductSearch({ onSelectProduct, selectedProductId }: ProductSea
     <div className="product-search">
       <div className="search-filters">
         <label className="category-filter-label">{t('products.filterByCategory')}:</label>
-        <CategoryTreeFilter
+        <CategoryFilter
           selectedCategory={selectedCategory}
           onChange={(cat) => { setSelectedCategory(cat); setCurrentPage(1); }}
         />

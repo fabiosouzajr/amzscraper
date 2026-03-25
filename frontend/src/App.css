@@ -3662,6 +3662,11 @@
   background: #fff3e0;
 }
 
+.cat-tree-row:focus-within {
+  outline: 2px solid #ff9900;
+  outline-offset: -2px;
+}
+
 .cat-tree-expand {
   background: none;
   border: none;
