@@ -131,22 +131,22 @@ export function UserManagement() {
             ) : (
               users.map((user) => (
                 <tr key={user.id}>
-                  <td>{user.username}</td>
-                  <td>
+                  <td data-label={t('admin.users.username')}>{user.username}</td>
+                  <td data-label={t('admin.users.role')}>
                     <Badge variant={user.role === 'ADMIN' ? 'info' : 'neutral'}>
                       {user.role}
                     </Badge>
                   </td>
-                  <td>
+                  <td data-label={t('admin.users.status')}>
                     <Badge variant={user.is_disabled ? 'danger' : 'success'}>
                       {user.is_disabled ? t('admin.users.disabled') : t('admin.users.active')}
                     </Badge>
                   </td>
-                  <td>{user.product_count || 0}</td>
-                  <td>{user.list_count || 0}</td>
-                  <td>{user.price_history_count || 0}</td>
-                  <td>{new Date(user.created_at).toLocaleDateString()}</td>
-                  <td>
+                  <td data-label={t('admin.users.products')}>{user.product_count || 0}</td>
+                  <td data-label={t('admin.users.lists')}>{user.list_count || 0}</td>
+                  <td data-label={t('admin.users.priceHistory')}>{user.price_history_count || 0}</td>
+                  <td data-label={t('admin.users.createdAt')}>{new Date(user.created_at).toLocaleDateString()}</td>
+                  <td data-label={t('admin.users.actions')}>
                     <Button
                       size="sm"
                       variant="secondary"

@@ -108,26 +108,26 @@ export function AuditLog() {
             ) : (
               filteredLogs.map((log) => (
                 <tr key={log.id}>
-                  <td>{new Date(log.created_at).toLocaleString()}</td>
-                  <td>{log.admin_username}</td>
-                  <td>
+                  <td data-label={t('admin.audit.timestamp')}>{new Date(log.created_at).toLocaleString()}</td>
+                  <td data-label={t('admin.audit.admin')}>{log.admin_username}</td>
+                  <td data-label={t('admin.audit.action')}>
                     <span className={`action-badge ${getActionBadgeClass(log.action)}`}>
                       {log.action}
                     </span>
                   </td>
-                  <td>
+                  <td data-label={t('admin.audit.target')}>
                     <span className={getTargetTypeBadgeClass(log.target_type)}>
                       {log.target_type || '-'}
                     </span>
                   </td>
-                  <td>
+                  <td data-label={t('admin.audit.targetId')}>
                     {log.target_id ? (
                       <span>{log.target_type}:{log.target_id}</span>
                     ) : (
                       <span>-</span>
                     )}
                   </td>
-                  <td>{log.details || '-'}</td>
+                  <td data-label={t('admin.audit.details')}>{log.details || '-'}</td>
                 </tr>
               ))
             )}

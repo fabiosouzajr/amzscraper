@@ -7,6 +7,7 @@ import { ProductWithPrice } from '../types';
 import { formatDate, formatDateTime } from '../utils/dateFormat';
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
 import { ProductNotifications } from './ProductNotifications';
+import { Badge } from '../design-system';
 
 interface ProductDetailProps {
   productId: number;
@@ -123,10 +124,12 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
       
       <div className="product-header">
         <div className="product-meta">
-          <span className="asin-badge">{t('productDetail.asin')}: {product.asin}</span>
-          <span className="date-badge">
+          <Badge variant="neutral" size="sm">
+            {t('productDetail.asin')}: {product.asin}
+          </Badge>
+          <Badge variant="neutral" size="sm">
             {t('productDetail.added')}: {formatDate(product.created_at)}
-          </span>
+          </Badge>
           {product.lists && product.lists.length > 0 && (
             <div className="product-lists">
               <span className="lists-label">{t('products.inLists')}: </span>
@@ -143,9 +146,9 @@ export function ProductDetail({ productId, onBack, onNavigate }: ProductDetailPr
           <div className="product-categories">
             {product.categories.map((cat, idx) => (
               <span key={cat.id}>
-                <span className="category-badge">
+                <Badge variant="info" size="sm">
                   {cat.name}
-                </span>
+                </Badge>
                 {idx < product.categories!.length - 1 && ' > '}
               </span>
             ))}
