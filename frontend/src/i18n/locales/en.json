@@ -68,7 +68,9 @@
     "failedToAddToList": "Failed to add product to list",
     "failedToRemoveFromList": "Failed to remove product from list",
     "noProductsInList": "No products in this list",
-    "noListsAvailable": "No lists available. Create a list first."
+    "noListsAvailable": "No lists available. Create a list first.",
+    "perPage": "per page",
+    "itemsPerPage": "Items per page"
   },
   "search": {
     "title": "Search Products",
@@ -165,7 +167,9 @@
     "confirmDelete": "Are you sure you want to delete this list?",
     "rename": "Rename",
     "delete": "Delete",
-    "allProducts": "All Products"
+    "allProducts": "All Products",
+    "showLists": "Lists ({{count}})",
+    "closeLists": "Close"
   },
   "pagination": {
     "previous": "Previous",
@@ -357,6 +361,7 @@
       "threshold": "Threshold (R$)",
       "percentage": "Percentage (%)",
       "windowDays": "Window (days)",
+      "daysUnit": "days",
       "ruleTypes": {
         "lowestInDays": "Lowest price in N days",
         "belowThreshold": "Price below threshold",

@@ -1,0 +1,7 @@
+.appShell {
+  display: contents;
+}
+
+.appShellMobile .mobileContent {
+  padding-bottom: var(--bottom-nav-height);
+}

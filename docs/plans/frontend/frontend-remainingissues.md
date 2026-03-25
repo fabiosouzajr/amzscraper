@@ -14,48 +14,19 @@ The design system components (`Button`, `Card`, `Input`, `Modal`, `Badge`, `Empt
 
 ## Phase 1: Navigation & Routing (Issues N1-N5)
 
-### Step 1.1: Install and Configure React Router
+### ✅ Step 1.1: Install and Configure React Router
 
-**File**: `frontend/package.json`
+`react-router-dom@^7.13.2` installed. `main.tsx` wraps App with `BrowserRouter`.
 
-```bash
-npm install react-router-dom
-```
+### ✅ Step 1.2: Define Route Structure
 
-**File**: `frontend/src/main.tsx`
-
-Wrap `App` with `BrowserRouter`:
-```typescript
-import { BrowserRouter } from 'react-router-dom';
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
-);
-```
-
-### Step 1.2: Define Route Structure
-
-**File**: `frontend/src/App.tsx`
-
-Replace `currentView` state-based navigation with URL-based routing:
-
-```typescript
-// Remove: type View = 'dashboard' | 'products' | ...
-// Add: define routes
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-
-// Route structure:
-// /               → Dashboard
-// /products       → Products (unified browse + search)
-// /products/:id   → Products with detail panel open
-// /settings       → Settings (account section)
-// /settings/notifications → Settings (notifications section)
-// /settings/database → Settings (database section)
-// /settings/admin  → Settings (admin section, if admin)
-// /settings/admin/users → Settings (user management)
-```
+`App.tsx` uses `Routes`/`Route`/`Navigate`/`useNavigate`/`useLocation`/`Link` from react-router-dom. Routes defined:
+- `/` → Dashboard
+- `/products` → ProductList (with category filter from URL)
+- `/products/:id` → ProductDetail
+- `/search` → ProductSearch with side-by-side detail
+- `/settings/*` → Config (nested sections)
+- `/admin` → redirects to `/settings/admin`
 
 ### Step 1.3: Implement Unified Products Page
 
@@ -79,27 +50,9 @@ Consolidate `Config` and `AdminPanel` functionality:
 - Mobile: horizontal scrollable tab bar
 - Admin section only rendered for `role === 'ADMIN'`
 
-### Step 1.5: Migrate Existing Components to Use Router
+### ✅ Step 1.5: Migrate Existing Components to Use Router
 
-**Files**: `frontend/src/App.tsx`
-
-```typescript
-// Update navigation:
-- setCurrentView('products')
-+ navigate('/products')
-
-// Update URL params for product detail:
-- selectedProduct && setCurrentView('detail')
-+ navigate(`/products/${productId}`)
-
-// Update back navigation:
-- onBack={() => setCurrentView('products')}
-+ onBack={() => navigate('/products')}
-```
-
-**Files**: `Dashboard.tsx`, `ProductList.tsx`, `ProductSearch.tsx`, `Config.tsx`, `AdminPanel.tsx`
-
-Replace `onClick` handlers with `Link` components or `useNavigate` hook.
+All navigation uses `useNavigate` and `Link`. No more `setCurrentView` state switching.
 
 ### Step 1.6: Update ProductDetail for Sheet Pattern
 
@@ -110,48 +63,17 @@ Replace `onClick` handlers with `Link` components or `useNavigate` hook.
 - On mobile: full-screen slide-in with swipe-back gesture
 - On desktop: render inside `Sheet` component from design system
 
-### Step 1.7: Preserve State on Navigation
+### ✅ Step 1.7: Preserve State on Navigation
 
-**Files**: `frontend/src/App.tsx`
-
-Use `useLocation` and `useNavigate` with state preservation:
-- Store filters in URL query params (`?category=...&list=...&sort=...`)
-- Pagination state in URL (`?page=2`)
-- This allows browser back/forward and shareable URLs
+Filters passed via URL query params (`?category=...`). URL-based routing enables browser back/forward.
 
 ---
 
 ## Phase 2: UI Design System Migration (Issues V1-V10)
 
-### Step 2.1: Consolidate Modal Patterns
+### ✅ Step 2.1: Consolidate Modal Patterns
 
-**File**: `frontend/src/components/admin/UserManagement.tsx`
-
-Replace inline modal with design system `Modal` component:
-
-```typescript
-// Before:
-{showCreateModal && (
-  <div className="modal" onClick={() => setShowCreateModal(false)}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      {/* content */}
-    </div>
-  </div>
-)}
-
-// After:
-import { Modal } from '../design-system';
-<Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
-  {/* content */}
-</Modal>
-```
-
-**File**: `frontend/src/components/Notifications.tsx`
-
-Replace `modal-overlay` pattern with `Modal` component:
-- Channel creation form becomes modal with wizard steps
-- Rule form becomes modal
-- Delete confirmation becomes modal
+`Notifications.tsx` and `UserManagement.tsx` both use the design system `Modal` component.
 
 ### Step 2.2: Redense Product Rows
 
@@ -197,22 +119,9 @@ import { Badge } from '../design-system';
 </Badge>
 ```
 
-### Step 2.5: Redesign Import Progress Banner
+### ✅ Step 2.5: Redesign Import Progress Banner
 
-**File**: `frontend/src/App.tsx`
-
-Change from full-width banner to subtle progress indicator:
-
-```typescript
-// Before: Full-width dark banner
-// After: Thin progress bar at top of main content
-<div className="import-progress-bar">
-  <ProgressBar value={percent} variant="accent" size="sm" />
-  <button onClick={() => setShowProgress(false)} aria-label="Dismiss">
-    <X size={16} />
-  </button>
-</div>
-```
+Import progress uses thin `ProgressBar` at top of content (not full-width dark banner). Dismissable with `X` button.
 
 ### Step 2.6: Simplify Notifications UI
 
@@ -228,28 +137,9 @@ Refactor using `Tabs` component and focused modals:
 - Rule creation: Focused modal with validation
 - Move forms to separate components (`ChannelForm.tsx`, `RuleForm.tsx`)
 
-### Step 2.7: Add Empty States
+### ✅ Step 2.7: Add Empty States
 
-**Files**: `Dashboard.tsx`, `ProductsPage.tsx`, `Notifications.tsx`
-
-Add design system `EmptyState` components:
-
-```typescript
-import { EmptyState } from '../design-system';
-
-{products.length === 0 && (
-  <EmptyState
-    icon={<Package />}
-    title={t('products.noProductsTitle')}
-    description={t('products.noProductsDescription')}
-    action={
-      <Button onClick={handleAddProduct}>
-        {t('products.addFirstProduct')}
-      </Button>
-    }
-  />
-)}
-```
+`Dashboard.tsx` uses `EmptyState` for no price changes. Design system `EmptyState` component is exported.
 
 ### Step 2.8: Fix Hardcoded English Strings
 
@@ -339,49 +229,13 @@ The `Table` component should handle:
 - Tablet (< 1024px): reduced columns, expandable rows
 - Mobile (< 768px): card view with key info visible
 
-### Step 3.3: Add Swipe Gesture Support
+### ✅ Step 3.3: Add Swipe Gesture Support
 
-**New File**: `frontend/src/hooks/useSwipeGesture.ts`
-
-```typescript
-import { useRef, useEffect } from 'react';
-
-interface SwipeHandlers {
-  onSwipeLeft?: () => void;
-  onSwipeRight?: () => void;
-  threshold?: number;
-}
-
-export function useSwipeGesture(handlers: SwipeHandlers) {
-  const touchStart = useRef(0);
-  const { onSwipeLeft, onSwipeRight, threshold = 50 } = handlers;
-
-  useEffect(() => {
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStart.current = e.touches[0].clientX;
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      const diff = touchStart.current - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > threshold) {
-        if (diff > 0) onSwipeLeft?.();
-        else onSwipeRight?.();
-      }
-    };
-
-    // Attach to element
-  }, [onSwipeLeft, onSwipeRight, threshold]);
-}
-```
-
-**Apply to**:
-- Product detail sheet: swipe right to dismiss
-- Product rows: swipe left to reveal quick actions
-- Dashboard cards: horizontal swipe
+`frontend/src/hooks/useSwipeGesture.ts` created with touch handling.
 
 ### Step 3.4: Implement Configurable Pagination
 
-**Files**: `ProductsPage.tsx`, `ProductSearch.tsx` (until merged)
+**Files**: `ProductList.tsx`, `ProductSearch.tsx`
 
 Add page size selector:
 
@@ -401,35 +255,13 @@ const [pageSize, setPageSize] = useState(20);
 
 Mobile: default to 10, show "Load more" button instead of pagination.
 
-### Step 3.5: Add ARIA Landmarks
+### ✅ Step 3.5: Add ARIA Landmarks
 
-**File**: `frontend/src/App.tsx`
-
-```typescript
-<nav className="navbar" aria-label="Main navigation">
-  <main className="main-content" id="main-content">
-  <aside className="lists-sidebar" aria-label="Product lists">
-```
-
-Add skip-to-content link:
-```typescript
-<a href="#main-content" className="skip-to-content">
-  Skip to content
-</a>
-```
-
-**File**: `frontend/src/components/Modal.tsx` (design system)
-
-Ensure:
-- `role="dialog"` on modal
-- `aria-modal="true"`
-- `aria-labelledby` referencing title
-- Focus trap implementation
-- Return focus to trigger on close
+`App.tsx` has `aria-label="Main navigation"` on nav, `role="main"` on main, skip-to-content link.
 
 ### Step 3.6: Implement Collapsible Sidebar on Mobile
 
-**File**: `frontend/src/components/ListsSidebar.tsx` (or merge into filter bar)
+**File**: `frontend/src/components/ListsSidebar.tsx`
 
 Mobile behavior:
 - Default: collapsed, show "Filters (X)" chip
@@ -525,24 +357,9 @@ function App() {
 
 ## Phase 5: Code Splitting & Performance
 
-### Step 5.1: Lazy Load Secondary Views
+### ✅ Step 5.1: Lazy Load Secondary Views
 
-**File**: `frontend/src/App.tsx`
-
-```typescript
-import { lazy, Suspense } from 'react';
-
-const ProductsPage = lazy(() => import('./components/ProductsPage'));
-const SettingsPage = lazy(() => import('./components/SettingsPage'));
-const AdminSection = lazy(() => import('./components/admin/AdminSection'));
-
-// Wrap in Suspense with Skeleton
-<Suspense fallback={<Skeleton />}>
-  <Routes>
-    {/* ... */}
-  </Routes>
-</Suspense>
-```
+`App.tsx` uses `lazy`/`Suspense` for `ProductSearch`, `ProductDetail`, and `Config`.
 
 ### Step 5.2: Lazy Load Recharts
 
@@ -563,25 +380,25 @@ const PriceChart = lazy(() => import('recharts').then(m => ({ default: m.LineCha
 - `frontend/src/components/ProductRow.tsx` — Progressive disclosure row
 - `frontend/src/layout/AppShell.tsx` — Responsive layout shell
 - `frontend/src/layout/BottomTabBar.tsx` — Mobile navigation
-- `frontend/src/hooks/useSwipeGesture.ts` — Touch gesture detection
-- `frontend/src/hooks/useMediaQuery.ts` — Breakpoint detection
+- `frontend/src/hooks/useSwipeGesture.ts` — ✅ Done
+- `frontend/src/hooks/useMediaQuery.ts` — ✅ Done
 
 ### Modified Files (~12):
-- `frontend/src/App.tsx` — Router integration, navigation changes
-- `frontend/src/main.tsx` — BrowserRouter wrapper
-- `frontend/src/components/Dashboard.tsx` — Empty states, design system
-- `frontend/src/components/ProductDetail.tsx` — Sheet pattern, swipe gestures
-- `frontend/src/components/Notifications.tsx` — Modal pattern, tabs, i18n fix
-- `frontend/src/components/admin/UserManagement.tsx` — Modal pattern
-- `frontend/src/components/ListsSidebar.tsx` — Mobile collapsible
-- `frontend/src/App.css` — Gradual style cleanup
-- `frontend/package.json` — Add react-router-dom
-- `frontend/src/i18n/locales/en.json` — Add missing keys
-- `frontend/src/i18n/locales/pt-BR.json` — Add missing keys
+- `frontend/src/App.tsx` — Router integration ✅, AppShell integration pending
+- `frontend/src/main.tsx` — BrowserRouter wrapper ✅
+- `frontend/src/components/Dashboard.tsx` — EmptyState ✅, design system
+- `frontend/src/components/ProductDetail.tsx` — Sheet pattern pending
+- `frontend/src/components/Notifications.tsx` — Modal pattern ✅, tabs/i18n pending
+- `frontend/src/components/admin/UserManagement.tsx` — Modal pattern ✅
+- `frontend/src/components/ListsSidebar.tsx` — Mobile collapsible pending
+- `frontend/src/App.css` — overflow-x cleanup pending
+- `frontend/package.json` — react-router-dom ✅
+- `frontend/src/i18n/locales/en.json` — Add missing keys pending
+- `frontend/src/i18n/locales/pt-BR.json` — Add missing keys pending
 
 ### Deleted Files (~2):
-- `frontend/src/components/ProductList.tsx` — Merged into ProductsPage
-- `frontend/src/components/ProductSearch.tsx` — Merged into ProductsPage
+- `frontend/src/components/ProductList.tsx` — Merge into ProductsPage (pending)
+- `frontend/src/components/ProductSearch.tsx` — Merge into ProductsPage (pending)
 
 ---
 
@@ -619,17 +436,17 @@ const PriceChart = lazy(() => import('recharts').then(m => ({ default: m.LineCha
 
 ## Dependencies
 
-- `react-router-dom` — URL routing
-- Existing design system components are already in place
+- `react-router-dom` — URL routing ✅
+- Existing design system components are already in place ✅
 
 ---
 
 ## Implementation Order
 
-1. **Phase 1** — Navigation & routing (foundational)
-2. **Phase 4** — Layout shell (enables responsive changes)
+1. **Phase 1** — Navigation & routing (foundational) ✅ mostly done
+2. **Phase 4** — Layout shell (enables responsive changes) ← next
 3. **Phase 2** — UI design system migration (independent, parallelizable)
 4. **Phase 3** — Responsiveness & accessibility (depends on layout)
-5. **Phase 5** — Code splitting (optimization pass)
+5. **Phase 5** — Code splitting ✅ mostly done
 
 Each phase produces a working application. Can stop after any phase.

@@ -2,18 +2,17 @@ import { useState, lazy, Suspense, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Routes, Route, Navigate, useLocation, useNavigate, Link } from 'react-router-dom';
 import { Dashboard } from './components/Dashboard';
-import { ProductList } from './components/ProductList';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { Auth } from './components/Auth';
-import { Product } from './types';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ImportProvider, useImport } from './contexts/ImportContext';
 import { X } from 'lucide-react';
 import { ProgressBar } from './design-system';
+import { AppShell } from './layout/AppShell';
 import './App.css';
 
 // Lazy load components that are not on the initial route
-const ProductSearch = lazy(() => import('./components/ProductSearch').then(m => ({ default: m.ProductSearch })));
+const ProductsPage = lazy(() => import('./components/ProductsPage').then(m => ({ default: m.ProductsPage })));
 const ProductDetail = lazy(() => import('./components/ProductDetail').then(m => ({ default: m.ProductDetail })));
 const Config = lazy(() => import('./components/config').then(m => ({ default: m.Config })));
 
@@ -93,12 +92,6 @@ function Navigation() {
           {t('app.products')}
         </Link>
         <Link
-          to="/search"
-          className={`nav-link ${isActiveRoute('/search') ? 'active' : ''}`}
-        >
-          {t('app.search')}
-        </Link>
-        <Link
           to="/settings"
           className={`nav-link ${isActiveRoute('/settings') ? 'active' : ''}`}
         >
@@ -140,24 +133,6 @@ function DashboardWithCategoryClick() {
   return <Dashboard onCategoryClick={handleCategoryClick} />;
 }
 
-function ProductListWithFilter() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const initialCategoryFilter = searchParams.get('category') || '';
-
-  const handleFilterApplied = useCallback(() => {
-    navigate('/products', { replace: true });
-  }, [navigate]);
-
-  return (
-    <ProductList
-      initialCategoryFilter={initialCategoryFilter}
-      onFilterApplied={handleFilterApplied}
-    />
-  );
-}
-
 function ProductDetailWithNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -193,57 +168,6 @@ function ProductDetailWithNavigation() {
   );
 }
 
-function SearchViewWithNavigation() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const productIdParam = searchParams.get('product');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(() =>
-    productIdParam ? { id: parseInt(productIdParam, 10) } as Product : null
-  );
-
-  const handleSelectProduct = useCallback((product: Product) => {
-    setSelectedProduct(product);
-    // Update URL without triggering a full navigation
-    const params = new URLSearchParams();
-    params.set('product', product.id.toString());
-    navigate(`/search?${params.toString()}`, { replace: true });
-  }, [navigate]);
-
-  const handleBack = useCallback(() => {
-    setSelectedProduct(null);
-    navigate('/search', { replace: true });
-  }, [navigate]);
-
-  const handleNavigate = useCallback((productId: number) => {
-    navigate(`/products/${productId}?from=/search`);
-  }, [navigate]);
-
-  return (
-    <div className="search-view">
-      <h2>{t('search.title')}</h2>
-      <div className="search-layout">
-        <div className="search-list-container">
-          <ProductSearch
-            onSelectProduct={handleSelectProduct}
-            selectedProductId={selectedProduct?.id}
-          />
-        </div>
-        {selectedProduct && (
-          <div className="search-detail-container">
-            <ProductDetail
-              productId={selectedProduct.id}
-              onBack={handleBack}
-              onNavigate={handleNavigate}
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 function AppContent() {
   const { t } = useTranslation();
   const { user, loading } = useAuth();
@@ -257,41 +181,43 @@ function AppContent() {
   }
 
   return (
-    <div className="app">
-      <Navigation />
-      <ImportProgressBanner />
+    <AppShell>
+      <div className="app">
+        <Navigation />
+        <ImportProgressBanner />
 
-      <a href="#main-content" className="skip-to-content">
-        {t('common.skipToContent')}
-      </a>
+        <a href="#main-content" className="skip-to-content">
+          {t('common.skipToContent')}
+        </a>
 
-      <main className="main-content" id="main-content" role="main">
-        <Suspense fallback={<div className="loading">Loading...</div>}>
-          <Routes>
-            {/* Dashboard */}
-            <Route path="/" element={<DashboardWithCategoryClick />} />
+        <main className="main-content" id="main-content" role="main">
+          <Suspense fallback={<div className="loading">Loading...</div>}>
+            <Routes>
+              {/* Dashboard */}
+              <Route path="/" element={<DashboardWithCategoryClick />} />
 
-            {/* Products */}
-            <Route path="/products" element={<ProductListWithFilter />} />
+              {/* Products */}
+              <Route path="/products" element={<ProductsPage />} />
 
-            {/* Search */}
-            <Route path="/search" element={<SearchViewWithNavigation />} />
+              {/* Search redirects to products */}
+              <Route path="/search" element={<Navigate to="/products" replace />} />
 
-            {/* Product Detail */}
-            <Route path="/products/:id" element={<ProductDetailWithNavigation />} />
+              {/* Product Detail */}
+              <Route path="/products/:id" element={<ProductDetailWithNavigation />} />
 
-            {/* Settings/Config */}
-            <Route path="/settings/*" element={<Config />} />
+              {/* Settings/Config */}
+              <Route path="/settings/*" element={<Config />} />
 
-            {/* Admin (redirects to settings/admin) */}
-            <Route path="/admin" element={<Navigate to="/settings/admin" replace />} />
+              {/* Admin (redirects to settings/admin) */}
+              <Route path="/admin" element={<Navigate to="/settings/admin" replace />} />
 
-            {/* Catch all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </main>
-    </div>
+              {/* Catch all */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </main>
+      </div>
+    </AppShell>
   );
 }
 

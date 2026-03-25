@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import { UserList } from '../types';
 import { useTranslation } from 'react-i18next';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 interface ListsSidebarProps {
   onListClick?: (listId: number | null) => void;
@@ -13,6 +15,8 @@ interface ListsSidebarProps {
 export function ListsSidebar({ onListClick, selectedListId, onListChange }: ListsSidebarProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const isMobile = useMediaQuery('(max-width: 767px)');
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [lists, setLists] = useState<UserList[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -108,20 +112,39 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
     }
   };
 
+  const handleListClickAndClose = (listId: number | null) => {
+    onListClick?.(listId);
+    if (isMobile) {
+      setIsCollapsed(true);
+    }
+  };
+
   if (!user) {
     return null;
   }
 
-  return (
-    <div className="lists-sidebar">
+  const sidebarContent = (
+    <>
       <div className="lists-sidebar-header">
         <h3>{t('lists.title')}</h3>
-        <button
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          className="create-list-button"
-        >
-          {t('lists.create')}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="create-list-button"
+          >
+            {t('lists.create')}
+          </button>
+          {isMobile && (
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className="lists-sidebar-close-button"
+              title={t('lists.closeLists')}
+              aria-label={t('lists.closeLists')}
+            >
+              <X size={20} />
+            </button>
+          )}
+        </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -160,13 +183,13 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
           {/* All Products option */}
           <div
             className={`list-item all-products-item ${selectedListId === null ? 'selected' : ''}`}
-            onClick={() => onListClick?.(null)}
+            onClick={() => handleListClickAndClose(null)}
           >
             <div className="list-name">
               {t('lists.allProducts')}
             </div>
           </div>
-          
+
           {lists.length === 0 ? (
             <p className="empty-state">{t('lists.noLists')}</p>
           ) : (
@@ -203,7 +226,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
                   <>
                     <div
                       className="list-name"
-                      onClick={() => onListClick?.(list.id)}
+                      onClick={() => handleListClickAndClose(list.id)}
                     >
                       {list.name}
                     </div>
@@ -230,7 +253,44 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
           )}
         </div>
       )}
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile toggle button */}
+        <button
+          className="lists-sidebar-toggle"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          aria-expanded={!isCollapsed}
+          aria-label={t('lists.showLists', { count: lists.length })}
+        >
+          <span>{t('lists.showLists', { count: lists.length })}</span>
+          {isCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+        </button>
+
+        {/* Mobile overlay */}
+        {!isCollapsed && (
+          <>
+            <div
+              className="lists-sidebar-backdrop"
+              onClick={() => setIsCollapsed(true)}
+              aria-hidden="true"
+            />
+            <div className="lists-sidebar lists-sidebar-overlay">
+              {sidebarContent}
+            </div>
+          </>
+        )}
+      </>
+    );
+  }
+
+  // Desktop: render normally
+  return (
+    <div className="lists-sidebar">
+      {sidebarContent}
     </div>
   );
 }
-

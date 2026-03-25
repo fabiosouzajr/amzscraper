@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { PriceDrop } from '../types';
-import { MiniPriceChart } from './MiniPriceChart';
 import { formatDateTime } from '../utils/dateFormat';
+
+const MiniPriceChart = lazy(() => import('./MiniPriceChart').then(m => ({ default: m.MiniPriceChart })));
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
 import { Card, Button, ProgressBar, Badge, EmptyState } from '../design-system';
 
@@ -76,7 +77,9 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
         </a>
         {item.price_history && item.price_history.length > 0 && (
           <div className="mini-chart-container">
-            <MiniPriceChart priceHistory={item.price_history} />
+            <Suspense fallback={null}>
+              <MiniPriceChart priceHistory={item.price_history} />
+            </Suspense>
           </div>
         )}
         <div className="price-info">

@@ -7,10 +7,16 @@ export default defineConfig({
     chunkSizeWarningLimit: 600, // recharts is ~557 KB — isolated chunk, only loads on product detail
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-recharts': ['recharts'],
-          'vendor-i18n': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+        manualChunks(id) {
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3') || id.includes('node_modules/victory-vendor')) {
+            return 'vendor-recharts';
+          }
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/') || id.includes('node_modules/react-is') || id.includes('node_modules/scheduler')) {
+            return 'vendor-react';
+          }
+          if (id.includes('node_modules/i18next') || id.includes('node_modules/react-i18next')) {
+            return 'vendor-i18n';
+          }
         }
       }
     }
@@ -25,7 +31,7 @@ export default defineConfig({
     ],
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'http://localhost:3000',
         changeOrigin: true
       }
     }

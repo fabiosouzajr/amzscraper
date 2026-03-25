@@ -28,7 +28,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
   const [lists, setLists] = useState<UserList[]>([]);
   const [addingToListProductId, setAddingToListProductId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(20);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
@@ -84,6 +84,11 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
+  useEffect(() => {
+    loadProducts(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageSize]);
+
   const adjustDropdownPosition = (productId: number) => {
     const dropdown = dropdownRefs.current[productId];
     if (!dropdown) return;
@@ -119,6 +124,12 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
       window.removeEventListener('scroll', handleScroll, true);
     };
   }, [addingToListProductId]);
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+    // loadProducts will be called by the useEffect that watches pageSize
+  };
 
   const handleCategoryClick = useCallback((categoryName: string) => setSelectedCategory(categoryName), []);
 
@@ -442,35 +453,50 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
               </div>
             )}
 
-            {!selectedListId && totalPages > 1 && (
+            {!selectedListId && (
               <div className="pagination">
-                <button
-                  onClick={() => {
-                    const newPage = currentPage - 1;
-                    setCurrentPage(newPage);
-                    loadProducts(newPage);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  disabled={currentPage === 1}
-                  className="pagination-button"
+                <select
+                  value={pageSize}
+                  onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+                  className="page-size-select"
+                  aria-label={t('products.itemsPerPage')}
                 >
-                  {t('pagination.previous')}
-                </button>
-                <span className="pagination-info">
-                  {t('pagination.pageInfo', { page: currentPage, totalPages, total: totalCount })}
-                </span>
-                <button
-                  onClick={() => {
-                    const newPage = currentPage + 1;
-                    setCurrentPage(newPage);
-                    loadProducts(newPage);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  disabled={currentPage === totalPages}
-                  className="pagination-button"
-                >
-                  {t('pagination.next')}
-                </button>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
+                <span>{t('products.perPage')}</span>
+                {totalPages > 1 && (
+                  <>
+                    <button
+                      onClick={() => {
+                        const newPage = currentPage - 1;
+                        setCurrentPage(newPage);
+                        loadProducts(newPage);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={currentPage === 1}
+                      className="pagination-button"
+                    >
+                      {t('pagination.previous')}
+                    </button>
+                    <span className="pagination-info">
+                      {t('pagination.pageInfo', { page: currentPage, totalPages, total: totalCount })}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const newPage = currentPage + 1;
+                        setCurrentPage(newPage);
+                        loadProducts(newPage);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={currentPage === totalPages}
+                      className="pagination-button"
+                    >
+                      {t('pagination.next')}
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>

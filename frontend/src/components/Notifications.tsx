@@ -18,15 +18,15 @@ import { Modal, Button } from '../design-system';
 
 type TabType = 'channels' | 'rules' | 'history';
 
-function formatRuleParams(type: NotificationRuleType, params: LowestInDaysParams | BelowThresholdParams | PercentageDropParams): string {
+function formatRuleParams(type: NotificationRuleType, params: LowestInDaysParams | BelowThresholdParams | PercentageDropParams, t: (key: string, options?: Record<string, unknown>) => string): string {
   switch (type) {
     case 'lowest_in_days':
-      return `${(params as LowestInDaysParams).days} days`;
+      return `${(params as LowestInDaysParams).days} ${t('notifications.rules.daysUnit')}`;
     case 'below_threshold':
       return `R$ ${(params as BelowThresholdParams).threshold.toFixed(2)}`;
     case 'percentage_drop': {
       const p = params as PercentageDropParams;
-      return `${p.percentage}% / ${p.window_days} days`;
+      return `${p.percentage}% / ${p.window_days} ${t('notifications.rules.daysUnit')}`;
     }
   }
 }
@@ -592,7 +592,7 @@ export function Notifications() {
                             {t(`notifications.rules.ruleTypes.${rule.type === 'lowest_in_days' ? 'lowestInDays' : rule.type === 'below_threshold' ? 'belowThreshold' : 'percentageDrop'}`)}
                           </span>
                         </td>
-                        <td>{formatRuleParams(rule.type, rule.params)}</td>
+                        <td>{formatRuleParams(rule.type, rule.params, t)}</td>
                         <td>{getChannelName(rule.channel_id)}</td>
                         <td>
                           <button

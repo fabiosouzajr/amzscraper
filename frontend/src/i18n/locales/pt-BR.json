@@ -68,7 +68,9 @@
     "failedToAddToList": "Falha ao adicionar produto à lista",
     "failedToRemoveFromList": "Falha ao remover produto da lista",
     "noProductsInList": "Nenhum produto nesta lista",
-    "noListsAvailable": "Nenhuma lista disponível. Crie uma lista primeiro."
+    "noListsAvailable": "Nenhuma lista disponível. Crie uma lista primeiro.",
+    "perPage": "por página",
+    "itemsPerPage": "Itens por página"
   },
   "search": {
     "title": "Buscar Produtos",
@@ -165,7 +167,9 @@
     "confirmDelete": "Tem certeza de que deseja excluir esta lista?",
     "rename": "Renomear",
     "delete": "Excluir",
-    "allProducts": "Todos os Produtos"
+    "allProducts": "Todos os Produtos",
+    "showLists": "Listas ({{count}})",
+    "closeLists": "Fechar"
   },
   "pagination": {
     "previous": "Anterior",
@@ -357,6 +361,7 @@
       "threshold": "Limite (R$)",
       "percentage": "Porcentagem (%)",
       "windowDays": "Janela (dias)",
+      "daysUnit": "dias",
       "ruleTypes": {
         "lowestInDays": "Menor preço em N dias",
         "belowThreshold": "Preço abaixo do limite",
