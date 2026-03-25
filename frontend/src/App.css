@@ -628,13 +628,13 @@
 .category-badge,
 .category-filter-button {
   display: inline-block;
-  padding: 0.2rem 0.4rem;
-  background: #e8f4f8;
-  color: #2162a1;
+  padding: 0.1rem 0.1rem;
+  background: none;
+  color: none;
   border-radius: 3px;
   font-size: 0.7rem;
   font-weight: 500;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .category-filter-button {

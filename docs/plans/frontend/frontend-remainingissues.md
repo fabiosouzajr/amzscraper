@@ -28,7 +28,7 @@ The design system components (`Button`, `Card`, `Input`, `Modal`, `Badge`, `Empt
 - `/settings/*` → Config (nested sections)
 - `/admin` → redirects to `/settings/admin`
 
-### Step 1.3: Implement Unified Products Page
+### ✅ Step 1.3: Implement Unified Products Page
 
 **New File**: `frontend/src/components/ProductsPage.tsx`
 
@@ -141,7 +141,7 @@ Refactor using `Tabs` component and focused modals:
 
 `Dashboard.tsx` uses `EmptyState` for no price changes. Design system `EmptyState` component is exported.
 
-### Step 2.8: Fix Hardcoded English Strings
+### ✅ Step 2.8: Fix Hardcoded English Strings
 
 **File**: `frontend/src/components/Notifications.tsx`
 
@@ -184,7 +184,7 @@ Use design system colors from `tokens.css`:
 
 ## Phase 3: Responsiveness & Accessibility (Issues R1-R6)
 
-### Step 3.1: Remove Overflow-x Suppression
+### ✅ Step 3.1: Remove Overflow-x Suppression
 
 **File**: `frontend/src/App.css`
 
@@ -233,7 +233,7 @@ The `Table` component should handle:
 
 `frontend/src/hooks/useSwipeGesture.ts` created with touch handling.
 
-### Step 3.4: Implement Configurable Pagination
+### ✅ Step 3.4: Implement Configurable Pagination
 
 **Files**: `ProductList.tsx`, `ProductSearch.tsx`
 
@@ -259,7 +259,7 @@ Mobile: default to 10, show "Load more" button instead of pagination.
 
 `App.tsx` has `aria-label="Main navigation"` on nav, `role="main"` on main, skip-to-content link.
 
-### Step 3.6: Implement Collapsible Sidebar on Mobile
+### ✅ Step 3.6: Implement Collapsible Sidebar on Mobile
 
 **File**: `frontend/src/components/ListsSidebar.tsx`
 
@@ -361,7 +361,7 @@ function App() {
 
 `App.tsx` uses `lazy`/`Suspense` for `ProductSearch`, `ProductDetail`, and `Config`.
 
-### Step 5.2: Lazy Load Recharts
+### ✅ Step 5.2: Lazy Load Recharts
 
 **Files**: `Dashboard.tsx`, `SystemStats.tsx`, `ProductDetail.tsx`
 
