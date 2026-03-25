@@ -14,7 +14,7 @@ import './App.css';
 // Lazy load components that are not on the initial route
 const ProductsPage = lazy(() => import('./components/ProductsPage').then(m => ({ default: m.ProductsPage })));
 const ProductDetail = lazy(() => import('./components/ProductDetail').then(m => ({ default: m.ProductDetail })));
-const Config = lazy(() => import('./components/config').then(m => ({ default: m.Config })));
+const SettingsPage = lazy(() => import('./components/SettingsPage').then(m => ({ default: m.SettingsPage })));
 
 function ImportProgressBanner() {
   const { t } = useTranslation();
@@ -97,14 +97,6 @@ function Navigation() {
         >
           {t('app.config')}
         </Link>
-        {user && user.role === 'ADMIN' && (
-          <Link
-            to="/settings/admin"
-            className={`nav-link ${isActiveRoute('/settings/admin') ? 'active' : ''}`}
-          >
-            {t('app.admin')}
-          </Link>
-        )}
         <div className="user-info">
           <Link
             to="/settings"
@@ -206,10 +198,7 @@ function AppContent() {
               <Route path="/products/:id" element={<ProductDetailWithNavigation />} />
 
               {/* Settings/Config */}
-              <Route path="/settings/*" element={<Config />} />
-
-              {/* Admin (redirects to settings/admin) */}
-              <Route path="/admin" element={<Navigate to="/settings/admin" replace />} />
+              <Route path="/settings/*" element={<SettingsPage />} />
 
               {/* Catch all */}
               <Route path="*" element={<Navigate to="/" replace />} />
