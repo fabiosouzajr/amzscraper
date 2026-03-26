@@ -45,6 +45,7 @@
     "expand": "Expandir",
     "collapse": "Recolher",
     "noProducts": "Ainda não há produtos rastreados. Adicione um ASIN acima para começar.",
+    "addFirstProduct": "Adicione seu primeiro produto usando o campo ASIN acima.",
     "remove": "Remover",
     "added": "Adicionado",
     "loading": "Carregando produtos...",

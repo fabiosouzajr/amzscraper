@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
+import { Package } from 'lucide-react';
 import { api } from '../services/api';
 import { UserList } from '../types';
 import { ASINInput } from './ASINInput';
 import { ListsSidebar } from './ListsSidebar';
 import { CategoryFilter } from './CategoryFilter';
+import { EmptyState } from '../design-system';
 import { formatDate } from '../utils/dateFormat';
 import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { useAuth } from '../contexts/AuthContext';
@@ -329,9 +331,11 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
               </div>
             </div>
             {filteredProducts.length === 0 ? (
-              <p className="empty-state">
-                {selectedListId ? t('products.noProductsInList') : t('products.noProducts')}
-              </p>
+              <EmptyState
+                icon={<Package size={48} />}
+                title={selectedListId ? t('products.noProductsInList') : t('products.noProducts')}
+                description={!selectedListId ? t('products.addFirstProduct') : undefined}
+              />
             ) : (
               <div className="products-list">
                 {filteredProducts.map((product) => (

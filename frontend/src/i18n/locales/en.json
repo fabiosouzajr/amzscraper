@@ -45,6 +45,7 @@
     "expand": "Expand",
     "collapse": "Collapse",
     "noProducts": "No products tracked yet. Add an ASIN above to get started.",
+    "addFirstProduct": "Add your first product using the ASIN input above.",
     "remove": "Remove",
     "added": "Added",
     "loading": "Loading products...",
