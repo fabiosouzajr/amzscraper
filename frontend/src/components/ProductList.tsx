@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
-import { Product, UserList } from '../types';
+import { UserList } from '../types';
 import { ASINInput } from './ASINInput';
 import { ListsSidebar } from './ListsSidebar';
 import { CategoryFilter } from './CategoryFilter';
@@ -9,6 +10,7 @@ import { formatDate } from '../utils/dateFormat';
 import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
+import { useProducts, useDeleteProduct } from '../hooks';
 
 interface ProductListProps {
   initialCategoryFilter?: string;
@@ -20,21 +22,30 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const { t } = useTranslation();
   const { user } = useAuth();
   const { importing, importResults, startImport, setOnImportComplete } = useImport();
-  const [products, setProducts] = useState<Product[]>([]);
+  const qc = useQueryClient();
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategoryFilter);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
   const [lists, setLists] = useState<UserList[]>([]);
   const [addingToListProductId, setAddingToListProductId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data, isLoading: loading, error: queryError } = useProducts(
+    selectedCategory || undefined,
+    currentPage,
+    pageSize,
+  );
+  const products = data?.products ?? [];
+  const totalPages = data?.pagination.totalPages ?? 1;
+  const totalCount = data?.pagination.totalCount ?? 0;
+  const fetchError = queryError ? t('products.failedToLoad') : null;
+
+  const deleteMutation = useDeleteProduct();
 
   const loadLists = async () => {
     if (!user) return;
@@ -43,23 +54,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
       setLists(data);
     } catch (err) {
       console.error('Failed to load lists:', err);
-    }
-  };
-
-  const loadProducts = async (page: number = currentPage) => {
-    try {
-      setLoading(true);
-      const response = await api.getProducts(selectedCategory || undefined, page, pageSize);
-      setProducts(response.products);
-      setTotalPages(response.pagination.totalPages);
-      setTotalCount(response.pagination.totalCount);
-      setCurrentPage(response.pagination.page);
-      setError(null);
-    } catch (err) {
-      setError(t('products.failedToLoad'));
-      console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -74,7 +68,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     // Register a callback so the context can tell us when import finishes
     setOnImportComplete(() => {
       setCurrentPage(1);
-      loadProducts(1);
+      qc.invalidateQueries({ queryKey: ['products'] });
     });
     return () => setOnImportComplete(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,14 +76,9 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
 
   useEffect(() => {
     setCurrentPage(1);
-    loadProducts(1);
+    // TanStack Query handles refetch automatically when selectedCategory changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
-
-  useEffect(() => {
-    loadProducts(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageSize]);
 
   const adjustDropdownPosition = (productId: number) => {
     const dropdown = dropdownRefs.current[productId];
@@ -130,7 +119,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const handlePageSizeChange = (newSize: number) => {
     setPageSize(newSize);
     setCurrentPage(1);
-    // loadProducts will be called by the useEffect that watches pageSize
   };
 
   const handleCategoryClick = useCallback((categoryName: string) => setSelectedCategory(categoryName), []);
@@ -143,7 +131,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
       const product = await api.addProduct(asin);
       setSuccessMessage(t('products.addedSuccessfully', { name: product.description || asin }));
       setCurrentPage(1);
-      await loadProducts(1);
+      qc.invalidateQueries({ queryKey: ['products'] });
       setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err: any) {
       setError(err.message || t('products.failedToAdd'));
@@ -156,22 +144,19 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const handleDeleteProduct = useCallback(async (id: number) => {
     if (!confirm(t('products.confirmDelete'))) return;
     try {
-      await api.deleteProduct(id);
+      await deleteMutation.mutateAsync(id);
+      // If deleting the last item on a page > 1, go back one page
       const currentProductsOnPage = selectedListId
         ? products.filter(p => p.lists?.some(l => l.id === selectedListId)).length
         : products.length;
       if (currentProductsOnPage === 1 && currentPage > 1) {
-        const newPage = currentPage - 1;
-        setCurrentPage(newPage);
-        await loadProducts(newPage);
-      } else {
-        await loadProducts(currentPage);
+        setCurrentPage(currentPage - 1);
       }
     } catch (err) {
       setError(t('products.failedToDelete'));
       console.error(err);
     }
-  }, [products, selectedListId, currentPage]);
+  }, [deleteMutation, products, selectedListId, currentPage, t]);
 
   const handleListClick = (listId: number | null) => setSelectedListId(listId);
 
@@ -188,42 +173,57 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
       await api.addProductToList(listId, productId);
       const listToAdd = lists.find(l => l.id === listId);
       if (listToAdd) {
-        setProducts(prevProducts =>
-          prevProducts.map(product =>
-            product.id === productId
-              ? {
-                  ...product,
-                  lists: product.lists
-                    ? product.lists.some(l => l.id === listId)
-                      ? product.lists
-                      : [...product.lists, listToAdd]
-                    : [listToAdd],
-                }
-              : product
-          )
+        // Optimistic local update — query will sync on next refetch
+        qc.setQueryData(
+          ['products', selectedCategory || '', currentPage, pageSize],
+          (old: typeof data) => {
+            if (!old) return old;
+            return {
+              ...old,
+              products: old.products.map(product =>
+                product.id === productId
+                  ? {
+                      ...product,
+                      lists: product.lists
+                        ? product.lists.some(l => l.id === listId)
+                          ? product.lists
+                          : [...product.lists, listToAdd]
+                        : [listToAdd],
+                    }
+                  : product
+              ),
+            };
+          }
         );
       }
       setAddingToListProductId(null);
     } catch (err: any) {
       setError(err.message || t('products.failedToAddToList'));
     }
-  }, [lists]);
+  }, [lists, qc, selectedCategory, currentPage, pageSize, data, t]);
 
   const handleRemoveFromList = async (productId: number, listId: number) => {
     try {
       await api.removeProductFromList(listId, productId);
-      setProducts(prevProducts =>
-        prevProducts.map(product =>
-          product.id === productId
-            ? {
-                ...product,
-                lists: (() => {
-                  const updatedLists = product.lists?.filter(l => l.id !== listId) || [];
-                  return updatedLists.length > 0 ? updatedLists : undefined;
-                })(),
-              }
-            : product
-        )
+      qc.setQueryData(
+        ['products', selectedCategory || '', currentPage, pageSize],
+        (old: typeof data) => {
+          if (!old) return old;
+          return {
+            ...old,
+            products: old.products.map(product =>
+              product.id === productId
+                ? {
+                    ...product,
+                    lists: (() => {
+                      const updatedLists = product.lists?.filter(l => l.id !== listId) || [];
+                      return updatedLists.length > 0 ? updatedLists : undefined;
+                    })(),
+                  }
+                : product
+            ),
+          };
+        }
       );
     } catch (err: any) {
       setError(err.message || t('products.failedToRemoveFromList'));
@@ -256,15 +256,14 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     ? products.filter(product => product.lists?.some(list => list.id === selectedListId))
     : products;
 
+  const displayError = error || fetchError;
+
   if (loading) {
     return <div className="loading">{t('products.loading')}</div>;
   }
 
   return (
     <div className="product-list">
-      {/* Page title centered */}
-      <h2 className="product-list-title">{t('products.title')}</h2>
-
       {/* Import button above the lists+content area */}
       <div className="import-section">
         <button
@@ -312,9 +311,10 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
           </div>
         )}
         <div className="product-list-content">
+          <h2 className="product-list-title">{t('products.title')}</h2>
           <div className="add-product-section">
             <h3>{t('products.addNew')}</h3>
-            <ASINInput onAdd={handleAddProduct} isValidating={isValidating} error={error} successMessage={successMessage} />
+            <ASINInput onAdd={handleAddProduct} isValidating={isValidating} error={displayError} successMessage={successMessage} />
           </div>
 
           <div className="products-section">
@@ -480,7 +480,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                       onClick={() => {
                         const newPage = currentPage - 1;
                         setCurrentPage(newPage);
-                        loadProducts(newPage);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       disabled={currentPage === 1}
@@ -495,7 +494,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                       onClick={() => {
                         const newPage = currentPage + 1;
                         setCurrentPage(newPage);
-                        loadProducts(newPage);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       disabled={currentPage === totalPages}
