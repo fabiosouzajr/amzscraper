@@ -1,7 +1,9 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { PriceDrop } from '../types';
+import { usePriceDrops, usePriceIncreases } from '../hooks';
 import { formatDateTime } from '../utils/dateFormat';
 
 const MiniPriceChart = lazy(() => import('./MiniPriceChart').then(m => ({ default: m.MiniPriceChart })));
@@ -102,35 +104,14 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
 
 export function Dashboard({ onCategoryClick }: DashboardProps) {
   const { t } = useTranslation();
-  const [priceDrops, setPriceDrops] = useState<PriceDrop[]>([]);
-  const [priceIncreases, setPriceIncreases] = useState<PriceDrop[]>([]);
-  const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
+  const { data: drops = [], isLoading: dropsLoading } = usePriceDrops(20);
+  const { data: increases = [], isLoading: increasesLoading } = usePriceIncreases(20);
+  const loading = dropsLoading || increasesLoading;
   const [updating, setUpdating] = useState(false);
   const [updateProgress, setUpdateProgress] = useState(0);
   const [updateStatus, setUpdateStatus] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-
-  const loadPriceChanges = async () => {
-    try {
-      setLoading(true);
-      const [drops, increases] = await Promise.all([
-        api.getPriceDrops(20),
-        api.getPriceIncreases(20)
-      ]);
-      setPriceDrops(drops);
-      setPriceIncreases(increases);
-      setError(null);
-    } catch (err) {
-      setError(t('dashboard.failedToLoad'));
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadPriceChanges();
-  }, []);
 
   const handleUpdatePrices = async () => {
     setUpdating(true);
@@ -171,9 +152,10 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                 : '')
             );
             setUpdateProgress(100);
-            // Refresh price changes after completion
-            setTimeout(async () => {
-              await loadPriceChanges();
+            // Invalidate queries to refresh price changes after completion
+            setTimeout(() => {
+              qc.invalidateQueries({ queryKey: ['priceDrops'] });
+              qc.invalidateQueries({ queryKey: ['priceIncreases'] });
               setUpdating(false);
               setUpdateProgress(0);
               setUpdateStatus('');
@@ -237,7 +219,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
         </Card>
       )}
 
-      {priceDrops.length === 0 && priceIncreases.length === 0 ? (
+      {drops.length === 0 && increases.length === 0 ? (
         <EmptyState
           title={t('dashboard.noPriceChanges')}
           description={t('dashboard.noPriceChangesHint')}
@@ -245,11 +227,11 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
         />
       ) : (
         <>
-          {priceDrops.length > 0 && (
+          {drops.length > 0 && (
             <div className="price-changes-section">
               <h2 className="section-title">{t('dashboard.priceDrops')}</h2>
               <div className="price-drops-grid">
-                {priceDrops.map((drop) => (
+                {drops.map((drop) => (
                   <PriceChangeCard
                     key={drop.product.id}
                     item={drop}
@@ -261,11 +243,11 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
             </div>
           )}
 
-          {priceIncreases.length > 0 && (
+          {increases.length > 0 && (
             <div className="price-changes-section">
               <h2 className="section-title">{t('dashboard.priceIncreases')}</h2>
               <div className="price-drops-grid">
-                {priceIncreases.map((increase) => (
+                {increases.map((increase) => (
                   <PriceChangeCard
                     key={increase.product.id}
                     item={increase}
