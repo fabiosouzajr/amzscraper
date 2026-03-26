@@ -15,6 +15,6 @@ examine the codebase in order to write a md file that details a step by step pla
  these parameters should be incorporated and displayed into the Price Change Dashboard and 
 
 
-## background logging
+## 3 Comprehensive Logging system
 implement background logging 
  ## implement a fallback to get product images as some items do not have images

@@ -1,8 +1,7 @@
 import { useState, lazy, Suspense, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Routes, Route, Navigate, useLocation, useNavigate, Link } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Dashboard } from './components/Dashboard';
-import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { Auth } from './components/Auth';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ImportProvider, useImport } from './contexts/ImportContext';
@@ -61,59 +60,6 @@ function ImportProgressBanner() {
   );
 }
 
-function Navigation() {
-  const { t } = useTranslation();
-  const { user, logout } = useAuth();
-  const location = useLocation();
-
-  const isActiveRoute = (path: string) => {
-    if (path === '/' && location.pathname === '/') return true;
-    return location.pathname.startsWith(path) && path !== '/';
-  };
-
-  if (!user) return null;
-
-  return (
-    <nav className="navbar" aria-label="Main navigation">
-      <div className="nav-brand">
-        <Link to="/">{t('app.title')}</Link>
-      </div>
-      <div className="nav-links">
-        <Link
-          to="/"
-          className={`nav-link ${isActiveRoute('/') ? 'active' : ''}`}
-        >
-          {t('app.dashboard')}
-        </Link>
-        <Link
-          to="/products"
-          className={`nav-link ${isActiveRoute('/products') ? 'active' : ''}`}
-        >
-          {t('app.products')}
-        </Link>
-        <Link
-          to="/settings"
-          className={`nav-link ${isActiveRoute('/settings') ? 'active' : ''}`}
-        >
-          {t('app.config')}
-        </Link>
-        <div className="user-info">
-          <Link
-            to="/settings"
-            className={`username-button ${isActiveRoute('/settings/account') ? 'active' : ''}`}
-            title={user.username}
-          >
-            {user.username}
-          </Link>
-          <button onClick={logout} className="logout-button">
-            {t('app.logout')}
-          </button>
-        </div>
-        <LanguageSwitcher />
-      </div>
-    </nav>
-  );
-}
 
 function DashboardWithCategoryClick() {
   const navigate = useNavigate();
@@ -174,38 +120,35 @@ function AppContent() {
 
   return (
     <AppShell>
-      <div className="app">
-        <Navigation />
-        <ImportProgressBanner />
+      <ImportProgressBanner />
 
-        <a href="#main-content" className="skip-to-content">
-          {t('common.skipToContent')}
-        </a>
+      <a href="#main-content" className="skip-to-content">
+        {t('common.skipToContent')}
+      </a>
 
-        <main className="main-content" id="main-content" role="main">
-          <Suspense fallback={<div className="loading">Loading...</div>}>
-            <Routes>
-              {/* Dashboard */}
-              <Route path="/" element={<DashboardWithCategoryClick />} />
+      <main className="main-content" id="main-content" role="main">
+        <Suspense fallback={<div className="loading">Loading...</div>}>
+          <Routes>
+            {/* Dashboard */}
+            <Route path="/" element={<DashboardWithCategoryClick />} />
 
-              {/* Products */}
-              <Route path="/products" element={<ProductsPage />} />
+            {/* Products */}
+            <Route path="/products" element={<ProductsPage />} />
 
-              {/* Search redirects to products */}
-              <Route path="/search" element={<Navigate to="/products" replace />} />
+            {/* Search redirects to products */}
+            <Route path="/search" element={<Navigate to="/products" replace />} />
 
-              {/* Product Detail */}
-              <Route path="/products/:id" element={<ProductDetailWithNavigation />} />
+            {/* Product Detail */}
+            <Route path="/products/:id" element={<ProductDetailWithNavigation />} />
 
-              {/* Settings/Config */}
-              <Route path="/settings/*" element={<SettingsPage />} />
+            {/* Settings/Config */}
+            <Route path="/settings/*" element={<SettingsPage />} />
 
-              {/* Catch all */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </main>
-      </div>
+            {/* Catch all */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </main>
     </AppShell>
   );
 }

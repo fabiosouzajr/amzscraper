@@ -310,6 +310,7 @@
   "notifications": {
     "title": "Notificações",
     "pleaseLogin": "Faça login para gerenciar notificações",
+    "delete": "Excluir",
     "channels": {
       "title": "Canais",
       "add": "Adicionar Canal",

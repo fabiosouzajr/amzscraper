@@ -3,18 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import {
   NotificationChannel,
-  NotificationChannelType,
   NotificationRule,
-  NotificationRuleType,
   NotificationLogEntry,
-  EmailConfig,
-  TelegramConfig,
-  DiscordConfig,
   LowestInDaysParams,
   BelowThresholdParams,
   PercentageDropParams,
+  NotificationRuleType,
 } from '../types';
-import { Modal, Button } from '../design-system';
+import { Badge, EmptyState, TableSkeleton, SimpleTabs, Button } from '../design-system';
+import { ChannelForm } from './ChannelForm';
+import { RuleForm } from './RuleForm';
 
 type TabType = 'channels' | 'rules' | 'history';
 
@@ -30,335 +28,6 @@ function formatRuleParams(type: NotificationRuleType, params: LowestInDaysParams
     }
   }
 }
-
-// ─── ChannelForm ─────────────────────────────────────────────────────────────
-
-interface ChannelFormProps {
-  channel: NotificationChannel | null;
-  onClose: () => void;
-  onSaved: () => void;
-}
-
-function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
-  const { t } = useTranslation();
-
-  const [channelType, setChannelType] = useState<NotificationChannelType>(channel?.type ?? 'email');
-  const [name, setName] = useState(channel?.name ?? '');
-
-  // Email fields
-  const emailCfg = channel && channel.type === 'email' ? (channel.config as EmailConfig) : null;
-  const [smtpHost, setSmtpHost] = useState(emailCfg?.smtp_host ?? '');
-  const [smtpPort, setSmtpPort] = useState(String(emailCfg?.smtp_port ?? 587));
-  const [smtpSecure, setSmtpSecure] = useState(emailCfg?.smtp_secure ?? true);
-  const [smtpUser, setSmtpUser] = useState(emailCfg?.smtp_user ?? '');
-  const [smtpPass, setSmtpPass] = useState(emailCfg?.smtp_pass ?? '');
-  const [fromAddress, setFromAddress] = useState(emailCfg?.from_address ?? '');
-  const [toAddress, setToAddress] = useState(emailCfg?.to_address ?? '');
-
-  // Telegram fields
-  const telegramCfg = channel && channel.type === 'telegram' ? (channel.config as TelegramConfig) : null;
-  const [botToken, setBotToken] = useState(telegramCfg?.bot_token ?? '');
-  const [chatId, setChatId] = useState(telegramCfg?.chat_id ?? '');
-
-  // Discord fields
-  const discordCfg = channel && channel.type === 'discord' ? (channel.config as DiscordConfig) : null;
-  const [webhookUrl, setWebhookUrl] = useState(discordCfg?.webhook_url ?? '');
-
-  const [submitting, setSubmitting] = useState(false);
-  const [testing, setTesting] = useState(false);
-  const [testResult, setTestResult] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const buildConfig = (): EmailConfig | TelegramConfig | DiscordConfig => {
-    switch (channelType) {
-      case 'email':
-        return {
-          smtp_host: smtpHost,
-          smtp_port: parseInt(smtpPort, 10) || 587,
-          smtp_secure: smtpSecure,
-          smtp_user: smtpUser,
-          smtp_pass: smtpPass,
-          from_address: fromAddress,
-          to_address: toAddress,
-        };
-      case 'telegram':
-        return { bot_token: botToken, chat_id: chatId };
-      case 'discord':
-        return { webhook_url: webhookUrl };
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
-    try {
-      const config = buildConfig();
-      if (channel) {
-        await api.notifications.updateChannel(channel.id, { name, config });
-      } else {
-        await api.notifications.createChannel({ type: channelType, name, config });
-      }
-      onSaved();
-    } catch (err) {
-      setError(t('notifications.channels.createFailed') + ': ' + (err as Error).message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleTest = async () => {
-    if (!channel) return;
-    setTesting(true);
-    setTestResult(null);
-    try {
-      const result = await api.notifications.testChannel(channel.id);
-      if (result.success) {
-        setTestResult(t('notifications.channels.testSuccess'));
-      } else {
-        setTestResult(t('notifications.channels.testFailed') + (result.error ? ': ' + result.error : ''));
-      }
-    } catch (err) {
-      setTestResult(t('notifications.channels.testFailed') + ': ' + (err as Error).message);
-    } finally {
-      setTesting(false);
-    }
-  };
-
-  return (
-    <Modal
-      isOpen={true}
-      onClose={onClose}
-      title={channel ? t('notifications.channels.edit') : t('notifications.channels.add')}
-      size="md"
-    >
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>{t('notifications.channels.type')}</label>
-            <select
-              value={channelType}
-              onChange={(e) => setChannelType(e.target.value as NotificationChannelType)}
-              disabled={!!channel}
-            >
-              <option value="email">{t('notifications.channels.channelTypes.email')}</option>
-              <option value="telegram">{t('notifications.channels.channelTypes.telegram')}</option>
-              <option value="discord">{t('notifications.channels.channelTypes.discord')}</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>{t('notifications.channels.name')}</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-
-          {channelType === 'email' && (
-            <>
-              <div className="form-group">
-                <label>{t('notifications.channels.email.smtpHost')}</label>
-                <input type="text" value={smtpHost} onChange={(e) => setSmtpHost(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label>{t('notifications.channels.email.smtpPort')}</label>
-                <input type="number" value={smtpPort} onChange={(e) => setSmtpPort(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={smtpSecure}
-                    onChange={(e) => setSmtpSecure(e.target.checked)}
-                  />
-                  {' '}{t('notifications.channels.email.smtpSecure')}
-                </label>
-              </div>
-              <div className="form-group">
-                <label>{t('notifications.channels.email.smtpUser')}</label>
-                <input type="text" value={smtpUser} onChange={(e) => setSmtpUser(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label>{t('notifications.channels.email.smtpPass')}</label>
-                <input type="password" value={smtpPass} onChange={(e) => setSmtpPass(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label>{t('notifications.channels.email.fromAddress')}</label>
-                <input type="email" value={fromAddress} onChange={(e) => setFromAddress(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label>{t('notifications.channels.email.toAddress')}</label>
-                <input type="email" value={toAddress} onChange={(e) => setToAddress(e.target.value)} required />
-              </div>
-            </>
-          )}
-
-          {channelType === 'telegram' && (
-            <>
-              <div className="form-group">
-                <label>{t('notifications.channels.telegram.botToken')}</label>
-                <input type="text" value={botToken} onChange={(e) => setBotToken(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label>{t('notifications.channels.telegram.chatId')}</label>
-                <input type="text" value={chatId} onChange={(e) => setChatId(e.target.value)} required />
-              </div>
-            </>
-          )}
-
-          {channelType === 'discord' && (
-            <div className="form-group">
-              <label>{t('notifications.channels.discord.webhookUrl')}</label>
-              <input type="url" value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} required />
-            </div>
-          )}
-
-          {error && <div className="error-message">{error}</div>}
-          {testResult && <div className="form-group">{testResult}</div>}
-
-          <div className="modal-actions">
-            <button type="button" onClick={onClose} disabled={submitting}>
-              {t('common.cancel')}
-            </button>
-            {channel && (
-              <button type="button" onClick={handleTest} disabled={testing || submitting}>
-                {testing ? '...' : t('notifications.channels.test')}
-              </button>
-            )}
-            <Button type="submit" variant="primary" disabled={submitting}>
-              {submitting ? '...' : t('common.save')}
-            </Button>
-          </div>
-        </form>
-      </Modal>
-  );
-}
-
-// ─── RuleForm ─────────────────────────────────────────────────────────────────
-
-interface RuleFormProps {
-  rule: NotificationRule | null;
-  channels: NotificationChannel[];
-  onClose: () => void;
-  onSaved: () => void;
-}
-
-function RuleForm({ rule, channels, onClose, onSaved }: RuleFormProps) {
-  const { t } = useTranslation();
-
-  const [ruleType, setRuleType] = useState<NotificationRuleType>(rule?.type ?? 'lowest_in_days');
-  const [channelId, setChannelId] = useState(String(rule?.channel_id ?? ''));
-  const [days, setDays] = useState(String((rule?.params as LowestInDaysParams)?.days ?? 30));
-  const [threshold, setThreshold] = useState(String((rule?.params as BelowThresholdParams)?.threshold ?? 100));
-  const [percentage, setPercentage] = useState(String((rule?.params as PercentageDropParams)?.percentage ?? 20));
-  const [windowDays, setWindowDays] = useState(String((rule?.params as PercentageDropParams)?.window_days ?? 30));
-
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const buildParams = (): LowestInDaysParams | BelowThresholdParams | PercentageDropParams => {
-    switch (ruleType) {
-      case 'lowest_in_days':
-        return { days: parseInt(days, 10) || 30 };
-      case 'below_threshold':
-        return { threshold: parseFloat(threshold) || 100 };
-      case 'percentage_drop':
-        return { percentage: parseFloat(percentage) || 20, window_days: parseInt(windowDays, 10) || 30 };
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
-    try {
-      const params = buildParams();
-      const chanId = parseInt(channelId, 10);
-      if (rule) {
-        await api.notifications.updateRule(rule.id, { channel_id: chanId, type: ruleType, params });
-      } else {
-        await api.notifications.createRule({ product_id: null, channel_id: chanId, type: ruleType, params });
-      }
-      onSaved();
-    } catch (err) {
-      setError(t('notifications.rules.createFailed') + ': ' + (err as Error).message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <Modal
-      isOpen={true}
-      onClose={onClose}
-      title={rule ? t('notifications.rules.edit') : t('notifications.rules.add')}
-      size="md"
-    >
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>{t('notifications.rules.type')}</label>
-            <select value={ruleType} onChange={(e) => setRuleType(e.target.value as NotificationRuleType)}>
-              <option value="lowest_in_days">{t('notifications.rules.ruleTypes.lowestInDays')}</option>
-              <option value="below_threshold">{t('notifications.rules.ruleTypes.belowThreshold')}</option>
-              <option value="percentage_drop">{t('notifications.rules.ruleTypes.percentageDrop')}</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>{t('notifications.rules.channel')}</label>
-            <select value={channelId} onChange={(e) => setChannelId(e.target.value)} required>
-              <option value="">—</option>
-              {channels.map((c) => (
-                <option key={c.id} value={String(c.id)}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-
-          {ruleType === 'lowest_in_days' && (
-            <div className="form-group">
-              <label>{t('notifications.rules.days')}</label>
-              <input type="number" value={days} onChange={(e) => setDays(e.target.value)} min="1" required />
-            </div>
-          )}
-
-          {ruleType === 'below_threshold' && (
-            <div className="form-group">
-              <label>{t('notifications.rules.threshold')}</label>
-              <input type="number" value={threshold} onChange={(e) => setThreshold(e.target.value)} min="0" step="0.01" required />
-            </div>
-          )}
-
-          {ruleType === 'percentage_drop' && (
-            <>
-              <div className="form-group">
-                <label>{t('notifications.rules.percentage')}</label>
-                <input type="number" value={percentage} onChange={(e) => setPercentage(e.target.value)} min="1" max="100" required />
-              </div>
-              <div className="form-group">
-                <label>{t('notifications.rules.windowDays')}</label>
-                <input type="number" value={windowDays} onChange={(e) => setWindowDays(e.target.value)} min="1" required />
-              </div>
-            </>
-          )}
-
-          {error && <div className="error-message">{error}</div>}
-
-          <div className="modal-actions">
-            <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>
-              {t('common.cancel')}
-            </Button>
-            <Button type="submit" variant="primary" disabled={submitting}>
-              {submitting ? '...' : t('common.save')}
-            </Button>
-          </div>
-        </form>
-      </Modal>
-  );
-}
-
-// ─── Notifications (main) ─────────────────────────────────────────────────────
 
 export function Notifications() {
   const { t } = useTranslation();
@@ -462,35 +131,27 @@ export function Notifications() {
     return ch ? ch.name : String(channelId);
   };
 
+  const tabs = [
+    { value: 'channels', label: t('notifications.channels.title') },
+    { value: 'rules', label: t('notifications.rules.title') },
+    { value: 'history', label: t('notifications.history.title') },
+  ];
+
   return (
     <div className="notifications-section">
       <h2>{t('notifications.title')}</h2>
 
-      <nav className="notifications-tabs">
-        <button
-          className={`notifications-tab${activeTab === 'channels' ? ' active' : ''}`}
-          onClick={() => setActiveTab('channels')}
-        >
-          {t('notifications.channels.title')}
-        </button>
-        <button
-          className={`notifications-tab${activeTab === 'rules' ? ' active' : ''}`}
-          onClick={() => setActiveTab('rules')}
-        >
-          {t('notifications.rules.title')}
-        </button>
-        <button
-          className={`notifications-tab${activeTab === 'history' ? ' active' : ''}`}
-          onClick={() => setActiveTab('history')}
-        >
-          {t('notifications.history.title')}
-        </button>
-      </nav>
+      <SimpleTabs
+        tabs={tabs}
+        value={activeTab}
+        onChange={(v) => setActiveTab(v as TabType)}
+        variant="underlined"
+      />
 
       {error && <div className="error-message">{error}</div>}
 
       {loading ? (
-        <div className="loading">...</div>
+        <TableSkeleton rows={4} columns={activeTab === 'history' ? 4 : activeTab === 'channels' ? 4 : 5} />
       ) : (
         <>
           {/* Channels Tab */}
@@ -498,16 +159,25 @@ export function Notifications() {
             <>
               <div className="notifications-header">
                 <h3>{t('notifications.channels.title')}</h3>
-                <button
-                  className="btn btn-primary"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={() => { setEditingChannel(null); setShowChannelForm(true); }}
                 >
                   {t('notifications.channels.add')}
-                </button>
+                </Button>
               </div>
 
               {channels.length === 0 ? (
-                <div className="empty-state">{t('notifications.channels.noChannels')}</div>
+                <EmptyState
+                  variant="no-data"
+                  title={t('notifications.channels.noChannels')}
+                  action={
+                    <Button variant="primary" size="sm" onClick={() => { setEditingChannel(null); setShowChannelForm(true); }}>
+                      {t('notifications.channels.add')}
+                    </Button>
+                  }
+                />
               ) : (
                 <table className="notifications-table">
                   <thead>
@@ -523,9 +193,9 @@ export function Notifications() {
                       <tr key={channel.id}>
                         <td>{channel.name}</td>
                         <td>
-                          <span className={`channel-type-badge type-${channel.type}`}>
+                          <Badge variant="info" size="sm">
                             {t(`notifications.channels.channelTypes.${channel.type}`)}
-                          </span>
+                          </Badge>
                         </td>
                         <td>
                           <button
@@ -563,16 +233,25 @@ export function Notifications() {
             <>
               <div className="notifications-header">
                 <h3>{t('notifications.rules.title')}</h3>
-                <button
-                  className="btn btn-primary"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={() => { setEditingRule(null); setShowRuleForm(true); }}
                 >
                   {t('notifications.rules.add')}
-                </button>
+                </Button>
               </div>
 
               {rules.length === 0 ? (
-                <div className="empty-state">{t('notifications.rules.noRules')}</div>
+                <EmptyState
+                  variant="no-data"
+                  title={t('notifications.rules.noRules')}
+                  action={
+                    <Button variant="primary" size="sm" onClick={() => { setEditingRule(null); setShowRuleForm(true); }}>
+                      {t('notifications.rules.add')}
+                    </Button>
+                  }
+                />
               ) : (
                 <table className="notifications-table">
                   <thead>
@@ -588,9 +267,9 @@ export function Notifications() {
                     {rules.map((rule) => (
                       <tr key={rule.id}>
                         <td>
-                          <span className={`rule-type-badge type-${rule.type}`}>
+                          <Badge variant="neutral" size="sm">
                             {t(`notifications.rules.ruleTypes.${rule.type === 'lowest_in_days' ? 'lowestInDays' : rule.type === 'below_threshold' ? 'belowThreshold' : 'percentageDrop'}`)}
-                          </span>
+                          </Badge>
                         </td>
                         <td>{formatRuleParams(rule.type, rule.params, t)}</td>
                         <td>{getChannelName(rule.channel_id)}</td>
@@ -630,7 +309,7 @@ export function Notifications() {
             <>
               <h3>{t('notifications.history.title')}</h3>
               {history.length === 0 ? (
-                <div className="empty-state">{t('notifications.history.noHistory')}</div>
+                <EmptyState variant="no-data" title={t('notifications.history.noHistory')} />
               ) : (
                 <table className="notifications-table">
                   <thead>
@@ -647,9 +326,12 @@ export function Notifications() {
                         <td>{new Date(entry.created_at).toLocaleString()}</td>
                         <td>{entry.trigger_type}</td>
                         <td>
-                          <span className={`status-badge status-${entry.status}`}>
+                          <Badge
+                            variant={entry.status === 'sent' ? 'success' : entry.status === 'failed' ? 'danger' : 'warning'}
+                            size="sm"
+                          >
                             {entry.status}
-                          </span>
+                          </Badge>
                         </td>
                         <td>
                           {entry.message?.substring(0, 100)}

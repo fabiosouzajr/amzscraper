@@ -123,7 +123,7 @@ import { Badge } from '../design-system';
 
 Import progress uses thin `ProgressBar` at top of content (not full-width dark banner). Dismissable with `X` button.
 
-### Step 2.6: Simplify Notifications UI
+### ✅ Step 2.6: Simplify Notifications UI
 
 **File**: `frontend/src/components/Notifications.tsx`
 
@@ -156,7 +156,7 @@ Lines 294, 545, 612 — wrap with `t()`:
 
 Add missing translation keys if needed.
 
-### Step 2.9: Apply Semantic Color System
+### ✅ Step 2.9: Apply Semantic Color System
 
 **Files**: `frontend/src/App.css` (phased removal), individual component files
 

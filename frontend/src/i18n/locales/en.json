@@ -310,6 +310,7 @@
   "notifications": {
     "title": "Notifications",
     "pleaseLogin": "Please login to manage notifications",
+    "delete": "Delete",
     "channels": {
       "title": "Channels",
       "add": "Add Channel",

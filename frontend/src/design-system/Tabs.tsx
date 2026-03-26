@@ -26,6 +26,11 @@ export interface TabProps {
    * Custom className
    */
   className?: string;
+
+  /**
+   * Click handler (injected by parent Tabs/SimpleTabs)
+   */
+  onClick?: () => void;
 }
 
 export interface TabsProps {
@@ -92,6 +97,7 @@ export const Tab: React.FC<TabProps> = ({
   icon,
   disabled = false,
   className = '',
+  onClick,
 }) => {
   return (
     <button
@@ -99,6 +105,7 @@ export const Tab: React.FC<TabProps> = ({
       role="tab"
       data-value={value}
       disabled={disabled}
+      onClick={onClick}
       className={`${styles.tab} ${disabled ? styles.disabled : ''} ${className}`}
     >
       {icon && <span className={styles.tabIcon}>{icon}</span>}
@@ -223,6 +230,7 @@ export const Tabs: React.FC<TabsProps> = ({
               key={tabProps.value}
               {...tabProps}
               disabled={tabProps.disabled}
+              onClick={() => handleTabClick(tabProps.value)}
             />
           );
         })}
@@ -325,7 +333,14 @@ export const SimpleTabs: React.FC<SimpleTabsProps> = ({
       fullWidth ? styles.fullWidth : ''
     } ${className}`} role="tablist" onKeyDown={handleKeyDown} ref={tabsListRef}>
       {tabs.map((tab) => (
-        <Tab key={tab.value} value={tab.value} label={tab.label} icon={tab.icon} disabled={tab.disabled} />
+        <Tab
+          key={tab.value}
+          value={tab.value}
+          label={tab.label}
+          icon={tab.icon}
+          disabled={tab.disabled}
+          onClick={() => !tab.disabled && onChange(tab.value)}
+        />
       ))}
 
       {variant === 'underlined' && (
