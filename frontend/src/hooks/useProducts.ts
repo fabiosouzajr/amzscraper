@@ -17,6 +17,7 @@ export function useAddProduct() {
     mutationFn: (asin: string) => api.addProduct(asin),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['products'] });
+      qc.invalidateQueries({ queryKey: ['categories'] });
     },
   });
 }
@@ -27,6 +28,7 @@ export function useDeleteProduct() {
     mutationFn: (id: number) => api.deleteProduct(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['products'] });
+      qc.invalidateQueries({ queryKey: ['categories'] });
     },
   });
 }
