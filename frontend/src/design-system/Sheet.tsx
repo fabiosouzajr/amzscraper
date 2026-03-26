@@ -215,16 +215,7 @@ export const Sheet: React.FC<SheetProps> = ({
 
         {/* Content */}
         <div className={styles.content}>
-          {!header && showCloseButton && (
-            <button
-              type="button"
-              className={styles.closeButtonInline}
-              onClick={onClose}
-              aria-label="Close sheet"
-            >
-              <XIcon size={20} />
-            </button>
-          )}
+
           {children}
         </div>
 

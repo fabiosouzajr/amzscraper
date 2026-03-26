@@ -6,6 +6,7 @@ import { api } from '../services/api';
 import { ProductWithPrice } from '../types';
 import { formatDate, formatDateTime } from '../utils/dateFormat';
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
+import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { ProductNotifications } from './ProductNotifications';
 import { Badge } from '../design-system';
 import { useSwipeToDismiss } from '../hooks';
@@ -181,12 +182,10 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
         <div className="price-info-body">
           <div className="product-thumbnail-wrapper product-thumbnail-wrapper--lg">
             <img
-              src={`https://images-na.ssl-images-amazon.com/images/P/${product.asin}.01._SCLZZZZZZZ_.jpg`}
+              src={getPreferredProductImageUrl(product)}
               alt={product.description}
               className="product-thumbnail"
-              onError={(e) => {
-                (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
-              }}
+              onError={(e) => handleProductImageError(e, product.asin)}
             />
           </div>
           <div className="price-data">
@@ -260,4 +259,3 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
     </div>
   );
 }
-

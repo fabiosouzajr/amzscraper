@@ -73,7 +73,8 @@
     "noProductsInList": "No products in this list",
     "noListsAvailable": "No lists available. Create a list first.",
     "perPage": "per page",
-    "itemsPerPage": "Items per page"
+    "itemsPerPage": "Items per page",
+    "view": "View"
   },
   "search": {
     "title": "Search Products",

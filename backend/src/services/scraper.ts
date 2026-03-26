@@ -110,6 +110,58 @@ export class ScraperService {
       description = description.trim();
       console.log(`Found product using selector "${selectorUsed}": ${description.substring(0, 60)}...`);
 
+      // Extract canonical product image URL
+      let imageUrl: string | undefined;
+      try {
+        imageUrl = await page.evaluate(() => {
+          const normalizeUrl = (raw: string | null | undefined): string | null => {
+            if (!raw) return null;
+            const trimmed = raw.trim();
+            if (!trimmed) return null;
+            if (trimmed.startsWith('//')) return `https:${trimmed}`;
+            if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+            return null;
+          };
+
+          const candidates: Array<string | null> = [];
+
+          // Common high-confidence metadata
+          // @ts-ignore - browser context
+          const ogImage = document.querySelector('meta[property="og:image"]')?.getAttribute('content');
+          // @ts-ignore - browser context
+          const imageSrc = document.querySelector('link[rel="image_src"]')?.getAttribute('href');
+          candidates.push(ogImage, imageSrc);
+
+          // Main Amazon image elements
+          // @ts-ignore - browser context
+          const landingImage = document.querySelector('#landingImage');
+          if (landingImage) {
+            candidates.push(
+              landingImage.getAttribute('data-old-hires'),
+              landingImage.getAttribute('src'),
+            );
+          }
+
+          // @ts-ignore - browser context
+          const wrapperImage = document.querySelector('#imgTagWrapperId img');
+          if (wrapperImage) {
+            candidates.push(
+              wrapperImage.getAttribute('data-old-hires'),
+              wrapperImage.getAttribute('src'),
+            );
+          }
+
+          for (const candidate of candidates) {
+            const normalized = normalizeUrl(candidate);
+            if (normalized) return normalized;
+          }
+
+          return null;
+        }) ?? undefined;
+      } catch (error) {
+        console.log('⚠ Error extracting image URL (continuing anyway):', error);
+      }
+
       // Check product availability before extracting price
       console.log('Checking product availability...');
       const availabilityCheck = await page.evaluate(() => {
@@ -178,6 +230,7 @@ export class ScraperService {
           price: null,
           available: false,
           unavailableReason: availabilityCheck.reason,
+          imageUrl,
           categories: []
         };
         await page.close();
@@ -459,6 +512,7 @@ export class ScraperService {
                   description,
                   price,
                   available: true,
+                  imageUrl,
                   categories: []
                 };
                 await page.close();
@@ -606,6 +660,7 @@ export class ScraperService {
           price: null,
           available: false,
           unavailableReason: 'Preço não encontrado',
+          imageUrl,
           categories: categories.length > 0 ? categories : undefined
         };
         await page.close();
@@ -617,6 +672,7 @@ export class ScraperService {
         description,
         price,
         available: true,
+        imageUrl,
         categories: categories.length > 0 ? categories : undefined
       };
       await page.close();
@@ -657,4 +713,3 @@ export class ScraperService {
 
 // Singleton instance
 export const scraperService = new ScraperService();
-

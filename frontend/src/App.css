@@ -388,17 +388,19 @@
 }
 
 .add-product-section {
+  align-items: end;
   background: white;
   padding: 1.25rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 100%;
+  width: 75%;
   max-width: 100%;
   box-sizing: border-box;
 }
 
 .add-product-section h3 {
+  font-size: medium;
   margin-bottom: 1rem;
   color: var(--color-amazon-navy);
 }
@@ -765,6 +767,22 @@
   align-items: center;
 }
 
+.view-button {
+  background: var(--color-amazon-navy);
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.view-button:hover {
+  background: #1a2532;
+}
+
 .delete-button {
   background: var(--color-danger);
   color: white;
@@ -1011,17 +1029,17 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
 }
 
 .current-price .label {
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: #666;
 }
 
 .current-price .value {
-  font-size: 1.75rem;
+  font-size: 1.65rem;
   font-weight: bold;
   color: var(--color-amazon-navy);
 }
@@ -1061,7 +1079,7 @@
 
 .last-updated {
   margin-top: 0.75rem;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #666;
   text-align: right;
 }
@@ -1074,15 +1092,15 @@
 }
 
 .price-chart {
-  margin-top: 1.25rem;
-  padding-top: 1.25rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
   border-top: 1px solid #f0f0f0;
 }
 
 .price-chart h3 {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.55rem;
   color: var(--color-amazon-navy);
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .price-chart .recharts-wrapper {
@@ -1092,7 +1110,7 @@
 .price-history-table {
   margin-top: 1.25rem;
   padding-top: 1.25rem;
-  border-top: 1px solid #f0f0f0;
+  border-top: 2px solid #f0f0f0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -1100,13 +1118,13 @@
 .price-history-table h3 {
   margin-bottom: 0.75rem;
   color: var(--color-amazon-navy);
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .price-history-table table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 500px;
+  min-width: 350;
 }
 
 .price-history-table th,
@@ -1910,6 +1928,7 @@
   .update-button,
   .export-button,
   .import-button,
+  .view-button,
   .delete-button {
     padding: 0.625rem 1rem;
     font-size: 0.875rem;
@@ -1962,6 +1981,7 @@
   .update-button,
   .export-button,
   .import-button,
+  .view-button,
   .delete-button {
     min-height: 44px;
     min-width: 44px;
@@ -2674,6 +2694,18 @@
   background: #138496;
 }
 
+/* Keep ProductList action buttons visually consistent in size */
+.add-to-list-button,
+.view-button,
+.delete-button {
+  width: 108px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
 .add-to-list-dropdown {
   position: absolute;
   top: 100%;
@@ -2750,6 +2782,30 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.page-size-select {
+  border: 1px solid #d5d9d9;
+  background: #fff;
+  color: var(--color-amazon-navy);
+  border-radius: 6px;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  min-height: 36px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.page-size-select:hover {
+  border-color: var(--color-amazon-orange);
+}
+
+.page-size-select:focus {
+  outline: none;
+  border-color: var(--color-amazon-orange);
+  box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.2);
+}
+
 .pagination-button {
   background: var(--color-amazon-orange);
   color: white;
@@ -2796,6 +2852,11 @@
   .pagination {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .page-size-select {
+    width: 100%;
+    max-width: 220px;
   }
   
   .pagination-info {

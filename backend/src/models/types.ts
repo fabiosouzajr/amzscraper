@@ -2,6 +2,7 @@ export interface Product {
   id: number;
   asin: string;
   description: string;
+  image_url?: string;
   categories?: Category[];
   lists?: UserList[];
   created_at: string;
@@ -37,6 +38,7 @@ export interface ScrapedProductData {
   price: number | null;
   available: boolean;
   unavailableReason?: string;
+  imageUrl?: string;
   categories?: string[];
 }
 
@@ -194,4 +196,3 @@ export interface NotificationLogEntryWithUser extends NotificationLogEntry {
   product_description?: string;
   channel_name?: string;
 }
-

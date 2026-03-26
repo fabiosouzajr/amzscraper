@@ -257,6 +257,7 @@ async function migrateProductsTable(db: sqlite3.Database): Promise<void> {
         user_id INTEGER NOT NULL,
         asin TEXT NOT NULL,
         description TEXT NOT NULL,
+        image_url TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         UNIQUE(user_id, asin)
@@ -267,8 +268,14 @@ async function migrateProductsTable(db: sqlite3.Database): Promise<void> {
 
   const columns = await dbAll<{ name: string }>(db, 'PRAGMA table_info(products)');
   const hasUserId = columns.some((c) => c.name === 'user_id');
+  const hasImageUrl = columns.some((c) => c.name === 'image_url');
 
-  if (hasUserId) return;
+  if (hasUserId) {
+    if (!hasImageUrl) {
+      await dbRun(db, 'ALTER TABLE products ADD COLUMN image_url TEXT');
+    }
+    return;
+  }
 
   const row = await dbGet<{ count: number }>(db, 'SELECT COUNT(*) as count FROM products');
   if (row && row.count > 0) {
@@ -281,12 +288,19 @@ async function migrateProductsTable(db: sqlite3.Database): Promise<void> {
       user_id INTEGER NOT NULL DEFAULT 1,
       asin TEXT NOT NULL,
       description TEXT NOT NULL,
+      image_url TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
       UNIQUE(user_id, asin)
     )
   `);
-  await dbRun(db, 'INSERT INTO products_new (id, asin, description, created_at) SELECT id, asin, description, created_at FROM products');
+  const oldCols = columns.map((c) => c.name);
+  const copyImageUrl = oldCols.includes('image_url') ? 'image_url' : 'NULL';
+  await dbRun(
+    db,
+    `INSERT INTO products_new (id, asin, description, image_url, created_at)
+     SELECT id, asin, description, ${copyImageUrl}, created_at FROM products`
+  );
   await dbRun(db, 'DROP TABLE IF EXISTS products');
   await dbRun(db, 'ALTER TABLE products_new RENAME TO products');
 }

@@ -12,7 +12,7 @@ The design system components (`Button`, `Card`, `Input`, `Modal`, `Badge`, `Empt
 
 ---
 
-## Phase 1: Navigation & Routing (Issues N1-N5)
+## Phase 1: Navigation & Routing (Issues N1-N5) ✅
 
 ### ✅ Step 1.1: Install and Configure React Router
 
@@ -62,6 +62,8 @@ All navigation uses `useNavigate` and `Link`. No more `setCurrentView` state swi
 - Always render as content (context determines container)
 - On mobile: full-screen slide-in with swipe-back gesture
 - On desktop: render inside `Sheet` component from design system
+
+`ProductsPage.tsx` opens `ProductDetail` in a `Sheet` on desktop; navigates to `/products/:id` on mobile. `ProductList` now accepts `onProductSelect` prop with a "View" button per row.
 
 ### ✅ Step 1.7: Preserve State on Navigation
 
@@ -278,9 +280,9 @@ return isMobile ? <MobileFilters /> : <DesktopSidebar />;
 
 ---
 
-## Phase 4: Layout Shell Implementation
+## Phase 4: Layout Shell Implementation ✅
 
-### Step 4.1: Create AppShell Component
+### ✅ Step 4.1: Create AppShell Component
 
 **New File**: `frontend/src/layout/AppShell.tsx`
 
@@ -319,7 +321,7 @@ Mobile (< 768px):
 └─────────────────────────────┘
 ```
 
-### Step 4.2: Create Bottom Tab Bar
+### ✅ Step 4.2: Create Bottom Tab Bar
 
 **New File**: `frontend/src/layout/BottomTabBar.tsx`
 
@@ -329,7 +331,7 @@ Mobile-only bottom navigation:
 - Hide on scroll down, show on scroll up
 - Safe-area-inset padding
 
-### Step 4.3: Update App.tsx to Use AppShell
+### ✅ Step 4.3: Update App.tsx to Use AppShell
 
 **File**: `frontend/src/App.tsx`
 
@@ -378,13 +380,13 @@ const PriceChart = lazy(() => import('recharts').then(m => ({ default: m.LineCha
 - `frontend/src/components/SettingsPage.tsx` — Consolidated settings
 - `frontend/src/components/CategoryFilter.tsx` — Accessible category filter
 - `frontend/src/components/ProductRow.tsx` — Progressive disclosure row
-- `frontend/src/layout/AppShell.tsx` — Responsive layout shell
-- `frontend/src/layout/BottomTabBar.tsx` — Mobile navigation
+- `frontend/src/layout/AppShell.tsx` — Responsive layout shell ✅ Done
+- `frontend/src/layout/BottomTabBar.tsx` — Mobile navigation ✅ Done
 - `frontend/src/hooks/useSwipeGesture.ts` — ✅ Done
 - `frontend/src/hooks/useMediaQuery.ts` — ✅ Done
 
 ### Modified Files (~12):
-- `frontend/src/App.tsx` — Router integration ✅, AppShell integration pending
+- `frontend/src/App.tsx` — Router integration ✅, AppShell integration ✅
 - `frontend/src/main.tsx` — BrowserRouter wrapper ✅
 - `frontend/src/components/Dashboard.tsx` — EmptyState ✅, design system
 - `frontend/src/components/ProductDetail.tsx` — Sheet pattern pending
@@ -397,8 +399,8 @@ const PriceChart = lazy(() => import('recharts').then(m => ({ default: m.LineCha
 - `frontend/src/i18n/locales/pt-BR.json` — Add missing keys pending
 
 ### Deleted Files (~2):
-- `frontend/src/components/ProductList.tsx` — Merge into ProductsPage (pending)
-- `frontend/src/components/ProductSearch.tsx` — Merge into ProductsPage (pending)
+- `frontend/src/components/ProductList.tsx` — Still used by ProductsPage (merge deferred to Phase 2)
+- `frontend/src/components/ProductSearch.tsx` — ✅ Deleted (route redirects to /products)
 
 ---
 
@@ -443,8 +445,8 @@ const PriceChart = lazy(() => import('recharts').then(m => ({ default: m.LineCha
 
 ## Implementation Order
 
-1. **Phase 1** — Navigation & routing (foundational) ✅ mostly done
-2. **Phase 4** — Layout shell (enables responsive changes) ← next
+1. **Phase 1** — Navigation & routing (foundational) ✅ complete
+2. **Phase 4** — Layout shell (enables responsive changes) ✅ done
 3. **Phase 2** — UI design system migration (independent, parallelizable)
 4. **Phase 3** — Responsiveness & accessibility (depends on layout)
 5. **Phase 5** — Code splitting ✅ mostly done

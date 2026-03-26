@@ -103,7 +103,7 @@ export function createProductRepo(
     },
 
     async addProduct(
-      userId: number, asin: string, description: string, categories?: string[]
+      userId: number, asin: string, description: string, categories?: string[], imageUrl?: string
     ): Promise<Product> {
       const quotaStr = await getConfig('quota_max_products');
       const quotaLimit = parseInt(quotaStr ?? '100', 10);
@@ -118,8 +118,8 @@ export function createProductRepo(
       }
       const productId: number = await new Promise((resolve, reject) => {
         db.run(
-          'INSERT INTO products (user_id, asin, description) VALUES (?, ?, ?)',
-          [userId, asin, description],
+          'INSERT INTO products (user_id, asin, description, image_url) VALUES (?, ?, ?, ?)',
+          [userId, asin, description, imageUrl ?? null],
           function (err) { err ? reject(err) : resolve(this.lastID); }
         );
       });
@@ -211,6 +211,18 @@ export function createProductRepo(
       });
     },
 
+    async updateProductImageUrl(
+      productId: number,
+      userId: number,
+      imageUrl: string | null
+    ): Promise<void> {
+      await dbRun(
+        db,
+        'UPDATE products SET image_url = ? WHERE id = ? AND user_id = ?',
+        [imageUrl, productId, userId]
+      );
+    },
+
     async getLastPrice(productId: number): Promise<number | null> {
       const row = await dbGet<{ price: number | null; available: number }>(
         db,
@@ -283,6 +295,7 @@ export function createProductRepo(
           p.id,
           p.asin,
           p.description,
+          p.image_url,
           p.created_at,
           current.price as current_price,
           previous.price as previous_price,
@@ -320,6 +333,7 @@ export function createProductRepo(
               id: row.id,
               asin: row.asin,
               description: row.description,
+              image_url: row.image_url ?? undefined,
               categories: categories.length > 0 ? categories : undefined,
               created_at: row.created_at,
             },
@@ -341,6 +355,7 @@ export function createProductRepo(
           p.id,
           p.asin,
           p.description,
+          p.image_url,
           p.created_at,
           current.price as current_price,
           previous.price as previous_price,
@@ -378,6 +393,7 @@ export function createProductRepo(
               id: row.id,
               asin: row.asin,
               description: row.description,
+              image_url: row.image_url ?? undefined,
               categories: categories.length > 0 ? categories : undefined,
               created_at: row.created_at,
             },

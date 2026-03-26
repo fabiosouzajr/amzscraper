@@ -6,15 +6,17 @@ import { ASINInput } from './ASINInput';
 import { ListsSidebar } from './ListsSidebar';
 import { CategoryFilter } from './CategoryFilter';
 import { formatDate } from '../utils/dateFormat';
+import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
 
 interface ProductListProps {
   initialCategoryFilter?: string;
   onFilterApplied?: () => void;
+  onProductSelect?: (productId: number) => void;
 }
 
-export function ProductList({ initialCategoryFilter = '', onFilterApplied }: ProductListProps) {
+export function ProductList({ initialCategoryFilter = '', onFilterApplied, onProductSelect }: ProductListProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { importing, importResults, startImport, setOnImportComplete } = useImport();
@@ -336,12 +338,10 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                   <div key={product.id} className="product-list-item">
                     <div className="product-thumbnail-wrapper">
                       <img
-                        src={`https://images-na.ssl-images-amazon.com/images/P/${product.asin}.01._SCLZZZZZZZ_.jpg`}
+                        src={getPreferredProductImageUrl(product)}
                         alt={product.description}
                         className="product-thumbnail"
-                        onError={(e) => {
-                          (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
-                        }}
+                        onError={(e) => handleProductImageError(e, product.asin)}
                       />
                     </div>
                     <div className="product-info">
@@ -440,6 +440,14 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied }: Pro
                             </div>
                           )}
                         </div>
+                      )}
+                      {onProductSelect && (
+                        <button
+                          className="view-button"
+                          onClick={() => onProductSelect(product.id)}
+                        >
+                          {t('products.view')}
+                        </button>
                       )}
                       <button
                         className="delete-button"

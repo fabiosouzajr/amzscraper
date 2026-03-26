@@ -139,6 +139,12 @@ export class SchedulerService {
           const scrapedData = await scraperService.scrapeProduct(product.asin);
           const lastPrice = await dbService.getLastPrice(product.id);
 
+          // Backfill/store canonical image URL when available from scraper
+          if (scrapedData.imageUrl && scrapedData.imageUrl !== product.image_url) {
+            await dbService.updateProductImageUrl(product.id, userId, scrapedData.imageUrl);
+            console.log('  ✓ Product image URL updated');
+          }
+
           // Update categories if they have changed or were missing
           if (scrapedData.categories && scrapedData.categories.length > 0) {
             const currentCategories = product.categories || [];
@@ -243,6 +249,12 @@ export class SchedulerService {
             const scrapedData = await scraperService.scrapeProduct(product.asin);
             const lastPrice = await dbService.getLastPrice(product.id);
 
+            // Backfill/store canonical image URL when available from scraper
+            if (scrapedData.imageUrl && scrapedData.imageUrl !== product.image_url) {
+              await dbService.updateProductImageUrl(product.id, user.id, scrapedData.imageUrl);
+              console.log('    ✓ Product image URL updated');
+            }
+
             // Update categories if they have changed or were missing
             if (scrapedData.categories && scrapedData.categories.length > 0) {
               const currentCategories = product.categories || [];
@@ -309,4 +321,3 @@ export class SchedulerService {
 
 // Singleton instance
 export const schedulerService = new SchedulerService();
-

@@ -1,10 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { Product } from '../types';
 import { ProductList } from './ProductList';
-import { useCallback } from 'react';
+import { Sheet } from '../design-system';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
+
+const ProductDetailSheet = lazy(() =>
+  import('./ProductDetail').then(m => ({ default: m.ProductDetail }))
+);
 
 interface SearchResultsListProps {
   results: Product[];
@@ -34,12 +40,10 @@ function SearchResultsList({ results, loading, query, onSelect }: SearchResultsL
         >
           <div className="product-thumbnail-wrapper">
             <img
-              src={`https://images-na.ssl-images-amazon.com/images/P/${product.asin}.01._SCLZZZZZZZ_.jpg`}
+              src={getPreferredProductImageUrl(product)}
               alt={product.description}
               className="product-thumbnail"
-              onError={(e) => {
-                (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
-              }}
+              onError={(e) => handleProductImageError(e, product.asin)}
             />
           </div>
           <div className="search-result-info">
@@ -64,6 +68,7 @@ export function ProductsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const searchParams = new URLSearchParams(location.search);
   const initialCategoryFilter = searchParams.get('category') || '';
@@ -72,11 +77,28 @@ export function ProductsPage() {
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [isSearchMode, setIsSearchMode] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   const handleFilterApplied = useCallback(() => {
     navigate('/products', { replace: true });
   }, [navigate]);
+
+  const handleProductSelect = useCallback((productId: number) => {
+    if (isMobile) {
+      navigate(`/products/${productId}`);
+    } else {
+      setSelectedProductId(productId);
+    }
+  }, [isMobile, navigate]);
+
+  const handleSheetClose = useCallback(() => {
+    setSelectedProductId(null);
+  }, []);
+
+  const handleSheetNavigate = useCallback((productId: number) => {
+    setSelectedProductId(productId);
+  }, []);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -105,6 +127,14 @@ export function ProductsPage() {
     };
   }, [query]);
 
+  // Close sheet when switching to mobile
+  useEffect(() => {
+    if (isMobile && selectedProductId !== null) {
+      navigate(`/products/${selectedProductId}`);
+      setSelectedProductId(null);
+    }
+  }, [isMobile, selectedProductId, navigate]);
+
   return (
     <div className="products-page">
       <div className="products-page-search">
@@ -131,14 +161,34 @@ export function ProductsPage() {
           results={searchResults}
           loading={searchLoading}
           query={query}
-          onSelect={(product) => navigate(`/products/${product.id}`)}
+          onSelect={(product) => handleProductSelect(product.id)}
         />
       ) : (
         <ProductList
           initialCategoryFilter={initialCategoryFilter}
           onFilterApplied={handleFilterApplied}
+          onProductSelect={handleProductSelect}
         />
       )}
+
+      <Sheet
+        isOpen={selectedProductId !== null}
+        onClose={handleSheetClose}
+        position="right"
+        size="lg"
+        showCloseButton
+      >
+        {selectedProductId !== null && (
+          <Suspense fallback={<div className="loading">{t('productDetail.loading')}</div>}>
+            <ProductDetailSheet
+              productId={selectedProductId}
+              onClose={handleSheetClose}
+              onNavigate={handleSheetNavigate}
+              isSheet
+            />
+          </Suspense>
+        )}
+      </Sheet>
     </div>
   );
 }

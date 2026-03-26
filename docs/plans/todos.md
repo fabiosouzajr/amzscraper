@@ -17,4 +17,24 @@ examine the codebase in order to write a md file that details a step by step pla
 
 ## 3 Comprehensive Logging system
 implement background logging 
- ## implement a fallback to get product images as some items do not have images
+
+
+
+ ## 4 Implement product image fallback 
+    some items are not displaying images despite existing images on the amazon page. I want you examine the codebase in order to create a fallback method that enables these images to be displayed according to the existing logic. Images should be linked, not downloaded.
+    here are some examples asins of products with no images: 
+    B0DYFZSHZ4
+    B0CXT2T3PG
+    B0CN8V8R6Q
+
+    PROMPT:
+
+    
+    Current behavior: Images use a single hardcoded URL pattern: images-na.ssl-images-amazon.com/images/P/{ASIN}.01._SCLZZZZZZZ_.jpg. When it fails (404), the wrapper is hidden — no fallback.
+
+    The issue is likely that some newer products live on Amazon's newer CDN (m.media-amazon.com) or use a different URL structure than the old images-na pattern.
+
+    The fallback Should be Scraper-enhanced — when a product is added/scraped, extract and store the actual image URL from the Amazon page. Frontend uses stored URL with a CDN fallback. This will require a DB migration and scraper change.
+    For existing products that already have no image URL stored, we should 
+    re-scrape them lazily, so that on first page load, if no image URL is stored, the frontend falls back to the CDN pattern (existing behavior) until the next scheduled scrape populates it.
+
