@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { api } from '../services/api';
+import { useCategories } from '../hooks';
 import { CategoryTreeNode } from '../types';
 
 interface CategoryFilterProps {
@@ -75,13 +75,9 @@ const TreeNode = React.memo(function TreeNode({
 
 export function CategoryFilter({ selectedCategory, onChange }: CategoryFilterProps) {
   const { t } = useTranslation();
-  const [tree, setTree] = useState<CategoryTreeNode[]>([]);
+  const { data: tree = [] } = useCategories();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    api.getCategoryTree().then(setTree).catch(console.error);
-  }, []);
 
   // Close on outside click
   useEffect(() => {
