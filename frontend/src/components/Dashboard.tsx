@@ -210,12 +210,17 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
 
       {updating && (
         <Card elevation={1} padding="md">
-          <ProgressBar
-            value={updateProgress}
-            variant="primary"
-            size="md"
-          />
-          <div className="progress-status">{updateStatus}</div>
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <ProgressBar
+              value={updateProgress}
+              variant="primary"
+              size="md"
+            />
+            <div className="progress-status">{updateStatus}</div>
+          </div>
         </Card>
       )}
 

@@ -29,7 +29,11 @@ function ImportProgressBanner() {
   return (
     <div className="import-progress-bar">
       <ProgressBar value={percent} variant="primary" size="sm" />
-      <div className="import-progress-content">
+      <div
+        className="import-progress-content"
+        aria-live="polite"
+        aria-atomic="false"
+      >
         {importProgress.status === 'starting' && t('products.importStarting')}
         {importProgress.status === 'processing' && (
           <>
