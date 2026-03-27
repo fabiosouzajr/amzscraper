@@ -4165,3 +4165,42 @@
   gap: var(--space-2);
   background: var(--color-bg-secondary);
 }
+
+/* Swipeable row — mobile delete gesture */
+.swipeable-row-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.swipeable-row-content {
+  transition: transform 150ms ease;
+  will-change: transform;
+}
+
+.swipeable-row--swiped .swipeable-row-content {
+  transform: translateX(-80px);
+}
+
+.swipeable-row-actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-danger);
+}
+
+.swipe-delete-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}

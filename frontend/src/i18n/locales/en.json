@@ -188,7 +188,8 @@
     "cancel": "Cancel",
     "save": "Save",
     "skipToContent": "Skip to main content",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "delete": "Delete"
   },
   "admin": {
     "title": "Admin Panel",

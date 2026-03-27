@@ -188,7 +188,8 @@
     "cancel": "Cancelar",
     "save": "Salvar",
     "skipToContent": "Pular para o conteúdo principal",
-    "dismiss": "Descartar"
+    "dismiss": "Descartar",
+    "delete": "Excluir"
   },
   "admin": {
     "title": "Painel de Administração",

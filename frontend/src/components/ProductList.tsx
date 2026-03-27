@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { Package } from 'lucide-react';
@@ -12,9 +12,46 @@ import { formatDate } from '../utils/dateFormat';
 import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
-import { useProducts, useDeleteProduct } from '../hooks';
+import { useProducts, useDeleteProduct, useMediaQuery, useSwipeGesture } from '../hooks';
 
 
+
+interface SwipeableRowProps {
+  productId: number;
+  onDelete: (id: number) => void;
+  children: React.ReactNode;
+  isMobile: boolean;
+}
+
+const SwipeableRow = React.memo(function SwipeableRow({ productId, onDelete, children, isMobile }: SwipeableRowProps) {
+  const { t } = useTranslation();
+  const [swiped, setSwiped] = useState(false);
+
+  const { ref: swipeRef } = useSwipeGesture({
+    onSwipeLeft: isMobile ? () => setSwiped(true) : undefined,
+    onSwipeRight: isMobile ? () => setSwiped(false) : undefined,
+    threshold: 60,
+  });
+
+  return (
+    <div className={`swipeable-row-container${swiped ? ' swipeable-row--swiped' : ''}`}>
+      <div ref={swipeRef as React.RefObject<HTMLDivElement>} className="swipeable-row-content">
+        {children}
+      </div>
+      {isMobile && (
+        <div className="swipeable-row-actions" aria-hidden={!swiped}>
+          <button
+            className="swipe-delete-btn"
+            onClick={() => { onDelete(productId); setSwiped(false); }}
+            tabIndex={swiped ? 0 : -1}
+          >
+            {t('common.delete')}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+});
 
 interface ProductListProps {
   initialCategoryFilter?: string;
@@ -51,6 +88,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const fetchError = queryError ? t('products.failedToLoad') : null;
 
   const deleteMutation = useDeleteProduct();
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const loadLists = async () => {
     if (!user) return;
@@ -351,7 +389,13 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
             ) : (
               <div className="products-list">
                 {filteredProducts.map((product) => (
-                  <div key={product.id} className="product-list-item">
+                  <SwipeableRow
+                    key={product.id}
+                    productId={product.id}
+                    onDelete={handleDeleteProduct}
+                    isMobile={isMobile}
+                  >
+                  <div className="product-list-item">
                     {/* Main row — always visible */}
                     <div className="product-row-main">
                       <div className="product-thumbnail-wrapper">
@@ -493,6 +537,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                       </div>
                     )}
                   </div>
+                  </SwipeableRow>
                 ))}
               </div>
             )}
