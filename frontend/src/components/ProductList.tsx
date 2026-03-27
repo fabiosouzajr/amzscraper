@@ -210,7 +210,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     }
   }, [deleteMutation, products, selectedListId, currentPage, t]);
 
-  const handleListClick = (listId: number | null) => setSelectedListId(listId);
+  const handleListClick = useCallback((listId: number | null) => setSelectedListId(listId), []);
 
   const handleToggleDropdown = useCallback((productId: number) => {
     const newState = addingToListProductId === productId ? null : productId;
@@ -254,7 +254,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     }
   }, [lists, qc, selectedCategory, currentPage, pageSize, data, t]);
 
-  const handleRemoveFromList = async (productId: number, listId: number) => {
+  const handleRemoveFromList = useCallback(async (productId: number, listId: number) => {
     try {
       await api.removeProductFromList(listId, productId);
       qc.setQueryData(
@@ -280,7 +280,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     } catch (err: any) {
       setError(err.message || t('products.failedToRemoveFromList'));
     }
-  };
+  }, [qc, selectedCategory, currentPage, pageSize, data, t]);
 
   const handleImportClick = () => {
     if (!importing) fileInputRef.current?.click();
