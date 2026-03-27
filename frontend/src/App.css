@@ -131,7 +131,7 @@
 .price-drop-card {
   background: var(--color-success-subtle);
   border-radius: 8px;
-  padding: 1.25rem;
+  padding: 1rem;
   padding-bottom: 0.75rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: transform 0.2s, box-shadow 0.2s;
@@ -151,7 +151,7 @@
 .price-increase-card {
   background: var(--color-danger-subtle);
   border-radius: 8px;
-  padding: 1.25rem;
+  padding: 1rem;
   padding-bottom: 0.75rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: transform 0.2s, box-shadow 0.2s;
@@ -388,11 +388,12 @@
 }
 
 .add-product-section {
-  align-items: end;
   background: white;
   padding: 1.25rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
+  margin-left: auto;
+  margin-right: 0;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   width: 75%;
   max-width: 100%;
@@ -1692,6 +1693,9 @@
   }
 
   .add-product-section {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
     padding: 1rem;
   }
 
@@ -2398,7 +2402,7 @@
 .lists-sidebar {
   background: white;
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   height: fit-content;
   position: sticky;
@@ -2411,7 +2415,7 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: min(320px, 85vw);
+  width: min(300px, 85vw);
   height: 100%;
   z-index: 200;
   border-radius: 0;
@@ -2476,6 +2480,7 @@
 }
 
 .lists-sidebar-header h3 {
+  font-size: larger;
   margin: 0;
   color: var(--color-amazon-navy);
 }
@@ -2782,30 +2787,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.page-size-select {
-  border: 1px solid #d5d9d9;
-  background: #fff;
-  color: var(--color-amazon-navy);
-  border-radius: 6px;
-  padding: 0.5rem 2rem 0.5rem 0.75rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  line-height: 1.2;
-  cursor: pointer;
-  min-height: 36px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.page-size-select:hover {
-  border-color: var(--color-amazon-orange);
-}
-
-.page-size-select:focus {
-  outline: none;
-  border-color: var(--color-amazon-orange);
-  box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.2);
-}
-
 .pagination-button {
   background: var(--color-amazon-orange);
   color: white;
@@ -2852,11 +2833,6 @@
   .pagination {
     flex-direction: column;
     gap: 0.5rem;
-  }
-
-  .page-size-select {
-    width: 100%;
-    max-width: 220px;
   }
   
   .pagination-info {
@@ -4129,4 +4105,63 @@
   margin: 0;
   font-size: 1rem;
   color: var(--color-amazon-navy);
+}
+
+/* Progressive disclosure product rows */
+.product-row-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+.product-row-summary {
+  flex: 1;
+  min-width: 0;
+}
+
+.product-description-link {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.product-description-link:hover {
+  text-decoration: underline;
+  color: var(--color-accent-primary);
+}
+
+.product-row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.btn-icon:hover {
+  color: var(--color-text-primary);
+}
+
+.product-row-details {
+  padding: var(--space-2) var(--space-4) var(--space-3);
+  padding-left: calc(80px + var(--space-3) + var(--space-4));
+  border-top: 1px solid var(--color-border-primary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--color-bg-secondary);
 }

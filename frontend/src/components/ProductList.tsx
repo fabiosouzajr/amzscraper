@@ -14,6 +14,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
 import { useProducts, useDeleteProduct } from '../hooks';
 
+
+
 interface ProductListProps {
   initialCategoryFilter?: string;
   onFilterApplied?: () => void;
@@ -32,6 +34,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
   const [lists, setLists] = useState<UserList[]>([]);
   const [addingToListProductId, setAddingToListProductId] = useState<number | null>(null);
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
@@ -124,6 +127,15 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   };
 
   const handleCategoryClick = useCallback((categoryName: string) => setSelectedCategory(categoryName), []);
+
+  const toggleExpanded = useCallback((id: number) => {
+    setExpandedRows(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   const handleAddProduct = async (asin: string) => {
     setIsValidating(true);
@@ -340,126 +352,146 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
               <div className="products-list">
                 {filteredProducts.map((product) => (
                   <div key={product.id} className="product-list-item">
-                    <div className="product-thumbnail-wrapper">
-                      <img
-                        src={getPreferredProductImageUrl(product)}
-                        alt={product.description}
-                        className="product-thumbnail"
-                        onError={(e) => handleProductImageError(e, product.asin)}
-                      />
-                    </div>
-                    <div className="product-info">
-                      {product.categories && product.categories.length > 0 && (
-                        <div className="product-categories">
-                          {product.categories.map((cat, idx) => (
-                            <span key={cat.id}>
-                              <button
-                                className="category-badge category-filter-button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleCategoryClick(cat.name);
-                                }}
-                                title={t('dashboard.filterBy', { category: cat.name })}
+                    {/* Main row — always visible */}
+                    <div className="product-row-main">
+                      <div className="product-thumbnail-wrapper">
+                        <img
+                          src={getPreferredProductImageUrl(product)}
+                          alt={product.description}
+                          className="product-thumbnail"
+                          onError={(e) => handleProductImageError(e, product.asin)}
+                        />
+                      </div>
+
+                      <div className="product-row-summary">
+                        <a
+                          href={`https://www.amazon.com.br/dp/${product.asin}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="product-description product-link product-description-link"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {product.description}
+                        </a>
+                        {product.lists && product.lists.length > 0 && (
+                          <div className="product-lists">
+                            <span className="lists-label">{t('products.inLists')}: </span>
+                            {product.lists.map((list, idx) => (
+                              <span key={list.id} className="list-badge">
+                                {list.name}
+                                {user && (
+                                  <button
+                                    className="remove-from-list-button"
+                                    onClick={() => handleRemoveFromList(product.id, list.id)}
+                                    title={t('products.removeFromList')}
+                                  >
+                                    ×
+                                  </button>
+                                )}
+                                {idx < product.lists!.length - 1 && ', '}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="product-row-actions product-actions">
+                        <button
+                          className="btn-icon"
+                          onClick={() => toggleExpanded(product.id)}
+                          aria-expanded={expandedRows.has(product.id)}
+                          aria-label={expandedRows.has(product.id) ? t('products.collapse') : t('products.expand')}
+                          title={expandedRows.has(product.id) ? t('products.collapse') : t('products.expand')}
+                        >
+                          {expandedRows.has(product.id) ? '▴' : '▾'}
+                        </button>
+                        {user && (
+                          <div className="add-to-list-container">
+                            <button
+                              className="add-to-list-button"
+                              onClick={() => handleToggleDropdown(product.id)}
+                            >
+                              {t('products.addToList')}
+                            </button>
+                            {addingToListProductId === product.id && (
+                              <div
+                                ref={(el) => { dropdownRefs.current[product.id] = el; }}
+                                className="add-to-list-dropdown"
                               >
-                                {cat.name}
-                              </button>
-                              {idx < product.categories!.length - 1 && ' > '}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <a
-                        href={`https://www.amazon.com.br/dp/${product.asin}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="product-description product-link"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {product.description}
-                      </a>
-                      <div className="product-asin">{product.asin}</div>
-                      {product.lists && product.lists.length > 0 && (
-                        <div className="product-lists">
-                          <span className="lists-label">{t('products.inLists')}: </span>
-                          {product.lists.map((list, idx) => (
-                            <span key={list.id} className="list-badge">
-                              {list.name}
-                              {user && (
-                                <button
-                                  className="remove-from-list-button"
-                                  onClick={() => handleRemoveFromList(product.id, list.id)}
-                                  title={t('products.removeFromList')}
-                                >
-                                  ×
-                                </button>
-                              )}
-                              {idx < product.lists!.length - 1 && ', '}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <div className="product-date">
-                        {t('products.added')}: {formatDate(product.created_at)}
+                                {lists.length === 0 ? (
+                                  <div className="no-lists-message">{t('products.noListsAvailable')}</div>
+                                ) : (
+                                  lists.map((list) => {
+                                    const isInList = product.lists?.some(l => l.id === list.id);
+                                    return (
+                                      <button
+                                        key={list.id}
+                                        className={`list-option ${isInList ? 'in-list' : ''}`}
+                                        onClick={() => {
+                                          if (isInList) {
+                                            handleRemoveFromList(product.id, list.id);
+                                          } else {
+                                            handleAddToList(product.id, list.id);
+                                          }
+                                        }}
+                                        disabled={isInList}
+                                      >
+                                        {list.name}
+                                        {isInList && ' ✓'}
+                                      </button>
+                                    );
+                                  })
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        {onProductSelect && (
+                          <button
+                            className="view-button"
+                            onClick={() => onProductSelect(product.id)}
+                          >
+                            {t('products.view')}
+                          </button>
+                        )}
+                        <button
+                          className="delete-button"
+                          onClick={() => handleDeleteProduct(product.id)}
+                        >
+                          {t('products.remove')}
+                        </button>
                       </div>
                     </div>
-                    <div className="product-actions">
-                      {user && (
-                        <div className="add-to-list-container">
-                          <button
-                            className="add-to-list-button"
-                            onClick={() => handleToggleDropdown(product.id)}
-                          >
-                            {t('products.addToList')}
-                          </button>
-                          {addingToListProductId === product.id && (
-                            <div
-                              ref={(el) => { dropdownRefs.current[product.id] = el; }}
-                              className="add-to-list-dropdown"
-                            >
-                              {lists.length === 0 ? (
-                                <div className="no-lists-message">{t('products.noListsAvailable')}</div>
-                              ) : (
-                                lists.map((list) => {
-                                  const isInList = product.lists?.some(l => l.id === list.id);
-                                  return (
-                                    <button
-                                      key={list.id}
-                                      className={`list-option ${isInList ? 'in-list' : ''}`}
-                                      onClick={() => {
-                                        if (isInList) {
-                                          handleRemoveFromList(product.id, list.id);
-                                        } else {
-                                          handleAddToList(product.id, list.id);
-                                        }
-                                      }}
-                                      disabled={isInList}
-                                    >
-                                      {list.name}
-                                      {isInList && ' ✓'}
-                                    </button>
-                                  );
-                                })
-                              )}
-                            </div>
-                          )}
+
+                    {/* Details row — shown only when expanded */}
+                    {expandedRows.has(product.id) && (
+                      <div className="product-row-details">
+                        <div className="product-asin">{product.asin}</div>
+                        <div className="product-date">
+                          {t('products.added')}: {formatDate(product.created_at)}
                         </div>
-                      )}
-                      {onProductSelect && (
-                        <button
-                          className="view-button"
-                          onClick={() => onProductSelect(product.id)}
-                        >
-                          {t('products.view')}
-                        </button>
-                      )}
-                      <button
-                        className="delete-button"
-                        onClick={() => handleDeleteProduct(product.id)}
-                      >
-                        {t('products.remove')}
-                      </button>
-                    </div>
+                        {product.categories && product.categories.length > 0 && (
+                          <div className="product-categories">
+                            {product.categories.map((cat, idx) => (
+                              <span key={cat.id}>
+                                <button
+                                  className="category-badge category-filter-button"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleCategoryClick(cat.name);
+                                  }}
+                                  title={t('dashboard.filterBy', { category: cat.name })}
+                                >
+                                  {cat.name}
+                                </button>
+                                {idx < product.categories!.length - 1 && ' > '}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
