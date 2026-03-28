@@ -33,6 +33,7 @@ function ImportProgressBanner() {
         className="import-progress-content"
         aria-live="polite"
         aria-atomic="false"
+        aria-label={t('products.importProgress')}
       >
         {importProgress.status === 'starting' && t('products.importStarting')}
         {importProgress.status === 'processing' && (

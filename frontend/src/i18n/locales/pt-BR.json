@@ -75,7 +75,8 @@
     "noListsAvailable": "Nenhuma lista disponível. Crie uma lista primeiro.",
     "perPage": "por página",
     "itemsPerPage": "Itens por página",
-    "view": "Ver"
+    "view": "Ver",
+    "importProgress": "Progresso da importação"
   },
   "search": {
     "title": "Buscar Produtos",
