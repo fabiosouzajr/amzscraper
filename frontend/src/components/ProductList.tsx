@@ -402,6 +402,34 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                         >
                           {product.description}
                         </a>
+                        <div className="product-row-meta">
+                          <span className="product-row-asin-badge">{product.asin}</span>
+                          {(product as any).current_price != null && (
+                            <span className="product-row-price">
+                              {(product as any).current_price}
+                            </span>
+                          )}
+                          {product.categories && product.categories.length > 0 && (
+                            <div className="product-row-categories-hover" aria-hidden="true">
+                              {product.categories.map((cat, idx) => (
+                                <span key={cat.id}>
+                                  <button
+                                    className="category-badge category-filter-button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      handleCategoryClick(cat.name);
+                                    }}
+                                    title={t('dashboard.filterBy', { category: cat.name })}
+                                  >
+                                    {cat.name}
+                                  </button>
+                                  {idx < product.categories!.length - 1 && ' > '}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                         {product.lists && product.lists.length > 0 && (
                           <div className="product-lists">
                             <span className="lists-label">{t('products.inLists')}: </span>
@@ -495,7 +523,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                     {/* Details row — shown only when expanded */}
                     {expandedRows.has(product.id) && (
                       <div className="product-row-details">
-                        <div className="product-asin">{product.asin}</div>
                         <div className="product-date">
                           {t('products.added')}: {formatDate(product.created_at)}
                         </div>

@@ -1716,6 +1716,11 @@
     padding: 1rem;
   }
 
+  /* Hide hover-only category pills on mobile — they're in expanded details */
+  .product-row-categories-hover {
+    display: none;
+  }
+
   .product-actions {
     align-self: flex-end;
   }
@@ -4151,6 +4156,50 @@
   flex-direction: column;
   gap: var(--space-2);
   background: var(--color-bg-secondary);
+}
+
+/* Product row meta line: ASIN badge + price slot + hover categories */
+.product-row-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-1);
+}
+
+.product-row-asin-badge {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 3px;
+  padding: 1px var(--space-1);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.product-row-price {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Category pills in the summary row — visible only on desktop hover */
+.product-row-categories-hover {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.product-list-item:hover .product-row-categories-hover {
+  visibility: visible;
+  opacity: 1;
 }
 
 /* Swipeable row — mobile delete gesture */
