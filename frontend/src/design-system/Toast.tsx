@@ -105,8 +105,8 @@ export const Toast: React.FC<ToastProps> = ({
   return (
     <div
       className={`${styles.toast} ${styles[variant]} ${styles[position]} ${className}`}
-      role="alert"
-      aria-live={variant === 'error' ? 'assertive' : 'polite'}
+      role="status"
+      aria-atomic="true"
     >
       {/* Icon */}
       <span className={styles.icon}>{getIcon()}</span>
