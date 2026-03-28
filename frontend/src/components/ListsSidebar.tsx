@@ -5,6 +5,7 @@ import { api } from '../services/api';
 import { UserList } from '../types';
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import styles from './ListsSidebar.module.css';
 
 interface ListsSidebarProps {
   onListClick?: (listId: number | null) => void;
@@ -125,19 +126,19 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
 
   const sidebarContent = (
     <>
-      <div className="lists-sidebar-header">
+      <div className={styles['lists-sidebar-header']}>
         <h3>{t('lists.title')}</h3>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="create-list-button"
+            className={styles['create-list-button']}
           >
             {t('lists.create')}
           </button>
           {isMobile && (
             <button
               onClick={() => setIsCollapsed(true)}
-              className="lists-sidebar-close-button"
+              className={styles['lists-sidebar-close-button']}
               title={t('lists.closeLists')}
               aria-label={t('lists.closeLists')}
             >
@@ -150,7 +151,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
       {error && <div className="error-message">{error}</div>}
 
       {showCreateForm && (
-        <form onSubmit={handleCreateList} className="create-list-form">
+        <form onSubmit={handleCreateList} className={styles['create-list-form']}>
           <input
             type="text"
             value={newListName}
@@ -159,7 +160,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
             disabled={creating}
             autoFocus
           />
-          <div className="form-actions">
+          <div className={styles['form-actions']}>
             <button type="submit" disabled={creating || !newListName.trim()}>
               {t('lists.create')}
             </button>
@@ -179,13 +180,13 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
       {loading ? (
         <div className="loading">{t('lists.loading')}</div>
       ) : (
-        <div className="lists-list">
+        <div className={styles['lists-list']}>
           {/* All Products option */}
           <div
-            className={`list-item all-products-item ${selectedListId === null ? 'selected' : ''}`}
+            className={`${styles['list-item']} ${styles['all-products-item']}${selectedListId === null ? ` ${styles.selected}` : ''}`}
             onClick={() => handleListClickAndClose(null)}
           >
-            <div className="list-name">
+            <div className={styles['list-name']}>
               {t('lists.allProducts')}
             </div>
           </div>
@@ -196,10 +197,10 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
             lists.map((list) => (
               <div
                 key={list.id}
-                className={`list-item ${selectedListId === list.id ? 'selected' : ''}`}
+                className={`${styles['list-item']}${selectedListId === list.id ? ` ${styles.selected}` : ''}`}
               >
                 {editingListId === list.id ? (
-                  <div className="list-edit-form">
+                  <div className={styles['list-edit-form']}>
                     <input
                       type="text"
                       value={editingName}
@@ -213,7 +214,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
                       }}
                       autoFocus
                     />
-                    <div className="list-edit-actions">
+                    <div className={styles['list-edit-actions']}>
                       <button onClick={() => handleSaveEdit(list.id)}>
                         {t('common.save')}
                       </button>
@@ -225,12 +226,12 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
                 ) : (
                   <>
                     <div
-                      className="list-name"
+                      className={styles['list-name']}
                       onClick={() => handleListClickAndClose(list.id)}
                     >
                       {list.name}
                     </div>
-                    <div className="list-actions">
+                    <div className={styles['list-actions']}>
                       <button
                         onClick={() => handleStartEdit(list)}
                         className="edit-button"
@@ -261,7 +262,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
       <>
         {/* Mobile toggle button */}
         <button
-          className="lists-sidebar-toggle"
+          className={styles['lists-sidebar-toggle']}
           onClick={() => setIsCollapsed(!isCollapsed)}
           aria-expanded={!isCollapsed}
           aria-label={t('lists.showLists', { count: lists.length })}
@@ -274,11 +275,11 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
         {!isCollapsed && (
           <>
             <div
-              className="lists-sidebar-backdrop"
+              className={styles['lists-sidebar-backdrop']}
               onClick={() => setIsCollapsed(true)}
               aria-hidden="true"
             />
-            <div className="lists-sidebar lists-sidebar-overlay">
+            <div className={`${styles['lists-sidebar']} ${styles['lists-sidebar-overlay']}`}>
               {sidebarContent}
             </div>
           </>
@@ -289,7 +290,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
 
   // Desktop: render normally
   return (
-    <div className="lists-sidebar">
+    <div className={styles['lists-sidebar']}>
       {sidebarContent}
     </div>
   );

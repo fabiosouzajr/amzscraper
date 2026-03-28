@@ -5,6 +5,7 @@ import { api } from '../services/api';
 import { PriceDrop } from '../types';
 import { usePriceDrops, usePriceIncreases } from '../hooks';
 import { formatDateTime } from '../utils/dateFormat';
+import styles from './Dashboard.module.css';
 
 const MiniPriceChart = lazy(() => import('./MiniPriceChart').then(m => ({ default: m.MiniPriceChart })));
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
@@ -22,11 +23,11 @@ interface PriceChangeCardProps {
 
 const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onCategoryClick }: PriceChangeCardProps) {
   const { t } = useTranslation();
-  const cardClass = variant === 'drop' ? 'price-drop-card' : 'price-increase-card';
-  const headerClass = variant === 'drop' ? 'drop-header' : 'increase-header';
-  const headerContentClass = variant === 'drop' ? 'drop-header-content' : 'increase-header-content';
-  const percentageClass = variant === 'drop' ? 'drop-percentage' : 'increase-percentage';
-  const amountClass = variant === 'drop' ? 'drop-amount' : 'increase-amount';
+  const cardClass = variant === 'drop' ? styles['price-drop-card'] : styles['price-increase-card'];
+  const headerClass = variant === 'drop' ? styles['drop-header'] : styles['increase-header'];
+  const headerContentClass = variant === 'drop' ? styles['drop-header-content'] : styles['increase-header-content'];
+  const percentageClass = variant === 'drop' ? styles['drop-percentage'] : styles['increase-percentage'];
+  const amountClass = variant === 'drop' ? styles['drop-amount'] : styles['increase-amount'];
   const currentPriceClass = variant === 'drop' ? 'price current' : 'price current increase';
 
   return (
@@ -78,7 +79,7 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
           {item.product.description}
         </a>
         {item.price_history && item.price_history.length > 0 && (
-          <div className="mini-chart-container">
+          <div className={styles['mini-chart-container']}>
             <Suspense fallback={null}>
               <MiniPriceChart priceHistory={item.price_history} />
             </Suspense>
@@ -193,8 +194,8 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
   }
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
+    <div className={styles.dashboard}>
+      <div className={styles['dashboard-header']}>
         <h1>{t('dashboard.title')}</h1>
         <Button
           onClick={handleUpdatePrices}
@@ -219,7 +220,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
               variant="primary"
               size="md"
             />
-            <div className="progress-status">{updateStatus}</div>
+            <div className={styles['progress-status']}>{updateStatus}</div>
           </div>
         </Card>
       )}
@@ -233,9 +234,9 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
       ) : (
         <>
           {drops.length > 0 && (
-            <div className="price-changes-section">
-              <h2 className="section-title">{t('dashboard.priceDrops')}</h2>
-              <div className="price-drops-grid">
+            <div className={styles['price-changes-section']}>
+              <h2 className={styles['section-title']}>{t('dashboard.priceDrops')}</h2>
+              <div className={styles['price-drops-grid']}>
                 {drops.map((drop) => (
                   <PriceChangeCard
                     key={drop.product.id}
@@ -249,9 +250,9 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
           )}
 
           {increases.length > 0 && (
-            <div className="price-changes-section">
-              <h2 className="section-title">{t('dashboard.priceIncreases')}</h2>
-              <div className="price-drops-grid">
+            <div className={styles['price-changes-section']}>
+              <h2 className={styles['section-title']}>{t('dashboard.priceIncreases')}</h2>
+              <div className={styles['price-drops-grid']}>
                 {increases.map((increase) => (
                   <PriceChangeCard
                     key={increase.product.id}

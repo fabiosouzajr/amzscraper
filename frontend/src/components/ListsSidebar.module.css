@@ -1,0 +1,227 @@
+.lists-sidebar {
+  background: var(--color-bg-elevated);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+/* Mobile overlay mode */
+.lists-sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(300px, 85vw);
+  height: 100%;
+  z-index: 200;
+  border-radius: 0;
+  overflow-y: auto;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+  animation: slideInFromLeft 0.22s ease-out;
+}
+
+@keyframes slideInFromLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.lists-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 199;
+}
+
+.lists-sidebar-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-bg-elevated, var(--color-amazon-navy));
+  color: var(--color-amazon-orange);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.lists-sidebar-toggle:hover {
+  background: var(--color-text-primary);
+}
+
+.lists-sidebar-close-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lists-sidebar-close-button:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--color-amazon-navy);
+}
+
+.lists-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.lists-sidebar-header h3 {
+  font-size: larger;
+  margin: 0;
+  color: var(--color-amazon-navy);
+}
+
+.create-list-button {
+  background: var(--color-amazon-orange);
+  color: var(--color-text-inverse);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.create-list-button:hover {
+  background: var(--color-amazon-orange-hover);
+}
+
+.create-list-form {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border-radius: 4px;
+}
+
+.create-list-form input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.form-actions button[type="submit"] {
+  background: var(--color-success);
+  color: var(--color-text-inverse);
+}
+
+.form-actions button[type="button"] {
+  background: var(--color-text-secondary);
+  color: var(--color-text-inverse);
+}
+
+.lists-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.list-item:hover {
+  background: var(--color-bg-secondary);
+}
+
+.list-item.selected {
+  background: var(--color-warning-subtle);
+  border: 1px solid var(--color-amazon-orange);
+}
+
+.all-products-item {
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+}
+
+.list-name {
+  flex: 1;
+  color: var(--color-amazon-navy);
+  font-weight: 500;
+}
+
+.list-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.list-edit-form {
+  width: 100%;
+}
+
+.list-edit-form input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.list-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.list-edit-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.list-edit-actions button:first-child {
+  background: var(--color-success);
+  color: var(--color-text-inverse);
+}
+
+.list-edit-actions button:last-child {
+  background: var(--color-text-secondary);
+  color: var(--color-text-inverse);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .lists-sidebar {
+    position: static;
+  }
+}

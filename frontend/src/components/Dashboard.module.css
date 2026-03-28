@@ -1,0 +1,241 @@
+.dashboard {
+  width: 100%;
+  max-width: 100%;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-header h1 {
+  color: var(--color-amazon-navy);
+}
+
+.progress-status {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.price-changes-section {
+  margin-bottom: 2.5rem;
+}
+
+.price-changes-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  color: var(--color-amazon-navy);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-bg-inset);
+}
+
+.price-drops-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.price-drop-card {
+  background: var(--color-success-subtle);
+  border-radius: 8px;
+  padding: 1rem;
+  padding-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.price-drop-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.price-increase-card {
+  background: var(--color-danger-subtle);
+  border-radius: 8px;
+  padding: 1rem;
+  padding-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.price-increase-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.drop-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-bg-inset);
+}
+
+.drop-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.drop-percentage {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--color-danger);
+}
+
+.drop-amount {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-success);
+}
+
+.increase-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-bg-inset);
+}
+
+.increase-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.increase-percentage {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--color-success);
+}
+
+.increase-amount {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-danger);
+}
+
+.mini-chart-container {
+  margin: 0.75rem 0;
+  padding: 0.5rem;
+  background: var(--color-bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--color-border-primary);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .price-drops-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .price-drops-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .price-drop-card {
+    padding: 1rem;
+  }
+
+  .drop-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .drop-percentage {
+    font-size: 1.25rem;
+  }
+
+  .drop-amount {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .price-drop-card {
+    padding: 0.75rem;
+  }
+
+  .drop-percentage {
+    font-size: 1.1rem;
+  }
+
+  .drop-amount {
+    font-size: 0.9rem;
+  }
+
+  .mini-chart-container {
+    margin: 0.5rem 0;
+    padding: 0.25rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .price-drops-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+}
+
+@media print {
+  .price-drop-card {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid var(--color-border-primary);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .price-drop-card:hover {
+    transform: none;
+  }
+}
