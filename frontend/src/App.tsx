@@ -6,7 +6,7 @@ import { Auth } from './components/Auth';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ImportProvider, useImport } from './contexts/ImportContext';
 import { X } from 'lucide-react';
-import { ProgressBar } from './design-system';
+import { ProgressBar, Skeleton, CardSkeleton } from './design-system';
 import { AppShell } from './layout/AppShell';
 import './App.css';
 
@@ -14,6 +14,38 @@ import './App.css';
 const ProductsPage = lazy(() => import('./components/ProductsPage').then(m => ({ default: m.ProductsPage })));
 const ProductDetail = lazy(() => import('./components/ProductDetail').then(m => ({ default: m.ProductDetail })));
 const SettingsPage = lazy(() => import('./components/SettingsPage').then(m => ({ default: m.SettingsPage })));
+
+/** Full-app skeleton shown while auth state is resolving (<1 s on fast connections). */
+function AppLoadingSkeleton() {
+  return (
+    <div className="app-shell">
+      {/* Sidebar skeleton */}
+      <div className="sidebar" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', padding: 'var(--space-4)' }}>
+        <Skeleton variant="rectangular" size="lg" width="80%" />
+        <Skeleton variant="text" size="md" lines={4} />
+      </div>
+      {/* Main content skeleton */}
+      <div className="main-content" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', padding: 'var(--space-6)' }}>
+        <Skeleton variant="rectangular" size="lg" width="40%" />
+        <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+        <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+        <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+      </div>
+    </div>
+  );
+}
+
+/** Generic page skeleton shown as Suspense fallback when lazy route chunks are loading. */
+function PageSkeleton() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+      <Skeleton variant="rectangular" size="lg" width="35%" />
+      <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+      <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+      <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+    </div>
+  );
+}
 
 function ImportProgressBanner() {
   const { t } = useTranslation();
@@ -116,7 +148,7 @@ function AppContent() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <AppLoadingSkeleton />;
   }
 
   if (!user) {
@@ -132,7 +164,7 @@ function AppContent() {
       </a>
 
       <main className="main-content" id="main-content" role="main">
-        <Suspense fallback={<div className="loading">Loading...</div>}>
+        <Suspense fallback={<PageSkeleton />}>
           <Routes>
             {/* Dashboard */}
             <Route path="/" element={<DashboardWithCategoryClick />} />
