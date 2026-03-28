@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import styles from './ProductDetail.module.css';
 
 const PriceChart = lazy(() => import('./PriceChart'));
 import { api } from '../services/api';
@@ -112,20 +113,20 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
   const hasNext = currentIndex >= 0 && currentIndex < sortedProductIds.length - 1;
 
   return (
-    <div className="product-detail" ref={swipeRef}>
+    <div className={styles.productDetail} ref={swipeRef}>
       {!isSheet && (
-        <div className="product-detail-header">
-          <div className="product-navigation">
+        <div className={styles.productDetailHeader}>
+          <div className={styles.productNavigation}>
             <button
               onClick={handlePrevious}
-              className="nav-button prev-button"
+              className={`${styles.navButton} ${styles.prevButton}`}
               disabled={!hasPrevious}
             >
               {t('productDetail.previous')}
             </button>
             <button
               onClick={handleNext}
-              className="nav-button next-button"
+              className={`${styles.navButton} ${styles.nextButton}`}
               disabled={!hasNext}
             >
               {t('productDetail.next')}
@@ -134,8 +135,8 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
         </div>
       )}
 
-      <div className="product-header">
-        <div className="product-meta">
+      <div className={styles.productHeader}>
+        <div className={styles.productMeta}>
           <Badge variant="neutral" size="sm">
             {t('productDetail.asin')}: {product.asin}
           </Badge>
@@ -179,8 +180,8 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
       </div>
 
       <div className="price-info">
-        <div className="price-info-body">
-          <div className="product-thumbnail-wrapper product-thumbnail-wrapper--lg">
+        <div className={styles.priceInfoBody}>
+          <div className={`product-thumbnail-wrapper ${styles.productThumbnailWrapperLg}`}>
             <img
               src={getPreferredProductImageUrl(product)}
               alt={product.description}
@@ -188,21 +189,21 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
               onError={(e) => handleProductImageError(e, product.asin)}
             />
           </div>
-          <div className="price-data">
+          <div className={styles.priceData}>
             {product.current_price != null ? (
               <>
-                <div className="current-price">
+                <div className={styles.currentPrice}>
                   <span className="label">{t('productDetail.currentPrice')}</span>
                   <span className="value">{formatPrice(product.current_price)}</span>
                 </div>
                 {product.previous_price != null && (
-                  <div className="price-comparison">
-                    <div className="previous-price">
+                  <div className={styles.priceComparison}>
+                    <div className={styles.previousPrice}>
                       <span className="label">{t('productDetail.previousPrice')}</span>
                       <span className="value">{formatPrice(product.previous_price)}</span>
                     </div>
                     {product.price_drop !== undefined && product.price_drop > 0 && (
-                      <div className="price-drop">
+                      <div className={styles.priceDrop}>
                         <span className="label">{t('productDetail.priceDrop')}</span>
                         <span className="value positive">
                           -{formatPrice(product.price_drop)} ({product.price_drop_percentage !== undefined ? formatPercentage(product.price_drop_percentage) : ''})
@@ -218,23 +219,23 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
                 )}
               </>
             ) : (
-              <div className="no-price-data">{t('productDetail.noPriceData')}</div>
+              <div className={styles.noPriceData}>{t('productDetail.noPriceData')}</div>
             )}
           </div>
         </div>
       </div>
 
       {chartData.length > 0 && (
-        <div className="price-chart">
+        <div className={styles.priceChart}>
           <h3>{t('productDetail.priceHistory')}</h3>
           <Suspense fallback={<div className="chart-loading">Loading chart...</div>}>
             <PriceChart data={chartData} />
           </Suspense>
         </div>
       )}
-      
+
       {product.price_history && product.price_history.length > 0 && (
-        <div className="price-history-table">
+        <div className={styles.priceHistoryTable}>
           <h3>{t('productDetail.priceHistoryDetails')}</h3>
           <table>
             <thead>

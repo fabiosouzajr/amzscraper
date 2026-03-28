@@ -1,0 +1,299 @@
+/* Product Detail */
+.productDetail {
+  background: var(--color-bg-elevated);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.productDetailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.backButton {
+  background: var(--color-text-secondary);
+  color: var(--color-text-inverse);
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.backButton:hover {
+  background: var(--color-text-primary);
+}
+
+.productNavigation {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.navButton {
+  background: #2563eb;
+  color: var(--color-text-inverse);
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+  min-width: 70px;
+}
+
+.navButton:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.navButton:disabled {
+  background: var(--color-border-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.productHeader {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-bg-inset);
+}
+
+.productHeader :global(.product-categories) {
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  align-items: center;
+}
+
+.productHeader h2 {
+  color: var(--color-amazon-navy);
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+  font-size: 1.25rem;
+}
+
+.productMeta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.priceInfoBody {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.priceData {
+  flex: 1;
+}
+
+.productThumbnailWrapperLg {
+  width: 120px;
+  height: 120px;
+}
+
+.productThumbnailWrapperLg :global(.product-thumbnail) {
+  width: 120px;
+  height: 120px;
+}
+
+.currentPrice {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.currentPrice .label {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.currentPrice .value {
+  font-size: 1.65rem;
+  font-weight: bold;
+  color: var(--color-amazon-navy);
+}
+
+.priceComparison {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.previousPrice,
+.priceDrop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-bg-secondary);
+  border-radius: 4px;
+}
+
+.previousPrice .label,
+.priceDrop .label {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.previousPrice .value {
+  text-decoration: line-through;
+  color: var(--color-text-tertiary);
+  font-size: 0.9rem;
+}
+
+.priceDrop .value.positive {
+  color: var(--color-success);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.lastUpdated {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+.noPriceData {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.priceChart {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-bg-inset);
+}
+
+.priceChart h3 {
+  margin-bottom: 0.55rem;
+  color: var(--color-amazon-navy);
+  font-size: 1rem;
+}
+
+.priceChart :global(.recharts-wrapper) {
+  margin-top: 0.5rem;
+}
+
+.priceHistoryTable {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 2px solid var(--color-bg-inset);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.priceHistoryTable h3 {
+  margin-bottom: 0.75rem;
+  color: var(--color-amazon-navy);
+  font-size: 1rem;
+}
+
+.priceHistoryTable table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 350px;
+}
+
+.priceHistoryTable th,
+.priceHistoryTable td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-bg-inset);
+  font-size: 0.9rem;
+}
+
+.priceHistoryTable th {
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+  color: var(--color-amazon-navy);
+  font-size: 0.85rem;
+}
+
+.priceHistoryTable tr:hover {
+  background: var(--color-bg-secondary);
+}
+
+/* Tablet (max-width: 768px) */
+@media (max-width: 768px) {
+  .productDetail {
+    padding: 0.75rem;
+  }
+
+  .productDetailHeader {
+    margin-bottom: 0.75rem;
+  }
+
+  .productHeader {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .productHeader h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .productMeta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .currentPrice {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+  }
+
+  .currentPrice .value {
+    font-size: 1.5rem;
+  }
+
+  .priceChart {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+
+  .priceHistoryTable {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+}
+
+/* Small mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  .productDetail {
+    padding: 0.75rem;
+  }
+
+  .priceHistoryTable {
+    overflow-x: auto;
+  }
+
+  .priceHistoryTable table {
+    min-width: 400px;
+    font-size: 0.875rem;
+  }
+
+  .priceHistoryTable th,
+  .priceHistoryTable td {
+    padding: 0.5rem;
+  }
+}

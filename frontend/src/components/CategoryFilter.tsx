@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCategories } from '../hooks';
 import { CategoryTreeNode } from '../types';
+import styles from './CategoryFilter.module.css';
 
 interface CategoryFilterProps {
   selectedCategory: string;
@@ -26,9 +27,9 @@ const TreeNode = React.memo(function TreeNode({
   const isSelected = node.name === selectedCategory;
 
   return (
-    <div className="cat-tree-node">
+    <div className={styles.catTreeNode}>
       <div
-        className={`cat-tree-row${isSelected ? ' selected' : ''}`}
+        className={`${styles.catTreeRow}${isSelected ? ` ${styles.selected}` : ''}`}
         style={{ paddingLeft: `${0.5 + depth * 1.1}rem` }}
         role="treeitem"
         aria-level={depth + 1}
@@ -38,7 +39,7 @@ const TreeNode = React.memo(function TreeNode({
       >
         {hasChildren ? (
           <button
-            className="cat-tree-expand"
+            className={styles.catTreeExpand}
             onClick={(e) => { e.stopPropagation(); setExpanded(x => !x); }}
             aria-label={expanded ? t('products.collapse') : t('products.expand')}
             aria-expanded={expanded}
@@ -46,10 +47,10 @@ const TreeNode = React.memo(function TreeNode({
             {expanded ? '▾' : '▸'}
           </button>
         ) : (
-          <span className="cat-tree-leaf-icon" aria-hidden="true">•</span>
+          <span className={styles.catTreeLeafIcon} aria-hidden="true">•</span>
         )}
         <button
-          className="cat-tree-label"
+          className={styles.catTreeLabel}
           onClick={() => onSelect(node.name)}
           aria-selected={isSelected}
         >
@@ -57,7 +58,7 @@ const TreeNode = React.memo(function TreeNode({
         </button>
       </div>
       {hasChildren && expanded && (
-        <div className="cat-tree-children" role="group">
+        <div className={styles.catTreeChildren} role="group">
           {node.children.map(child => (
             <TreeNode
               key={child.id}
@@ -103,27 +104,27 @@ export function CategoryFilter({ selectedCategory, onChange }: CategoryFilterPro
   const displayLabel = selectedCategory || t('products.allCategories');
 
   return (
-    <div className="cat-tree-filter" ref={containerRef}>
+    <div className={styles.catTreeFilter} ref={containerRef}>
       <button
-        className={`cat-tree-trigger${selectedCategory ? ' has-value' : ''}`}
+        className={`${styles.catTreeTrigger}${selectedCategory ? ` ${styles.hasValue}` : ''}`}
         onClick={() => setOpen(x => !x)}
         type="button"
         aria-expanded={open}
         aria-haspopup="tree"
         aria-label={t('products.filterByCategory')}
       >
-        <span className="cat-tree-trigger-label">{displayLabel}</span>
-        <span className="cat-tree-trigger-arrow" aria-hidden="true">{open ? '▲' : '▼'}</span>
+        <span className={styles.catTreeTriggerLabel}>{displayLabel}</span>
+        <span className={styles.catTreeTriggerArrow} aria-hidden="true">{open ? '▲' : '▼'}</span>
       </button>
 
       {open && (
         <div
-          className="cat-tree-dropdown"
+          className={styles.catTreeDropdown}
           role="tree"
           aria-label={t('products.categories')}
         >
           <div
-            className={`cat-tree-all-row${!selectedCategory ? ' selected' : ''}`}
+            className={`${styles.catTreeAllRow}${!selectedCategory ? ` ${styles.selected}` : ''}`}
             onClick={handleClearAll}
             role="treeitem"
             aria-level={1}
@@ -132,7 +133,7 @@ export function CategoryFilter({ selectedCategory, onChange }: CategoryFilterPro
           >
             {t('products.allCategories')}
           </div>
-          <div className="cat-tree-scroll">
+          <div className={styles.catTreeScroll}>
             {tree.map(node => (
               <TreeNode
                 key={node.id}

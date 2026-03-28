@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import styles from './SettingsPage.module.css';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { api } from '../services/api';
 import { User, Database, Download, Bell, Users, BarChart, Settings as SettingsIcon, FileText } from 'lucide-react';
@@ -100,18 +101,18 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="settings-page">
+    <div className={styles.settingsPage}>
       <h2>{t('config.title')}</h2>
 
-      <div className="settings-layout">
+      <div className={styles.settingsLayout}>
         {/* Navigation sidebar (desktop) or tab bar (mobile) */}
-        <div className="settings-sidebar">
-          <nav className="settings-nav">
+        <div className={styles.settingsSidebar}>
+          <nav className={styles.settingsNav}>
             {sections.map(({ id, labelKey, icon: Icon }) => (
               <button
                 key={id}
                 onClick={() => handleSectionChange(id)}
-                className={`settings-nav-item ${activeSection === id ? 'active' : ''}`}
+                className={`${styles.settingsNavItem} ${activeSection === id ? styles.active : ''}`}
               >
                 <Icon size={isMobile ? 16 : 18} />
                 <span>{t(labelKey)}</span>
@@ -121,7 +122,7 @@ export function SettingsPage() {
         </div>
 
         {/* Content area */}
-        <div className="settings-content">
+        <div className={styles.settingsContent}>
           {/* Account Section */}
           {activeSection === 'account' && (
             <AccountSection onUnsavedChangesChange={setHasUnsavedChanges} />
@@ -137,7 +138,7 @@ export function SettingsPage() {
 
           {/* Notifications Section */}
           {activeSection === 'notifications' && (
-            <div id="notifications" className="settings-section">
+            <div id="notifications" className={styles.settingsSection}>
               <Notifications />
             </div>
           )}

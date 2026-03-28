@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { CategoryTreeNode } from '../types';
+import styles from './CategoryTreeFilter.module.css';
 
 interface CategoryTreeFilterProps {
   selectedCategory: string;
@@ -25,31 +26,31 @@ const TreeNode = React.memo(function TreeNode({
   const isSelected = node.name === selectedCategory;
 
   return (
-    <div className="cat-tree-node">
+    <div className={styles.catTreeNode}>
       <div
-        className={`cat-tree-row${isSelected ? ' selected' : ''}`}
+        className={`${styles.catTreeRow}${isSelected ? ` ${styles.selected}` : ''}`}
         style={{ paddingLeft: `${0.5 + depth * 1.1}rem` }}
       >
         {hasChildren ? (
           <button
-            className="cat-tree-expand"
+            className={styles.catTreeExpand}
             onClick={(e) => { e.stopPropagation(); setExpanded(x => !x); }}
             aria-label={expanded ? 'collapse' : 'expand'}
           >
             {expanded ? '▾' : '▸'}
           </button>
         ) : (
-          <span className="cat-tree-leaf-icon">•</span>
+          <span className={styles.catTreeLeafIcon}>•</span>
         )}
         <button
-          className="cat-tree-label"
+          className={styles.catTreeLabel}
           onClick={() => onSelect(node.name)}
         >
           {node.name}
         </button>
       </div>
       {hasChildren && expanded && (
-        <div className="cat-tree-children">
+        <div className={styles.catTreeChildren}>
           {node.children.map(child => (
             <TreeNode
               key={child.id}
@@ -99,25 +100,25 @@ export function CategoryTreeFilter({ selectedCategory, onChange }: CategoryTreeF
   const displayLabel = selectedCategory || t('products.allCategories');
 
   return (
-    <div className="cat-tree-filter" ref={containerRef}>
+    <div className={styles.catTreeFilter} ref={containerRef}>
       <button
-        className={`cat-tree-trigger${selectedCategory ? ' has-value' : ''}`}
+        className={`${styles.catTreeTrigger}${selectedCategory ? ` ${styles.hasValue}` : ''}`}
         onClick={() => setOpen(x => !x)}
         type="button"
       >
-        <span className="cat-tree-trigger-label">{displayLabel}</span>
-        <span className="cat-tree-trigger-arrow">{open ? '▲' : '▼'}</span>
+        <span className={styles.catTreeTriggerLabel}>{displayLabel}</span>
+        <span className={styles.catTreeTriggerArrow}>{open ? '▲' : '▼'}</span>
       </button>
 
       {open && (
-        <div className="cat-tree-dropdown">
+        <div className={styles.catTreeDropdown}>
           <div
-            className={`cat-tree-all-row${!selectedCategory ? ' selected' : ''}`}
+            className={`${styles.catTreeAllRow}${!selectedCategory ? ` ${styles.selected}` : ''}`}
             onClick={handleClearAll}
           >
             {t('products.allCategories')}
           </div>
-          <div className="cat-tree-scroll">
+          <div className={styles.catTreeScroll}>
             {tree.map(node => (
               <TreeNode
                 key={node.id}
