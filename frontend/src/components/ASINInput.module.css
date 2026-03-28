@@ -1,0 +1,59 @@
+.asinInput {
+  margin-top: 1rem;
+}
+
+.inputGroup {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.inputGroup input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid var(--color-border-primary);
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.inputGroup input:focus {
+  outline: none;
+  border-color: var(--color-amazon-orange);
+}
+
+.inputGroup input.invalid {
+  border-color: var(--color-danger);
+}
+
+.inputGroup button {
+  background: var(--color-amazon-navy);
+  color: var(--color-text-inverse);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.inputGroup button:hover:not(:disabled) {
+  background: var(--color-text-primary);
+}
+
+.inputGroup button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .inputGroup {
+    flex-direction: column;
+  }
+
+  .inputGroup input,
+  .inputGroup button {
+    width: 100%;
+  }
+}

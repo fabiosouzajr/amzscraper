@@ -2,6 +2,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { PriceHistory } from '../types';
 import { formatDateShort } from '../utils/dateFormat';
 import { formatPrice } from '../utils/numberFormat';
+import styles from './MiniPriceChart.module.css';
 
 interface MiniPriceChartProps {
   priceHistory: PriceHistory[];
@@ -27,7 +28,7 @@ export function MiniPriceChart({ priceHistory, height = 80 }: MiniPriceChartProp
   const padding = (maxPrice - minPrice) * 0.1 || 1; // 10% padding, minimum 1
 
   return (
-    <div className="mini-price-chart" style={{ height: `${height}px`, width: '100%' }}>
+    <div className={styles.miniPriceChart} style={{ height: `${height}px`, width: '100%' }}>
       <ResponsiveContainer width="100%" height={height}>
         <LineChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
           <XAxis 

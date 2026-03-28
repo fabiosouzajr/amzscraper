@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styles from './ASINInput.module.css';
 
 interface ASINInputProps {
   onAdd: (asin: string) => Promise<void>;
@@ -40,8 +41,8 @@ export function ASINInput({ onAdd, isValidating = false, error, successMessage }
   const isValid = asin.trim() === '' || validateASIN(asin);
 
   return (
-    <form onSubmit={handleSubmit} className="asin-input">
-      <div className="input-group">
+    <form onSubmit={handleSubmit} className={styles.asinInput}>
+      <div className={styles.inputGroup}>
         <input
           type="text"
           value={asin}
@@ -49,7 +50,7 @@ export function ASINInput({ onAdd, isValidating = false, error, successMessage }
           placeholder={t('asinInput.placeholder')}
           maxLength={10}
           disabled={isSubmitting || isValidating}
-          className={!isValid ? 'invalid' : ''}
+          className={!isValid ? styles.invalid : ''}
         />
         <button
           type="submit"
