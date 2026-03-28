@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Users } from 'lucide-react';
 import { adminApi } from '../../services/api';
 import type { User } from '../../types';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
-import { Modal, Button, Input, Badge } from '../../design-system';
+import { Modal, Button, Input, Badge, EmptyState } from '../../design-system';
 
 export function UserManagement() {
   const { t } = useTranslation();
@@ -109,6 +110,12 @@ export function UserManagement() {
 
       {loading ? (
         <div className="loading">{t('admin.users.loading')}</div>
+      ) : users.length === 0 ? (
+        <EmptyState
+          icon={<Users size={48} />}
+          title={debouncedSearch ? t('admin.users.noUsersMatchSearch') : t('admin.users.noUsersFound')}
+          description={debouncedSearch ? t('admin.users.noUsersMatchSearchHint') : undefined}
+        />
       ) : (
         <table className="admin-table">
           <thead>
@@ -124,57 +131,51 @@ export function UserManagement() {
             </tr>
           </thead>
           <tbody>
-            {users.length === 0 ? (
-              <tr>
-                <td colSpan={8}>{t('admin.users.noUsersFound')}</td>
-              </tr>
-            ) : (
-              users.map((user) => (
-                <tr key={user.id}>
-                  <td data-label={t('admin.users.username')}>{user.username}</td>
-                  <td data-label={t('admin.users.role')}>
-                    <Badge variant={user.role === 'ADMIN' ? 'info' : 'neutral'}>
-                      {user.role}
-                    </Badge>
-                  </td>
-                  <td data-label={t('admin.users.status')}>
-                    <Badge variant={user.is_disabled ? 'danger' : 'success'}>
-                      {user.is_disabled ? t('admin.users.disabled') : t('admin.users.active')}
-                    </Badge>
-                  </td>
-                  <td data-label={t('admin.users.products')}>{user.product_count || 0}</td>
-                  <td data-label={t('admin.users.lists')}>{user.list_count || 0}</td>
-                  <td data-label={t('admin.users.priceHistory')}>{user.price_history_count || 0}</td>
-                  <td data-label={t('admin.users.createdAt')}>{new Date(user.created_at).toLocaleDateString()}</td>
-                  <td data-label={t('admin.users.actions')}>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td data-label={t('admin.users.username')}>{user.username}</td>
+                <td data-label={t('admin.users.role')}>
+                  <Badge variant={user.role === 'ADMIN' ? 'info' : 'neutral'}>
+                    {user.role}
+                  </Badge>
+                </td>
+                <td data-label={t('admin.users.status')}>
+                  <Badge variant={user.is_disabled ? 'danger' : 'success'}>
+                    {user.is_disabled ? t('admin.users.disabled') : t('admin.users.active')}
+                  </Badge>
+                </td>
+                <td data-label={t('admin.users.products')}>{user.product_count || 0}</td>
+                <td data-label={t('admin.users.lists')}>{user.list_count || 0}</td>
+                <td data-label={t('admin.users.priceHistory')}>{user.price_history_count || 0}</td>
+                <td data-label={t('admin.users.createdAt')}>{new Date(user.created_at).toLocaleDateString()}</td>
+                <td data-label={t('admin.users.actions')}>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => handleViewStats(user)}
+                  >
+                    {t('admin.users.viewStats')}
+                  </Button>
+                  {user.is_disabled ? (
                     <Button
                       size="sm"
-                      variant="secondary"
-                      onClick={() => handleViewStats(user)}
+                      variant="primary"
+                      onClick={() => handleEnableUser(user.id)}
                     >
-                      {t('admin.users.viewStats')}
+                      {t('admin.users.enable')}
                     </Button>
-                    {user.is_disabled ? (
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={() => handleEnableUser(user.id)}
-                      >
-                        {t('admin.users.enable')}
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        onClick={() => handleDisableUser(user.id)}
-                      >
-                        {t('admin.users.disable')}
-                      </Button>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={() => handleDisableUser(user.id)}
+                    >
+                      {t('admin.users.disable')}
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       )}

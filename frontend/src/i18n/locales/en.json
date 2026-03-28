@@ -45,6 +45,7 @@
     "expand": "Expand",
     "collapse": "Collapse",
     "noProducts": "No products tracked yet. Add an ASIN above to get started.",
+    "noProductsInCategory": "No products match this category filter.",
     "addFirstProduct": "Add your first product using the ASIN input above.",
     "remove": "Remove",
     "added": "Added",
@@ -240,6 +241,8 @@
       "passwordPlaceholder": "Minimum 6 characters",
       "userStats": "Stats: {{username}}",
       "noUsersFound": "No users found",
+      "noUsersMatchSearch": "No users match your search",
+      "noUsersMatchSearchHint": "Try a different search term.",
       "confirmDisable": "Are you sure you want to disable this user?",
       "confirmResetPassword": "Are you sure you want to reset the password for this user?",
       "passwordReset": "Password reset successfully"

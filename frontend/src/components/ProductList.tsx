@@ -368,8 +368,8 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
             {filteredProducts.length === 0 ? (
               <EmptyState
                 icon={<Package size={48} />}
-                title={selectedListId ? t('products.noProductsInList') : t('products.noProducts')}
-                description={!selectedListId ? t('products.addFirstProduct') : undefined}
+                title={selectedListId ? t('products.noProductsInList') : selectedCategory ? t('products.noProductsInCategory') : t('products.noProducts')}
+                description={!selectedListId && !selectedCategory ? t('products.addFirstProduct') : undefined}
               />
             ) : (
               <div className="products-list">

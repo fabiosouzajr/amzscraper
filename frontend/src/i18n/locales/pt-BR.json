@@ -45,6 +45,7 @@
     "expand": "Expandir",
     "collapse": "Recolher",
     "noProducts": "Ainda não há produtos rastreados. Adicione um ASIN acima para começar.",
+    "noProductsInCategory": "Nenhum produto corresponde a este filtro de categoria.",
     "addFirstProduct": "Adicione seu primeiro produto usando o campo ASIN acima.",
     "remove": "Remover",
     "added": "Adicionado",
@@ -240,6 +241,8 @@
       "passwordPlaceholder": "Mínimo de 6 caracteres",
       "userStats": "Estatísticas: {{username}}",
       "noUsersFound": "Nenhum usuário encontrado",
+      "noUsersMatchSearch": "Nenhum usuário corresponde à sua busca",
+      "noUsersMatchSearchHint": "Tente um termo de busca diferente.",
       "confirmDisable": "Tem certeza que deseja desativar este usuário?",
       "confirmResetPassword": "Tem certeza que deseja redefinir a senha deste usuário?",
       "passwordReset": "Senha redefinida com sucesso"
