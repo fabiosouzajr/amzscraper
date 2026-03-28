@@ -837,11 +837,6 @@
   min-width: 0;
 }
 
-.product-search {
-  position: relative;
-  max-width: 100%;
-}
-
 .search-input {
   width: 100%;
   padding: 1rem;
@@ -1742,10 +1737,6 @@
   .search-detail-container {
     flex: 1;
     width: 100%;
-  }
-
-  .product-search {
-    max-width: 100%;
   }
 
   /* Product Detail */
@@ -2856,11 +2847,6 @@
   .logout-button {
     width: 100%;
   }
-}
-
-/* Admin Panel Styles */
-.admin-panel {
-  padding: 2rem;
 }
 
 .admin-header {
