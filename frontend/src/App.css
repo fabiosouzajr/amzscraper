@@ -17,8 +17,8 @@
 .update-progress-container {
   background: var(--color-bg-elevated);
   border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  padding: 1rem;
+  /* margin-bottom: 1rem; */
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
@@ -28,7 +28,7 @@
   background-color: var(--color-bg-inset);
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   position: relative;
 }
 
@@ -43,7 +43,8 @@
 .progress-status {
   font-size: 0.95rem;
   color: var(--color-text-secondary);
-  margin-bottom: 0.5rem;
+  margin-top: 0.75rem;
+  /* margin-bottom: 0rem; */
   text-align: center;
 }
 
@@ -834,6 +835,11 @@
 .search-detail-container {
   flex: 1;
   min-width: 0;
+}
+
+.product-search {
+  position: relative;
+  max-width: 100%;
 }
 
 .search-input {
@@ -2850,6 +2856,54 @@
   .logout-button {
     width: 100%;
   }
+}
+
+/* Admin Panel Styles */
+.admin-panel {
+  padding: 2rem;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--color-amazon-navy);
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--color-border-primary);
+}
+
+.admin-tab {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+
+.admin-tab:hover {
+  color: var(--color-amazon-navy);
+  background-color: var(--color-bg-secondary);
+}
+
+.admin-tab.active {
+  color: var(--color-amazon-orange);
+  border-bottom-color: var(--color-amazon-orange);
+  font-weight: 600;
+}
+
+.admin-content {
+  padding-top: 1rem;
 }
 
 /* User Management Styles */

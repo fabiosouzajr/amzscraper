@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { Package } from 'lucide-react';
 import { api } from '../services/api';
-import { UserList } from '../types';
 import { ASINInput } from './ASINInput';
 import { ListsSidebar } from './ListsSidebar';
 import { CategoryFilter } from './CategoryFilter';
@@ -12,7 +11,7 @@ import { formatDate } from '../utils/dateFormat';
 import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
-import { useProducts, useDeleteProduct, useMediaQuery, useSwipeGesture } from '../hooks';
+import { useProducts, useAddProduct, useDeleteProduct, useLists, useMediaQuery, useSwipeGesture } from '../hooks';
 
 
 
@@ -69,7 +68,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const [error, setError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
-  const [lists, setLists] = useState<UserList[]>([]);
   const [addingToListProductId, setAddingToListProductId] = useState<number | null>(null);
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,23 +85,12 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const totalCount = data?.pagination.totalCount ?? 0;
   const fetchError = queryError ? t('products.failedToLoad') : null;
 
+  const addProductMutation = useAddProduct();
   const deleteMutation = useDeleteProduct();
+  const { data: lists = [] } = useLists();
   const isMobile = useMediaQuery('(max-width: 767px)');
 
-  const loadLists = async () => {
-    if (!user) return;
-    try {
-      const data = await api.getLists();
-      setLists(data);
-    } catch (err) {
-      console.error('Failed to load lists:', err);
-    }
-  };
-
   useEffect(() => {
-    if (user) {
-      loadLists();
-    }
     if (initialCategoryFilter) {
       setSelectedCategory(initialCategoryFilter);
       onFilterApplied?.();
@@ -180,10 +167,9 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     setError(null);
     setSuccessMessage(null);
     try {
-      const product = await api.addProduct(asin);
+      const product = await addProductMutation.mutateAsync(asin);
       setSuccessMessage(t('products.addedSuccessfully', { name: product.description || asin }));
       setCurrentPage(1);
-      qc.invalidateQueries({ queryKey: ['products'] });
       setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err: any) {
       setError(err.message || t('products.failedToAdd'));
@@ -252,7 +238,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     } catch (err: any) {
       setError(err.message || t('products.failedToAddToList'));
     }
-  }, [lists, qc, selectedCategory, currentPage, pageSize, data, t]);
+  }, [lists, qc, selectedCategory, currentPage, pageSize, t]);
 
   const handleRemoveFromList = useCallback(async (productId: number, listId: number) => {
     try {
@@ -280,7 +266,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     } catch (err: any) {
       setError(err.message || t('products.failedToRemoveFromList'));
     }
-  }, [qc, selectedCategory, currentPage, pageSize, data, t]);
+  }, [qc, selectedCategory, currentPage, pageSize, t]);
 
   const handleImportClick = () => {
     if (!importing) fileInputRef.current?.click();
@@ -358,7 +344,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
             <ListsSidebar
               onListClick={handleListClick}
               selectedListId={selectedListId}
-              onListChange={loadLists}
             />
           </div>
         )}
