@@ -2722,7 +2722,6 @@
   max-width: 300px;
   max-height: 300px;
   overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .add-to-list-dropdown.dropdown-up {
@@ -2743,6 +2742,9 @@
   font-size: 0.9rem;
   transition: background 0.2s;
   border-bottom: 1px solid var(--color-bg-inset);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .list-option:last-child {
