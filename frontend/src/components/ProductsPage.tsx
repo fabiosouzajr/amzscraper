@@ -7,6 +7,7 @@ import { ProductList } from './ProductList';
 import { Sheet } from '../design-system';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
+import styles from './ProductsPage.module.css';
 
 const ProductDetailSheet = lazy(() =>
   import('./ProductDetail').then(m => ({ default: m.ProductDetail }))
@@ -23,19 +24,19 @@ function SearchResultsList({ results, loading, query, onSelect }: SearchResultsL
   const { t } = useTranslation();
 
   if (loading) {
-    return <div className="search-loading">{t('search.searching')}</div>;
+    return <div className={styles.searchLoading}>{t('search.searching')}</div>;
   }
 
   if (query.trim() !== '' && results.length === 0) {
-    return <div className="search-no-results">{t('search.noResults')}</div>;
+    return <div className={styles.searchNoResults}>{t('search.noResults')}</div>;
   }
 
   return (
-    <div className="search-results">
+    <div className={styles.searchResults}>
       {results.map((product) => (
         <div
           key={product.id}
-          className="search-result-item"
+          className={styles.searchResultItem}
           onClick={() => onSelect(product)}
         >
           <div className="product-thumbnail-wrapper">
@@ -46,8 +47,8 @@ function SearchResultsList({ results, loading, query, onSelect }: SearchResultsL
               onError={(e) => handleProductImageError(e, product.asin)}
             />
           </div>
-          <div className="search-result-info">
-            <div className="result-asin">{product.asin}</div>
+          <div className={styles.searchResultInfo}>
+            <div className={styles.resultAsin}>{product.asin}</div>
             <a
               href={`https://www.amazon.com.br/dp/${product.asin}`}
               target="_blank"
@@ -137,18 +138,18 @@ export function ProductsPage() {
 
   return (
     <div className="products-page">
-      <div className="products-page-search">
+      <div className={styles.productsPageSearch}>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t('search.placeholder')}
-          className="search-input"
+          className={styles.searchInput}
         />
         {query && (
           <button
             onClick={() => setQuery('')}
-            className="search-clear-btn"
+            className={styles.searchClearBtn}
             aria-label="Clear"
           >
             ×

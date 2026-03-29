@@ -12,6 +12,7 @@ import { getPreferredProductImageUrl, handleProductImageError } from '../utils/p
 import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
 import { useProducts, useAddProduct, useDeleteProduct, useLists, useMediaQuery, useSwipeGesture } from '../hooks';
+import styles from './ProductList.module.css';
 
 
 
@@ -33,14 +34,14 @@ const SwipeableRow = React.memo(function SwipeableRow({ productId, onDelete, chi
   });
 
   return (
-    <div className={`swipeable-row-container${swiped ? ' swipeable-row--swiped' : ''}`}>
-      <div ref={swipeRef as React.RefObject<HTMLDivElement>} className="swipeable-row-content">
+    <div className={`${styles.swipeableRowContainer}${swiped ? ` ${styles.swipeableRowSwiped}` : ''}`}>
+      <div ref={swipeRef as React.RefObject<HTMLDivElement>} className={styles.swipeableRowContent}>
         {children}
       </div>
       {isMobile && (
-        <div className="swipeable-row-actions" aria-hidden={!swiped}>
+        <div className={styles.swipeableRowActions} aria-hidden={!swiped}>
           <button
-            className="swipe-delete-btn"
+            className={styles.swipeDeleteBtn}
             onClick={() => { onDelete(productId); setSwiped(false); }}
             tabIndex={swiped ? 0 : -1}
           >
@@ -115,7 +116,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     if (!dropdown) return;
     const container = dropdown.parentElement;
     if (!container) return;
-    const button = container.querySelector('.add-to-list-button') as HTMLElement;
+    const button = container.querySelector(`.${styles.addToListButton}`) as HTMLElement;
     if (!button) return;
     const buttonRect = button.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
@@ -123,10 +124,10 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     const spaceAbove = buttonRect.top;
     const estimatedDropdownHeight = Math.min(300, lists.length * 50 + 20);
     if (spaceBelow < estimatedDropdownHeight && spaceAbove > estimatedDropdownHeight) {
-      dropdown.classList.add('dropdown-up');
+      dropdown.classList.add(styles.dropdownUp);
       dropdown.style.maxHeight = `${Math.min(300, spaceAbove - 20)}px`;
     } else {
-      dropdown.classList.remove('dropdown-up');
+      dropdown.classList.remove(styles.dropdownUp);
       dropdown.style.maxHeight = `${Math.min(300, spaceBelow - 20)}px`;
     }
   };
@@ -301,16 +302,16 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   }
 
   return (
-    <div className="product-list">
+    <div className={styles.productList}>
       {/* Import button above the lists+content area */}
-      <div className="import-section">
+      <div className={styles.importSection}>
         <button
-          className={`import-button import-button-csv${importing ? ' disabled' : ''}`}
+          className={`${styles.importButton} ${styles.importButtonCsv}${importing ? ` ${styles.disabled}` : ''}`}
           onClick={handleImportClick}
           disabled={importing}
           title={t('products.importASINs')}
         >
-          <svg className="csv-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className={styles.csvIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <polyline points="14 2 14 8 20 8" />
             <line x1="16" y1="13" x2="8" y2="13" />
@@ -329,36 +330,36 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
           style={{ display: 'none' }}
         />
         {importResults && !importing && (
-          <div className="import-results">
-            <span className="import-result-item">{t('products.importTotal')}: {importResults.total}</span>
-            <span className="import-result-item success">{t('products.importSuccess')}: {importResults.success}</span>
-            <span className="import-result-item skipped">{t('products.importSkipped')}: {importResults.skipped}</span>
-            <span className="import-result-item failed">{t('products.importFailed')}: {importResults.failed}</span>
+          <div className={styles.importResults}>
+            <span className={styles.importResultItem}>{t('products.importTotal')}: {importResults.total}</span>
+            <span className={`${styles.importResultItem} ${styles.success}`}>{t('products.importSuccess')}: {importResults.success}</span>
+            <span className={`${styles.importResultItem} ${styles.skipped}`}>{t('products.importSkipped')}: {importResults.skipped}</span>
+            <span className={`${styles.importResultItem} ${styles.failed}`}>{t('products.importFailed')}: {importResults.failed}</span>
           </div>
         )}
       </div>
 
-      <div className="product-list-layout">
+      <div className={styles.productListLayout}>
         {user && (
-          <div className="product-list-sidebar">
+          <div className={styles.productListSidebar}>
             <ListsSidebar
               onListClick={handleListClick}
               selectedListId={selectedListId}
             />
           </div>
         )}
-        <div className="product-list-content">
-          <h2 className="product-list-title">{t('products.title')}</h2>
-          <div className="add-product-section">
+        <div className={styles.productListContent}>
+          <h2 className={styles.productListTitle}>{t('products.title')}</h2>
+          <div className={styles.addProductSection}>
             <h3>{t('products.addNew')}</h3>
             <ASINInput onAdd={handleAddProduct} isValidating={isValidating} error={displayError} successMessage={successMessage} />
           </div>
 
-          <div className="products-section">
-            <div className="products-section-header">
+          <div className={styles.productsSection}>
+            <div className={styles.productsSectionHeader}>
               <h3>{t('products.trackedProducts')} ({selectedListId ? filteredProducts.length : totalCount}{selectedListId ? ` / ${totalCount}` : ''})</h3>
-              <div className="category-filter-panel">
-                <label className="category-filter-label">{t('products.filterByCategory')}:</label>
+              <div className={styles.categoryFilterPanel}>
+                <label className={styles.categoryFilterLabel}>{t('products.filterByCategory')}:</label>
                 <CategoryFilter
                   selectedCategory={selectedCategory}
                   onChange={setSelectedCategory}
@@ -372,7 +373,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                 description={!selectedListId && !selectedCategory ? t('products.addFirstProduct') : undefined}
               />
             ) : (
-              <div className="products-list">
+              <div className={styles.productsList}>
                 {filteredProducts.map((product) => (
                   <SwipeableRow
                     key={product.id}
@@ -380,9 +381,9 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                     onDelete={handleDeleteProduct}
                     isMobile={isMobile}
                   >
-                  <div className="product-list-item">
+                  <div className={styles.productListItem}>
                     {/* Main row — always visible */}
-                    <div className="product-row-main">
+                    <div className={styles.productRowMain}>
                       <div className="product-thumbnail-wrapper">
                         <img
                           src={getPreferredProductImageUrl(product)}
@@ -392,25 +393,25 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                         />
                       </div>
 
-                      <div className="product-row-summary">
+                      <div className={styles.productRowSummary}>
                         <a
                           href={`https://www.amazon.com.br/dp/${product.asin}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="product-description product-link product-description-link"
+                          className={`product-description product-link ${styles.productDescriptionLink}`}
                           onClick={(e) => e.stopPropagation()}
                         >
                           {product.description}
                         </a>
-                        <div className="product-row-meta">
-                          <span className="product-row-asin-badge">{product.asin}</span>
+                        <div className={styles.productRowMeta}>
+                          <span className={styles.productRowAsinBadge}>{product.asin}</span>
                           {(product as any).current_price != null && (
-                            <span className="product-row-price">
+                            <span className={styles.productRowPrice}>
                               {(product as any).current_price}
                             </span>
                           )}
                           {product.categories && product.categories.length > 0 && (
-                            <div className="product-row-categories-hover" aria-hidden="true">
+                            <div className={styles.productRowCategoriesHover} aria-hidden="true">
                               {product.categories.map((cat, idx) => (
                                 <span key={cat.id}>
                                   <button
@@ -438,7 +439,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                                 {list.name}
                                 {user && (
                                   <button
-                                    className="remove-from-list-button"
+                                    className={styles.removeFromListButton}
                                     onClick={() => handleRemoveFromList(product.id, list.id)}
                                     title={t('products.removeFromList')}
                                   >
@@ -452,9 +453,9 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                         )}
                       </div>
 
-                      <div className="product-row-actions product-actions">
+                      <div className={`${styles.productRowActions} product-actions`}>
                         <button
-                          className="btn-icon"
+                          className={styles.btnIcon}
                           onClick={() => toggleExpanded(product.id)}
                           aria-expanded={expandedRows.has(product.id)}
                           aria-label={expandedRows.has(product.id) ? t('products.collapse') : t('products.expand')}
@@ -463,9 +464,9 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                           {expandedRows.has(product.id) ? '▴' : '▾'}
                         </button>
                         {user && (
-                          <div className="add-to-list-container">
+                          <div className={styles.addToListContainer}>
                             <button
-                              className="add-to-list-button"
+                              className={styles.addToListButton}
                               onClick={() => handleToggleDropdown(product.id)}
                             >
                               {t('products.addToList')}
@@ -473,17 +474,17 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                             {addingToListProductId === product.id && (
                               <div
                                 ref={(el) => { dropdownRefs.current[product.id] = el; }}
-                                className="add-to-list-dropdown"
+                                className={styles.addToListDropdown}
                               >
                                 {lists.length === 0 ? (
-                                  <div className="no-lists-message">{t('products.noListsAvailable')}</div>
+                                  <div className={styles.noListsMessage}>{t('products.noListsAvailable')}</div>
                                 ) : (
                                   lists.map((list) => {
                                     const isInList = product.lists?.some(l => l.id === list.id);
                                     return (
                                       <button
                                         key={list.id}
-                                        className={`list-option ${isInList ? 'in-list' : ''}`}
+                                        className={`${styles.listOption}${isInList ? ` ${styles.inList}` : ''}`}
                                         onClick={() => {
                                           if (isInList) {
                                             handleRemoveFromList(product.id, list.id);
@@ -505,7 +506,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                         )}
                         {onProductSelect && (
                           <button
-                            className="view-button"
+                            className={styles.viewButton}
                             onClick={() => onProductSelect(product.id)}
                           >
                             {t('products.view')}
@@ -522,7 +523,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
 
                     {/* Details row — shown only when expanded */}
                     {expandedRows.has(product.id) && (
-                      <div className="product-row-details">
+                      <div className={styles.productRowDetails}>
                         <div className="product-date">
                           {t('products.added')}: {formatDate(product.created_at)}
                         </div>
@@ -555,11 +556,11 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
             )}
 
             {!selectedListId && (
-              <div className="pagination">
+              <div className={styles.pagination}>
                 <select
                   value={pageSize}
                   onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-                  className="page-size-select"
+                  className={styles.pageSizeSelect}
                   aria-label={t('products.itemsPerPage')}
                 >
                   <option value={10}>10</option>
@@ -576,11 +577,11 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       disabled={currentPage === 1}
-                      className="pagination-button"
+                      className={styles.paginationButton}
                     >
                       {t('pagination.previous')}
                     </button>
-                    <span className="pagination-info">
+                    <span className={styles.paginationInfo}>
                       {t('pagination.pageInfo', { page: currentPage, totalPages, total: totalCount })}
                     </span>
                     <button
@@ -590,7 +591,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       disabled={currentPage === totalPages}
-                      className="pagination-button"
+                      className={styles.paginationButton}
                     >
                       {t('pagination.next')}
                     </button>
