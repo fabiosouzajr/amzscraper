@@ -5,6 +5,8 @@ import { adminApi } from '../../services/api';
 import type { User } from '../../types';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { Modal, Button, Input, Badge, EmptyState } from '../../design-system';
+import styles from './UserManagement.module.css';
+import tableStyles from './AdminTable.module.css';
 
 export function UserManagement() {
   const { t } = useTranslation();
@@ -91,15 +93,15 @@ export function UserManagement() {
   };
 
   return (
-    <div className="user-management">
-      <div className="user-management-header">
+    <div className={styles.userManagement}>
+      <div className={styles.userManagementHeader}>
         <h2>{t('admin.users.title')}</h2>
         <Button onClick={() => setShowCreateModal(true)} variant="primary">
           {t('admin.users.createUser')}
         </Button>
       </div>
 
-      <div className="search-box">
+      <div className={styles.searchBox}>
         <input
           type="text"
           placeholder={t('admin.users.searchPlaceholder')}
@@ -117,7 +119,8 @@ export function UserManagement() {
           description={debouncedSearch ? t('admin.users.noUsersMatchSearchHint') : undefined}
         />
       ) : (
-        <table className="admin-table">
+        <div className={tableStyles.tableWrapper}>
+          <table className={tableStyles.adminTable}>
           <thead>
             <tr>
               <th>{t('admin.users.username')}</th>
@@ -177,7 +180,8 @@ export function UserManagement() {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       )}
 
       {/* Create User Modal */}
@@ -233,21 +237,21 @@ export function UserManagement() {
       >
         {selectedUser && selectedUser.stats && (
           <>
-            <div className="user-stats-grid">
-              <div className="stat-card">
+            <div className={styles.userStatsGrid}>
+              <div className={styles.statCard}>
                 <h4>{t('admin.users.products')}</h4>
-                <p className="stat-value">{selectedUser.stats.product_count}</p>
+                <p className={styles.statValue}>{selectedUser.stats.product_count}</p>
               </div>
-              <div className="stat-card">
+              <div className={styles.statCard}>
                 <h4>{t('admin.users.lists')}</h4>
-                <p className="stat-value">{selectedUser.stats.list_count}</p>
+                <p className={styles.statValue}>{selectedUser.stats.list_count}</p>
               </div>
-              <div className="stat-card">
+              <div className={styles.statCard}>
                 <h4>{t('admin.users.priceHistory')}</h4>
-                <p className="stat-value">{selectedUser.stats.price_history_count}</p>
+                <p className={styles.statValue}>{selectedUser.stats.price_history_count}</p>
               </div>
             </div>
-            <div className="user-actions">
+            <div className={styles.userActions}>
               <div className="form-group">
                 <label>{t('admin.users.newPassword')}</label>
                 <Input
