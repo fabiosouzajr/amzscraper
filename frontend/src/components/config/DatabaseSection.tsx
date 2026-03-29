@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
+import styles from './Config.module.css';
 
 interface DatabaseInfo {
   productCount: number;
@@ -43,35 +44,35 @@ export function DatabaseSection({ dbInfo, loadingDbInfo }: Props) {
   };
 
   return (
-    <div id="database" className="config-section">
+    <div id="database" className={styles.configSection}>
       <h3>{t('config.database')}</h3>
-      <div className="database-info">
+      <div className={styles.databaseInfo}>
         {loadingDbInfo ? (
-          <p className="config-description">{t('config.loadingInfo')}</p>
+          <p className={styles.configDescription}>{t('config.loadingInfo')}</p>
         ) : dbInfo ? (
           <>
-            <div className="database-stat">
-              <span className="stat-label">{t('config.totalProducts')}</span>
+            <div className={styles.databaseStat}>
+              <span className={styles.statLabel}>{t('config.totalProducts')}</span>
               <span className="stat-value">{dbInfo.productCount}</span>
             </div>
-            <div className="database-stat">
-              <span className="stat-label">{t('config.databaseSize')}</span>
+            <div className={styles.databaseStat}>
+              <span className={styles.statLabel}>{t('config.databaseSize')}</span>
               <span className="stat-value">{dbInfo.databaseSizeFormatted}</span>
             </div>
           </>
         ) : (
-          <p className="config-description">{t('config.unableToLoad')}</p>
+          <p className={styles.configDescription}>{t('config.unableToLoad')}</p>
         )}
       </div>
-      <div className="config-actions">
+      <div className={styles.configActions}>
         <button
           onClick={handleExportDatabase}
           disabled={exportingDb || loadingDbInfo}
-          className="export-button"
+          className={styles.exportButton}
         >
           {exportingDb ? t('config.exportingDatabase') : t('config.exportDatabase')}
         </button>
-        <p className="config-description">{t('config.exportDatabaseDescription')}</p>
+        <p className={styles.configDescription}>{t('config.exportDatabaseDescription')}</p>
       </div>
       {error && <div className="error-message">{error}</div>}
     </div>

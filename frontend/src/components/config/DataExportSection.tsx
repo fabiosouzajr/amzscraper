@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styles from './Config.module.css';
 
 export function DataExportSection() {
   const { t } = useTranslation();
@@ -45,13 +46,13 @@ export function DataExportSection() {
   };
 
   return (
-    <div id="data-export" className="config-section">
+    <div id="data-export" className={styles.configSection}>
       <h3>{t('config.dataExport')}</h3>
-      <div className="config-actions">
-        <button onClick={handleExportASINs} disabled={exporting} className="export-button">
+      <div className={styles.configActions}>
+        <button onClick={handleExportASINs} disabled={exporting} className={styles.exportButton}>
           {exporting ? t('config.exportingASINs') : t('config.exportASINs')}
         </button>
-        <p className="config-description">{t('config.exportASINsDescription')}</p>
+        <p className={styles.configDescription}>{t('config.exportASINsDescription')}</p>
       </div>
       {error && <div className="error-message">{error}</div>}
     </div>

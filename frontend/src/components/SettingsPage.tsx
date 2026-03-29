@@ -166,15 +166,15 @@ export function SettingsPage() {
 
       {/* Confirmation dialog for unsaved changes */}
       {showConfirmDialog && (
-        <div className="confirm-dialog-overlay">
-          <div className="confirm-dialog">
+        <div className={styles.confirmDialogOverlay}>
+          <div className={styles.confirmDialog}>
             <h3>{t('config.unsavedChanges')}</h3>
             <p>{t('config.unsavedChangesMessage')}</p>
-            <div className="confirm-dialog-actions">
-              <button onClick={handleCancelNavigation} className="confirm-dialog-button cancel">
+            <div className={styles.confirmDialogActions}>
+              <button onClick={handleCancelNavigation} className={`${styles.confirmDialogButton} ${styles.cancel}`}>
                 {t('config.cancel')}
               </button>
-              <button onClick={handleConfirmNavigation} className="confirm-dialog-button confirm">
+              <button onClick={handleConfirmNavigation} className={`${styles.confirmDialogButton} ${styles.confirm}`}>
                 {t('config.discardChanges')}
               </button>
             </div>
