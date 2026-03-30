@@ -8,7 +8,6 @@ import { ImportProvider, useImport } from './contexts/ImportContext';
 import { X } from 'lucide-react';
 import { ProgressBar, Skeleton, CardSkeleton } from './design-system';
 import { AppShell } from './layout/AppShell';
-import './App.css';
 
 // Lazy load components that are not on the initial route
 const ProductsPage = lazy(() => import('./components/ProductsPage').then(m => ({ default: m.ProductsPage })));

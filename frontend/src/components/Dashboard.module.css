@@ -239,3 +239,38 @@
     transform: none;
   }
 }
+
+/* ── Product Card Inline Elements ────────────────────────────────────── */
+
+.productInfo {
+  flex: 1;
+}
+
+.productAsin {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.categoryBadgeBtn {
+  background: none;
+  border: none;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font: inherit;
+  color: inherit;
+}
+
+.categoryBadgeBtn:hover {
+  background: rgba(33, 98, 161, 0.1);
+  transform: translateY(-1px);
+}
+
+.categoryBadgeBtn:active {
+  transform: translateY(0);
+}

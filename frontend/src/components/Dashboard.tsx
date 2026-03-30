@@ -47,15 +47,15 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
           </div>
         </div>
       </div>
-      <div className="product-info">
-        <div className="product-asin">{item.product.asin}</div>
+      <div className={styles.productInfo}>
+        <div className={styles.productAsin}>{item.product.asin}</div>
         {item.product.categories && item.product.categories.length > 0 && (
           <div className="product-categories">
             {item.product.categories.map((cat, idx) => (
               <span key={cat.id}>
                 <button
                   type="button"
-                  className="category-badge-btn"
+                  className={styles.categoryBadgeBtn}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

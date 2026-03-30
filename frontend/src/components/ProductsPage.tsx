@@ -137,7 +137,7 @@ export function ProductsPage() {
   }, [isMobile, selectedProductId, navigate]);
 
   return (
-    <div className="products-page">
+    <div className={styles.productsPage}>
       <div className={styles.productsPageSearch}>
         <input
           type="text"

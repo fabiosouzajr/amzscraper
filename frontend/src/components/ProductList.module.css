@@ -665,3 +665,46 @@
     border: 1px solid var(--color-border-primary);
   }
 }
+
+/* ── Category filter button ──────────────────────────────────────────── */
+
+.categoryFilterButton {
+  display: inline-block;
+  padding: 0.1rem 0.1rem;
+  background: none;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.2;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
+  font-family: inherit;
+  margin: 0;
+  color: inherit;
+}
+
+.categoryFilterButton:hover {
+  background: var(--color-info-subtle);
+  color: var(--color-info);
+  transform: translateY(-1px);
+}
+
+.categoryFilterButton:active {
+  transform: translateY(0);
+  background: var(--color-info-subtle);
+}
+
+.productDate {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-align: right;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .categoryFilterButton {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.35rem;
+  }
+}

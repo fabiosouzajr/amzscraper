@@ -415,7 +415,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                               {product.categories.map((cat, idx) => (
                                 <span key={cat.id}>
                                   <button
-                                    className="category-badge category-filter-button"
+                                    className={styles.categoryFilterButton}
                                     onClick={(e) => {
                                       e.preventDefault();
                                       e.stopPropagation();
@@ -524,7 +524,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                     {/* Details row — shown only when expanded */}
                     {expandedRows.has(product.id) && (
                       <div className={styles.productRowDetails}>
-                        <div className="product-date">
+                        <div className={styles.productDate}>
                           {t('products.added')}: {formatDate(product.created_at)}
                         </div>
                         {product.categories && product.categories.length > 0 && (
@@ -532,7 +532,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                             {product.categories.map((cat, idx) => (
                               <span key={cat.id}>
                                 <button
-                                  className="category-badge category-filter-button"
+                                  className={styles.categoryFilterButton}
                                   onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();

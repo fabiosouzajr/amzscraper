@@ -102,3 +102,8 @@
 .search-clear-btn:hover {
   color: var(--color-text-primary);
 }
+
+/* Products page wrapper */
+.productsPage {
+  width: 100%;
+}
