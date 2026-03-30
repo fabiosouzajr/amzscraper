@@ -1,4 +1,4 @@
-.lists-sidebar {
+.listsSidebar {
   background: var(--color-bg-elevated);
   border-radius: 8px;
   padding: 1rem;
@@ -9,7 +9,7 @@
 }
 
 /* Mobile overlay mode */
-.lists-sidebar-overlay {
+.listsSidebarOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -28,14 +28,14 @@
   to { transform: translateX(0); }
 }
 
-.lists-sidebar-backdrop {
+.listsSidebarBackdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
   z-index: 199;
 }
 
-.lists-sidebar-toggle {
+.listsSidebarToggle {
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -50,11 +50,11 @@
   margin-bottom: 0.75rem;
 }
 
-.lists-sidebar-toggle:hover {
+.listsSidebarToggle:hover {
   background: var(--color-text-primary);
 }
 
-.lists-sidebar-close-button {
+.listsSidebarCloseButton {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -66,25 +66,25 @@
   justify-content: center;
 }
 
-.lists-sidebar-close-button:hover {
+.listsSidebarCloseButton:hover {
   background: rgba(0, 0, 0, 0.08);
   color: var(--color-amazon-navy);
 }
 
-.lists-sidebar-header {
+.listsSidebarHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
 }
 
-.lists-sidebar-header h3 {
+.listsSidebarHeader h3 {
   font-size: larger;
   margin: 0;
   color: var(--color-amazon-navy);
 }
 
-.create-list-button {
+.createListButton {
   background: var(--color-amazon-orange);
   color: var(--color-text-inverse);
   border: none;
@@ -95,18 +95,18 @@
   transition: background 0.2s;
 }
 
-.create-list-button:hover {
+.createListButton:hover {
   background: var(--color-amazon-orange-hover);
 }
 
-.create-list-form {
+.createListForm {
   margin-bottom: 1rem;
   padding: 1rem;
   background: var(--color-bg-secondary);
   border-radius: 4px;
 }
 
-.create-list-form input {
+.createListForm input {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid var(--color-border-primary);
@@ -115,12 +115,12 @@
   box-sizing: border-box;
 }
 
-.form-actions {
+.formActions {
   display: flex;
   gap: 0.5rem;
 }
 
-.form-actions button {
+.formActions button {
   flex: 1;
   padding: 0.5rem;
   border: none;
@@ -129,22 +129,22 @@
   font-size: 0.9rem;
 }
 
-.form-actions button[type="submit"] {
+.formActions button[type="submit"] {
   background: var(--color-success);
   color: var(--color-text-inverse);
 }
 
-.form-actions button[type="button"] {
+.formActions button[type="button"] {
   background: var(--color-text-secondary);
   color: var(--color-text-inverse);
 }
 
-.lists-list {
+.listsList {
   max-height: 600px;
   overflow-y: auto;
 }
 
-.list-item {
+.listItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -155,38 +155,38 @@
   cursor: pointer;
 }
 
-.list-item:hover {
+.listItem:hover {
   background: var(--color-bg-secondary);
 }
 
-.list-item.selected {
+.listItem.selected {
   background: var(--color-warning-subtle);
   border: 1px solid var(--color-amazon-orange);
 }
 
-.all-products-item {
+.allProductsItem {
   font-weight: 600;
   border-bottom: 1px solid var(--color-border-primary);
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
 }
 
-.list-name {
+.listName {
   flex: 1;
   color: var(--color-amazon-navy);
   font-weight: 500;
 }
 
-.list-actions {
+.listActions {
   display: flex;
   gap: 0.5rem;
 }
 
-.list-edit-form {
+.listEditForm {
   width: 100%;
 }
 
-.list-edit-form input {
+.listEditForm input {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid var(--color-border-primary);
@@ -195,12 +195,12 @@
   box-sizing: border-box;
 }
 
-.list-edit-actions {
+.listEditActions {
   display: flex;
   gap: 0.5rem;
 }
 
-.list-edit-actions button {
+.listEditActions button {
   flex: 1;
   padding: 0.5rem;
   border: none;
@@ -209,19 +209,19 @@
   font-size: 0.9rem;
 }
 
-.list-edit-actions button:first-child {
+.listEditActions button:first-child {
   background: var(--color-success);
   color: var(--color-text-inverse);
 }
 
-.list-edit-actions button:last-child {
+.listEditActions button:last-child {
   background: var(--color-text-secondary);
   color: var(--color-text-inverse);
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .lists-sidebar {
+  .listsSidebar {
     position: static;
   }
 }

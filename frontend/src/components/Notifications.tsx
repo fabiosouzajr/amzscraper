@@ -13,6 +13,7 @@ import {
 import { Badge, EmptyState, TableSkeleton, SimpleTabs, Button } from '../design-system';
 import { ChannelForm } from './ChannelForm';
 import { RuleForm } from './RuleForm';
+import styles from './Notifications.module.css';
 
 type TabType = 'channels' | 'rules' | 'history';
 
@@ -138,7 +139,7 @@ export function Notifications() {
   ];
 
   return (
-    <div className="notifications-section">
+    <div className={styles.notificationsSection}>
       <h2>{t('notifications.title')}</h2>
 
       <SimpleTabs
@@ -157,7 +158,7 @@ export function Notifications() {
           {/* Channels Tab */}
           {activeTab === 'channels' && (
             <>
-              <div className="notifications-header">
+              <div className={styles.notificationsHeader}>
                 <h3>{t('notifications.channels.title')}</h3>
                 <Button
                   variant="primary"
@@ -179,7 +180,7 @@ export function Notifications() {
                   }
                 />
               ) : (
-                <table className="notifications-table">
+                <table className={styles.notificationsTable}>
                   <thead>
                     <tr>
                       <th>{t('notifications.channels.name')}</th>
@@ -199,7 +200,7 @@ export function Notifications() {
                         </td>
                         <td>
                           <button
-                            className={`toggle-button ${channel.enabled ? 'enabled' : 'disabled'}`}
+                            className={`${styles.toggleButton} ${channel.enabled ? styles.enabled : styles.disabled}`}
                             onClick={() => handleToggleChannel(channel.id, !channel.enabled)}
                           >
                             {channel.enabled ? '✓' : '✗'}
@@ -207,14 +208,14 @@ export function Notifications() {
                         </td>
                         <td>
                           <button
-                            className="btn btn-small"
+                            className={styles.btnSmall}
                             onClick={() => { setEditingChannel(channel); setShowChannelForm(true); }}
                           >
                             {t('notifications.channels.edit')}
                           </button>
                           {' '}
                           <button
-                            className="btn btn-small btn-danger"
+                            className={styles.btnSmallDanger}
                             onClick={() => handleDeleteChannel(channel.id)}
                           >
                             {t('notifications.delete')}
@@ -231,7 +232,7 @@ export function Notifications() {
           {/* Rules Tab */}
           {activeTab === 'rules' && (
             <>
-              <div className="notifications-header">
+              <div className={styles.notificationsHeader}>
                 <h3>{t('notifications.rules.title')}</h3>
                 <Button
                   variant="primary"
@@ -253,7 +254,7 @@ export function Notifications() {
                   }
                 />
               ) : (
-                <table className="notifications-table">
+                <table className={styles.notificationsTable}>
                   <thead>
                     <tr>
                       <th>{t('notifications.rules.type')}</th>
@@ -275,7 +276,7 @@ export function Notifications() {
                         <td>{getChannelName(rule.channel_id)}</td>
                         <td>
                           <button
-                            className={`toggle-button ${rule.enabled ? 'enabled' : 'disabled'}`}
+                            className={`${styles.toggleButton} ${rule.enabled ? styles.enabled : styles.disabled}`}
                             onClick={() => handleToggleRule(rule.id, !rule.enabled)}
                           >
                             {rule.enabled ? '✓' : '✗'}
@@ -283,14 +284,14 @@ export function Notifications() {
                         </td>
                         <td>
                           <button
-                            className="btn btn-small"
+                            className={styles.btnSmall}
                             onClick={() => { setEditingRule(rule); setShowRuleForm(true); }}
                           >
                             {t('notifications.rules.edit')}
                           </button>
                           {' '}
                           <button
-                            className="btn btn-small btn-danger"
+                            className={styles.btnSmallDanger}
                             onClick={() => handleDeleteRule(rule.id)}
                           >
                             {t('notifications.delete')}
@@ -311,7 +312,7 @@ export function Notifications() {
               {history.length === 0 ? (
                 <EmptyState variant="no-data" title={t('notifications.history.noHistory')} />
               ) : (
-                <table className="notifications-table">
+                <table className={styles.notificationsTable}>
                   <thead>
                     <tr>
                       <th>{t('notifications.history.date')}</th>

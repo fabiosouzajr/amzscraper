@@ -23,11 +23,11 @@ interface PriceChangeCardProps {
 
 const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onCategoryClick }: PriceChangeCardProps) {
   const { t } = useTranslation();
-  const cardClass = variant === 'drop' ? styles['price-drop-card'] : styles['price-increase-card'];
-  const headerClass = variant === 'drop' ? styles['drop-header'] : styles['increase-header'];
-  const headerContentClass = variant === 'drop' ? styles['drop-header-content'] : styles['increase-header-content'];
-  const percentageClass = variant === 'drop' ? styles['drop-percentage'] : styles['increase-percentage'];
-  const amountClass = variant === 'drop' ? styles['drop-amount'] : styles['increase-amount'];
+  const cardClass = variant === 'drop' ? styles.priceDropCard : styles.priceIncreaseCard;
+  const headerClass = variant === 'drop' ? styles.dropHeader : styles.increaseHeader;
+  const headerContentClass = variant === 'drop' ? styles.dropHeaderContent : styles.increaseHeaderContent;
+  const percentageClass = variant === 'drop' ? styles.dropPercentage : styles.increasePercentage;
+  const amountClass = variant === 'drop' ? styles.dropAmount : styles.increaseAmount;
   const currentPriceClass = variant === 'drop' ? 'price current' : 'price current increase';
 
   return (
@@ -79,7 +79,7 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
           {item.product.description}
         </a>
         {item.price_history && item.price_history.length > 0 && (
-          <div className={styles['mini-chart-container']}>
+          <div className={styles.miniChartContainer}>
             <Suspense fallback={null}>
               <MiniPriceChart priceHistory={item.price_history} />
             </Suspense>
@@ -195,7 +195,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
 
   return (
     <div className={styles.dashboard}>
-      <div className={styles['dashboard-header']}>
+      <div className={styles.dashboardHeader}>
         <h1>{t('dashboard.title')}</h1>
         <Button
           onClick={handleUpdatePrices}
@@ -220,7 +220,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
               variant="primary"
               size="md"
             />
-            <div className={styles['progress-status']}>{updateStatus}</div>
+            <div className={styles.progressStatus}>{updateStatus}</div>
           </div>
         </Card>
       )}
@@ -234,9 +234,9 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
       ) : (
         <>
           {drops.length > 0 && (
-            <div className={styles['price-changes-section']}>
-              <h2 className={styles['section-title']}>{t('dashboard.priceDrops')}</h2>
-              <div className={styles['price-drops-grid']}>
+            <div className={styles.priceChangesSection}>
+              <h2 className={styles.sectionTitle}>{t('dashboard.priceDrops')}</h2>
+              <div className={styles.priceDropsGrid}>
                 {drops.map((drop) => (
                   <PriceChangeCard
                     key={drop.product.id}
@@ -250,9 +250,9 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
           )}
 
           {increases.length > 0 && (
-            <div className={styles['price-changes-section']}>
-              <h2 className={styles['section-title']}>{t('dashboard.priceIncreases')}</h2>
-              <div className={styles['price-drops-grid']}>
+            <div className={styles.priceChangesSection}>
+              <h2 className={styles.sectionTitle}>{t('dashboard.priceIncreases')}</h2>
+              <div className={styles.priceDropsGrid}>
                 {increases.map((increase) => (
                   <PriceChangeCard
                     key={increase.product.id}

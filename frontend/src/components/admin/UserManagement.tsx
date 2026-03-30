@@ -192,7 +192,7 @@ export function UserManagement() {
         size="md"
       >
         <form onSubmit={handleCreateUser}>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t('auth.username')}</label>
             <Input
               type="text"
@@ -202,7 +202,7 @@ export function UserManagement() {
               onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
             />
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t('admin.users.newPassword')}</label>
             <Input
               type="password"
@@ -213,7 +213,7 @@ export function UserManagement() {
               onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
             />
           </div>
-          <div className="modal-actions">
+          <div className={styles.modalActions}>
             <Button
               type="button"
               variant="secondary"
@@ -252,7 +252,7 @@ export function UserManagement() {
               </div>
             </div>
             <div className={styles.userActions}>
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label>{t('admin.users.newPassword')}</label>
                 <Input
                   type="password"
@@ -263,7 +263,7 @@ export function UserManagement() {
                 />
               </div>
               <form onSubmit={handleResetPassword}>
-                <div className="modal-actions">
+                <div className={styles.modalActions}>
                   <Button
                     type="button"
                     variant="secondary"

@@ -266,3 +266,30 @@
     min-width: 44px;
   }
 }
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--color-amazon-orange);
+  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
+}

@@ -10,6 +10,7 @@ import {
   PercentageDropParams,
 } from '../types';
 import { Modal, Button } from '../design-system';
+import styles from './NotificationForms.module.css';
 
 interface RuleFormProps {
   rule: NotificationRule | null;
@@ -70,7 +71,7 @@ export function RuleForm({ rule, channels, onClose, onSaved }: RuleFormProps) {
       size="md"
     >
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>{t('notifications.rules.type')}</label>
           <select value={ruleType} onChange={(e) => setRuleType(e.target.value as NotificationRuleType)}>
             <option value="lowest_in_days">{t('notifications.rules.ruleTypes.lowestInDays')}</option>
@@ -79,7 +80,7 @@ export function RuleForm({ rule, channels, onClose, onSaved }: RuleFormProps) {
           </select>
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>{t('notifications.rules.channel')}</label>
           <select value={channelId} onChange={(e) => setChannelId(e.target.value)} required>
             <option value="">—</option>
@@ -90,14 +91,14 @@ export function RuleForm({ rule, channels, onClose, onSaved }: RuleFormProps) {
         </div>
 
         {ruleType === 'lowest_in_days' && (
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t('notifications.rules.days')}</label>
             <input type="number" value={days} onChange={(e) => setDays(e.target.value)} min="1" required />
           </div>
         )}
 
         {ruleType === 'below_threshold' && (
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t('notifications.rules.threshold')}</label>
             <input type="number" value={threshold} onChange={(e) => setThreshold(e.target.value)} min="0" step="0.01" required />
           </div>
@@ -105,11 +106,11 @@ export function RuleForm({ rule, channels, onClose, onSaved }: RuleFormProps) {
 
         {ruleType === 'percentage_drop' && (
           <>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.rules.percentage')}</label>
               <input type="number" value={percentage} onChange={(e) => setPercentage(e.target.value)} min="1" max="100" required />
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.rules.windowDays')}</label>
               <input type="number" value={windowDays} onChange={(e) => setWindowDays(e.target.value)} min="1" required />
             </div>
@@ -118,7 +119,7 @@ export function RuleForm({ rule, channels, onClose, onSaved }: RuleFormProps) {
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="modal-actions">
+        <div className={styles.modalActions}>
           <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>
             {t('common.cancel')}
           </Button>

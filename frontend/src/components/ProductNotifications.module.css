@@ -1,0 +1,201 @@
+.productNotifications {
+  margin-top: 2rem;
+  border-top: 1px solid var(--color-border-primary);
+  padding-top: 1.5rem;
+}
+
+.productNotificationsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.productNotificationsHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-amazon-navy);
+}
+
+.notificationsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.notificationsTable th {
+  background: var(--color-bg-secondary);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-border-primary);
+  white-space: nowrap;
+}
+
+.notificationsTable td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--color-bg-inset);
+  vertical-align: middle;
+}
+
+.notificationsTable tr:last-child td {
+  border-bottom: none;
+}
+
+.ruleTypeBadge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ruleTypeBadge.typeLowestInDays {
+  background: var(--color-success-subtle);
+  color: var(--color-success);
+}
+
+.ruleTypeBadge.typeBelowThreshold {
+  background: var(--color-warning-subtle);
+  color: var(--color-warning);
+}
+
+.ruleTypeBadge.typePercentageDrop {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+}
+
+.toggleButton {
+  background: none;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+
+.toggleButton.enabled {
+  border-color: var(--color-success);
+  color: var(--color-success);
+  background: var(--color-success-subtle);
+}
+
+.toggleButton.disabled {
+  border-color: var(--color-text-tertiary);
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-secondary);
+}
+
+.btnSmall {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.82rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
+  background: var(--color-bg-elevated);
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.btnSmall:hover {
+  background: var(--color-bg-secondary);
+}
+
+.btnSmallDanger {
+  composes: btnSmall;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.btnSmallDanger:hover {
+  background: var(--color-danger-subtle);
+}
+
+/* Inline modal for this component */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--color-bg-elevated);
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal h3 {
+  margin: 0 0 1.25rem 0;
+  font-size: 1.1rem;
+  color: var(--color-amazon-navy);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-bg-inset);
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.formGroup input,
+.formGroup select {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--color-amazon-orange);
+  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
+}
+
+.btnPrimary {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: var(--color-amazon-orange);
+  color: var(--color-text-inverse);
+  transition: background 0.15s;
+}
+
+.btnPrimary:hover {
+  background: var(--color-amazon-orange-hover);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

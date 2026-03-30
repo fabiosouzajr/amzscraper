@@ -9,6 +9,7 @@ import {
   DiscordConfig,
 } from '../types';
 import { Modal, Button } from '../design-system';
+import styles from './NotificationForms.module.css';
 
 interface ChannelFormProps {
   channel: NotificationChannel | null;
@@ -107,7 +108,7 @@ export function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
       size="md"
     >
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>{t('notifications.channels.type')}</label>
           <select
             value={channelType}
@@ -120,7 +121,7 @@ export function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
           </select>
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>{t('notifications.channels.name')}</label>
           <input
             type="text"
@@ -132,15 +133,15 @@ export function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
 
         {channelType === 'email' && (
           <>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.channels.email.smtpHost')}</label>
               <input type="text" value={smtpHost} onChange={(e) => setSmtpHost(e.target.value)} required />
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.channels.email.smtpPort')}</label>
               <input type="number" value={smtpPort} onChange={(e) => setSmtpPort(e.target.value)} required />
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>
                 <input
                   type="checkbox"
@@ -150,19 +151,19 @@ export function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
                 {' '}{t('notifications.channels.email.smtpSecure')}
               </label>
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.channels.email.smtpUser')}</label>
               <input type="text" value={smtpUser} onChange={(e) => setSmtpUser(e.target.value)} required />
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.channels.email.smtpPass')}</label>
               <input type="password" value={smtpPass} onChange={(e) => setSmtpPass(e.target.value)} required />
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.channels.email.fromAddress')}</label>
               <input type="email" value={fromAddress} onChange={(e) => setFromAddress(e.target.value)} required />
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.channels.email.toAddress')}</label>
               <input type="email" value={toAddress} onChange={(e) => setToAddress(e.target.value)} required />
             </div>
@@ -171,11 +172,11 @@ export function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
 
         {channelType === 'telegram' && (
           <>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.channels.telegram.botToken')}</label>
               <input type="text" value={botToken} onChange={(e) => setBotToken(e.target.value)} required />
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.channels.telegram.chatId')}</label>
               <input type="text" value={chatId} onChange={(e) => setChatId(e.target.value)} required />
             </div>
@@ -183,16 +184,16 @@ export function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
         )}
 
         {channelType === 'discord' && (
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t('notifications.channels.discord.webhookUrl')}</label>
             <input type="url" value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} required />
           </div>
         )}
 
         {error && <div className="error-message">{error}</div>}
-        {testResult && <div className="form-group">{testResult}</div>}
+        {testResult && <div className={styles.formGroup}>{testResult}</div>}
 
-        <div className="modal-actions">
+        <div className={styles.modalActions}>
           <button type="button" onClick={onClose} disabled={submitting}>
             {t('common.cancel')}
           </button>

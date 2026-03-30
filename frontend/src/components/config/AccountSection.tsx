@@ -82,7 +82,7 @@ export function AccountSection({ onUnsavedChangesChange }: Props) {
         </div>
       )}
       <form onSubmit={handleChangePassword} className={styles.passwordChangeForm}>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="currentPassword">{t('config.currentPassword')}</label>
           <input
             type="password"
@@ -93,7 +93,7 @@ export function AccountSection({ onUnsavedChangesChange }: Props) {
             disabled={changingPassword}
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="newPassword">{t('config.newPassword')}</label>
           <input
             type="password"
@@ -105,7 +105,7 @@ export function AccountSection({ onUnsavedChangesChange }: Props) {
             disabled={changingPassword}
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="confirmPassword">{t('config.confirmPassword')}</label>
           <input
             type="password"
