@@ -7,7 +7,8 @@
     "config": "Config",
     "admin": "Admin",
     "logout": "Logout",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "offline": "You're offline — showing cached data"
   },
   "dashboard": {
     "title": "Price Change Dashboard",

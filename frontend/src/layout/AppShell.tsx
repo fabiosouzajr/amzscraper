@@ -5,6 +5,7 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 import { useAuth } from '../contexts/AuthContext';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { BottomTabBar } from './BottomTabBar';
+import { OfflineBanner } from './OfflineBanner';
 import styles from './AppShell.module.css';
 
 const NAV_ITEMS = [
@@ -94,6 +95,7 @@ export function AppShell({ children }: AppShellProps) {
       )}
 
       <div className={styles.content}>
+        <OfflineBanner />
         {children}
       </div>
 

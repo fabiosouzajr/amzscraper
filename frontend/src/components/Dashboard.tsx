@@ -1,10 +1,11 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, lazy, Suspense, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { PriceDrop } from '../types';
-import { usePriceDrops, usePriceIncreases } from '../hooks';
+import { usePriceDrops, usePriceIncreases, usePullToRefresh } from '../hooks';
 import { formatDateTime } from '../utils/dateFormat';
+import { PullToRefreshIndicator } from './PullToRefreshIndicator';
 import styles from './Dashboard.module.css';
 
 const MiniPriceChart = lazy(() => import('./MiniPriceChart').then(m => ({ default: m.MiniPriceChart })));
@@ -114,6 +115,17 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
   const [updateStatus, setUpdateStatus] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
+  const handlePullRefresh = useCallback(async () => {
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ['priceDrops'] }),
+      qc.invalidateQueries({ queryKey: ['priceIncreases'] }),
+    ]);
+  }, [qc]);
+
+  const { progress: pullProgress, refreshing: pullRefreshing } = usePullToRefresh({
+    onRefresh: handlePullRefresh,
+  });
+
   const handleUpdatePrices = async () => {
     setUpdating(true);
     setUpdateProgress(0);
@@ -195,6 +207,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
 
   return (
     <div className={styles.dashboard}>
+      <PullToRefreshIndicator progress={pullProgress} refreshing={pullRefreshing} />
       <div className={styles.dashboardHeader}>
         <h1>{t('dashboard.title')}</h1>
         <Button

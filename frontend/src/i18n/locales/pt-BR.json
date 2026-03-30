@@ -7,7 +7,8 @@
     "config": "Configuração",
     "admin": "Admin",
     "logout": "Sair",
-    "loading": "Carregando..."
+    "loading": "Carregando...",
+    "offline": "Você está offline — exibindo dados em cache"
   },
   "dashboard": {
     "title": "Painel de Mudanças de Preço",

@@ -11,7 +11,8 @@ import { formatDate } from '../utils/dateFormat';
 import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
-import { useProducts, useAddProduct, useDeleteProduct, useLists, useMediaQuery, useSwipeGesture } from '../hooks';
+import { useProducts, useAddProduct, useDeleteProduct, useLists, useMediaQuery, useSwipeGesture, usePullToRefresh } from '../hooks';
+import { PullToRefreshIndicator } from './PullToRefreshIndicator';
 import styles from './ProductList.module.css';
 
 
@@ -90,6 +91,14 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const deleteMutation = useDeleteProduct();
   const { data: lists = [] } = useLists();
   const isMobile = useMediaQuery('(max-width: 767px)');
+
+  const handlePullRefresh = useCallback(async () => {
+    await qc.invalidateQueries({ queryKey: ['products'] });
+  }, [qc]);
+
+  const { progress: pullProgress, refreshing: pullRefreshing } = usePullToRefresh({
+    onRefresh: handlePullRefresh,
+  });
 
   useEffect(() => {
     if (initialCategoryFilter) {
@@ -303,6 +312,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
 
   return (
     <div className={styles.productList}>
+      <PullToRefreshIndicator progress={pullProgress} refreshing={pullRefreshing} />
       {/* Import button above the lists+content area */}
       <div className={styles.importSection}>
         <button
