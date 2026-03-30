@@ -257,29 +257,17 @@ Wrap `App` in `<QueryClientProvider client={queryClient}>` in `main.tsx`.
 
 ---
 
-### ⚠️ Phase 5: CSS Cleanup & Performance — PARTIALLY DONE
+### ✅ Phase 5: CSS Cleanup & Performance — DONE
 
 **Done:**
 - Code splitting via `vite.config.ts` (recharts, react-dom, i18n as separate chunks)
 - Lazy loading in `App.tsx` for `ProductsPage`, `ProductDetail`, `SettingsPage`
-- `App.css` overflow-x reduced to 1 occurrence
+- **Step 5.1**: `App.css` fully deleted (2026-03-28). Was ~4,244 lines. All styles migrated to
+  component CSS Modules and `index.css` global utilities across 7 commits on `new-frontend`.
 - **Step 5.2**: Loading skeletons — `AppLoadingSkeleton` and `PageSkeleton` replace plain `<div className="loading">` in `App.tsx`
+- **Step 5.3**: Recharts lazy-loads correctly — confirmed it only loads when chart is visible
 - **Step 5.4**: Adjustable page size — `ProductList` has 10/20/50 page size selector
-
-**Still needed:**
-
-**Step 5.1: Remove `App.css`** — `App.css` currently at ~4,200 lines. Strategy:
-1. For each migrated component, identify its rules in `App.css` and delete them
-2. After all components migrated, `App.css` should be near-empty
-3. Delete `App.css`, move any global resets to `index.css`
-
-**Step 5.3: Lazy-load Recharts** (large ~557 KB chunk loads even when chart is not visible):
-- Already split into `vendor-recharts` chunk by vite config
-- Verify it only loads when `ProductDetail` or `SystemStats` is opened
-
-**Step 5.5: Remaining overflow-x cleanup** (R1):
-- Identify the 1 remaining `overflow-x: hidden` in `App.css`
-- Fix the underlying layout issue causing it instead of hiding it
+- **Step 5.5**: Overflow-x cleanup done as part of App.css removal
 
 ---
 
