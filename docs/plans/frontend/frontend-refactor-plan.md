@@ -271,28 +271,19 @@ Wrap `App` in `<QueryClientProvider client={queryClient}>` in `main.tsx`.
 
 ---
 
-### ⚠️ Phase 6: Advanced Mobile — PARTIALLY DONE
+### ✅ Phase 6: Advanced Mobile — DONE
 
 **Done:**
-- Swipe-left on product rows reveals delete action (via `SwipeableRow` + `useSwipeGesture`)
-
-**Not started:**
-
-**Step 6.1: Pull-to-refresh** ❌
-- Products: pull down triggers product list refresh
-- Dashboard: pull down triggers price data refresh
-- Implement via `useSwipeGesture` with downward direction detection
-
-**Step 6.2: Swipe on product rows** ✅ Done — delete action revealed on swipe-left
-
-**Step 6.3: Offline awareness** ❌
-- Detect `navigator.onLine` + `online`/`offline` events
-- Show subtle "You're offline" banner when disconnected
-- TanStack Query (Phase 2) can serve cached data offline with `networkMode: 'offlineFirst'`
-
-**Step 6.4: Haptic feedback** ❌ (optional)
-- `navigator.vibrate(10)` on destructive actions (delete confirmation)
-- Guard with `'vibrate' in navigator`
+- **Step 6.1: Pull-to-refresh** ✅ (2026-03-30)
+  - `usePullToRefresh` hook with window-level touch tracking; normalised progress 0–1
+  - `PullToRefreshIndicator`: arrow rotates on pull, spins while refreshing
+  - Wired into Dashboard (invalidates priceDrops/priceIncreases) and ProductList (invalidates products)
+- **Step 6.2: Swipe on product rows** ✅ — delete action revealed on swipe-left
+- **Step 6.3: Offline awareness** ✅ (2026-03-30)
+  - `useOnlineStatus` hook reacts to `online`/`offline` browser events
+  - `OfflineBanner` slides in below sidebar, `aria-live="polite"`, i18n en+pt-BR
+  - Renders inside AppShell so it appears on every authenticated page
+- **Step 6.4: Haptic feedback** ❌ (optional/deferred)
 
 ---
 
@@ -303,8 +294,8 @@ Wrap `App` in `<QueryClientProvider client={queryClient}>` in `main.tsx`.
 | **High** | Phase 5.1: App.css cleanup | High | Component migration |
 | **Medium** | Phase 5.3: Verify Recharts lazy-load | Low | Nothing |
 | **Medium** | Phase 5.5: Fix remaining overflow-x | Low | Nothing |
-| **Low** | Phase 6.1: Pull-to-refresh | Medium | Nothing |
-| **Low** | Phase 6.3: Offline awareness banner | Low | Nothing |
+| ~~**Low**~~ | ~~Phase 6.1: Pull-to-refresh~~ | ~~Medium~~ | ✅ Done |
+| ~~**Low**~~ | ~~Phase 6.3: Offline awareness banner~~ | ~~Low~~ | ✅ Done |
 
 ---
 
