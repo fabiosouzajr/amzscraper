@@ -313,41 +313,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   return (
     <div className={styles.productList}>
       <PullToRefreshIndicator progress={pullProgress} refreshing={pullRefreshing} />
-      {/* Import button above the lists+content area */}
-      <div className={styles.importSection}>
-        <button
-          className={`${styles.importButton} ${styles.importButtonCsv}${importing ? ` ${styles.disabled}` : ''}`}
-          onClick={handleImportClick}
-          disabled={importing}
-          title={t('products.importASINs')}
-        >
-          <svg className={styles.csvIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <polyline points="10 9 9 9 8 9" />
-          </svg>
-          {importing ? t('products.importing') : t('products.importASINs')}
-        </button>
-        <input
-          ref={fileInputRef}
-          id="import-file"
-          type="file"
-          accept=".csv"
-          onChange={handleFileChange}
-          disabled={importing}
-          style={{ display: 'none' }}
-        />
-        {importResults && !importing && (
-          <div className={styles.importResults}>
-            <span className={styles.importResultItem}>{t('products.importTotal')}: {importResults.total}</span>
-            <span className={`${styles.importResultItem} ${styles.success}`}>{t('products.importSuccess')}: {importResults.success}</span>
-            <span className={`${styles.importResultItem} ${styles.skipped}`}>{t('products.importSkipped')}: {importResults.skipped}</span>
-            <span className={`${styles.importResultItem} ${styles.failed}`}>{t('products.importFailed')}: {importResults.failed}</span>
-          </div>
-        )}
-      </div>
+      <h2 className={styles.productListTitle}>{t('products.title')}</h2>
 
       <div className={styles.productListLayout}>
         {user && (
@@ -359,10 +325,43 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
           </div>
         )}
         <div className={styles.productListContent}>
-          <h2 className={styles.productListTitle}>{t('products.title')}</h2>
           <div className={styles.addProductSection}>
-            <h3>{t('products.addNew')}</h3>
+            <div className={styles.addProductHeader}>
+              <h3>{t('products.addNew')}</h3>
+              <button
+                className={`${styles.importButton} ${styles.importButtonCsv}${importing ? ` ${styles.disabled}` : ''}`}
+                onClick={handleImportClick}
+                disabled={importing}
+                title={t('products.importASINs')}
+              >
+                <svg className={styles.csvIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
+                {importing ? t('products.importing') : t('products.importASINs')}
+              </button>
+              <input
+                ref={fileInputRef}
+                id="import-file"
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                disabled={importing}
+                style={{ display: 'none' }}
+              />
+            </div>
             <ASINInput onAdd={handleAddProduct} isValidating={isValidating} error={displayError} successMessage={successMessage} />
+            {importResults && !importing && (
+              <div className={styles.importResults}>
+                <span className={styles.importResultItem}>{t('products.importTotal')}: {importResults.total}</span>
+                <span className={`${styles.importResultItem} ${styles.success}`}>{t('products.importSuccess')}: {importResults.success}</span>
+                <span className={`${styles.importResultItem} ${styles.skipped}`}>{t('products.importSkipped')}: {importResults.skipped}</span>
+                <span className={`${styles.importResultItem} ${styles.failed}`}>{t('products.importFailed')}: {importResults.failed}</span>
+              </div>
+            )}
           </div>
 
           <div className={styles.productsSection}>
@@ -404,15 +403,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                       </div>
 
                       <div className={styles.productRowSummary}>
-                        <a
-                          href={`https://www.amazon.com.br/dp/${product.asin}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`product-description product-link ${styles.productDescriptionLink}`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {product.description}
-                        </a>
                         <div className={styles.productRowMeta}>
                           <span className={styles.productRowAsinBadge}>{product.asin}</span>
                           {(product as any).current_price != null && (
@@ -441,6 +431,15 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                             </div>
                           )}
                         </div>
+                        <a
+                          href={`https://www.amazon.com.br/dp/${product.asin}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`product-description product-link ${styles.productDescriptionLink}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {product.description}
+                        </a>
                         {product.lists && product.lists.length > 0 && (
                           <div className="product-lists">
                             <span className="lists-label">{t('products.inLists')}: </span>

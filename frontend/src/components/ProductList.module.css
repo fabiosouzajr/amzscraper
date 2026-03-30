@@ -21,13 +21,6 @@
   box-sizing: border-box;
 }
 
-.import-section {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
 .add-product-section {
   background: var(--color-bg-elevated);
   padding: 1.25rem;
@@ -43,8 +36,16 @@
 
 .add-product-section h3 {
   font-size: medium;
-  margin-bottom: 1rem;
+  margin: 0;
   color: var(--color-amazon-navy);
+}
+
+.add-product-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
 
 .import-button {
@@ -76,6 +77,9 @@
   gap: 0.75rem;
   font-size: 0.75rem;
   flex-wrap: wrap;
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-primary);
 }
 
 .import-result-item {
@@ -143,8 +147,8 @@
 
 .product-list-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--color-bg-inset);
   transition: background 0.2s;
@@ -368,7 +372,7 @@
   font-size: 1.5rem;
 }
 
-/* Import button (CSV styled) above layout */
+/* Import button (CSV styled) */
 .import-button-csv {
   display: inline-flex;
   align-items: center;
@@ -408,11 +412,19 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
+  width: 100%;
+  min-width: 0;
 }
 
 .product-row-summary {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
+}
+
+.product-row-summary :global(.product-lists),
+.product-row-summary :global(.list-badge) {
+  overflow-wrap: anywhere;
 }
 
 .product-description-link {
@@ -433,8 +445,12 @@
 .product-row-actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: var(--space-2);
   flex-shrink: 0;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .btn-icon {
@@ -514,6 +530,8 @@
 .swipeable-row-content {
   transition: transform 150ms ease;
   will-change: transform;
+  width: 100%;
+  min-width: 0;
 }
 
 .swipeable-row-swiped .swipeable-row-content {
@@ -563,6 +581,17 @@
   .pagination-info {
     order: -1;
   }
+
+  .product-row-main {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .product-row-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: var(--space-1);
+  }
 }
 
 @media (max-width: 768px) {
@@ -574,12 +603,6 @@
 
   .product-list-header h2 {
     font-size: 1.5rem;
-  }
-
-  .import-section {
-    width: 100%;
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .import-button {
@@ -600,6 +623,17 @@
     padding: 1rem;
   }
 
+  .add-product-header {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .add-product-header .import-button-csv {
+    width: 100%;
+    justify-content: center;
+  }
+
   .products-section-header {
     flex-direction: column;
     align-items: flex-start;
@@ -611,6 +645,14 @@
     align-items: flex-start;
     gap: 1rem;
     padding: 1rem;
+  }
+
+  .product-row-main {
+    padding: var(--space-2);
+  }
+
+  .product-row-actions {
+    justify-content: flex-start;
   }
 
   /* Hide hover-only category pills on mobile — they're in expanded details */
@@ -654,7 +696,6 @@
 }
 
 @media print {
-  .import-section,
   .product-actions {
     display: none;
   }

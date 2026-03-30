@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  css: {
+    modules: {
+      localsConvention: 'camelCase', // allow kebab-case classes to be accessed as camelCase
+    },
+  },
   build: {
     chunkSizeWarningLimit: 600, // recharts is ~557 KB — isolated chunk, only loads on product detail
     rollupOptions: {
