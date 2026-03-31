@@ -82,6 +82,8 @@
 /* Products page wrapper */
 .products-page-search {
   position: relative;
+  width: 50%;
+  padding: 0.25rem 0;
   margin-bottom: 1rem;
 }
 
@@ -106,4 +108,17 @@
 /* Products page wrapper */
 .productsPage {
   width: 100%;
+}
+
+.products-page-title {
+  text-align: center;
+  color: var(--color-amazon-navy);
+  margin: 0 0 0.75rem;
+  font-size: 1.5rem;
+}
+
+@media (max-width: 767px) {
+  .products-page-search {
+    width: 100%;
+  }
 }

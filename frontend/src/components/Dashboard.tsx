@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense, useCallback } from 'react';
+import React, { useState, lazy, Suspense, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
@@ -93,6 +93,24 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
   const [updateProgress, setUpdateProgress] = useState(0);
   const [updateStatus, setUpdateStatus] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'date' | 'dropAmount' | 'increaseAmount'>('date');
+
+  const sortPriceChanges = useCallback(
+    (items: PriceDrop[]) => {
+      return [...items].sort((a, b) => {
+        if (sortBy === 'date') {
+          const aTime = new Date(a.last_updated).getTime() || 0;
+          const bTime = new Date(b.last_updated).getTime() || 0;
+          return bTime - aTime;
+        }
+        return b.price_drop - a.price_drop;
+      });
+    },
+    [sortBy]
+  );
+
+  const sortedDrops = useMemo(() => sortPriceChanges(drops), [drops, sortPriceChanges]);
+  const sortedIncreases = useMemo(() => sortPriceChanges(increases), [increases, sortPriceChanges]);
 
   const handlePullRefresh = useCallback(async () => {
     await Promise.all([
@@ -199,6 +217,22 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
         </Button>
       </div>
 
+      <div className={styles.sortFilterRow}>
+        <label htmlFor="dashboard-sort-select" className={styles.sortFilterLabel}>
+          {t('dashboard.sortBy')}:
+        </label>
+        <select
+          id="dashboard-sort-select"
+          className={styles.sortFilterSelect}
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as 'date' | 'dropAmount' | 'increaseAmount')}
+        >
+          <option value="date">{t('dashboard.sortDate')}</option>
+          <option value="dropAmount">{t('dashboard.sortDropAmount')}</option>
+          <option value="increaseAmount">{t('dashboard.sortIncreaseAmount')}</option>
+        </select>
+      </div>
+
       {error && <div className="error-message">{error}</div>}
 
       {updating && (
@@ -217,7 +251,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
         </Card>
       )}
 
-      {drops.length === 0 && increases.length === 0 ? (
+      {sortedDrops.length === 0 && sortedIncreases.length === 0 ? (
         <EmptyState
           title={t('dashboard.noPriceChanges')}
           description={t('dashboard.noPriceChangesHint')}
@@ -225,11 +259,11 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
         />
       ) : (
         <>
-          {drops.length > 0 && (
+          {sortedDrops.length > 0 && (
             <div className={styles.priceChangesSection}>
               <h2 className={styles.sectionTitle}>{t('dashboard.priceDrops')}</h2>
               <div className={styles.priceDropsGrid}>
-                {drops.map((drop) => (
+                {sortedDrops.map((drop) => (
                   <PriceChangeCard
                     key={drop.product.id}
                     item={drop}
@@ -241,11 +275,11 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
             </div>
           )}
 
-          {increases.length > 0 && (
+          {sortedIncreases.length > 0 && (
             <div className={styles.priceChangesSection}>
               <h2 className={styles.sectionTitle}>{t('dashboard.priceIncreases')}</h2>
               <div className={styles.priceDropsGrid}>
-                {increases.map((increase) => (
+                {sortedIncreases.map((increase) => (
                   <PriceChangeCard
                     key={increase.product.id}
                     item={increase}

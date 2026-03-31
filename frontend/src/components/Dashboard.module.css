@@ -17,6 +17,29 @@
   color: var(--color-amazon-navy);
 }
 
+.sortFilterRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.sortFilterLabel {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.sortFilterSelect {
+  min-width: 220px;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+}
+
 .progressStatus {
   font-size: 0.95rem;
   color: var(--color-text-secondary);
@@ -171,6 +194,17 @@
 
   .dashboardHeader h1 {
     font-size: 1.5rem;
+  }
+
+  .sortFilterRow {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sortFilterSelect {
+    width: 100%;
+    min-width: 0;
   }
 
   .priceDropsGrid {

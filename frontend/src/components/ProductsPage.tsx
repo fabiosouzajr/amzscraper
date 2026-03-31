@@ -138,6 +138,7 @@ export function ProductsPage() {
 
   return (
     <div className={styles.productsPage}>
+      <h2 className={styles.productsPageTitle}>{t('products.title')}</h2>
       <div className={styles.productsPageSearch}>
         <input
           type="text"

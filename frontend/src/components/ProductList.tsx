@@ -313,7 +313,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   return (
     <div className={styles.productList}>
       <PullToRefreshIndicator progress={pullProgress} refreshing={pullRefreshing} />
-      <h2 className={styles.productListTitle}>{t('products.title')}</h2>
 
       <div className={styles.productListLayout}>
         {user && (
