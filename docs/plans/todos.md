@@ -5,7 +5,9 @@
         1.1.3 - improve the "product-categories" display.
         1.1.4 - make the recharts graph datapoints(dates) standout.
 
-## 2 Adding and scraping for additional parameters:
+        1.1.5 - in the dashboard merge "price-info" and "dropHeaderContent" into a single container that contains the data from both. this should be located 
+
+## 2 fixes and scraping for additional parameters:
     2.1 let's use the item page "https://www.amazon.com.br/Air-cooler-processador-silencioso-eficiente/dp/B00IT14NVO" as an example; to check the selectors for following parameters:
     -- out of stock or unavailable indication
     -- remaining qty available (Somente 4 em estoque.)
@@ -13,7 +15,8 @@
     what i want you to do:
     examine the codebase in order to write a md file that details a step by step plan with the necessary backend, frontend and database changes necessary to implement this.
     these parameters should be incorporated and displayed into the Price Change Dashboard and 
-    2.2 fix scraper price error when item is "Este produto está disponível apenas por vendedores terceiros" 
+    2.2 fix scraper price error when item is "Este produto está disponível apenas por vendedores terceiros"
+    2.2 out of stock items or available from are getting p
 
 ## 3 Comprehensive Logging system
 implement background logging 

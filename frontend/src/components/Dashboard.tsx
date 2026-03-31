@@ -10,7 +10,7 @@ import styles from './Dashboard.module.css';
 
 const MiniPriceChart = lazy(() => import('./MiniPriceChart').then(m => ({ default: m.MiniPriceChart })));
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
-import { Card, Button, ProgressBar, Badge, EmptyState } from '../design-system';
+import { Card, Button, ProgressBar, EmptyState } from '../design-system';
 
 interface DashboardProps {
   onCategoryClick: (categoryName: string) => void;
@@ -50,27 +50,6 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
       </div>
       <div className={styles.productInfo}>
         <div className={styles.productAsin}>{item.product.asin}</div>
-        {item.product.categories && item.product.categories.length > 0 && (
-          <div className="product-categories">
-            {item.product.categories.map((cat, idx) => (
-              <span key={cat.id}>
-                <button
-                  type="button"
-                  className={styles.categoryBadgeBtn}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onCategoryClick(cat.name);
-                  }}
-                  title={t('dashboard.filterBy', { category: cat.name })}
-                >
-                  <Badge variant="info" size="sm">{cat.name}</Badge>
-                </button>
-                {idx < item.product.categories!.length - 1 && ' > '}
-              </span>
-            ))}
-          </div>
-        )}
         <a
           href={`https://www.amazon.com.br/dp/${item.product.asin}`}
           target="_blank"

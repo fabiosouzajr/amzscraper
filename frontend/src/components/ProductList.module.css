@@ -229,7 +229,7 @@
   padding: 0.5rem 0.75rem;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: var(--font-size-sm);
   transition: background 0.2s;
   white-space: nowrap;
 }
@@ -432,7 +432,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   color: var(--color-text-primary);
   text-decoration: none;
 }
