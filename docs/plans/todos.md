@@ -2,8 +2,8 @@
     1.1 - In the price change dashboard:
         1.1.1 - modify the frontend component ui "price-drop-card" in dasboard.tsx, making "drop-header" into a 2 column layout. the left column containing "price-info" and the right containing "drop-header-content". 
         1.1.2 - reduce the "drop-amount" size making it more proportional. 
-        1.1.3 - improve the "product-categories" display.
-        1.1.4 - make the recharts graph datapoints(dates) standout.
+        1.1.3 - 
+        1.1.4 - 
 
         1.1.5 - in the dashboard merge "price-info" and "dropHeaderContent" into a single container that contains the data from both. this should be located 
 

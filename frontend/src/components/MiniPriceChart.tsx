@@ -9,7 +9,7 @@ interface MiniPriceChartProps {
   height?: number;
 }
 
-export function MiniPriceChart({ priceHistory, height = 80 }: MiniPriceChartProps) {
+export function MiniPriceChart({ priceHistory, height = 100 }: MiniPriceChartProps) {
   if (!priceHistory || priceHistory.length === 0) {
     return null;
   }
@@ -30,28 +30,33 @@ export function MiniPriceChart({ priceHistory, height = 80 }: MiniPriceChartProp
   return (
     <div className={styles.miniPriceChart} style={{ height: `${height}px`, width: '100%' }}>
       <ResponsiveContainer width="100%" height={height}>
-        <LineChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-          <XAxis 
-            dataKey="date" 
-            hide
-            tick={{ fontSize: 10 }}
+        <LineChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 18 }}>
+          <XAxis
+            dataKey="date"
+            tick={{ fontSize: 8.5, fill: 'var(--color-text-tertiary)' }}
+            tickLine={false}
+            axisLine={false}
+            interval="preserveStartEnd"
+            angle={-30}
+            textAnchor="end"
+            height={22}
           />
-          <YAxis 
+          <YAxis
             hide
             domain={[minPrice - padding, maxPrice + padding]}
           />
-          <Tooltip 
+          <Tooltip
             formatter={(value: number) => formatPrice(value)}
             labelStyle={{ fontSize: '11px' }}
             contentStyle={{ fontSize: '12px', padding: '5px' }}
           />
-          <Line 
-            type="monotone" 
-            dataKey="price" 
-            stroke="#2563eb" 
+          <Line
+            type="monotone"
+            dataKey="price"
+            stroke="#2563eb"
             strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 3 }}
+            dot={{ r: 3.5, fill: '#2563eb', stroke: '#fff', strokeWidth: 1.5 }}
+            activeDot={{ r: 5, fill: '#1d4ed8', stroke: '#fff', strokeWidth: 2 }}
           />
         </LineChart>
       </ResponsiveContainer>

@@ -113,13 +113,14 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.dropHeader {
+.cardTopSection {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid var(--color-bg-inset);
+  gap: 0.75rem;
 }
 
 .dropHeaderContent {
@@ -127,6 +128,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 0.25rem;
+  flex-shrink: 0;
 }
 
 .dropPercentage {
@@ -141,20 +143,12 @@
   color: var(--color-success);
 }
 
-.increaseHeader {
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid var(--color-bg-inset);
-}
-
 .increaseHeaderContent {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 0.25rem;
+  flex-shrink: 0;
 }
 
 .increasePercentage {
@@ -172,9 +166,27 @@
 .miniChartContainer {
   margin: 0.75rem 0;
   padding: 0.5rem;
-  background: var(--color-bg-secondary);
+  background: white;
   border-radius: 6px;
   border: 1px solid var(--color-border-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.productThumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: white;
+  padding: 2px;
+}
+
+.chartWrapper {
+  flex: 1;
+  min-width: 0;
 }
 
 /* Responsive */
@@ -216,9 +228,8 @@
     padding: 1rem;
   }
 
-  .dropHeader {
-    flex-direction: column;
-    align-items: flex-start;
+  .cardTopSection {
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
 

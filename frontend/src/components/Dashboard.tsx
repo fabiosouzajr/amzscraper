@@ -25,7 +25,6 @@ interface PriceChangeCardProps {
 const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onCategoryClick }: PriceChangeCardProps) {
   const { t } = useTranslation();
   const cardClass = variant === 'drop' ? styles.priceDropCard : styles.priceIncreaseCard;
-  const headerClass = variant === 'drop' ? styles.dropHeader : styles.increaseHeader;
   const headerContentClass = variant === 'drop' ? styles.dropHeaderContent : styles.increaseHeaderContent;
   const percentageClass = variant === 'drop' ? styles.dropPercentage : styles.increasePercentage;
   const amountClass = variant === 'drop' ? styles.dropAmount : styles.increaseAmount;
@@ -38,34 +37,8 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
       onClick={() => onCategoryClick('')}
       className={cardClass}
     >
-      <div className={headerClass}>
-        <div className={headerContentClass}>
-          <div className={percentageClass}>
-            {formatPercentage(item.price_drop_percentage)}
-          </div>
-          <div className={amountClass}>
-            {formatPrice(item.price_drop)}
-          </div>
-        </div>
-      </div>
-      <div className={styles.productInfo}>
-        <div className={styles.productAsin}>{item.product.asin}</div>
-        <a
-          href={`https://www.amazon.com.br/dp/${item.product.asin}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="product-link"
-        >
-          {item.product.description}
-        </a>
-        {item.price_history && item.price_history.length > 0 && (
-          <div className={styles.miniChartContainer}>
-            <Suspense fallback={null}>
-              <MiniPriceChart priceHistory={item.price_history} />
-            </Suspense>
-          </div>
-        )}
-        <div className="price-info">
+      <div className={styles.cardTopSection}>
+        <div className="price-info" style={{ margin: 0 }}>
           <div className="price-row">
             <span className="label">{t('dashboard.previous')}:</span>
             <span className="price previous">{formatPrice(item.previous_price)}</span>
@@ -78,6 +51,40 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
             {t('dashboard.updated')}: {formatDateTime(item.last_updated)}
           </div>
         </div>
+        <div className={headerContentClass}>
+          <div className={percentageClass}>
+            {formatPercentage(item.price_drop_percentage)}
+          </div>
+          <div className={amountClass}>
+            {formatPrice(item.price_drop)}
+          </div>
+        </div>
+      </div>
+      <div className={styles.productInfo}>
+        <a
+          href={`https://www.amazon.com.br/dp/${item.product.asin}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="product-link"
+        >
+          {item.product.description}
+        </a>
+        {item.price_history && item.price_history.length > 0 && (
+          <div className={styles.miniChartContainer}>
+            {item.product.image_url && (
+              <img
+                src={item.product.image_url}
+                alt={item.product.description}
+                className={styles.productThumbnail}
+              />
+            )}
+            <div className={styles.chartWrapper}>
+              <Suspense fallback={null}>
+                <MiniPriceChart priceHistory={item.price_history} />
+              </Suspense>
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );
