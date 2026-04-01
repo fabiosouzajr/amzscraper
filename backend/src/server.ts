@@ -81,8 +81,17 @@ async function startServer() {
       }
     }
 
-    // Start scheduler for automatic daily updates
-    schedulerService.start();
+    // Start scheduler for automatic daily updates (reads config from system_config)
+    const schedulerEnabledConfig = await dbService.getConfig('scheduler_enabled');
+    const schedulerCronConfig = await dbService.getConfig('scheduler_cron');
+    const schedulerEnabled = schedulerEnabledConfig !== 'false';
+    const schedulerCron = schedulerCronConfig || '0 0 * * *';
+
+    if (schedulerEnabled) {
+      schedulerService.start(schedulerCron);
+    } else {
+      console.log('System scheduler is disabled via system_config');
+    }
   });
 
   // Handle server errors
