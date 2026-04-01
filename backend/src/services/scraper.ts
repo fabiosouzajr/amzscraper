@@ -792,16 +792,18 @@ export class ScraperService {
       return productPageMin;
     }
 
-    // Fallback: navigate to offer listing page
+    // Fallback: navigate to offer listing page using a fresh page so the
+    // caller's page object stays on the product URL for categories extraction.
     console.log(`No offers on product page, checking /gp/offer-listing/${asin}...`);
+    const offerPage = await this.context!.newPage();
     try {
-      await page.goto(`https://www.amazon.com.br/gp/offer-listing/${asin}?f=new`, {
+      await offerPage.goto(`https://www.amazon.com.br/gp/offer-listing/${asin}?f=new`, {
         waitUntil: 'domcontentloaded',
         timeout: 30000
       });
-      await page.waitForTimeout(2000);
+      await offerPage.waitForTimeout(2000);
 
-      const offerListingMin = await page.evaluate(() => {
+      const offerListingMin = await offerPage.evaluate(() => {
         const parseBRPrice = (text: string): number | null => {
           const match = text.match(/R\$\s*([\d.,]+)/);
           if (!match) return null;
@@ -843,6 +845,8 @@ export class ScraperService {
     } catch (e) {
       console.log(`⚠ Error accessing offer listing for ${asin}: ${e}`);
       return null;
+    } finally {
+      await offerPage.close();
     }
   }
 
