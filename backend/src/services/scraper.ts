@@ -224,7 +224,7 @@ export class ScraperService {
         }
 
         return { available: true };
-      });
+      }) as { available: boolean; marketplaceOnly?: boolean; reason?: string };
 
       if (!availabilityCheck.available) {
         console.log(`⚠ Product is unavailable: ${availabilityCheck.reason}`);
@@ -249,7 +249,7 @@ export class ScraperService {
       let priceMethod: string = '';
 
       // Marketplace-only branch: extract cheapest offer + shipping instead of direct price
-      if ((availabilityCheck as any).marketplaceOnly) {
+      if (availabilityCheck.marketplaceOnly) {
         console.log('📦 Marketplace-only product — extracting cheapest offer (item + frete)...');
         price = await this.extractMarketplacePrice(page, asin);
         if (price === null) {
@@ -840,6 +840,8 @@ export class ScraperService {
 
       if (offerListingMin !== null) {
         console.log(`✓ Found marketplace price on offer listing: R$ ${offerListingMin.toFixed(2)}`);
+      } else {
+        console.log(`⚠ Offer listing page loaded but no offers matched selectors for ${asin}`);
       }
       return offerListingMin;
     } catch (e) {
