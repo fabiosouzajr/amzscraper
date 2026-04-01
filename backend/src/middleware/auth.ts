@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { dbService } from '../services/database';
 import { User } from '../models/types';
 import { config } from '../config';
@@ -21,8 +21,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     const token = authHeader.substring(7);
 
     try {
-      const cfg = config as any;
-      const decoded = jwt.verify(token, cfg.jwtSecret) as { userId: number; username: string; role?: string };
+      const decoded = jwt.verify(token, config.jwtSecret as jwt.Secret) as { userId: number; username: string; role?: string };
       const user = await dbService.getUserById(decoded.userId);
 
       if (!user) {
@@ -49,11 +48,11 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 };
 
 export const generateToken = (user: User): string => {
-  const cfg = config as any;
+  const options: SignOptions = { expiresIn: config.jwtExpiresIn as any };
   return jwt.sign(
     { userId: user.id, username: user.username, role: user.role },
-    cfg.jwtSecret,
-    { expiresIn: cfg.jwtExpiresIn }
+    config.jwtSecret as jwt.Secret,
+    options
   );
 };
 
@@ -71,8 +70,7 @@ export const optionalAuthenticate = async (req: AuthRequest, res: Response, next
     const token = authHeader.substring(7);
 
     try {
-      const cfg = config as any;
-      const decoded = jwt.verify(token, cfg.jwtSecret) as { userId: number; username: string; role?: string };
+      const decoded = jwt.verify(token, config.jwtSecret as jwt.Secret) as { userId: number; username: string; role?: string };
       const user = await dbService.getUserById(decoded.userId);
 
       // Only set user if they exist and are not disabled
