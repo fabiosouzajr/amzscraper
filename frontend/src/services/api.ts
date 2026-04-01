@@ -81,6 +81,26 @@ export const api = {
     }
   },
 
+  // Setup
+  async getSetupStatus(): Promise<{ needsSetup: boolean; registrationEnabled: boolean }> {
+    const response = await fetch(`${API_BASE_URL}/setup/status`);
+    if (!response.ok) throw new Error('Failed to check setup status');
+    return response.json();
+  },
+
+  async setupAdmin(username: string, password: string): Promise<{ user: User; token: string }> {
+    const response = await fetch(`${API_BASE_URL}/setup/admin`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Setup failed');
+    }
+    return response.json();
+  },
+
   async getCurrentUser(): Promise<User> {
     const response = await fetch(`${API_BASE_URL}/auth/me`, {
       headers: getAuthHeaders(),
