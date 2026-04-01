@@ -346,6 +346,7 @@ async function initializeSystemConfig(db: sqlite3.Database): Promise<void> {
     { key: 'quota_max_notification_rules', value: '20', description: 'Max notification rules per user' },
     { key: 'scheduler_enabled', value: 'true', description: 'Enable automatic price updates' },
     { key: 'scheduler_cron', value: '0 0 * * *', description: 'Cron schedule for price updates' },
+    { key: 'registration_enabled', value: 'true', description: 'Allow new user self-registration' },
   ];
   for (const { key, value, description } of defaults) {
     await dbRun(
