@@ -195,6 +195,10 @@ export class ScraperService {
               };
             }
           }
+          // Check for marketplace-only (sold exclusively by third-party sellers)
+          if (/apenas (por|de) vendedores terceiros/i.test(availText)) {
+            return { available: true, marketplaceOnly: true };
+          }
           // #availability element found and no unavailable pattern matched → available
           return { available: true };
         }
