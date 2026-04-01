@@ -7,8 +7,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 mkdir -p "$SCRIPT_DIR/logs"
 
 # Prompt for backend port
-read -p "Enter backend port (default: 3030): " BACKEND_PORT
-BACKEND_PORT=${BACKEND_PORT:-3030}
+read -p "Enter backend port (default: 3000): " BACKEND_PORT
+BACKEND_PORT=${BACKEND_PORT:-3000}
 
 # Prompt for frontend port
 read -p "Enter frontend port (default: 5174): " FRONTEND_PORT
@@ -23,12 +23,6 @@ fi
 if ! [[ "$FRONTEND_PORT" =~ ^[0-9]+$ ]] || [ "$FRONTEND_PORT" -lt 1 ] || [ "$FRONTEND_PORT" -gt 65535 ]; then
   echo "Error: Frontend port must be a number between 1 and 65535"
   exit 1
-fi
-
-# Warn if backend port differs from default (vite proxy might need updating)
-if [ "$BACKEND_PORT" != "3000" ]; then
-  echo "Warning: Backend port is set to $BACKEND_PORT (default: 3000)"
-  echo "Note: If the frontend proxy doesn't work, update the proxy target in frontend/vite.config.ts"
 fi
 
 # Function to start a process in the background with nohup
@@ -48,8 +42,8 @@ start_process() {
 # Start backend with custom port
 start_process "backend" "backend" "PORT=$BACKEND_PORT npm run dev"
 
-# Start frontend with custom port
-start_process "frontend" "frontend" "npm run dev -- --port $FRONTEND_PORT"
+# Start frontend with custom port and proxy target pointing to actual backend port
+start_process "frontend" "frontend" "VITE_API_TARGET=http://localhost:$BACKEND_PORT npm run dev -- --port $FRONTEND_PORT"
 
 # Get Tailscale information if available
 TAILSCALE_IP=$(tailscale ip -4 2>/dev/null || echo "")
