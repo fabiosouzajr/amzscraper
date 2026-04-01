@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Dashboard } from './components/Dashboard';
 import { Auth } from './components/Auth';
+import SetupWizard from './components/SetupWizard';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ImportProvider, useImport } from './contexts/ImportContext';
 import { X } from 'lucide-react';
@@ -144,14 +145,18 @@ function ProductDetailWithNavigation() {
 
 function AppContent() {
   const { t } = useTranslation();
-  const { user, loading } = useAuth();
+  const { user, loading, needsSetup, registrationEnabled, completeSetup } = useAuth();
 
   if (loading) {
     return <AppLoadingSkeleton />;
   }
 
+  if (needsSetup) {
+    return <SetupWizard onSetupComplete={completeSetup} />;
+  }
+
   if (!user) {
-    return <Auth />;
+    return <Auth registrationEnabled={registrationEnabled} />;
   }
 
   return (
