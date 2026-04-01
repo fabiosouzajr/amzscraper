@@ -170,6 +170,17 @@
     "switchToRegister": "Don't have an account? Register",
     "switchToLogin": "Already have an account? Login"
   },
+  "setup": {
+    "title": "Welcome",
+    "subtitle": "Create your administrator account to get started. This account will have full control over the system.",
+    "username": "Admin username",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "Passwords do not match",
+    "createAdmin": "Create Admin Account",
+    "creating": "Creating account...",
+    "failed": "Failed to create admin account"
+  },
   "lists": {
     "title": "My Lists",
     "create": "Create List",

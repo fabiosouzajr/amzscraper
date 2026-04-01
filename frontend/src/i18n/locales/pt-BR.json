@@ -170,6 +170,17 @@
     "switchToRegister": "Não tem uma conta? Registrar",
     "switchToLogin": "Já tem uma conta? Entrar"
   },
+  "setup": {
+    "title": "Bem-vindo",
+    "subtitle": "Crie sua conta de administrador para começar. Esta conta terá controle total sobre o sistema.",
+    "username": "Nome de usuário admin",
+    "password": "Senha",
+    "confirmPassword": "Confirmar senha",
+    "passwordMismatch": "As senhas não coincidem",
+    "createAdmin": "Criar Conta Admin",
+    "creating": "Criando conta...",
+    "failed": "Falha ao criar conta admin"
+  },
   "lists": {
     "title": "Minhas Listas",
     "create": "Criar Lista",
