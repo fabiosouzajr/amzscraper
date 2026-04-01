@@ -1,8 +1,7 @@
-// Load .env before anything else
-import 'dotenv/config';
-
 // Import logger first to add timestamps to all console output
 import './utils/logger';
+// Import config (which loads .env)
+import { config } from './config';
 
 import express from 'express';
 import cors from 'cors';
@@ -54,8 +53,8 @@ async function startServer() {
     process.exit(1);
   }
 
-  // Start server - listen on all interfaces (0.0.0.0) to allow Tailscale access
-  const server = app.listen(PORT, '0.0.0.0', async () => {
+  // Start server - listen on configured bind address to allow Tailscale access
+  const server = app.listen(PORT, config.bindAddress, async () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Server accessible on all interfaces (including Tailscale)`);
 
@@ -63,8 +62,7 @@ async function startServer() {
     await dbService.ready;
 
     // Ensure initial admin exists (must run after DB is ready)
-    const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME;
-    const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
+    const { initialAdminUsername, initialAdminPassword } = config;
 
     if (initialAdminUsername && initialAdminPassword) {
       try {
