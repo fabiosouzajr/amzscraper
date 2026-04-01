@@ -16,6 +16,12 @@ router.options('*', (req: Request, res: Response) => {
 // POST /api/auth/register - Create new user account
 router.post('/register', async (req: Request, res: Response) => {
   try {
+    // Check if registration is enabled
+    const registrationEnabled = await dbService.getConfig('registration_enabled');
+    if (registrationEnabled === 'false') {
+      return res.status(403).json({ error: 'Registration is currently disabled. Contact an administrator.' });
+    }
+
     const { username, password } = req.body;
 
     if (!username || !password) {
