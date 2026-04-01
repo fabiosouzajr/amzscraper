@@ -51,7 +51,7 @@ export class DatabaseService {
         Object.assign(this, createUserRepo(db));
         Object.assign(this, createListRepo(db, getConfig));
         Object.assign(this, adminRepo);
-        Object.assign(this, createNotificationRepo(db));
+        Object.assign(this, createNotificationRepo(db, getConfig));
 
         this.resolveReady();
       } catch (migrationErr) {
