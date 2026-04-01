@@ -13,6 +13,7 @@ import authRouter from './routes/auth';
 import listsRouter from './routes/lists';
 import adminRouter from './routes/admin';
 import notificationsRouter from './routes/notifications';
+import setupRouter from './routes/setup';
 import { schedulerService } from './services/scheduler';
 import { getAvailablePort } from './utils/portManager';
 import { dbService } from './services/database';
@@ -30,6 +31,7 @@ async function startServer() {
   app.use(express.json());
 
   // Routes
+  app.use('/api/setup', setupRouter);
   app.use('/api/auth', authRouter);
   app.use('/api/lists', listsRouter);
   app.use('/api/products', productsRouter);
