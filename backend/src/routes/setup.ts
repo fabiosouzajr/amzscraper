@@ -13,7 +13,7 @@ const setupLimiter = rateLimit({
 });
 
 // GET /api/setup/status - Check if initial setup is needed
-router.get('/status', async (req: Request, res: Response) => {
+router.get('/status', setupLimiter, async (req: Request, res: Response) => {
   try {
     const stats = await dbService.getSystemStats();
     const totalAdmins = stats.total_admins ?? 0;
@@ -56,19 +56,10 @@ router.post('/admin', setupLimiter, async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
-    // Check if username is taken (edge case: a USER with this name already exists)
+    // If username is taken, return 409 instead of promoting
     const existing = await dbService.getUserByUsername(username);
     if (existing) {
-      // Promote existing user to admin
-      await dbService.setUserRole(existing.id, 'ADMIN');
-      const promotedUser = { ...existing, role: 'ADMIN' as const };
-      const token = generateToken(promotedUser);
-      await dbService.logAudit(existing.id, 'SETUP_ADMIN', 'user', existing.id,
-        'Existing user promoted to admin via setup wizard');
-      return res.status(200).json({
-        user: { id: existing.id, username: existing.username, role: 'ADMIN' },
-        token,
-      });
+      return res.status(409).json({ error: 'Username is already taken. Choose a different username.' });
     }
 
     // Create new admin user

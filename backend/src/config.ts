@@ -50,6 +50,13 @@ function loadConfig(): AppConfig {
     process.exit(1);
   }
 
+  // bcryptRounds validation
+  const bcryptRounds = parseInt(process.env.BCRYPT_ROUNDS || '10', 10);
+  if (isNaN(bcryptRounds) || bcryptRounds < 4 || bcryptRounds > 31) {
+    console.error(`FATAL: Invalid BCRYPT_ROUNDS value: "${process.env.BCRYPT_ROUNDS}". Must be 4-31.`);
+    process.exit(1);
+  }
+
   // Database path: configurable via DB_PATH, default relative to project root
   const dbPath = process.env.DB_PATH || path.resolve(__dirname, '../../database/products.db');
 
@@ -59,7 +66,7 @@ function loadConfig(): AppConfig {
     bindAddress: process.env.BIND_ADDRESS || '0.0.0.0',
     jwtSecret,
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-    bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS || '10', 10),
+    bcryptRounds,
     dbPath,
     initialAdminUsername: process.env.INITIAL_ADMIN_USERNAME || null,
     initialAdminPassword: process.env.INITIAL_ADMIN_PASSWORD || null,

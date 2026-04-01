@@ -81,11 +81,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const completeSetup = async (newToken: string) => {
-    localStorage.setItem('authToken', newToken);
-    setToken(newToken);
-    const userData = await api.getCurrentUser();
-    setUser(userData);
-    setNeedsSetup(false);
+    try {
+      localStorage.setItem('authToken', newToken);
+      setToken(newToken);
+      const userData = await api.getCurrentUser();
+      setUser(userData);
+      setNeedsSetup(false);
+    } catch (error) {
+      // If user fetch fails, clear partial state so the app doesn't get stuck
+      localStorage.removeItem('authToken');
+      setToken(null);
+      throw error; // Re-throw so SetupWizard can show an error
+    }
   };
 
   return (
