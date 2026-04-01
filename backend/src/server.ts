@@ -30,6 +30,15 @@ async function startServer() {
   }));
   app.use(express.json());
 
+  // Readiness gate — block requests until DB migrations finish
+  let dbReady = false;
+  app.use((req, res, next) => {
+    if (!dbReady && req.path !== '/health') {
+      return res.status(503).json({ error: 'Server is starting up. Please retry shortly.' });
+    }
+    next();
+  });
+
   // Routes
   app.use('/api/setup', setupRouter);
   app.use('/api/auth', authRouter);
@@ -43,7 +52,7 @@ async function startServer() {
 
   // Health check
   app.get('/health', (req, res) => {
-    res.json({ status: 'ok' });
+    res.json({ status: dbReady ? 'ok' : 'starting' });
   });
 
   // Get available port with failover support
@@ -62,6 +71,7 @@ async function startServer() {
 
     // Wait for DB tables/migrations to finish before starting the scheduler
     await dbService.ready;
+    dbReady = true;
 
     // Ensure initial admin exists (must run after DB is ready)
     const { initialAdminUsername, initialAdminPassword } = config;
