@@ -262,14 +262,34 @@ export class ScraperService {
             // @ts-ignore - browser context
             const priceToPay = document.querySelector('.a-price.priceToPay');
             if (!priceToPay) return null;
-            
-            // Strategy: Look for all price elements in the priceToPay container and find the most prominent one
-            // When there's a Pix discount, Amazon often shows multiple prices, and we want the displayed one
-            
-            // First, collect all price elements within priceToPay
+
+            // Returns true if the element is inside a Pix-discount price container.
+            // Amazon wraps Pix prices in ancestors with class /pix/i or /pns/i, or
+            // sibling/parent text nodes containing the word "Pix".
+            function isPixPrice(el: any): boolean {
+              let node: any = el;
+              let depth = 0;
+              while (node && depth < 10) {
+                const cls: string = node.className || '';
+                if (/pix/i.test(cls) || /pns/i.test(cls)) return true;
+                // Check immediate previous sibling label (e.g. "No Pix")
+                const sibText: string = node.previousElementSibling?.textContent ?? '';
+                if (/pix/i.test(sibText)) return true;
+                // Check parent's own text nodes (label inside same container)
+                const parentOwn: string = Array.from((node.parentElement?.childNodes as any) ?? [])
+                  .filter((n: any) => n.nodeType === 3)
+                  .map((n: any) => n.textContent ?? '')
+                  .join('');
+                if (/pix/i.test(parentOwn)) return true;
+                node = node.parentElement;
+                depth++;
+              }
+              return false;
+            }
+
             // @ts-ignore
             const allPriceElements: any[] = [];
-            
+
             // Get all .a-offscreen prices within priceToPay
             // @ts-ignore
             const offscreenPrices = priceToPay.querySelectorAll('.a-offscreen');
@@ -280,17 +300,16 @@ export class ScraperService {
                 // @ts-ignore
                 const match = text.match(/R\$\s*([\d.,]+)/);
                 if (match) {
-                  // Check if this is the visible/active price (not a crossed-out old price)
                   // @ts-ignore
                   const parent = el.parentElement;
                   // @ts-ignore
-                  const isStrikethrough = parent?.classList.contains('a-text-price') || 
+                  const isStrikethrough = parent?.classList.contains('a-text-price') ||
                                           // @ts-ignore
                                           parent?.querySelector('.a-text-strike') !== null;
                   // @ts-ignore
                   const isVisible = parent?.offsetParent !== null;
-                  
-                  if (isVisible && !isStrikethrough) {
+
+                  if (isVisible && !isStrikethrough && !isPixPrice(el)) {
                     allPriceElements.push({
                       text: match[1],
                       source: 'offscreen',
@@ -303,13 +322,13 @@ export class ScraperService {
                 }
               }
             });
-            
+
             // Also get visible whole/fraction prices
             // @ts-ignore
             const wholeEl = priceToPay.querySelector('span.a-price-whole');
             // @ts-ignore
             const fractionEl = priceToPay.querySelector('span.a-price-fraction');
-            
+
             if (wholeEl) {
               // @ts-ignore
               const wholeText = wholeEl.textContent?.trim();
@@ -320,11 +339,11 @@ export class ScraperService {
               // @ts-ignore
               const parent = wholeEl.closest('.a-price');
               // @ts-ignore
-              const isStrikethrough = parent?.classList.contains('a-text-price') || 
+              const isStrikethrough = parent?.classList.contains('a-text-price') ||
                                        // @ts-ignore
                                        parent?.querySelector('.a-text-strike') !== null;
-              
-              if (wholeText && isVisible && !isStrikethrough) {
+
+              if (wholeText && isVisible && !isStrikethrough && !isPixPrice(wholeEl)) {
                 allPriceElements.push({
                   whole: wholeText,
                   fraction: fractionText || '',
@@ -336,20 +355,16 @@ export class ScraperService {
                 });
               }
             }
-            
-            // If we found multiple prices, prioritize the one with larger font size (most prominent)
+
             if (allPriceElements.length > 0) {
-              // Sort by font size (larger = more prominent)
               allPriceElements.sort((a, b) => {
                 const sizeA = parseFloat(a.fontSize) || 0;
                 const sizeB = parseFloat(b.fontSize) || 0;
-                return sizeB - sizeA; // Descending order
+                return sizeB - sizeA;
               });
-              
-              // Return the most prominent price
               return allPriceElements[0];
             }
-            
+
             return null;
           });
           
