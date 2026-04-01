@@ -2,17 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { dbService } from '../services/database';
 import { User } from '../models/types';
-
-// Import config lazily to avoid type issues
-let configCache: any = null;
-
-function getConfig() {
-  if (!configCache) {
-    // eslint-disable-next-line global-require
-    configCache = require('../config').config;
-  }
-  return configCache;
-}
+import { config } from '../config';
 
 export interface AuthRequest extends Request {
   userId?: number;
@@ -21,7 +11,6 @@ export interface AuthRequest extends Request {
 
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const config = getConfig();
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -32,7 +21,8 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     const token = authHeader.substring(7);
 
     try {
-      const decoded = jwt.verify(token, config.jwtSecret) as { userId: number; username: string; role?: string };
+      const cfg = config as any;
+      const decoded = jwt.verify(token, cfg.jwtSecret) as { userId: number; username: string; role?: string };
       const user = await dbService.getUserById(decoded.userId);
 
       if (!user) {
@@ -59,18 +49,17 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 };
 
 export const generateToken = (user: User): string => {
-  const config = getConfig();
+  const cfg = config as any;
   return jwt.sign(
     { userId: user.id, username: user.username, role: user.role },
-    config.jwtSecret,
-    { expiresIn: config.jwtExpiresIn }
+    cfg.jwtSecret,
+    { expiresIn: cfg.jwtExpiresIn }
   );
 };
 
 // Optional authentication - doesn't fail if no token, but sets user if token is valid
 export const optionalAuthenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const config = getConfig();
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -82,7 +71,8 @@ export const optionalAuthenticate = async (req: AuthRequest, res: Response, next
     const token = authHeader.substring(7);
 
     try {
-      const decoded = jwt.verify(token, config.jwtSecret) as { userId: number; username: string; role?: string };
+      const cfg = config as any;
+      const decoded = jwt.verify(token, cfg.jwtSecret) as { userId: number; username: string; role?: string };
       const user = await dbService.getUserById(decoded.userId);
 
       // Only set user if they exist and are not disabled
