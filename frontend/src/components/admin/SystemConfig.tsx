@@ -76,7 +76,8 @@ export function SystemConfig() {
       'quota_max_products': t('admin.config.quotaMaxProducts'),
       'quota_max_lists': t('admin.config.quotaMaxLists'),
       'scheduler_enabled': t('admin.config.schedulerEnabled'),
-      'scheduler_cron': t('admin.config.schedulerCron')
+      'scheduler_cron': t('admin.config.schedulerCron'),
+      'registration_enabled': t('admin.config.registrationEnabled')
     };
     return labels[key] || key;
   };

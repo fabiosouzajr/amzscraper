@@ -226,6 +226,8 @@
       "quotaMaxLists": "Máximo de Listas por Usuário",
       "schedulerEnabled": "Agendador Ativado",
       "schedulerCron": "Expressão Cron do Agendador",
+      "registrationEnabled": "Permitir Registro de Novos Usuários",
+      "registrationEnabledDescription": "Quando desativado, apenas administradores podem criar novas contas.",
       "edit": "Editar",
       "loading": "Carregando...",
       "noConfigFound": "Nenhuma configuração encontrada",

@@ -226,6 +226,8 @@
       "quotaMaxLists": "Max Lists per User",
       "schedulerEnabled": "Scheduler Enabled",
       "schedulerCron": "Scheduler Cron Expression",
+      "registrationEnabled": "Allow New User Registration",
+      "registrationEnabledDescription": "When disabled, only administrators can create new user accounts.",
       "edit": "Edit",
       "loading": "Loading...",
       "noConfigFound": "No configuration found",
