@@ -247,7 +247,30 @@ export class ScraperService {
       // Try multiple selectors as Amazon can have different price formats
       let price: number | null = null;
       let priceMethod: string = '';
-      try {
+
+      // Marketplace-only branch: extract cheapest offer + shipping instead of direct price
+      if ((availabilityCheck as any).marketplaceOnly) {
+        console.log('📦 Marketplace-only product — extracting cheapest offer (item + frete)...');
+        price = await this.extractMarketplacePrice(page, asin);
+        if (price === null) {
+          console.log('⚠ No marketplace offers found, marking as unavailable');
+          await page.close();
+          return {
+            asin,
+            description,
+            price: null,
+            available: false,
+            unavailableReason: 'Apenas vendedores terceiros - sem ofertas disponíveis',
+            imageUrl,
+            categories: []
+          };
+        }
+        console.log(`✓ Marketplace price (item + frete): R$ ${price.toFixed(2)}`);
+        priceMethod = 'marketplace-offer-listing';
+      }
+
+      if (!priceMethod) {
+        try {
         console.log('Extracting price...');
         
         // Wait for visible price elements - try main price container first
@@ -589,6 +612,7 @@ export class ScraperService {
         console.error(`✗ Error extracting price for ASIN ${asin}:`, error);
         throw new Error('Price not found or invalid format');
       }
+      } // end if (!priceMethod)
 
       // Extract categories from breadcrumbs
       let categories: string[] = [];
@@ -711,6 +735,114 @@ export class ScraperService {
       }
       
       throw error;
+    }
+  }
+
+  private async extractMarketplacePrice(page: Page, asin: string): Promise<number | null> {
+    // Try extracting offers from the current product page (buybox area)
+    const productPageMin = await page.evaluate(() => {
+      const parseBRPrice = (text: string): number | null => {
+        const match = text.match(/R\$\s*([\d.,]+)/);
+        if (!match) return null;
+        const str = match[1].replace(/\./g, '').replace(',', '.');
+        const val = parseFloat(str);
+        return isNaN(val) ? null : val;
+      };
+
+      // @ts-ignore
+      const extractShipping = (container: Element): number => {
+        const text = container.textContent || '';
+        if (/frete\s+gr[aá]tis/i.test(text)) return 0;
+        const m = text.match(/frete[:\s+]*R\$\s*([\d.,]+)/i) ||
+                  text.match(/\+\s*R\$\s*([\d.,]+)[^R]*frete/i);
+        if (m) {
+          const str = m[1].replace(/\./g, '').replace(',', '.');
+          return parseFloat(str) || 0;
+        }
+        return 0; // absent shipping text → treat as free
+      };
+
+      const totals: number[] = [];
+      // @ts-ignore
+      const containers = [
+        // @ts-ignore
+        document.querySelector('#moreBuyingChoices_feature_div'),
+        // @ts-ignore
+        document.querySelector('#buyBoxAccordion'),
+        // @ts-ignore
+        document.querySelector('#buybox-see-all-buying-choices'),
+      // @ts-ignore
+      ].filter(Boolean) as Element[];
+
+      for (const container of containers) {
+        // @ts-ignore
+        container.querySelectorAll('.a-price .a-offscreen').forEach((el: Element) => {
+          const itemPrice = parseBRPrice(el.textContent || '');
+          if (itemPrice === null) return;
+          const offerRow = el.closest('.a-box, .a-row, [class*="offer"], [class*="buying"]') || container;
+          totals.push(itemPrice + extractShipping(offerRow));
+        });
+      }
+
+      return totals.length > 0 ? Math.min(...totals) : null;
+    });
+
+    if (productPageMin !== null) {
+      console.log(`✓ Found marketplace price on product page: R$ ${productPageMin.toFixed(2)}`);
+      return productPageMin;
+    }
+
+    // Fallback: navigate to offer listing page
+    console.log(`No offers on product page, checking /gp/offer-listing/${asin}...`);
+    try {
+      await page.goto(`https://www.amazon.com.br/gp/offer-listing/${asin}?f=new`, {
+        waitUntil: 'domcontentloaded',
+        timeout: 30000
+      });
+      await page.waitForTimeout(2000);
+
+      const offerListingMin = await page.evaluate(() => {
+        const parseBRPrice = (text: string): number | null => {
+          const match = text.match(/R\$\s*([\d.,]+)/);
+          if (!match) return null;
+          const str = match[1].replace(/\./g, '').replace(',', '.');
+          const val = parseFloat(str);
+          return isNaN(val) ? null : val;
+        };
+
+        const totals: number[] = [];
+        // @ts-ignore
+        const offers = document.querySelectorAll('.olpOffer, [class*="offer-listing__offer"]');
+        // @ts-ignore
+        offers.forEach((offer: Element) => {
+          // @ts-ignore
+          const priceEl = offer.querySelector('.a-price .a-offscreen, .olpOfferPrice');
+          const itemPrice = parseBRPrice(priceEl?.textContent || '');
+          if (itemPrice === null) return;
+
+          // @ts-ignore
+          const shippingText = (offer.querySelector('.olpShippingPrice, .a-color-secondary')?.textContent || offer.textContent || '');
+          let shipping = 0;
+          if (!/frete\s+gr[aá]tis/i.test(shippingText)) {
+            const m = shippingText.match(/R\$\s*([\d.,]+)/);
+            if (m) {
+              const str = m[1].replace(/\./g, '').replace(',', '.');
+              shipping = parseFloat(str) || 0;
+            }
+          }
+          totals.push(itemPrice + shipping);
+        });
+
+        return totals.length > 0 ? Math.min(...totals) : null;
+      });
+
+      if (offerListingMin !== null) {
+        console.log(`✓ Found marketplace price on offer listing: R$ ${offerListingMin.toFixed(2)}`);
+      }
+      return offerListingMin;
+    } catch (e) {
+      console.log(`⚠ Error accessing offer listing for ${asin}: ${e}`);
+      return null;
     }
   }
 
