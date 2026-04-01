@@ -271,6 +271,9 @@ export class ScraperService {
               let depth = 0;
               while (node && depth < 10) {
                 const cls: string = node.className || '';
+                // /pns/i matches Amazon's "reinventPricePnSWrapper" class — the Price-and-Savings
+                // widget that wraps Pix discount prices. Safe to use here because isPixPrice()
+                // is only ever called on elements inside .a-price.priceToPay.
                 if (/pix/i.test(cls) || /pns/i.test(cls)) return true;
                 // Check immediate previous sibling label (e.g. "No Pix")
                 const sibText: string = node.previousElementSibling?.textContent ?? '';
