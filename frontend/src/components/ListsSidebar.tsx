@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import { UserList } from '../types';
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import { LISTS_KEY } from '../hooks/useLists';
 import styles from './ListsSidebar.module.css';
 
 interface ListsSidebarProps {
@@ -18,6 +20,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange, navMod
   const { t } = useTranslation();
   const { user } = useAuth();
   const isMobile = useMediaQuery('(max-width: 767px)');
+  const qc = useQueryClient();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [lists, setLists] = useState<UserList[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,7 +63,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange, navMod
       setLists([...lists, newList]);
       setNewListName('');
       setShowCreateForm(false);
-      // Notify parent component that lists have changed
+      qc.invalidateQueries({ queryKey: LISTS_KEY });
       onListChange?.();
     } catch (err: any) {
       setError(err.message || 'Failed to create list');
@@ -78,9 +81,9 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange, navMod
       await api.deleteList(listId);
       setLists(lists.filter(list => list.id !== listId));
       if (selectedListId === listId && onListClick) {
-        onListClick(null); // Clear selection
+        onListClick(null);
       }
-      // Notify parent component that lists have changed
+      qc.invalidateQueries({ queryKey: LISTS_KEY });
       onListChange?.();
     } catch (err: any) {
       setError(err.message || 'Failed to delete list');
@@ -107,7 +110,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange, navMod
       setLists(lists.map(list => list.id === listId ? updated : list));
       setEditingListId(null);
       setEditingName('');
-      // Notify parent component that lists have changed
+      qc.invalidateQueries({ queryKey: LISTS_KEY });
       onListChange?.();
     } catch (err: any) {
       setError(err.message || 'Failed to update list');

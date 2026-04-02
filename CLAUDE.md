@@ -105,7 +105,7 @@ No frontend env vars — Vite proxies `/api` to the backend.
 - **SQLite** — single file DB at `database/products.db`, auto-created with migrations on startup
 - **Playwright Firefox** — scrapes Amazon.com.br with Chrome user-agent, Portuguese pattern matching
 - **SSE streaming** — price updates and ASIN imports stream progress via Server-Sent Events
-- **View state, not URL routing** — frontend uses `currentView` state in App.tsx, not React Router
+- **React Router v6** — frontend uses `<Routes>/<Route>` in `App.tsx` with `BrowserRouter` in `main.tsx`. Routes: `/`, `/products`, `/products/:id`, `/settings/*`
 - **Tailscale-first networking** — both servers bind `0.0.0.0`, Vite allows `*.ts.net` hosts
 
 ## Code Style
@@ -120,4 +120,4 @@ No frontend env vars — Vite proxies `/api` to the backend.
 - Backend `tsconfig.json` includes `test/**/*` but `rootDir` is `src/` — `tsc` errors on test files (pre-existing)
 - Database migrations run on every startup; they handle schema evolution via table recreation
 - Price field is nullable (unavailable products have `price: null` + `unavailable_reason`)
-- Frontend `App.css` is a single ~56KB monolithic stylesheet
+- Frontend `index.css` is a ~550-line global stylesheet; component styles live in `*.module.css` files alongside each component
