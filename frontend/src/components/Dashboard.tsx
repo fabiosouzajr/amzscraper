@@ -22,13 +22,69 @@ interface PriceChangeCardProps {
   onCategoryClick: (categoryName: string) => void;
 }
 
+type LowestPriceBadgeWindow = 7 | 30 | 365;
+
+function getLowestPriceBadgeWindow(item: PriceDrop): LowestPriceBadgeWindow | null {
+  if (!item.price_history || item.price_history.length === 0) {
+    return null;
+  }
+
+  const referenceDate = Number.isNaN(new Date(item.last_updated).getTime())
+    ? new Date()
+    : new Date(item.last_updated);
+  const pricePoints = [...item.price_history.map((entry) => ({
+    price: entry.price,
+    date: new Date(entry.date),
+  }))];
+
+  // Ensure the current observation is part of the comparison window.
+  pricePoints.push({ price: item.current_price, date: referenceDate });
+
+  const validPoints = pricePoints.filter((point) => !Number.isNaN(point.date.getTime()));
+  if (validPoints.length === 0) {
+    return null;
+  }
+
+  const oldestPointTime = Math.min(...validPoints.map((point) => point.date.getTime()));
+  const centsEpsilon = 0.005;
+  const windows: LowestPriceBadgeWindow[] = [365, 30, 7];
+
+  for (const windowDays of windows) {
+    const windowStart = new Date(referenceDate);
+    windowStart.setDate(referenceDate.getDate() - (windowDays - 1));
+    const hasFullWindowCoverage = oldestPointTime <= windowStart.getTime();
+    if (!hasFullWindowCoverage) {
+      continue;
+    }
+
+    const pointsInWindow = validPoints.filter((point) => point.date >= windowStart);
+    if (pointsInWindow.length === 0) {
+      continue;
+    }
+
+    const minPriceInWindow = Math.min(...pointsInWindow.map((point) => point.price));
+    if (item.current_price <= minPriceInWindow + centsEpsilon) {
+      return windowDays;
+    }
+  }
+
+  return null;
+}
+
 const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onCategoryClick }: PriceChangeCardProps) {
   const { t } = useTranslation();
   const cardClass = variant === 'drop' ? styles.priceDropCard : styles.priceIncreaseCard;
-  const headerContentClass = variant === 'drop' ? styles.dropHeaderContent : styles.increaseHeaderContent;
-  const percentageClass = variant === 'drop' ? styles.dropPercentage : styles.increasePercentage;
-  const amountClass = variant === 'drop' ? styles.dropAmount : styles.increaseAmount;
-  const currentPriceClass = variant === 'drop' ? 'price current' : 'price current increase';
+  const changePanelClass = variant === 'drop' ? styles.changePanelDrop : styles.changePanelIncrease;
+  const changePercentageClass = variant === 'drop' ? styles.changePercentageDrop : styles.changePercentageIncrease;
+  const changeAmountClass = variant === 'drop' ? styles.changeAmountDrop : styles.changeAmountIncrease;
+  const directionPillClass = variant === 'drop' ? styles.directionPillDrop : styles.directionPillIncrease;
+  const directionSymbol = variant === 'drop' ? '▼' : '▲';
+  const lowestBadgeWindow = getLowestPriceBadgeWindow(item);
+  const lowestBadgeClass = lowestBadgeWindow === 365
+    ? styles.lowestBadge365
+    : lowestBadgeWindow === 30
+      ? styles.lowestBadge30
+      : styles.lowestBadge7;
 
   return (
     <Card
@@ -37,25 +93,34 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
       onClick={() => onCategoryClick('')}
       className={cardClass}
     >
+      {lowestBadgeWindow && (
+        <span className={`${styles.cornerBadge} ${lowestBadgeClass}`}>
+          <span className={styles.cornerBadgeIcon} aria-hidden="true">editor_choice</span>
+          <span className={styles.cornerBadgeText}>
+            {t('dashboard.lowestPriceInDays', { days: lowestBadgeWindow })}
+          </span>
+        </span>
+      )}
       <div className={styles.cardTopSection}>
-        <div className="price-info" style={{ margin: 0 }}>
-          <div className="price-row">
-            <span className="label">{t('dashboard.previous')}:</span>
-            <span className="price previous">{formatPrice(item.previous_price)}</span>
+        <div className={styles.priceSummary}>
+          <div className={styles.currentRow}>
+            <span className={styles.currentLabel}>{t('dashboard.current')}</span>
+            <span className={`${styles.directionPill} ${directionPillClass}`}>{directionSymbol}</span>
           </div>
-          <div className="price-row">
-            <span className="label">{t('dashboard.current')}:</span>
-            <span className={currentPriceClass}>{formatPrice(item.current_price)}</span>
+          <div className={styles.currentPrice}>{formatPrice(item.current_price)}</div>
+          <div className={styles.previousRow}>
+            <span className={styles.previousLabel}>{t('dashboard.previous')}:</span>
+            <span className={styles.previousPrice}>{formatPrice(item.previous_price)}</span>
           </div>
-          <div className="last-updated">
+          <div className={styles.lastUpdated}>
             {t('dashboard.updated')}: {formatDateTime(item.last_updated)}
           </div>
         </div>
-        <div className={headerContentClass}>
-          <div className={percentageClass}>
+        <div className={`${styles.changePanel} ${changePanelClass}`}>
+          <div className={changePercentageClass}>
             {formatPercentage(item.price_drop_percentage)}
           </div>
-          <div className={amountClass}>
+          <div className={changeAmountClass}>
             {formatPrice(item.price_drop)}
           </div>
         </div>
@@ -213,31 +278,32 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
     <div className={styles.dashboard}>
       <PullToRefreshIndicator progress={pullProgress} refreshing={pullRefreshing} />
       <div className={styles.dashboardHeader}>
-        <h1>{t('dashboard.title')}</h1>
-        <Button
-          onClick={handleUpdatePrices}
-          disabled={updating}
-          variant="primary"
-          size="md"
-        >
-          {updating ? t('dashboard.updating') : t('dashboard.updatePrices')}
-        </Button>
-      </div>
-
-      <div className={styles.sortFilterRow}>
-        <label htmlFor="dashboard-sort-select" className={styles.sortFilterLabel}>
-          {t('dashboard.sortBy')}:
-        </label>
-        <select
-          id="dashboard-sort-select"
-          className={styles.sortFilterSelect}
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as 'date' | 'dropAmount' | 'increaseAmount')}
-        >
-          <option value="date">{t('dashboard.sortDate')}</option>
-          <option value="dropAmount">{t('dashboard.sortDropAmount')}</option>
-          <option value="increaseAmount">{t('dashboard.sortIncreaseAmount')}</option>
-        </select>
+        <div className={styles.headerLeft}>
+          <Button
+            onClick={handleUpdatePrices}
+            disabled={updating}
+            variant="primary"
+            size="md"
+          >
+            {updating ? t('dashboard.updating') : t('dashboard.updatePrices')}
+          </Button>
+        </div>
+        <h1 className={styles.headerTitle}>{t('dashboard.title')}</h1>
+        <div className={`${styles.headerRight} ${styles.sortFilterRow}`}>
+          <label htmlFor="dashboard-sort-select" className={styles.sortFilterLabel}>
+            {t('dashboard.sortBy')}:
+          </label>
+          <select
+            id="dashboard-sort-select"
+            className={styles.sortFilterSelect}
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as 'date' | 'dropAmount' | 'increaseAmount')}
+          >
+            <option value="date">{t('dashboard.sortDate')}</option>
+            <option value="dropAmount">{t('dashboard.sortDropAmount')}</option>
+            <option value="increaseAmount">{t('dashboard.sortIncreaseAmount')}</option>
+          </select>
+        </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}

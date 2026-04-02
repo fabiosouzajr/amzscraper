@@ -73,6 +73,7 @@ export function ProductsPage() {
 
   const searchParams = new URLSearchParams(location.search);
   const initialCategoryFilter = searchParams.get('category') || '';
+  const initialListFilter = searchParams.get('list') ? parseInt(searchParams.get('list')!) : null;
 
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
@@ -168,6 +169,7 @@ export function ProductsPage() {
       ) : (
         <ProductList
           initialCategoryFilter={initialCategoryFilter}
+          initialListFilter={initialListFilter}
           onFilterApplied={handleFilterApplied}
           onProductSelect={handleProductSelect}
         />

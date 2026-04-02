@@ -4,7 +4,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Package } from 'lucide-react';
 import { api } from '../services/api';
 import { ASINInput } from './ASINInput';
-import { ListsSidebar } from './ListsSidebar';
 import { CategoryFilter } from './CategoryFilter';
 import { EmptyState } from '../design-system';
 import { formatDate } from '../utils/dateFormat';
@@ -56,11 +55,12 @@ const SwipeableRow = React.memo(function SwipeableRow({ productId, onDelete, chi
 
 interface ProductListProps {
   initialCategoryFilter?: string;
+  initialListFilter?: number | null;
   onFilterApplied?: () => void;
   onProductSelect?: (productId: number) => void;
 }
 
-export function ProductList({ initialCategoryFilter = '', onFilterApplied, onProductSelect }: ProductListProps) {
+export function ProductList({ initialCategoryFilter = '', initialListFilter = null, onFilterApplied, onProductSelect }: ProductListProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { importing, importResults, startImport, setOnImportComplete } = useImport();
@@ -69,7 +69,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
-  const [selectedListId, setSelectedListId] = useState<number | null>(null);
+  const [selectedListId, setSelectedListId] = useState<number | null>(initialListFilter);
   const [addingToListProductId, setAddingToListProductId] = useState<number | null>(null);
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,6 +99,10 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
   const { progress: pullProgress, refreshing: pullRefreshing } = usePullToRefresh({
     onRefresh: handlePullRefresh,
   });
+
+  useEffect(() => {
+    setSelectedListId(initialListFilter ?? null);
+  }, [initialListFilter]);
 
   useEffect(() => {
     if (initialCategoryFilter) {
@@ -206,8 +210,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     }
   }, [deleteMutation, products, selectedListId, currentPage, t]);
 
-  const handleListClick = useCallback((listId: number | null) => setSelectedListId(listId), []);
-
   const handleToggleDropdown = useCallback((productId: number) => {
     const newState = addingToListProductId === productId ? null : productId;
     setAddingToListProductId(newState);
@@ -314,16 +316,7 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
     <div className={styles.productList}>
       <PullToRefreshIndicator progress={pullProgress} refreshing={pullRefreshing} />
 
-      <div className={styles.productListLayout}>
-        {user && (
-          <div className={styles.productListSidebar}>
-            <ListsSidebar
-              onListClick={handleListClick}
-              selectedListId={selectedListId}
-            />
-          </div>
-        )}
-        <div className={styles.productListContent}>
+      <div className={styles.productListContent}>
           <div className={styles.addProductSection}>
             <div className={styles.addProductHeader}>
               <h3>{t('products.addNew')}</h3>
@@ -408,26 +401,6 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
                             <span className={styles.productRowPrice}>
                               {(product as any).current_price}
                             </span>
-                          )}
-                          {product.categories && product.categories.length > 0 && (
-                            <div className={styles.productRowCategoriesHover} aria-hidden="true">
-                              {product.categories.map((cat, idx) => (
-                                <span key={cat.id}>
-                                  <button
-                                    className={styles.categoryFilterButton}
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      handleCategoryClick(cat.name);
-                                    }}
-                                    title={t('dashboard.filterBy', { category: cat.name })}
-                                  >
-                                    {cat.name}
-                                  </button>
-                                  {idx < product.categories!.length - 1 && ' > '}
-                                </span>
-                              ))}
-                            </div>
                           )}
                         </div>
                         <a
@@ -608,8 +581,8 @@ export function ProductList({ initialCategoryFilter = '', onFilterApplied, onPro
               </div>
             )}
           </div>
-        </div>
       </div>
     </div>
   );
 }
+

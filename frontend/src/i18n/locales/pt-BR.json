@@ -30,6 +30,7 @@
     "sortDate": "Data (mais recente primeiro)",
     "sortDropAmount": "Valor da queda (maior primeiro)",
     "sortIncreaseAmount": "Valor do aumento (maior primeiro)",
+    "lowestPriceInDays": "Menor em {{days}}d",
     "filterBy": "Filtrar por {{category}}",
     "startingUpdate": "Iniciando atualização de preços...",
     "updateStarted": "Atualização de preços iniciada. Processando produtos...",

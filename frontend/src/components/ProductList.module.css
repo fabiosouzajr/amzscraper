@@ -139,10 +139,20 @@
   background: var(--color-bg-elevated);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  overflow: hidden;
+  overflow: visible;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+}
+
+/* Clip rounded corners on first/last items to match container */
+.product-list-item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.product-list-item:last-child {
+  border-radius: 0 0 8px 8px;
+  border-bottom: none;
 }
 
 .product-list-item {
@@ -204,7 +214,7 @@
 /* Add to List */
 .add-to-list-container {
   position: relative;
-  margin-right: 0.5rem;
+  width: 100%;
 }
 
 .add-to-list-button {
@@ -241,7 +251,7 @@
 /* Keep ProductList action buttons visually consistent in size */
 .add-to-list-button,
 .view-button {
-  width: 108px;
+  width: 100%;
   min-height: 32px;
   display: inline-flex;
   align-items: center;
@@ -444,27 +454,38 @@
 
 .product-row-actions {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--space-2);
   flex-shrink: 0;
-  min-width: 0;
-  max-width: 100%;
+  width: 108px;
+}
+
+/* Override global delete-button width so it fills the column */
+.product-row-actions :global(.delete-button) {
+  width: 100%;
 }
 
 .btn-icon {
   background: none;
-  border: none;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
   cursor: pointer;
-  padding: var(--space-1);
+  padding: 0;
   color: var(--color-text-secondary);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1;
+  width: 100%;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .btn-icon:hover {
   color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
 }
 
 .product-row-details {
@@ -524,14 +545,31 @@
 /* Swipeable row — mobile delete gesture */
 .swipeable-row-container {
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden is only needed on mobile to conceal the swipe-delete
+     button; on desktop the button is not rendered, so keeping it hidden
+     would clip the absolutely-positioned add-to-list dropdown. */
+}
+
+@media (max-width: 767px) {
+  .swipeable-row-container {
+    overflow: hidden;
+  }
 }
 
 .swipeable-row-content {
-  transition: transform 150ms ease;
-  will-change: transform;
   width: 100%;
   min-width: 0;
+}
+
+/* will-change: transform is required for the swipe animation on mobile,
+   but it creates a stacking context on every row, which scopes z-index and
+   causes the add-to-list dropdown to be painted over by the next row.
+   Only apply it on mobile where the swipe gesture is active. */
+@media (max-width: 767px) {
+  .swipeable-row-content {
+    transition: transform 150ms ease;
+    will-change: transform;
+  }
 }
 
 .swipeable-row-swiped .swipeable-row-content {
@@ -588,9 +626,20 @@
   }
 
   .product-row-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
     width: 100%;
     justify-content: flex-end;
     margin-top: var(--space-1);
+  }
+
+  .product-row-actions :global(.delete-button),
+  .add-to-list-button,
+  .view-button,
+  .btn-icon {
+    width: auto;
+    min-width: 80px;
   }
 }
 

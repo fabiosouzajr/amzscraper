@@ -157,6 +157,45 @@
   justify-content: center;
 }
 
+/* ── Lists nav section ────────────────────────────────────────────────────── */
+
+.listsNavSection {
+  display: flex;
+  flex-direction: column;
+  margin: 0 var(--space-2);
+}
+
+.listsNavToggle {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.listsNavLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.listsNavChevron {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+}
+
+.listsNavPanel {
+  padding-left: var(--space-2);
+  overflow: visible;
+}
+
 /* ── Main content area ─────────────────────────────────────────────────────── */
 
 .content {

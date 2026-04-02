@@ -30,6 +30,7 @@
     "sortDate": "Date (newest first)",
     "sortDropAmount": "Drop amount (largest first)",
     "sortIncreaseAmount": "Increase amount (largest first)",
+    "lowestPriceInDays": "Lowest in {{days}}d",
     "filterBy": "Filter by {{category}}",
     "startingUpdate": "Starting price update...",
     "updateStarted": "Price update started. Processing products...",

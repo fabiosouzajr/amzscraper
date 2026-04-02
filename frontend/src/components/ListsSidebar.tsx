@@ -11,9 +11,10 @@ interface ListsSidebarProps {
   onListClick?: (listId: number | null) => void;
   selectedListId?: number | null;
   onListChange?: () => void; // Callback when lists are created/updated/deleted
+  navMode?: boolean; // Inline nav mode: no card wrapper, no sticky positioning
 }
 
-export function ListsSidebar({ onListClick, selectedListId, onListChange }: ListsSidebarProps) {
+export function ListsSidebar({ onListClick, selectedListId, onListChange, navMode = false }: ListsSidebarProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const isMobile = useMediaQuery('(max-width: 767px)');
@@ -288,9 +289,9 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
     );
   }
 
-  // Desktop: render normally
+  // Desktop: render normally (or inline in nav mode)
   return (
-    <div className={styles.listsSidebar}>
+    <div className={navMode ? styles.listsSidebarNav : styles.listsSidebar}>
       {sidebarContent}
     </div>
   );
