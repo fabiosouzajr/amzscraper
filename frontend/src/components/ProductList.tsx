@@ -10,48 +10,9 @@ import { formatDate } from '../utils/dateFormat';
 import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
-import { useProducts, useAddProduct, useDeleteProduct, useLists, useMediaQuery, useSwipeGesture, usePullToRefresh } from '../hooks';
+import { useProducts, useAddProduct, useDeleteProduct, useLists, usePullToRefresh } from '../hooks';
 import { PullToRefreshIndicator } from './PullToRefreshIndicator';
 import styles from './ProductList.module.css';
-
-
-
-interface SwipeableRowProps {
-  productId: number;
-  onDelete: (id: number) => void;
-  children: React.ReactNode;
-  isMobile: boolean;
-}
-
-const SwipeableRow = React.memo(function SwipeableRow({ productId, onDelete, children, isMobile }: SwipeableRowProps) {
-  const { t } = useTranslation();
-  const [swiped, setSwiped] = useState(false);
-
-  const { ref: swipeRef } = useSwipeGesture({
-    onSwipeLeft: isMobile ? () => setSwiped(true) : undefined,
-    onSwipeRight: isMobile ? () => setSwiped(false) : undefined,
-    threshold: 60,
-  });
-
-  return (
-    <div className={`${styles.swipeableRowContainer}${swiped ? ` ${styles.swipeableRowSwiped}` : ''}`}>
-      <div ref={swipeRef as React.RefObject<HTMLDivElement>} className={styles.swipeableRowContent}>
-        {children}
-      </div>
-      {isMobile && (
-        <div className={styles.swipeableRowActions} aria-hidden={!swiped}>
-          <button
-            className={styles.swipeDeleteBtn}
-            onClick={() => { onDelete(productId); setSwiped(false); }}
-            tabIndex={swiped ? 0 : -1}
-          >
-            {t('common.delete')}
-          </button>
-        </div>
-      )}
-    </div>
-  );
-});
 
 interface ProductListProps {
   initialCategoryFilter?: string;
@@ -90,7 +51,6 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
   const addProductMutation = useAddProduct();
   const deleteMutation = useDeleteProduct();
   const { data: lists = [] } = useLists();
-  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const handlePullRefresh = useCallback(async () => {
     await qc.invalidateQueries({ queryKey: ['products'] });
@@ -319,7 +279,10 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
       <div className={styles.productListContent}>
           <div className={styles.addProductSection}>
             <div className={styles.addProductHeader}>
-              <h3>{t('products.addNew')}</h3>
+              <div className={styles.addProductHeaderContent}>
+                <h3>{t('products.addNew')}</h3>
+                <p className={styles.addProductHint}>{t('asinInput.placeholder')}</p>
+              </div>
               <button
                 className={`${styles.importButton} ${styles.importButtonCsv}${importing ? ` ${styles.disabled}` : ''}`}
                 onClick={handleImportClick}
@@ -376,44 +339,32 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
             ) : (
               <div className={styles.productsList}>
                 {filteredProducts.map((product) => (
-                  <SwipeableRow
-                    key={product.id}
-                    productId={product.id}
-                    onDelete={handleDeleteProduct}
-                    isMobile={isMobile}
-                  >
-                  <div className={styles.productListItem}>
+                  <div key={product.id} className={styles.productListItem}>
                     {/* Main row — always visible */}
                     <div className={styles.productRowMain}>
-                      <div className="product-thumbnail-wrapper">
-                        <img
-                          src={getPreferredProductImageUrl(product)}
-                          alt={product.description}
-                          className="product-thumbnail"
-                          onError={(e) => handleProductImageError(e, product.asin)}
-                        />
+                      <div className={styles.productMediaColumn}>
+                        <button
+                          className={`${styles.btnIcon} ${styles.mobileExpandBtn}`}
+                          onClick={() => toggleExpanded(product.id)}
+                          aria-expanded={expandedRows.has(product.id)}
+                          aria-label={expandedRows.has(product.id) ? t('products.collapse') : t('products.expand')}
+                          title={expandedRows.has(product.id) ? t('products.collapse') : t('products.expand')}
+                        >
+                          {expandedRows.has(product.id) ? '▴' : '▾'}
+                        </button>
+                        <div className="product-thumbnail-wrapper">
+                          <img
+                            src={getPreferredProductImageUrl(product)}
+                            alt={product.description}
+                            className="product-thumbnail"
+                            onError={(e) => handleProductImageError(e, product.asin)}
+                          />
+                        </div>
                       </div>
 
                       <div className={styles.productRowSummary}>
-                        <div className={styles.productRowMeta}>
-                          <span className={styles.productRowAsinBadge}>{product.asin}</span>
-                          {(product as any).current_price != null && (
-                            <span className={styles.productRowPrice}>
-                              {(product as any).current_price}
-                            </span>
-                          )}
-                        </div>
-                        <a
-                          href={`https://www.amazon.com.br/dp/${product.asin}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`product-description product-link ${styles.productDescriptionLink}`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {product.description}
-                        </a>
                         {product.lists && product.lists.length > 0 && (
-                          <div className="product-lists">
+                          <div className={`${styles.productListsBlock} product-lists`}>
                             <span className="lists-label">{t('products.inLists')}: </span>
                             {product.lists.map((list, idx) => (
                               <span key={list.id} className="list-badge">
@@ -432,18 +383,26 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
                             ))}
                           </div>
                         )}
+                        <div className={styles.productRowMeta}>
+                          <span className={styles.productRowAsinBadge}>{product.asin}</span>
+                          {(product as any).current_price != null && (
+                            <span className={styles.productRowPrice}>
+                              {(product as any).current_price}
+                            </span>
+                          )}
+                        </div>
+                        <a
+                          href={`https://www.amazon.com.br/dp/${product.asin}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`product-description product-link ${styles.productDescriptionLink}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {product.description}
+                        </a>
                       </div>
 
                       <div className={`${styles.productRowActions} product-actions`}>
-                        <button
-                          className={styles.btnIcon}
-                          onClick={() => toggleExpanded(product.id)}
-                          aria-expanded={expandedRows.has(product.id)}
-                          aria-label={expandedRows.has(product.id) ? t('products.collapse') : t('products.expand')}
-                          title={expandedRows.has(product.id) ? t('products.collapse') : t('products.expand')}
-                        >
-                          {expandedRows.has(product.id) ? '▴' : '▾'}
-                        </button>
                         {user && (
                           <div className={styles.addToListContainer}>
                             <button
@@ -531,7 +490,6 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
                       </div>
                     )}
                   </div>
-                  </SwipeableRow>
                 ))}
               </div>
             )}
@@ -585,4 +543,3 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
     </div>
   );
 }
-

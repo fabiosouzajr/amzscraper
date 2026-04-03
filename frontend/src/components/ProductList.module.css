@@ -22,30 +22,58 @@
 }
 
 .add-product-section {
-  background: var(--color-bg-elevated);
-  padding: 1.25rem;
-  border-radius: 8px;
+  position: relative;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #fcfbf8 100%);
+  padding: 1.1rem 1.25rem 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-primary);
   margin-bottom: 1.5rem;
-  margin-left: auto;
+  margin-left: 0;
   margin-right: 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 75%;
+  box-shadow: var(--shadow-md);
+  width: 100%;
   max-width: 100%;
   box-sizing: border-box;
 }
 
+.add-product-section::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: linear-gradient(90deg, var(--color-accent-primary), #f2b150 72%, transparent);
+}
+
 .add-product-section h3 {
-  font-size: medium;
+  font-size: var(--font-size-md);
   margin: 0;
   color: var(--color-amazon-navy);
+  line-height: var(--line-height-tight);
+  text-wrap: balance;
 }
 
 .add-product-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-3);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.add-product-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.add-product-hint {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  max-width: 52ch;
 }
 
 .import-button {
@@ -145,6 +173,12 @@
   box-sizing: border-box;
 }
 
+.product-list-content {
+  flex: 1;
+  min-width: 0;
+  width: min(100%, 1180px);
+  margin-inline: auto;
+}
 /* Clip rounded corners on first/last items to match container */
 .product-list-item:first-child {
   border-radius: 8px 8px 0 0;
@@ -182,11 +216,6 @@
 .product-list-sidebar {
   width: 280px;
   flex-shrink: 0;
-}
-
-.product-list-content {
-  flex: 1;
-  min-width: 0;
 }
 
 .remove-from-list-button {
@@ -396,7 +425,7 @@
   cursor: pointer;
   font-weight: 600;
   transition: background 0.2s, transform 0.1s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-sm);
 }
 
 .import-button-csv:hover:not(:disabled) {
@@ -426,6 +455,13 @@
   min-width: 0;
 }
 
+.product-media-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
 .product-row-summary {
   flex: 1;
   min-width: 0;
@@ -437,12 +473,22 @@
   overflow-wrap: anywhere;
 }
 
+.product-lists-block {
+  width: 100%;
+  text-align: right;
+  margin-top: 0;
+  margin-bottom: var(--space-2);
+}
+
 .product-description-link {
   display: block;
-  white-space: nowrap;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
   font-size: var(--font-size-md);
+  line-height: 1.35;
   color: var(--color-text-primary);
   text-decoration: none;
 }
@@ -486,6 +532,17 @@
 .btn-icon:hover {
   color: var(--color-text-primary);
   background: var(--color-bg-secondary);
+}
+
+.mobile-expand-btn {
+  display: inline-flex;
+  width: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  line-height: 1;
+  margin-bottom: 2px;
 }
 
 .product-row-details {
@@ -542,64 +599,6 @@
   opacity: 1;
 }
 
-/* Swipeable row — mobile delete gesture */
-.swipeable-row-container {
-  position: relative;
-  /* overflow: hidden is only needed on mobile to conceal the swipe-delete
-     button; on desktop the button is not rendered, so keeping it hidden
-     would clip the absolutely-positioned add-to-list dropdown. */
-}
-
-@media (max-width: 767px) {
-  .swipeable-row-container {
-    overflow: hidden;
-  }
-}
-
-.swipeable-row-content {
-  width: 100%;
-  min-width: 0;
-}
-
-/* will-change: transform is required for the swipe animation on mobile,
-   but it creates a stacking context on every row, which scopes z-index and
-   causes the add-to-list dropdown to be painted over by the next row.
-   Only apply it on mobile where the swipe gesture is active. */
-@media (max-width: 767px) {
-  .swipeable-row-content {
-    transition: transform 150ms ease;
-    will-change: transform;
-  }
-}
-
-.swipeable-row-swiped .swipeable-row-content {
-  transform: translateX(-80px);
-}
-
-.swipeable-row-actions {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-danger);
-}
-
-.swipe-delete-btn {
-  background: none;
-  border: none;
-  color: var(--color-text-inverse);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-}
-
 /* Responsive */
 @media (max-width: 1024px) {
   .product-list-layout {
@@ -637,7 +636,7 @@
   .product-row-actions :global(.delete-button),
   .add-to-list-button,
   .view-button,
-  .btn-icon {
+  .product-row-actions .btn-icon {
     width: auto;
     min-width: 80px;
   }
@@ -672,10 +671,19 @@
     padding: 1rem;
   }
 
+  .add-product-section::before {
+    height: 3px;
+  }
+
   .add-product-header {
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
+    margin-bottom: var(--space-3);
+  }
+
+  .add-product-hint {
+    max-width: none;
   }
 
   .add-product-header .import-button-csv {
@@ -701,7 +709,36 @@
   }
 
   .product-row-actions {
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: var(--space-2);
+    justify-content: stretch;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .product-description-link {
+    -webkit-line-clamp: 3;
+  }
+
+  .product-row-actions :global(.delete-button),
+  .product-row-actions .add-to-list-button,
+  .product-row-actions .view-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    padding: 0.56rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .product-lists-block :global(.list-badge) {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 0 0.3rem 0.25rem;
   }
 
   /* Hide hover-only category pills on mobile — they're in expanded details */

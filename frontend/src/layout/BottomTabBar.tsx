@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Package, Settings, type LucideIcon } from 'lucide-react';
+import { Home, List, Package, Settings, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import styles from './BottomTabBar.module.css';
 
@@ -11,6 +11,7 @@ interface Tab {
 
 const TABS: Tab[] = [
   { icon: Home, labelKey: 'app.dashboard', route: '/' },
+  { icon: List, labelKey: 'lists.title', route: '/products?lists=open' },
   { icon: Package, labelKey: 'app.products', route: '/products' },
   { icon: Settings, labelKey: 'app.config', route: '/settings' },
 ];
@@ -20,8 +21,21 @@ export function BottomTabBar() {
   const location = useLocation();
 
   const isActiveRoute = (route: string): boolean => {
+    const [routePath, routeQuery] = route.split('?');
     if (route === '/' && location.pathname === '/') return true;
-    return route !== '/' && location.pathname.startsWith(route);
+    if (routePath === '/' || !location.pathname.startsWith(routePath)) return false;
+
+    const currentParams = new URLSearchParams(location.search);
+    if (routeQuery) {
+      const expectedParams = new URLSearchParams(routeQuery);
+      return Array.from(expectedParams.entries()).every(([key, value]) => currentParams.get(key) === value);
+    }
+
+    if (routePath === '/products') {
+      return currentParams.get('lists') !== 'open';
+    }
+
+    return true;
   };
 
   return (

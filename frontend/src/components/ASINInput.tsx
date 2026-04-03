@@ -43,13 +43,22 @@ export function ASINInput({ onAdd, isValidating = false, error, successMessage }
   return (
     <form onSubmit={handleSubmit} className={styles.asinInput}>
       <div className={styles.inputGroup}>
+        <label htmlFor="asin-input" className={styles.visuallyHidden}>
+          {t('asinInput.placeholder')}
+        </label>
         <input
+          id="asin-input"
+          name="asin"
           type="text"
           value={asin}
           onChange={(e) => setAsin(e.target.value.toUpperCase())}
           placeholder={t('asinInput.placeholder')}
           maxLength={10}
+          autoComplete="off"
+          spellCheck={false}
           disabled={isSubmitting || isValidating}
+          aria-invalid={!isValid}
+          aria-describedby={!isValid && asin.trim() !== '' ? 'asin-input-error' : undefined}
           className={!isValid ? styles.invalid : ''}
         />
         <button
@@ -62,9 +71,8 @@ export function ASINInput({ onAdd, isValidating = false, error, successMessage }
       {successMessage && <div className="success-message">{successMessage}</div>}
       {error && <div className="error-message">{error}</div>}
       {!isValid && asin.trim() !== '' && (
-        <div className="error-message">{t('asinInput.invalidFormat')}</div>
+        <div id="asin-input-error" className="error-message">{t('asinInput.invalidFormat')}</div>
       )}
     </form>
   );
 }
-

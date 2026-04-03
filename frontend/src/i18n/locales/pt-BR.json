@@ -90,7 +90,8 @@
     "placeholder": "Buscar produtos por nome ou ASIN...",
     "searching": "Buscando...",
     "noResults": "Nenhum produto encontrado",
-    "noProducts": "Nenhum produto disponível"
+    "noProducts": "Nenhum produto disponível",
+    "clear": "Limpar busca"
   },
   "productDetail": {
     "back": "← Voltar",

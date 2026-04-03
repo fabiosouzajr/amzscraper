@@ -90,7 +90,8 @@
     "placeholder": "Search products by name or ASIN...",
     "searching": "Searching...",
     "noResults": "No products found",
-    "noProducts": "No products available"
+    "noProducts": "No products available",
+    "clear": "Clear search"
   },
   "productDetail": {
     "back": "← Back",

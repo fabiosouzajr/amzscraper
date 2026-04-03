@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Search } from 'lucide-react';
 import { api } from '../services/api';
 import { Product } from '../types';
 import { ProductList } from './ProductList';
@@ -102,32 +103,52 @@ export function ProductsPage() {
     setSelectedProductId(productId);
   }, []);
 
+  const runSearch = useCallback(async (rawQuery: string) => {
+    const trimmedQuery = rawQuery.trim();
+
+    if (trimmedQuery === '') {
+      setIsSearchMode(false);
+      setSearchResults([]);
+      setSearchLoading(false);
+      return;
+    }
+
+    setIsSearchMode(true);
+    setSearchLoading(true);
+    try {
+      const data = await api.searchProducts(trimmedQuery);
+      setSearchResults(data);
+    } catch {
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  }, []);
+
+  const handleSearchSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    runSearch(query);
+  }, [query, runSearch]);
+
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (query.trim() === '') {
       setIsSearchMode(false);
       setSearchResults([]);
+      setSearchLoading(false);
       return;
     }
 
-    setIsSearchMode(true);
-    debounceRef.current = setTimeout(async () => {
-      setSearchLoading(true);
-      try {
-        const data = await api.searchProducts(query);
-        setSearchResults(data);
-      } catch {
-        setSearchResults([]);
-      } finally {
-        setSearchLoading(false);
-      }
+    debounceRef.current = setTimeout(() => {
+      runSearch(query);
     }, 300);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [query]);
+  }, [query, runSearch]);
 
   // Close sheet when switching to mobile
   useEffect(() => {
@@ -140,23 +161,36 @@ export function ProductsPage() {
   return (
     <div className={styles.productsPage}>
       <h2 className={styles.productsPageTitle}>{t('products.title')}</h2>
-      <div className={styles.productsPageSearch}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('search.placeholder')}
-          className={styles.searchInput}
-        />
-        {query && (
-          <button
-            onClick={() => setQuery('')}
-            className={styles.searchClearBtn}
-            aria-label="Clear"
-          >
-            ×
+      <div className={styles.productsPageSearch} role="search" aria-label={t('search.title')}>
+        <form className={styles.searchForm} onSubmit={handleSearchSubmit}>
+          <label htmlFor="product-search" className={styles.visuallyHidden}>
+            {t('search.title')}
+          </label>
+          <input
+            id="product-search"
+            name="product-search"
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t('search.placeholder')}
+            autoComplete="off"
+            className={styles.searchInput}
+          />
+          <button type="submit" className={styles.searchSubmitBtn} aria-label={t('app.search')}>
+            <Search size={16} aria-hidden="true" />
+            <span>{t('app.search')}</span>
           </button>
-        )}
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              className={styles.searchClearBtn}
+              aria-label={t('search.clear')}
+            >
+              ×
+            </button>
+          )}
+        </form>
       </div>
 
       {isSearchMode ? (
