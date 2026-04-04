@@ -41,6 +41,7 @@ database/*.db-shm
 # OS
 .DS_Store
 Thumbs.db
+*.pid
 
 # TypeScript
 *.tsbuildinfo
