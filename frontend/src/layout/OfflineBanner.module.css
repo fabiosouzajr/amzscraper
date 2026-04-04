@@ -1,0 +1,25 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: var(--color-warning-subtle, #fff3cd);
+  color: var(--color-warning, #856404);
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--color-warning, #856404);
+  animation: slideDown 0.2s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 3rem;
+    opacity: 1;
+  }
+}

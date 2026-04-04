@@ -1,0 +1,151 @@
+/* Category Tree Filter */
+.catTreeFilter {
+  position: relative;
+  width: 100%;
+}
+
+.catTreeTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0.9rem;
+  background: var(--color-bg-elevated);
+  border: 2px solid var(--color-border-primary);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s;
+  gap: 0.5rem;
+  font-family: inherit;
+  color: var(--color-text-primary);
+}
+
+.catTreeTrigger:hover,
+.catTreeTrigger:focus {
+  outline: none;
+  border-color: var(--color-amazon-orange);
+}
+
+.catTreeTrigger.hasValue {
+  border-color: var(--color-amazon-orange);
+  color: var(--color-amazon-navy);
+  font-weight: 500;
+}
+
+.catTreeTriggerLabel {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catTreeTriggerArrow {
+  font-size: 0.65rem;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.catTreeDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  z-index: 200;
+  overflow: hidden;
+}
+
+.catTreeAllRow {
+  padding: 0.55rem 0.9rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+  transition: background 0.15s;
+}
+
+.catTreeAllRow:hover {
+  background: var(--color-bg-secondary);
+}
+
+.catTreeAllRow.selected {
+  background: var(--color-warning-subtle);
+  color: var(--color-amazon-orange);
+  font-weight: 600;
+}
+
+.catTreeScroll {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.catTreeNode { }
+
+.catTreeChildren { }
+
+.catTreeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 34px;
+  transition: background 0.15s;
+}
+
+.catTreeRow:hover {
+  background: var(--color-bg-secondary);
+}
+
+.catTreeRow.selected {
+  background: var(--color-warning-subtle);
+}
+
+.catTreeRow:focus-within {
+  outline: 2px solid var(--color-amazon-orange);
+  outline-offset: -2px;
+}
+
+.catTreeExpand {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  font-size: 0.7rem;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+  line-height: 1;
+  width: 16px;
+}
+
+.catTreeLeafIcon {
+  width: 16px;
+  text-align: center;
+  color: var(--color-border-secondary);
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+.catTreeLabel {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+  text-align: left;
+  padding: 0.4rem 0.5rem 0.4rem 0;
+  flex: 1;
+  font-family: inherit;
+}
+
+.catTreeRow.selected .catTreeLabel {
+  color: #e07800;
+  font-weight: 600;
+}
+
+.catTreeLabel:hover {
+  color: var(--color-info);
+}

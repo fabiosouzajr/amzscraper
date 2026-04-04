@@ -1,53 +1,206 @@
-import { useState, useEffect } from 'react';
+import React, { useState, lazy, Suspense, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { PriceDrop } from '../types';
-import { MiniPriceChart } from './MiniPriceChart';
+import { usePriceDrops, usePriceIncreases, usePullToRefresh } from '../hooks';
 import { formatDateTime } from '../utils/dateFormat';
+import { PullToRefreshIndicator } from './PullToRefreshIndicator';
+import styles from './Dashboard.module.css';
+
+const MiniPriceChart = lazy(() => import('./MiniPriceChart').then(m => ({ default: m.MiniPriceChart })));
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
+import { Card, Button, ProgressBar, EmptyState } from '../design-system';
 
 interface DashboardProps {
   onCategoryClick: (categoryName: string) => void;
 }
 
+interface PriceChangeCardProps {
+  item: PriceDrop;
+  variant: 'drop' | 'increase';
+  onCategoryClick: (categoryName: string) => void;
+}
+
+type LowestPriceBadgeWindow = 7 | 30 | 365;
+
+function getLowestPriceBadgeWindow(item: PriceDrop): LowestPriceBadgeWindow | null {
+  if (!item.price_history || item.price_history.length === 0) {
+    return null;
+  }
+
+  const referenceDate = Number.isNaN(new Date(item.last_updated).getTime())
+    ? new Date()
+    : new Date(item.last_updated);
+  const pricePoints = [...item.price_history.map((entry) => ({
+    price: entry.price,
+    date: new Date(entry.date),
+  }))];
+
+  // Ensure the current observation is part of the comparison window.
+  pricePoints.push({ price: item.current_price, date: referenceDate });
+
+  const validPoints = pricePoints.filter((point) => !Number.isNaN(point.date.getTime()));
+  if (validPoints.length === 0) {
+    return null;
+  }
+
+  const oldestPointTime = Math.min(...validPoints.map((point) => point.date.getTime()));
+  const centsEpsilon = 0.005;
+  const windows: LowestPriceBadgeWindow[] = [365, 30, 7];
+
+  for (const windowDays of windows) {
+    const windowStart = new Date(referenceDate);
+    windowStart.setDate(referenceDate.getDate() - (windowDays - 1));
+    const hasFullWindowCoverage = oldestPointTime <= windowStart.getTime();
+    if (!hasFullWindowCoverage) {
+      continue;
+    }
+
+    const pointsInWindow = validPoints.filter((point) => point.date >= windowStart);
+    if (pointsInWindow.length === 0) {
+      continue;
+    }
+
+    const minPriceInWindow = Math.min(...pointsInWindow.map((point) => point.price));
+    if (item.current_price <= minPriceInWindow + centsEpsilon) {
+      return windowDays;
+    }
+  }
+
+  return null;
+}
+
+const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onCategoryClick }: PriceChangeCardProps) {
+  const { t } = useTranslation();
+  const cardClass = variant === 'drop' ? styles.priceDropCard : styles.priceIncreaseCard;
+  const changePanelClass = variant === 'drop' ? styles.changePanelDrop : styles.changePanelIncrease;
+  const changePercentageClass = variant === 'drop' ? styles.changePercentageDrop : styles.changePercentageIncrease;
+  const changeAmountClass = variant === 'drop' ? styles.changeAmountDrop : styles.changeAmountIncrease;
+  const directionPillClass = variant === 'drop' ? styles.directionPillDrop : styles.directionPillIncrease;
+  const directionSymbol = variant === 'drop' ? '▼' : '▲';
+  const lowestBadgeWindow = getLowestPriceBadgeWindow(item);
+  const lowestBadgeClass = lowestBadgeWindow === 365
+    ? styles.lowestBadge365
+    : lowestBadgeWindow === 30
+      ? styles.lowestBadge30
+      : styles.lowestBadge7;
+
+  return (
+    <Card
+      elevation={1}
+      padding="sm"
+      onClick={() => onCategoryClick('')}
+      className={cardClass}
+    >
+      {lowestBadgeWindow && (
+        <span className={`${styles.cornerBadge} ${lowestBadgeClass}`}>
+          <span className={styles.cornerBadgeIcon} aria-hidden="true">editor_choice</span>
+          <span className={styles.cornerBadgeText}>
+            {t('dashboard.lowestPriceInDays', { days: lowestBadgeWindow })}
+          </span>
+        </span>
+      )}
+      <div className={styles.cardTopSection}>
+        <div className={styles.priceSummary}>
+          <div className={styles.currentRow}>
+            <span className={styles.currentLabel}>{t('dashboard.current')}</span>
+            <span className={`${styles.directionPill} ${directionPillClass}`}>{directionSymbol}</span>
+          </div>
+          <div className={styles.currentPrice}>{formatPrice(item.current_price)}</div>
+          <div className={styles.previousRow}>
+            <span className={styles.previousLabel}>{t('dashboard.previous')}:</span>
+            <span className={styles.previousPrice}>{formatPrice(item.previous_price)}</span>
+          </div>
+          <div className={styles.lastUpdated}>
+            {t('dashboard.updated')}: {formatDateTime(item.last_updated)}
+          </div>
+        </div>
+        <div className={`${styles.changePanel} ${changePanelClass}`}>
+          <div className={changePercentageClass}>
+            {formatPercentage(item.price_drop_percentage)}
+          </div>
+          <div className={changeAmountClass}>
+            {formatPrice(item.price_drop)}
+          </div>
+        </div>
+      </div>
+      <div className={styles.productInfo}>
+        <a
+          href={`https://www.amazon.com.br/dp/${item.product.asin}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="product-link"
+        >
+          {item.product.description}
+        </a>
+        {item.price_history && item.price_history.length > 0 && (
+          <div className={styles.miniChartContainer}>
+            {item.product.image_url && (
+              <img
+                src={item.product.image_url}
+                alt={item.product.description}
+                className={styles.productThumbnail}
+              />
+            )}
+            <div className={styles.chartWrapper}>
+              <Suspense fallback={null}>
+                <MiniPriceChart priceHistory={item.price_history} />
+              </Suspense>
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+});
+
 export function Dashboard({ onCategoryClick }: DashboardProps) {
   const { t } = useTranslation();
-  const [priceDrops, setPriceDrops] = useState<PriceDrop[]>([]);
-  const [priceIncreases, setPriceIncreases] = useState<PriceDrop[]>([]);
-  const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
+  const { data: drops = [], isLoading: dropsLoading } = usePriceDrops(20);
+  const { data: increases = [], isLoading: increasesLoading } = usePriceIncreases(20);
+  const loading = dropsLoading || increasesLoading;
   const [updating, setUpdating] = useState(false);
   const [updateProgress, setUpdateProgress] = useState(0);
   const [updateStatus, setUpdateStatus] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'date' | 'dropAmount' | 'increaseAmount'>('date');
 
-  const loadPriceChanges = async () => {
-    try {
-      setLoading(true);
-      const [drops, increases] = await Promise.all([
-        api.getPriceDrops(20),
-        api.getPriceIncreases(20)
-      ]);
-      setPriceDrops(drops);
-      setPriceIncreases(increases);
-      setError(null);
-    } catch (err) {
-      setError(t('dashboard.failedToLoad'));
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const sortPriceChanges = useCallback(
+    (items: PriceDrop[]) => {
+      return [...items].sort((a, b) => {
+        if (sortBy === 'date') {
+          const aTime = new Date(a.last_updated).getTime() || 0;
+          const bTime = new Date(b.last_updated).getTime() || 0;
+          return bTime - aTime;
+        }
+        return b.price_drop - a.price_drop;
+      });
+    },
+    [sortBy]
+  );
 
-  useEffect(() => {
-    loadPriceChanges();
-  }, []);
+  const sortedDrops = useMemo(() => sortPriceChanges(drops), [drops, sortPriceChanges]);
+  const sortedIncreases = useMemo(() => sortPriceChanges(increases), [increases, sortPriceChanges]);
+
+  const handlePullRefresh = useCallback(async () => {
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ['priceDrops'] }),
+      qc.invalidateQueries({ queryKey: ['priceIncreases'] }),
+    ]);
+  }, [qc]);
+
+  const { progress: pullProgress, refreshing: pullRefreshing } = usePullToRefresh({
+    onRefresh: handlePullRefresh,
+  });
 
   const handleUpdatePrices = async () => {
     setUpdating(true);
     setUpdateProgress(0);
     setUpdateStatus(t('dashboard.startingUpdate'));
     setError(null);
-    
+
     try {
       // Start the update with real-time progress updates
       await api.updatePrices((progress) => {
@@ -75,15 +228,16 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
             break;
           case 'completed':
             setUpdateStatus(
-              t('dashboard.updateComplete') + 
+              t('dashboard.updateComplete') +
               (progress.updated !== undefined || progress.skipped !== undefined || progress.errors !== undefined
                 ? ` - ${progress.updated || 0} updated, ${progress.skipped || 0} skipped, ${progress.errors || 0} errors`
                 : '')
             );
             setUpdateProgress(100);
-            // Refresh price changes after completion
-            setTimeout(async () => {
-              await loadPriceChanges();
+            // Invalidate queries to refresh price changes after completion
+            setTimeout(() => {
+              qc.invalidateQueries({ queryKey: ['priceDrops'] });
+              qc.invalidateQueries({ queryKey: ['priceIncreases'] });
               setUpdating(false);
               setUpdateProgress(0);
               setUpdateStatus('');
@@ -121,177 +275,90 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
   }
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <h1>{t('dashboard.title')}</h1>
-        <button
-          onClick={handleUpdatePrices}
-          disabled={updating}
-          className="update-button"
-        >
-          {updating ? t('dashboard.updating') : t('dashboard.updatePrices')}
-        </button>
+    <div className={styles.dashboard}>
+      <PullToRefreshIndicator progress={pullProgress} refreshing={pullRefreshing} />
+      <div className={styles.dashboardHeader}>
+        <div className={styles.headerLeft}>
+          <Button
+            onClick={handleUpdatePrices}
+            disabled={updating}
+            variant="primary"
+            size="md"
+          >
+            {updating ? t('dashboard.updating') : t('dashboard.updatePrices')}
+          </Button>
+        </div>
+        <h1 className={styles.headerTitle}>{t('dashboard.title')}</h1>
+        <div className={`${styles.headerRight} ${styles.sortFilterRow}`}>
+          <label htmlFor="dashboard-sort-select" className={styles.sortFilterLabel}>
+            {t('dashboard.sortBy')}:
+          </label>
+          <select
+            id="dashboard-sort-select"
+            className={styles.sortFilterSelect}
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as 'date' | 'dropAmount' | 'increaseAmount')}
+          >
+            <option value="date">{t('dashboard.sortDate')}</option>
+            <option value="dropAmount">{t('dashboard.sortDropAmount')}</option>
+            <option value="increaseAmount">{t('dashboard.sortIncreaseAmount')}</option>
+          </select>
+        </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
       {updating && (
-        <div className="update-progress-container">
-          <div className="progress-bar-wrapper">
-            <div 
-              className="progress-bar" 
-              style={{ width: `${updateProgress}%` }}
-            ></div>
-            <div className="progress-percentage">{updateProgress}%</div>
+        <Card elevation={1} padding="md">
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <ProgressBar
+              value={updateProgress}
+              variant="primary"
+              size="md"
+            />
+            <div className={styles.progressStatus}>{updateStatus}</div>
           </div>
-          <div className="progress-status">{updateStatus}</div>
-        </div>
+        </Card>
       )}
 
-      {priceDrops.length === 0 && priceIncreases.length === 0 ? (
-        <div className="empty-state">
-          <p>{t('dashboard.noPriceChanges')}</p>
-          <p>{t('dashboard.noPriceChangesHint')}</p>
-        </div>
+      {sortedDrops.length === 0 && sortedIncreases.length === 0 ? (
+        <EmptyState
+          title={t('dashboard.noPriceChanges')}
+          description={t('dashboard.noPriceChangesHint')}
+          variant="no-data"
+        />
       ) : (
         <>
-          {priceDrops.length > 0 && (
-            <div className="price-changes-section">
-              <h2 className="section-title">{t('dashboard.priceDrops')}</h2>
-              <div className="price-drops-grid">
-                {priceDrops.map((drop) => (
-                  <div key={drop.product.id} className="price-drop-card">
-                    <div className="drop-header">
-                      <div className="drop-header-content">
-                        <div className="drop-amount">
-                          -{formatPrice(drop.price_drop)}
-                        </div>
-                        <div className="drop-percentage">
-                          {formatPercentage(drop.price_drop_percentage)} {t('dashboard.off')}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="product-info">
-                      <div className="product-asin">{drop.product.asin}</div>
-                      {drop.product.categories && drop.product.categories.length > 0 && (
-                        <div className="product-categories">
-                          {drop.product.categories.map((cat, idx) => (
-                            <span key={cat.id}>
-                              <button
-                                className="category-badge category-filter-button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  onCategoryClick(cat.name);
-                                }}
-                                title={t('dashboard.filterBy', { category: cat.name })}
-                              >
-                                {cat.name}
-                              </button>
-                              {idx < drop.product.categories!.length - 1 && ' > '}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <a
-                        href={`https://www.amazon.com.br/dp/${drop.product.asin}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="product-description product-link"
-                      >
-                        {drop.product.description}
-                      </a>
-                      {drop.price_history && drop.price_history.length > 0 && (
-                        <div className="mini-chart-container">
-                          <MiniPriceChart priceHistory={drop.price_history} />
-                        </div>
-                      )}
-                    </div>
-                    <div className="price-info">
-                      <div className="price-row">
-                        <span className="label">{t('dashboard.previous')}:</span>
-                        <span className="price previous">{formatPrice(drop.previous_price)}</span>
-                      </div>
-                      <div className="price-row">
-                        <span className="label">{t('dashboard.current')}:</span>
-                        <span className="price current">{formatPrice(drop.current_price)}</span>
-                      </div>
-                      <div className="last-updated">
-                        {t('dashboard.updated')}: {formatDateTime(drop.last_updated)}
-                      </div>
-                    </div>
-                  </div>
+          {sortedDrops.length > 0 && (
+            <div className={styles.priceChangesSection}>
+              <h2 className={styles.sectionTitle}>{t('dashboard.priceDrops')}</h2>
+              <div className={styles.priceDropsGrid}>
+                {sortedDrops.map((drop) => (
+                  <PriceChangeCard
+                    key={drop.product.id}
+                    item={drop}
+                    variant="drop"
+                    onCategoryClick={onCategoryClick}
+                  />
                 ))}
               </div>
             </div>
           )}
 
-          {priceIncreases.length > 0 && (
-            <div className="price-changes-section">
-              <h2 className="section-title">{t('dashboard.priceIncreases')}</h2>
-              <div className="price-drops-grid">
-                {priceIncreases.map((increase) => (
-                  <div key={increase.product.id} className="price-increase-card">
-                    <div className="increase-header">
-                      <div className="increase-header-content">
-                        <div className="increase-amount">
-                          +{formatPrice(increase.price_drop)}
-                        </div>
-                        <div className="increase-percentage">
-                          +{formatPercentage(increase.price_drop_percentage)} {t('dashboard.up')}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="product-info">
-                      <div className="product-asin">{increase.product.asin}</div>
-                      {increase.product.categories && increase.product.categories.length > 0 && (
-                        <div className="product-categories">
-                          {increase.product.categories.map((cat, idx) => (
-                            <span key={cat.id}>
-                              <button
-                                className="category-badge category-filter-button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  onCategoryClick(cat.name);
-                                }}
-                                title={t('dashboard.filterBy', { category: cat.name })}
-                              >
-                                {cat.name}
-                              </button>
-                              {idx < increase.product.categories!.length - 1 && ' > '}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <a
-                        href={`https://www.amazon.com.br/dp/${increase.product.asin}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="product-description product-link"
-                      >
-                        {increase.product.description}
-                      </a>
-                      {increase.price_history && increase.price_history.length > 0 && (
-                        <div className="mini-chart-container">
-                          <MiniPriceChart priceHistory={increase.price_history} />
-                        </div>
-                      )}
-                    </div>
-                    <div className="price-info">
-                      <div className="price-row">
-                        <span className="label">{t('dashboard.previous')}:</span>
-                        <span className="price previous">{formatPrice(increase.previous_price)}</span>
-                      </div>
-                      <div className="price-row">
-                        <span className="label">{t('dashboard.current')}:</span>
-                        <span className="price current increase">{formatPrice(increase.current_price)}</span>
-                      </div>
-                      <div className="last-updated">
-                        {t('dashboard.updated')}: {formatDateTime(increase.last_updated)}
-                      </div>
-                    </div>
-                  </div>
+          {sortedIncreases.length > 0 && (
+            <div className={styles.priceChangesSection}>
+              <h2 className={styles.sectionTitle}>{t('dashboard.priceIncreases')}</h2>
+              <div className={styles.priceDropsGrid}>
+                {sortedIncreases.map((increase) => (
+                  <PriceChangeCard
+                    key={increase.product.id}
+                    item={increase}
+                    variant="increase"
+                    onCategoryClick={onCategoryClick}
+                  />
                 ))}
               </div>
             </div>
@@ -301,4 +368,3 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
     </div>
   );
 }
-

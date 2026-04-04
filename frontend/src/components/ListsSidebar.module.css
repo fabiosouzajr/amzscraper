@@ -1,0 +1,283 @@
+.listsSidebar {
+  background: var(--color-bg-elevated);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+/* Nav inline mode — no card wrapper, flows inside AppShell sidebar */
+.listsSidebarNav {
+  padding: 0.25rem 0;
+}
+
+.listsSidebarNav .listsSidebarHeader {
+  padding: 0.25rem var(--space-2, 8px);
+  margin-bottom: 0.5rem;
+}
+
+.listsSidebarNav .listsSidebarHeader h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-tertiary);
+}
+
+.listsSidebarNav .listsList {
+  max-height: none;
+  overflow-y: visible;
+}
+
+.listsSidebarNav .listItem {
+  padding: var(--space-1, 4px) var(--space-2, 8px);
+  border-radius: var(--radius-sm, 6px);
+  margin-bottom: 1px;
+  font-size: 0.875rem;
+}
+
+.listsSidebarNav .listName {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.listsSidebarNav .allProductsItem {
+  font-size: 0.875rem;
+}
+
+.listsSidebarNav .createListButton {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Mobile overlay mode */
+.listsSidebarOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(300px, 85vw);
+  height: 100%;
+  z-index: 200;
+  border-radius: 0;
+  overflow-y: auto;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+  animation: slideInFromLeft 0.22s ease-out;
+}
+
+@keyframes slideInFromLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.listsSidebarBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 199;
+}
+
+.listsSidebarToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-bg-elevated, var(--color-amazon-navy));
+  color: var(--color-amazon-orange);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.listsSidebarToggle:hover {
+  background: var(--color-text-primary);
+}
+
+.listsSidebarCloseButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.listsSidebarCloseButton:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--color-amazon-navy);
+}
+
+.listsSidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.listsSidebarHeader h3 {
+  font-size: larger;
+  margin: 0;
+  color: var(--color-amazon-navy);
+}
+
+.createListButton {
+  background: var(--color-amazon-orange);
+  color: var(--color-text-inverse);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.createListButton:hover {
+  background: var(--color-amazon-orange-hover);
+}
+
+.createListForm {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border-radius: 4px;
+}
+
+.createListForm input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.formActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.formActions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.formActions button[type="submit"] {
+  background: var(--color-success);
+  color: var(--color-text-inverse);
+}
+
+.formActions button[type="button"] {
+  background: var(--color-text-secondary);
+  color: var(--color-text-inverse);
+}
+
+.listsList {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.listItem:hover {
+  background: var(--color-bg-secondary);
+}
+
+.listItem.selected {
+  background: var(--color-warning-subtle);
+  border: 1px solid var(--color-amazon-orange);
+}
+
+.allProductsItem {
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+}
+
+.listName {
+  flex: 1;
+  color: var(--color-amazon-navy);
+  font-weight: 500;
+}
+
+.listActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Make edit/delete icon buttons equal-sized squares */
+.listActions :global(.edit-button),
+.listActions :global(.delete-button) {
+  width: 28px;
+  min-height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-size: 0.9rem;
+}
+
+.listEditForm {
+  width: 100%;
+}
+
+.listEditForm input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.listEditActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.listEditActions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.listEditActions button:first-child {
+  background: var(--color-success);
+  color: var(--color-text-inverse);
+}
+
+.listEditActions button:last-child {
+  background: var(--color-text-secondary);
+  color: var(--color-text-inverse);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .listsSidebar {
+    position: static;
+  }
+}

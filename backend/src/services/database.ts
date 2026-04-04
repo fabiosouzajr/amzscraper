@@ -2,6 +2,7 @@ import sqlite3 from 'sqlite3';
 import path from 'path';
 import fs from 'fs';
 
+import { config } from '../config';
 import { createMigrations } from './db/migrations';
 import { createProductRepo, ProductRepo } from './db/product-repo';
 import { createUserRepo, UserRepo } from './db/user-repo';
@@ -9,7 +10,7 @@ import { createListRepo, ListRepo } from './db/list-repo';
 import { createAdminRepo, AdminRepo } from './db/admin-repo';
 import { createNotificationRepo, NotificationRepo } from './db/notification-repo';
 
-const DB_PATH = path.resolve(__dirname, '../../../database/products.db');
+const DB_PATH = config.dbPath;
 const DB_DIR = path.dirname(DB_PATH);
 
 type AllRepos = ProductRepo & UserRepo & ListRepo & AdminRepo & NotificationRepo;
@@ -50,7 +51,7 @@ export class DatabaseService {
         Object.assign(this, createUserRepo(db));
         Object.assign(this, createListRepo(db, getConfig));
         Object.assign(this, adminRepo);
-        Object.assign(this, createNotificationRepo(db));
+        Object.assign(this, createNotificationRepo(db, getConfig));
 
         this.resolveReady();
       } catch (migrationErr) {

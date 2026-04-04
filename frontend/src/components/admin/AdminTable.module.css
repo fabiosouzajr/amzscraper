@@ -1,0 +1,102 @@
+.adminTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-bg-elevated);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 0;
+}
+
+.adminTable thead {
+  background: var(--color-amazon-navy);
+  color: var(--color-text-inverse);
+}
+
+.adminTable th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.adminTable tbody tr {
+  border-bottom: 1px solid var(--color-border-primary);
+  transition: background-color 0.2s;
+}
+
+.adminTable tbody tr:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.adminTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.adminTable td {
+  padding: 1rem;
+  font-size: 0.95rem;
+}
+
+/* ── Responsive: overflow scroll on desktop ───────────────────────────── */
+@media (min-width: 768px) {
+  .tableWrapper {
+    overflow-x: auto;
+  }
+
+  .adminTable {
+    min-width: 800px;
+  }
+}
+
+/* ── Mobile: table-to-card pattern ───────────────────────────────────── */
+@media (max-width: 767px) {
+  .adminTable thead {
+    display: none;
+  }
+
+  .adminTable tbody tr {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: var(--color-bg-elevated);
+  }
+
+  .adminTable tbody tr:hover {
+    background-color: var(--color-bg-primary);
+  }
+
+  .adminTable tbody tr td {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-2, 0.5rem) 0;
+    border-bottom: 1px solid var(--color-border-primary);
+    border: none;
+    width: 100%;
+  }
+
+  .adminTable tbody tr td:last-child {
+    border-bottom: none;
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .adminTable tbody tr td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    margin-right: var(--space-3, 0.75rem);
+  }
+
+  .adminTable tbody tr td:first-child {
+    display: none;
+  }
+}

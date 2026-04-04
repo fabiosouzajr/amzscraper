@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import styles from './ProductNotifications.module.css';
 import { api } from '../services/api';
 import {
   NotificationChannel,
@@ -85,11 +86,11 @@ function RuleForm({ productId, rule, channels, onClose, onSaved }: RuleFormProps
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className={styles.modalOverlay}>
+      <div className={styles.modal}>
         <h3>{rule ? t('notifications.rules.edit') : t('notifications.product.addRule')}</h3>
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t('notifications.rules.type')}</label>
             <select value={ruleType} onChange={(e) => setRuleType(e.target.value as NotificationRuleType)}>
               <option value="lowest_in_days">{t('notifications.rules.ruleTypes.lowestInDays')}</option>
@@ -98,7 +99,7 @@ function RuleForm({ productId, rule, channels, onClose, onSaved }: RuleFormProps
             </select>
           </div>
 
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t('notifications.rules.channel')}</label>
             <select value={channelId} onChange={(e) => setChannelId(e.target.value)} required>
               <option value="">—</option>
@@ -109,14 +110,14 @@ function RuleForm({ productId, rule, channels, onClose, onSaved }: RuleFormProps
           </div>
 
           {ruleType === 'lowest_in_days' && (
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.rules.days')}</label>
               <input type="number" value={days} onChange={(e) => setDays(e.target.value)} min="1" required />
             </div>
           )}
 
           {ruleType === 'below_threshold' && (
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>{t('notifications.rules.threshold')}</label>
               <input
                 type="number"
@@ -131,7 +132,7 @@ function RuleForm({ productId, rule, channels, onClose, onSaved }: RuleFormProps
 
           {ruleType === 'percentage_drop' && (
             <>
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label>{t('notifications.rules.percentage')}</label>
                 <input
                   type="number"
@@ -142,7 +143,7 @@ function RuleForm({ productId, rule, channels, onClose, onSaved }: RuleFormProps
                   required
                 />
               </div>
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label>{t('notifications.rules.windowDays')}</label>
                 <input
                   type="number"
@@ -157,11 +158,11 @@ function RuleForm({ productId, rule, channels, onClose, onSaved }: RuleFormProps
 
           {error && <div className="error-message">{error}</div>}
 
-          <div className="modal-actions">
+          <div className={styles.modalActions}>
             <button type="button" onClick={onClose} disabled={submitting}>
               {t('common.cancel')}
             </button>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
+            <button type="submit" className={styles.btnPrimary} disabled={submitting}>
               {submitting ? '...' : t('common.save')}
             </button>
           </div>
@@ -227,11 +228,11 @@ export function ProductNotifications({ productId }: ProductNotificationsProps) {
   };
 
   return (
-    <div className="product-notifications">
-      <div className="product-notifications-header">
+    <div className={styles.productNotifications}>
+      <div className={styles.productNotificationsHeader}>
         <h3>{t('notifications.product.title')}</h3>
         <button
-          className="btn btn-small"
+          className={styles.btnSmall}
           onClick={() => { setEditingRule(null); setShowRuleForm(true); }}
         >
           {t('notifications.product.addRule')}
@@ -243,7 +244,7 @@ export function ProductNotifications({ productId }: ProductNotificationsProps) {
       ) : rules.length === 0 ? (
         <div className="empty-state">{t('notifications.product.noRules')}</div>
       ) : (
-        <table className="notifications-table">
+        <table className={styles.notificationsTable}>
           <thead>
             <tr>
               <th>{t('notifications.rules.type')}</th>
@@ -257,7 +258,7 @@ export function ProductNotifications({ productId }: ProductNotificationsProps) {
             {rules.map((rule) => (
               <tr key={rule.id}>
                 <td>
-                  <span className={`rule-type-badge type-${rule.type}`}>
+                  <span className={`${styles.ruleTypeBadge} ${rule.type === 'lowest_in_days' ? styles.typeLowestInDays : rule.type === 'below_threshold' ? styles.typeBelowThreshold : styles.typePercentageDrop}`}>
                     {t(
                       `notifications.rules.ruleTypes.${
                         rule.type === 'lowest_in_days'
@@ -273,7 +274,7 @@ export function ProductNotifications({ productId }: ProductNotificationsProps) {
                 <td>{getChannelName(rule.channel_id)}</td>
                 <td>
                   <button
-                    className={`toggle-button ${rule.enabled ? 'enabled' : 'disabled'}`}
+                    className={`${styles.toggleButton} ${rule.enabled ? styles.enabled : styles.disabled}`}
                     onClick={() => handleToggleRule(rule.id, !rule.enabled)}
                   >
                     {rule.enabled ? '✓' : '✗'}
@@ -281,14 +282,14 @@ export function ProductNotifications({ productId }: ProductNotificationsProps) {
                 </td>
                 <td>
                   <button
-                    className="btn btn-small"
+                    className={styles.btnSmall}
                     onClick={() => { setEditingRule(rule); setShowRuleForm(true); }}
                   >
                     {t('notifications.rules.edit')}
                   </button>
                   {' '}
                   <button
-                    className="btn-small btn-danger"
+                    className={styles.btnSmallDanger}
                     onClick={() => handleDeleteRule(rule.id)}
                   >
                     Delete

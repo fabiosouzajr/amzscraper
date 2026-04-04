@@ -1,0 +1,54 @@
+/* ========================================
+   Badge Component Styles
+   Uses design tokens from tokens.css
+   ======================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  transition: background-color var(--duration-fast) var(--ease-default),
+              color var(--duration-fast) var(--ease-default);
+}
+
+/* Sizes */
+.sm {
+  font-size: var(--font-size-xs);
+  padding: 0.15rem 0.4rem;
+  height: var(--badge-height-sm);
+}
+
+.md {
+  font-size: var(--font-size-sm);
+  padding: 0.25rem 0.5rem;
+  height: var(--badge-height-md);
+}
+
+/* Variants - semantic colors */
+.neutral {
+  background-color: var(--color-bg-inset);
+  color: var(--color-text-primary);
+}
+
+.success {
+  background-color: var(--color-success-subtle);
+  color: var(--color-success);
+}
+
+.danger {
+  background-color: var(--color-danger-subtle);
+  color: var(--color-danger);
+}
+
+.info {
+  background-color: var(--color-info-subtle);
+  color: var(--color-info);
+}
+
+.warning {
+  background-color: var(--color-warning-subtle);
+  color: var(--color-warning);
+}

@@ -2,6 +2,7 @@ export interface Product {
   id: number;
   asin: string;
   description: string;
+  image_url?: string;
   categories?: Category[];
   lists?: UserList[];
   created_at: string;
@@ -37,6 +38,7 @@ export interface ScrapedProductData {
   price: number | null;
   available: boolean;
   unavailableReason?: string;
+  imageUrl?: string;
   categories?: string[];
 }
 
@@ -173,7 +175,7 @@ export interface NotificationRule {
 export interface NotificationRuleWithUser extends NotificationRule {
   username: string;
   product_description?: string;
-  channel_name: string;
+  channel_name?: string;
 }
 
 export interface NotificationLogEntry {
@@ -192,6 +194,5 @@ export interface NotificationLogEntry {
 export interface NotificationLogEntryWithUser extends NotificationLogEntry {
   username: string;
   product_description?: string;
-  channel_name: string;
+  channel_name?: string;
 }
-

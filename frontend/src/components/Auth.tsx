@@ -1,8 +1,14 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { Button, Card, Input } from '../design-system';
+import styles from './Auth.module.css';
 
-export function Auth() {
+interface AuthProps {
+  registrationEnabled?: boolean;
+}
+
+export function Auth({ registrationEnabled = true }: AuthProps) {
   const { t } = useTranslation();
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
@@ -12,12 +18,15 @@ export function Auth() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // If registration is disabled, always show login form
+  const effectiveIsLogin = !registrationEnabled ? true : isLogin;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     // Validate passwords match when registering
-    if (!isLogin && password !== verifyPassword) {
+    if (!effectiveIsLogin && password !== verifyPassword) {
       setError(t('auth.passwordMismatch'));
       return;
     }
@@ -25,7 +34,7 @@ export function Auth() {
     setLoading(true);
 
     try {
-      if (isLogin) {
+      if (effectiveIsLogin) {
         await login(username, password);
       } else {
         await register(username, password);
@@ -38,69 +47,76 @@ export function Auth() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>{isLogin ? t('auth.login') : t('auth.register')}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">{t('auth.username')}</label>
-            <input
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <Card elevation={2} padding="lg">
+          <h2 className={styles.title}>
+            {effectiveIsLogin ? t('auth.login') : t('auth.register')}
+          </h2>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <Input
               id="username"
-              type="text"
+              label={t('auth.username')}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
               minLength={3}
               disabled={loading}
+              fullWidth
             />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">{t('auth.password')}</label>
-            <input
+            <Input
               id="password"
+              label={t('auth.password')}
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
               disabled={loading}
+              fullWidth
             />
-          </div>
-          {!isLogin && (
-            <div className="form-group">
-              <label htmlFor="verifyPassword">{t('auth.verifyPassword')}</label>
-              <input
+            {!effectiveIsLogin && (
+              <Input
                 id="verifyPassword"
+                label={t('auth.verifyPassword')}
                 type="password"
                 value={verifyPassword}
                 onChange={(e) => setVerifyPassword(e.target.value)}
                 required
                 minLength={6}
                 disabled={loading}
+                fullWidth
               />
+            )}
+            {error && <div className={styles.errorMessage}>{error}</div>}
+            <Button
+              type="submit"
+              loading={loading}
+              fullWidth
+              className={styles.submitButton}
+            >
+              {effectiveIsLogin ? t('auth.login') : t('auth.register')}
+            </Button>
+          </form>
+          {registrationEnabled && (
+            <div className={styles.switchRow}>
+              <button
+                type="button"
+                className={styles.linkButton}
+                disabled={loading}
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setError(null);
+                  setPassword('');
+                  setVerifyPassword('');
+                }}
+              >
+                {effectiveIsLogin ? t('auth.switchToRegister') : t('auth.switchToLogin')}
+              </button>
             </div>
           )}
-          {error && <div className="error-message">{error}</div>}
-          <button type="submit" disabled={loading} className="auth-button">
-            {loading ? t('auth.loading') : (isLogin ? t('auth.login') : t('auth.register'))}
-          </button>
-        </form>
-        <div className="auth-switch">
-          <button
-            type="button"
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setError(null);
-              setPassword('');
-              setVerifyPassword('');
-            }}
-            className="link-button"
-          >
-            {isLogin ? t('auth.switchToRegister') : t('auth.switchToLogin')}
-          </button>
-        </div>
+        </Card>
       </div>
     </div>
   );
 }
-

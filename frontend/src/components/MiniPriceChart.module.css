@@ -1,0 +1,8 @@
+.miniPriceChart {
+  width: 100%;
+  cursor: pointer;
+}
+
+.miniPriceChart:hover {
+  opacity: 0.9;
+}

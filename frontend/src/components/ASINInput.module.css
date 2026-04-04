@@ -1,0 +1,87 @@
+.asinInput {
+  margin-top: 0;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: stretch;
+  gap: 0.6rem;
+}
+
+.inputGroup input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.78rem 0.9rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  background: #fffefc;
+  transition: border-color var(--duration-normal) var(--ease-default), box-shadow var(--duration-normal) var(--ease-default);
+  touch-action: manipulation;
+}
+
+.inputGroup input:focus {
+  outline: none;
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 3px var(--color-accent-subtle);
+}
+
+.inputGroup input.invalid {
+  border-color: var(--color-danger);
+  background: var(--color-danger-subtle);
+}
+
+.inputGroup button {
+  background: var(--color-amazon-navy);
+  color: var(--color-text-inverse);
+  border: 1px solid transparent;
+  padding: 0.75rem 1.3rem;
+  border-radius: var(--radius-md);
+  min-height: var(--touch-target-min);
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  transition: background var(--duration-fast) var(--ease-default), transform var(--duration-fast) var(--ease-default);
+  touch-action: manipulation;
+}
+
+.inputGroup button:hover:not(:disabled) {
+  background: var(--color-text-primary);
+}
+
+.inputGroup button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.inputGroup button:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}
+
+.inputGroup button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 620px) {
+  .inputGroup {
+    flex-direction: column;
+  }
+
+  .inputGroup input,
+  .inputGroup button {
+    width: 100%;
+  }
+}

@@ -5,9 +5,23 @@ import bcrypt from 'bcrypt';
 
 const router = Router();
 
+// Handle OPTIONS for CORS preflight
+router.options('*', (req: Request, res: Response) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.sendStatus(200);
+});
+
 // POST /api/auth/register - Create new user account
 router.post('/register', async (req: Request, res: Response) => {
   try {
+    // Check if registration is enabled
+    const registrationEnabled = await dbService.getConfig('registration_enabled');
+    if (registrationEnabled === 'false') {
+      return res.status(403).json({ error: 'Registration is currently disabled. Contact an administrator.' });
+    }
+
     const { username, password } = req.body;
 
     if (!username || !password) {

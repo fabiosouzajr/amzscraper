@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import styles from './Config.module.css';
 
 interface Props {
   onUnsavedChangesChange: (hasChanges: boolean) => void;
@@ -60,28 +61,28 @@ export function AccountSection({ onUnsavedChangesChange }: Props) {
   };
 
   return (
-    <div id="account" className="config-section">
+    <div id="account" className={styles.configSection}>
       <h3>{t('config.account')}</h3>
       {user && (
-        <div className="account-info-card">
-          <div className="account-info-row">
-            <span className="account-info-label">{t('config.username')}</span>
-            <span className="account-info-value">{user.username}</span>
+        <div className={styles.accountInfoCard}>
+          <div className={styles.accountInfoRow}>
+            <span className={styles.accountInfoLabel}>{t('config.username')}</span>
+            <span className={styles.accountInfoValue}>{user.username}</span>
           </div>
-          <div className="account-info-row">
-            <span className="account-info-label">{t('config.role')}</span>
+          <div className={styles.accountInfoRow}>
+            <span className={styles.accountInfoLabel}>{t('config.role')}</span>
             <span className={`role-badge role-${user.role?.toLowerCase()}`}>{user.role}</span>
           </div>
-          <div className="account-info-row">
-            <span className="account-info-label">{t('config.memberSince')}</span>
-            <span className="account-info-value">
+          <div className={styles.accountInfoRow}>
+            <span className={styles.accountInfoLabel}>{t('config.memberSince')}</span>
+            <span className={styles.accountInfoValue}>
               {new Date(user.created_at).toLocaleDateString()}
             </span>
           </div>
         </div>
       )}
-      <form onSubmit={handleChangePassword} className="password-change-form">
-        <div className="form-group">
+      <form onSubmit={handleChangePassword} className={styles.passwordChangeForm}>
+        <div className={styles.formGroup}>
           <label htmlFor="currentPassword">{t('config.currentPassword')}</label>
           <input
             type="password"
@@ -92,7 +93,7 @@ export function AccountSection({ onUnsavedChangesChange }: Props) {
             disabled={changingPassword}
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="newPassword">{t('config.newPassword')}</label>
           <input
             type="password"
@@ -104,7 +105,7 @@ export function AccountSection({ onUnsavedChangesChange }: Props) {
             disabled={changingPassword}
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="confirmPassword">{t('config.confirmPassword')}</label>
           <input
             type="password"
@@ -116,7 +117,7 @@ export function AccountSection({ onUnsavedChangesChange }: Props) {
             disabled={changingPassword}
           />
         </div>
-        <button type="submit" disabled={changingPassword} className="change-password-button">
+        <button type="submit" disabled={changingPassword} className={styles.changePasswordButton}>
           {changingPassword ? t('config.changingPassword') : t('config.changePassword')}
         </button>
         {passwordSuccess && <div className="success-message">{passwordSuccess}</div>}
