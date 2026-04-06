@@ -6,13 +6,15 @@ import { api } from '../services/api';
 import { ASINInput } from './ASINInput';
 import { CategoryFilter } from './CategoryFilter';
 import { EmptyState } from '../design-system';
-import { formatDate } from '../utils/dateFormat';
+import { formatDate, formatDateTime } from '../utils/dateFormat';
+import { formatPrice } from '../utils/numberFormat';
 import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { useAuth } from '../contexts/AuthContext';
 import { useImport } from '../contexts/ImportContext';
 import { useProducts, useAddProduct, useDeleteProduct, useLists, usePullToRefresh } from '../hooks';
 import { PullToRefreshIndicator } from './PullToRefreshIndicator';
 import styles from './ProductList.module.css';
+import { Product } from '../types';
 
 interface ProductListProps {
   initialCategoryFilter?: string;
@@ -268,6 +270,25 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
 
   const displayError = error || fetchError;
 
+  const getLatestScrapeSummary = useCallback((product: Product): string => {
+    if (product.available === false) {
+      if (product.unavailable_reason) {
+        return t('products.latestScrapeUnavailableReason', { reason: product.unavailable_reason });
+      }
+      return t('products.latestScrapeUnavailable');
+    }
+
+    if (product.current_price != null) {
+      return t('products.latestScrapePrice', { price: formatPrice(product.current_price) });
+    }
+
+    if (product.available === true) {
+      return t('products.latestScrapeAvailableNoPrice');
+    }
+
+    return t('products.latestScrapeNoData');
+  }, [t]);
+
   if (loading) {
     return <div className="loading">{t('products.loading')}</div>;
   }
@@ -340,6 +361,36 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
               <div className={styles.productsList}>
                 {filteredProducts.map((product) => (
                   <div key={product.id} className={styles.productListItem}>
+                    {/* Details row — shown only when expanded */}
+                    {expandedRows.has(product.id) && (
+                      <div className={styles.productRowDetails}>
+                        {product.categories && product.categories.length > 0 && (
+                          <div className={`${styles.expandedCategories} product-categories`}>
+                            {product.categories.map((cat, idx) => (
+                              <span key={cat.id}>
+                                <button
+                                  className={styles.categoryFilterButton}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleCategoryClick(cat.name);
+                                  }}
+                                  title={t('dashboard.filterBy', { category: cat.name })}
+                                >
+                                  {cat.name}
+                                </button>
+                                {idx < product.categories!.length - 1 && ' > '}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <div className={`${styles.productRowAsinBadge} ${styles.expandedAsinBadge}`}>{product.asin}</div>
+                        <div className={styles.productDate}>
+                          {t('products.added')}: {formatDate(product.created_at)}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Main row — always visible */}
                     <div className={styles.productRowMain}>
                       <div className={styles.productMediaColumn}>
@@ -384,10 +435,9 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
                           </div>
                         )}
                         <div className={styles.productRowMeta}>
-                          <span className={styles.productRowAsinBadge}>{product.asin}</span>
-                          {(product as any).current_price != null && (
-                            <span className={styles.productRowPrice}>
-                              {(product as any).current_price}
+                          {product.last_updated && (
+                            <span className={styles.productRowUpdatedAt}>
+                              {t('products.latestScrapeUpdated', { date: formatDateTime(product.last_updated) })}
                             </span>
                           )}
                         </div>
@@ -400,6 +450,9 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
                         >
                           {product.description}
                         </a>
+                        <div className={styles.productLatestScrape}>
+                          {getLatestScrapeSummary(product)}
+                        </div>
                       </div>
 
                       <div className={`${styles.productRowActions} product-actions`}>
@@ -460,35 +513,6 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
                         </button>
                       </div>
                     </div>
-
-                    {/* Details row — shown only when expanded */}
-                    {expandedRows.has(product.id) && (
-                      <div className={styles.productRowDetails}>
-                        <div className={styles.productDate}>
-                          {t('products.added')}: {formatDate(product.created_at)}
-                        </div>
-                        {product.categories && product.categories.length > 0 && (
-                          <div className="product-categories">
-                            {product.categories.map((cat, idx) => (
-                              <span key={cat.id}>
-                                <button
-                                  className={styles.categoryFilterButton}
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleCategoryClick(cat.name);
-                                  }}
-                                  title={t('dashboard.filterBy', { category: cat.name })}
-                                >
-                                  {cat.name}
-                                </button>
-                                {idx < product.categories!.length - 1 && ' > '}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>

@@ -8,11 +8,12 @@ interface PriceChartData {
 
 interface PriceChartProps {
   data: PriceChartData[];
+  height?: number;
 }
 
-export default function PriceChart({ data }: PriceChartProps) {
+export default function PriceChart({ data, height = 220 }: PriceChartProps) {
   return (
-    <ResponsiveContainer width="100%" height={220}>
+    <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />

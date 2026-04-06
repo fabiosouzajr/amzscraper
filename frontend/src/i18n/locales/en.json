@@ -83,7 +83,13 @@
     "perPage": "per page",
     "itemsPerPage": "Items per page",
     "view": "View",
-    "importProgress": "Import progress"
+    "importProgress": "Import progress",
+    "latestScrapePrice": "Latest scrape: {{price}}",
+    "latestScrapeUnavailable": "Latest scrape: Unavailable",
+    "latestScrapeUnavailableReason": "Latest scrape: Unavailable ({{reason}})",
+    "latestScrapeAvailableNoPrice": "Latest scrape: Available (price missing)",
+    "latestScrapeNoData": "Latest scrape: No data yet",
+    "latestScrapeUpdated": "Updated {{date}}"
   },
   "search": {
     "title": "Search Products",

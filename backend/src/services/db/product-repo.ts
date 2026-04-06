@@ -273,8 +273,11 @@ export function createProductRepo(
       const product = await repo.getProductById(productId, userId);
       if (!product) return null;
       const history = await repo.getPriceHistory(productId);
-      const currentPrice = history.length > 0 ? history[history.length - 1].price ?? undefined : undefined;
-      const previousPrice = history.length > 1 ? history[history.length - 2].price ?? undefined : undefined;
+      // getPriceHistory returns DESC by date, so index 0 is the latest observation.
+      const latestEntry = history[0];
+      const previousEntry = history[1];
+      const currentPrice = latestEntry?.price ?? undefined;
+      const previousPrice = previousEntry?.price ?? undefined;
       const priceDrop = currentPrice && previousPrice ? previousPrice - currentPrice : undefined;
       const priceDropPercentage = currentPrice && previousPrice && previousPrice > 0
         ? ((previousPrice - currentPrice) / previousPrice) * 100
@@ -285,7 +288,9 @@ export function createProductRepo(
         previous_price: previousPrice,
         price_drop: priceDrop,
         price_drop_percentage: priceDropPercentage,
-        last_updated: history.length > 0 ? history[history.length - 1].date : undefined,
+        available: latestEntry?.available,
+        unavailable_reason: latestEntry?.unavailable_reason,
+        last_updated: latestEntry?.date,
       };
     },
 
@@ -427,7 +432,22 @@ export function createProductRepo(
     async getProductsWithLists(
       userId: number, categoryFilter?: string, limit?: number, offset?: number
     ): Promise<Product[]> {
-      let sql = 'SELECT p.* FROM products p WHERE p.user_id = ?';
+      let sql = `
+        SELECT
+          p.*,
+          ph.price AS current_price,
+          ph.available AS current_available,
+          ph.unavailable_reason AS current_unavailable_reason,
+          ph.date AS last_updated
+        FROM products p
+        LEFT JOIN price_history ph ON ph.id = (
+          SELECT ph2.id
+          FROM price_history ph2
+          WHERE ph2.product_id = p.id
+          ORDER BY ph2.date DESC
+          LIMIT 1
+        )
+        WHERE p.user_id = ?`;
       const params: unknown[] = [userId];
       if (categoryFilter) {
         sql += `
@@ -451,6 +471,12 @@ export function createProductRepo(
       return Promise.all(
         rows.map(async (r) => ({
           ...r,
+          current_price: r.current_price ?? undefined,
+          available: r.current_available === null || r.current_available === undefined
+            ? undefined
+            : r.current_available === 1,
+          unavailable_reason: r.current_unavailable_reason ?? undefined,
+          last_updated: r.last_updated ?? undefined,
           categories: await repo.getProductCategories(r.id),
           lists: await dbAll<any>(
             db,

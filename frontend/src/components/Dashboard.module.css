@@ -60,6 +60,7 @@
 
 .priceChangesSection {
   margin-bottom: 2.5rem;
+  overflow: visible;
 }
 
 .priceChangesSection:last-child {
@@ -82,6 +83,7 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  overflow: visible;
 }
 
 .priceDropCard {
@@ -89,6 +91,7 @@
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-border-secondary);
   border-radius: 8px;
+  overflow: visible !important;
   box-shadow: 0 6px 18px rgba(35, 35, 35, 0.08);
   transition: transform 0.2s, box-shadow 0.2s;
   width: 100%;
@@ -109,6 +112,7 @@
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-border-secondary);
   border-radius: 8px;
+  overflow: visible !important;
   box-shadow: 0 6px 18px rgba(35, 35, 35, 0.08);
   transition: transform 0.2s, box-shadow 0.2s;
   width: 100%;
@@ -216,7 +220,7 @@
   transform: rotate(17deg);
   transform-origin: center;
   pointer-events: none;
-  z-index: 2;
+  z-index: 12;
 }
 
 .lowestBadge7 {

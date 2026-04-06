@@ -244,61 +244,63 @@ export function ProductNotifications({ productId }: ProductNotificationsProps) {
       ) : rules.length === 0 ? (
         <div className="empty-state">{t('notifications.product.noRules')}</div>
       ) : (
-        <table className={styles.notificationsTable}>
-          <thead>
-            <tr>
-              <th>{t('notifications.rules.type')}</th>
-              <th>{t('notifications.rules.params')}</th>
-              <th>{t('notifications.rules.channel')}</th>
-              <th>{t('notifications.rules.enabled')}</th>
-              <th>{t('notifications.rules.actions')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rules.map((rule) => (
-              <tr key={rule.id}>
-                <td>
-                  <span className={`${styles.ruleTypeBadge} ${rule.type === 'lowest_in_days' ? styles.typeLowestInDays : rule.type === 'below_threshold' ? styles.typeBelowThreshold : styles.typePercentageDrop}`}>
-                    {t(
-                      `notifications.rules.ruleTypes.${
-                        rule.type === 'lowest_in_days'
-                          ? 'lowestInDays'
-                          : rule.type === 'below_threshold'
-                          ? 'belowThreshold'
-                          : 'percentageDrop'
-                      }`
-                    )}
-                  </span>
-                </td>
-                <td>{formatRuleParams(rule.type, rule.params)}</td>
-                <td>{getChannelName(rule.channel_id)}</td>
-                <td>
-                  <button
-                    className={`${styles.toggleButton} ${rule.enabled ? styles.enabled : styles.disabled}`}
-                    onClick={() => handleToggleRule(rule.id, !rule.enabled)}
-                  >
-                    {rule.enabled ? '✓' : '✗'}
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className={styles.btnSmall}
-                    onClick={() => { setEditingRule(rule); setShowRuleForm(true); }}
-                  >
-                    {t('notifications.rules.edit')}
-                  </button>
-                  {' '}
-                  <button
-                    className={styles.btnSmallDanger}
-                    onClick={() => handleDeleteRule(rule.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
+        <div className={styles.notificationsTableWrapper}>
+          <table className={styles.notificationsTable}>
+            <thead>
+              <tr>
+                <th>{t('notifications.rules.type')}</th>
+                <th>{t('notifications.rules.params')}</th>
+                <th>{t('notifications.rules.channel')}</th>
+                <th>{t('notifications.rules.enabled')}</th>
+                <th>{t('notifications.rules.actions')}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rules.map((rule) => (
+                <tr key={rule.id}>
+                  <td>
+                    <span className={`${styles.ruleTypeBadge} ${rule.type === 'lowest_in_days' ? styles.typeLowestInDays : rule.type === 'below_threshold' ? styles.typeBelowThreshold : styles.typePercentageDrop}`}>
+                      {t(
+                        `notifications.rules.ruleTypes.${
+                          rule.type === 'lowest_in_days'
+                            ? 'lowestInDays'
+                            : rule.type === 'below_threshold'
+                            ? 'belowThreshold'
+                            : 'percentageDrop'
+                        }`
+                      )}
+                    </span>
+                  </td>
+                  <td>{formatRuleParams(rule.type, rule.params)}</td>
+                  <td>{getChannelName(rule.channel_id)}</td>
+                  <td>
+                    <button
+                      className={`${styles.toggleButton} ${rule.enabled ? styles.enabled : styles.disabled}`}
+                      onClick={() => handleToggleRule(rule.id, !rule.enabled)}
+                    >
+                      {rule.enabled ? '✓' : '✗'}
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className={styles.btnSmall}
+                      onClick={() => { setEditingRule(rule); setShowRuleForm(true); }}
+                    >
+                      {t('notifications.rules.edit')}
+                    </button>
+                    {' '}
+                    <button
+                      className={styles.btnSmallDanger}
+                      onClick={() => handleDeleteRule(rule.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {showRuleForm && (

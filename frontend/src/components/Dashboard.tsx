@@ -290,9 +290,6 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
         </div>
         <h1 className={styles.headerTitle}>{t('dashboard.title')}</h1>
         <div className={`${styles.headerRight} ${styles.sortFilterRow}`}>
-          <label htmlFor="dashboard-sort-select" className={styles.sortFilterLabel}>
-            {t('dashboard.sortBy')}:
-          </label>
           <select
             id="dashboard-sort-select"
             className={styles.sortFilterSelect}

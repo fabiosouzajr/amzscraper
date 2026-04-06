@@ -88,6 +88,23 @@
   margin-bottom: 0.5rem;
 }
 
+.productMetaPrimary {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.productMetaAsin {
+  flex-shrink: 0;
+}
+
+.productMetaAdded {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .priceInfoBody {
   display: flex;
   align-items: flex-start;
@@ -116,14 +133,14 @@
   margin-bottom: 0.55rem;
 }
 
-.currentPrice .label {
+.currentPriceLabel {
   font-size: 0.85rem;
   color: var(--color-text-secondary);
 }
 
-.currentPrice .value {
-  font-size: 1.65rem;
-  font-weight: bold;
+.currentPriceValue {
+  font-size: 2.05rem;
+  font-weight: 800;
   color: var(--color-amazon-navy);
 }
 
@@ -192,6 +209,15 @@
   margin-top: 0.5rem;
 }
 
+.chartFrame {
+  width: 100%;
+}
+
+.chartFrameMobile {
+  width: 80%;
+  margin: 0 auto;
+}
+
 .priceHistoryTable {
   margin-top: 1.25rem;
   padding-top: 1.25rem;
@@ -252,7 +278,6 @@
   }
 
   .productMeta {
-    flex-direction: column;
     gap: 0.5rem;
   }
 
@@ -262,8 +287,9 @@
     margin-bottom: 0.5rem;
   }
 
-  .currentPrice .value {
-    font-size: 1.5rem;
+  .currentPriceValue {
+    font-size: 2.2rem;
+    font-weight: 800;
   }
 
   .priceChart {
@@ -274,6 +300,10 @@
   .priceHistoryTable {
     margin-top: 1rem;
     padding-top: 1rem;
+  }
+
+  .chartFrameMobile {
+    width: 80%;
   }
 }
 

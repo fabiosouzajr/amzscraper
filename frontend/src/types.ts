@@ -18,6 +18,10 @@ export interface Product {
   categories?: Category[];
   lists?: UserList[];
   created_at: string;
+  current_price?: number;
+  available?: boolean;
+  unavailable_reason?: string;
+  last_updated?: string;
 }
 
 export interface PriceHistory {

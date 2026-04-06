@@ -18,9 +18,10 @@ interface ProductDetailProps {
   onClose?: () => void;
   onNavigate?: (productId: number) => void;
   isSheet?: boolean;
+  showBackButton?: boolean;
 }
 
-export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet = false }: ProductDetailProps) {
+export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet = false, showBackButton = false }: ProductDetailProps) {
   const { t } = useTranslation();
   const [product, setProduct] = useState<ProductWithPrice | null>(null);
   const [loading, setLoading] = useState(true);
@@ -111,11 +112,24 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
 
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex >= 0 && currentIndex < sortedProductIds.length - 1;
+  const backHandler = onBack ?? onClose;
+  const backLabel = onBack ? t('productDetail.goBack') : t('productDetail.back');
+  const shouldShowBackButton = Boolean(onBack || (showBackButton && onClose));
+  const isMobileOverlay = isSheet && showBackButton;
 
   return (
     <div className={styles.productDetail} ref={swipeRef}>
-      {!isSheet && (
-        <div className={styles.productDetailHeader}>
+      <div className={styles.productDetailHeader}>
+        {shouldShowBackButton && backHandler && (
+          <button
+            onClick={backHandler}
+            className={styles.backButton}
+            type="button"
+          >
+            {backLabel}
+          </button>
+        )}
+        {!isSheet && (
           <div className={styles.productNavigation}>
             <button
               onClick={handlePrevious}
@@ -132,17 +146,19 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
               {t('productDetail.next')}
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className={styles.productHeader}>
         <div className={styles.productMeta}>
-          <Badge variant="neutral" size="sm">
-            {t('productDetail.asin')}: {product.asin}
-          </Badge>
-          <Badge variant="neutral" size="sm">
-            {t('productDetail.added')}: {formatDate(product.created_at)}
-          </Badge>
+          <div className={styles.productMetaPrimary}>
+            <Badge variant="neutral" size="sm" className={styles.productMetaAsin}>
+              {t('productDetail.asin')}: {product.asin}
+            </Badge>
+            <Badge variant="neutral" size="sm" className={styles.productMetaAdded}>
+              {t('productDetail.added')}: {formatDate(product.created_at)}
+            </Badge>
+          </div>
           {product.lists && product.lists.length > 0 && (
             <div className="product-lists">
               <span className="lists-label">{t('products.inLists')}: </span>
@@ -193,8 +209,8 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
             {product.current_price != null ? (
               <>
                 <div className={styles.currentPrice}>
-                  <span className="label">{t('productDetail.currentPrice')}</span>
-                  <span className="value">{formatPrice(product.current_price)}</span>
+                  <span className={styles.currentPriceLabel}>{t('productDetail.currentPrice')}</span>
+                  <span className={styles.currentPriceValue}>{formatPrice(product.current_price)}</span>
                 </div>
                 {product.previous_price != null && (
                   <div className={styles.priceComparison}>
@@ -228,9 +244,11 @@ export function ProductDetail({ productId, onBack, onClose, onNavigate, isSheet 
       {chartData.length > 0 && (
         <div className={styles.priceChart}>
           <h3>{t('productDetail.priceHistory')}</h3>
-          <Suspense fallback={<div className="chart-loading">Loading chart...</div>}>
-            <PriceChart data={chartData} />
-          </Suspense>
+          <div className={isMobileOverlay ? styles.chartFrameMobile : styles.chartFrame}>
+            <Suspense fallback={<div className="chart-loading">Loading chart...</div>}>
+              <PriceChart data={chartData} height={isMobileOverlay ? 176 : 220} />
+            </Suspense>
+          </div>
         </div>
       )}
 

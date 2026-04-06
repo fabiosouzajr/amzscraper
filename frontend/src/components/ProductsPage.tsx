@@ -88,12 +88,8 @@ export function ProductsPage() {
   }, [navigate]);
 
   const handleProductSelect = useCallback((productId: number) => {
-    if (isMobile) {
-      navigate(`/products/${productId}`);
-    } else {
-      setSelectedProductId(productId);
-    }
-  }, [isMobile, navigate]);
+    setSelectedProductId(productId);
+  }, []);
 
   const handleSheetClose = useCallback(() => {
     setSelectedProductId(null);
@@ -150,14 +146,6 @@ export function ProductsPage() {
     };
   }, [query, runSearch]);
 
-  // Close sheet when switching to mobile
-  useEffect(() => {
-    if (isMobile && selectedProductId !== null) {
-      navigate(`/products/${selectedProductId}`);
-      setSelectedProductId(null);
-    }
-  }, [isMobile, selectedProductId, navigate]);
-
   return (
     <div className={styles.productsPage}>
       <h2 className={styles.productsPageTitle}>{t('products.title')}</h2>
@@ -212,9 +200,9 @@ export function ProductsPage() {
       <Sheet
         isOpen={selectedProductId !== null}
         onClose={handleSheetClose}
-        position="right"
-        size="lg"
-        showCloseButton
+        position={isMobile ? 'bottom' : 'right'}
+        size={isMobile ? 'full' : 'lg'}
+        showCloseButton={!isMobile}
       >
         {selectedProductId !== null && (
           <Suspense fallback={<div className="loading">{t('productDetail.loading')}</div>}>
@@ -223,6 +211,7 @@ export function ProductsPage() {
               onClose={handleSheetClose}
               onNavigate={handleSheetNavigate}
               isSheet
+              showBackButton={isMobile}
             />
           </Suspense>
         )}

@@ -6,6 +6,10 @@ export interface Product {
   categories?: Category[];
   lists?: UserList[];
   created_at: string;
+  current_price?: number | null;
+  available?: boolean;
+  unavailable_reason?: string;
+  last_updated?: string;
 }
 
 export interface Category {
@@ -30,6 +34,8 @@ export interface ProductWithPrice extends Product {
   price_drop?: number;
   price_drop_percentage?: number;
   last_updated?: string;
+  available?: boolean;
+  unavailable_reason?: string;
 }
 
 export interface ScrapedProductData {

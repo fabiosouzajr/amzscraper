@@ -57,15 +57,6 @@
   background-size: 200% 100%;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
 .indeterminate .fill {
   width: 40% !important;
   animation: indeterminate 1.2s infinite ease-in-out;
