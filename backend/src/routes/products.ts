@@ -189,7 +189,13 @@ router.post('/', async (req: Request, res: Response) => {
     const scrapedData = await scraperService.scrapeProduct(normalizedASIN);
 
     // Save product with categories for this user
-    const product = await dbService.addProduct(authReq.userId, normalizedASIN, scrapedData.description, scrapedData.categories);
+    const product = await dbService.addProduct(
+      authReq.userId,
+      normalizedASIN,
+      scrapedData.description,
+      scrapedData.categories,
+      scrapedData.imageUrl
+    );
 
     // Save initial price (with availability information)
     await dbService.addPriceHistory(
@@ -234,4 +240,3 @@ router.delete('/:id', async (req: Request, res: Response) => {
 });
 
 export default router;
-

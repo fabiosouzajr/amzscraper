@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../services/api';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import styles from './SystemStats.module.css';
 
 const COLORS = ['#00a651', '#ff9900', '#cc0000'];
 
@@ -48,37 +49,37 @@ export function SystemStats() {
   ];
 
   return (
-    <div className="system-stats">
+    <div className={styles.systemStats}>
       <h2>{t('admin.stats.title')}</h2>
 
       {/* Overview Stats Cards */}
-      <div className="stats-overview-grid">
-        <div className="stat-card">
+      <div className={styles.statsOverviewGrid}>
+        <div className={styles.statCard}>
           <h4>{t('admin.stats.totalUsers')}</h4>
-          <p className="stat-value">{stats.total_users}</p>
-          <p className="stat-detail">{stats.active_users} {t('admin.stats.activeUsers')}</p>
+          <p className={styles.statValue}>{stats.total_users}</p>
+          <p className={styles.statDetail}>{stats.active_users} {t('admin.stats.activeUsers')}</p>
         </div>
-        <div className="stat-card">
+        <div className={styles.statCard}>
           <h4>{t('admin.stats.totalAdmins')}</h4>
-          <p className="stat-value">{stats.total_admins}</p>
+          <p className={styles.statValue}>{stats.total_admins}</p>
         </div>
-        <div className="stat-card">
+        <div className={styles.statCard}>
           <h4>{t('admin.stats.disabledUsers')}</h4>
-          <p className="stat-value">{stats.disabled_users}</p>
+          <p className={styles.statValue}>{stats.disabled_users}</p>
         </div>
-        <div className="stat-card">
+        <div className={styles.statCard}>
           <h4>{t('admin.stats.totalProducts')}</h4>
-          <p className="stat-value">{stats.total_products}</p>
+          <p className={styles.statValue}>{stats.total_products}</p>
         </div>
-        <div className="stat-card">
+        <div className={styles.statCard}>
           <h4>{t('admin.stats.totalPriceHistory')}</h4>
-          <p className="stat-value">{stats.total_price_history}</p>
+          <p className={styles.statValue}>{stats.total_price_history}</p>
         </div>
       </div>
 
       {/* Charts */}
-      <div className="stats-charts-grid">
-        <div className="chart-card">
+      <div className={styles.statsChartsGrid}>
+        <div className={styles.chartCard}>
           <h3>{t('admin.stats.overviewChart')}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={overviewData}>
@@ -91,7 +92,7 @@ export function SystemStats() {
           </ResponsiveContainer>
         </div>
 
-        <div className="chart-card">
+        <div className={styles.chartCard}>
           <h3>{t('admin.stats.userDistribution')}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>

@@ -23,7 +23,10 @@ interface CreateNotificationRule {
   params: string;
 }
 
-export function createNotificationRepo(db: sqlite3.Database) {
+export function createNotificationRepo(
+  db: sqlite3.Database,
+  getConfig: (key: string) => Promise<string | null>
+) {
   const repo = {
     // ---------------------------------------------------------------------------
     // Notification Channels - User Scoped
@@ -572,11 +575,8 @@ export function createNotificationRepo(db: sqlite3.Database) {
         [userId]
       );
       const current = countRow?.count ?? 0;
-      const maxConfig = await dbGet<{ value: string }>(
-        db,
-        "SELECT value FROM system_config WHERE key = 'quota_max_notification_channels'"
-      );
-      const max = maxConfig ? parseInt(maxConfig.value) : 5;
+      const maxStr = await getConfig('quota_max_notification_channels');
+      const max = maxStr ? parseInt(maxStr) : 5;
       return { allowed: current < max, current, max };
     },
 
@@ -587,11 +587,8 @@ export function createNotificationRepo(db: sqlite3.Database) {
         [userId]
       );
       const current = countRow?.count ?? 0;
-      const maxConfig = await dbGet<{ value: string }>(
-        db,
-        "SELECT value FROM system_config WHERE key = 'quota_max_notification_rules'"
-      );
-      const max = maxConfig ? parseInt(maxConfig.value) : 20;
+      const maxStr = await getConfig('quota_max_notification_rules');
+      const max = maxStr ? parseInt(maxStr) : 20;
       return { allowed: current < max, current, max };
     },
   };

@@ -1,0 +1,110 @@
+/* ========================================
+   Card Component Styles
+   Uses design tokens from tokens.css
+   ======================================== */
+
+.card {
+  background-color: var(--elevation-2-bg);
+  border-radius: var(--radius-lg);
+  transition:
+    transform var(--duration-fast) var(--ease-default),
+    box-shadow var(--duration-fast) var(--ease-default);
+  overflow: hidden;
+}
+
+/* Clickable variant */
+.card.clickable {
+  cursor: pointer;
+}
+
+.card.clickable:hover {
+  transform: translateY(-2px);
+}
+
+.card.clickable:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   ELEVATION LEVELS
+   ======================================== */
+
+.elevation0 {
+  box-shadow: none;
+  background-color: var(--color-bg-primary);
+}
+
+.elevation1 {
+  box-shadow: var(--elevation-1-shadow);
+  background-color: var(--elevation-1-bg);
+}
+
+.elevation2 {
+  box-shadow: var(--elevation-2-shadow);
+  background-color: var(--elevation-2-bg);
+}
+
+/* ========================================
+   PADDING
+   ======================================== */
+
+.paddingNone {
+  padding: 0;
+}
+
+.paddingSm {
+  padding: var(--space-3);
+}
+
+.paddingMd {
+  padding: var(--space-4);
+}
+
+.paddingLg {
+  padding: var(--space-6);
+}
+
+/* ========================================
+   SECTIONS
+   ======================================== */
+
+.header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.header + .content {
+  padding-top: var(--space-4);
+}
+
+.content {
+  padding: var(--space-4) var(--space-5);
+}
+
+.footer {
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--color-border-primary);
+  background-color: var(--color-bg-primary);
+}
+
+.content + .footer {
+  padding-top: var(--space-3);
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .card.clickable:hover {
+    transform: none;
+  }
+
+  .card.clickable:active {
+    transform: none;
+  }
+}

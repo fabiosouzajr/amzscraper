@@ -1,0 +1,77 @@
+.userManagement {
+  padding: 1rem;
+}
+
+.userManagementHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.userManagementHeader h2 {
+  font-size: 1.5rem;
+  color: var(--color-amazon-navy);
+  margin: 0;
+}
+
+.searchBox {
+  margin-bottom: 1.5rem;
+}
+
+.searchBox input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.searchBox input:focus {
+  outline: none;
+  border-color: var(--color-amazon-orange);
+  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
+}
+
+.userStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  composes: statCard from './adminShared.module.css';
+}
+
+.statValue {
+  composes: statValue from './adminShared.module.css';
+}
+
+.userActions {
+  border-top: 1px solid var(--color-border-primary);
+  padding-top: 1.5rem;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-bg-inset);
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.3rem;
+}

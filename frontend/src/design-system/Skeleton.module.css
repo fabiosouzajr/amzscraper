@@ -1,0 +1,231 @@
+/* ========================================
+   Skeleton Component Styles
+   Uses design tokens from tokens.css
+   ======================================== */
+
+.skeleton {
+  background-color: var(--color-bg-inset);
+  border-radius: var(--radius-sm);
+  animation: shimmer 1.5s infinite linear;
+  background-image: linear-gradient(
+    90deg,
+    var(--color-bg-inset) 0%,
+    var(--color-bg-secondary) 50%,
+    var(--color-bg-inset) 100%
+  );
+  background-size: 200% 100%;
+}
+
+.skeleton.noAnimate {
+  animation: none;
+  background-image: none;
+}
+
+/* ========================================
+   SIZES
+   ======================================== */
+
+.sm {
+  --skeleton-size-sm: 24px;
+  --skeleton-size-md: 32px;
+  --skeleton-size-lg: 48px;
+}
+
+.sm.rectangular {
+  height: 24px;
+}
+
+.md {
+  --skeleton-size-sm: 32px;
+  --skeleton-size-md: 40px;
+  --skeleton-size-lg: 56px;
+}
+
+.md.rectangular {
+  height: 32px;
+}
+
+.lg {
+  --skeleton-size-sm: 40px;
+  --skeleton-size-md: 48px;
+  --skeleton-size-lg: 64px;
+}
+
+.lg.rectangular {
+  height: 40px;
+}
+
+/* ========================================
+   VARIANTS
+   ======================================== */
+
+.circular {
+  border-radius: var(--radius-pill);
+}
+
+.sm.circular {
+  width: 24px;
+  height: 24px;
+}
+
+.md.circular {
+  width: 32px;
+  height: 32px;
+}
+
+.lg.circular {
+  width: 48px;
+  height: 48px;
+}
+
+.text {
+  height: 1em;
+  width: 100%;
+  border-radius: var(--radius-xs);
+}
+
+.sm.text {
+  font-size: var(--font-size-sm);
+}
+
+.md.text {
+  font-size: var(--font-size-base);
+}
+
+.lg.text {
+  font-size: var(--font-size-md);
+}
+
+/* ========================================
+   TEXT LINES
+   ======================================== */
+
+.textLines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ========================================
+   CARD SKELETON
+   ======================================== */
+
+.cardSkeleton {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  align-items: center;
+}
+
+.cardSkeletonAvatar {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-inset);
+  animation: shimmer 1.5s infinite linear;
+  background-image: linear-gradient(
+    90deg,
+    var(--color-bg-inset) 0%,
+    var(--color-bg-secondary) 50%,
+    var(--color-bg-inset) 100%
+  );
+  background-size: 200% 100%;
+}
+
+.cardSkeletonContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.cardSkeletonTitle .skeleton {
+  width: 80%;
+}
+
+.cardSkeletonDescription .skeleton {
+  width: 100%;
+}
+
+.cardSkeletonDescription .skeleton:last-child {
+  width: 60%;
+}
+
+/* ========================================
+   TABLE SKELETON
+   ======================================== */
+
+.tableSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background-color: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.tableSkeletonHeader {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.tableSkeletonHeader .skeleton {
+  flex: 1;
+  height: 20px;
+  min-width: 80px;
+}
+
+.tableSkeletonRow {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.tableSkeletonRow:last-child {
+  border-bottom: none;
+}
+
+.tableSkeletonRow .skeleton {
+  flex: 1;
+  min-width: 80px;
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .cardSkeletonAvatar {
+    animation: none;
+    background-image: none;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: var(--breakpoint-mobile)) {
+  .cardSkeleton {
+    padding: var(--space-3);
+  }
+
+  .cardSkeletonAvatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .tableSkeletonHeader .skeleton,
+  .tableSkeletonRow .skeleton {
+    min-width: 60px;
+  }
+}

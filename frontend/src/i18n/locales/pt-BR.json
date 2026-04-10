@@ -7,7 +7,8 @@
     "config": "Configuração",
     "admin": "Admin",
     "logout": "Sair",
-    "loading": "Carregando..."
+    "loading": "Carregando...",
+    "offline": "Você está offline — exibindo dados em cache"
   },
   "dashboard": {
     "title": "Painel de Mudanças de Preço",
@@ -25,6 +26,11 @@
     "previous": "Anterior",
     "current": "Atual",
     "updated": "Atualizado",
+    "sortBy": "Ordenar por",
+    "sortDate": "Data (mais recente primeiro)",
+    "sortDropAmount": "Valor da queda (maior primeiro)",
+    "sortIncreaseAmount": "Valor do aumento (maior primeiro)",
+    "lowestPriceInDays": "Menor em {{days}}d",
     "filterBy": "Filtrar por {{category}}",
     "startingUpdate": "Iniciando atualização de preços...",
     "updateStarted": "Atualização de preços iniciada. Processando produtos...",
@@ -41,7 +47,12 @@
     "trackedProducts": "Produtos Rastreados",
     "filterByCategory": "Filtrar por Categoria:",
     "allCategories": "Todas as Categorias",
+    "categories": "Categorias",
+    "expand": "Expandir",
+    "collapse": "Recolher",
     "noProducts": "Ainda não há produtos rastreados. Adicione um ASIN acima para começar.",
+    "noProductsInCategory": "Nenhum produto corresponde a este filtro de categoria.",
+    "addFirstProduct": "Adicione seu primeiro produto usando o campo ASIN acima.",
     "remove": "Remover",
     "added": "Adicionado",
     "loading": "Carregando produtos...",
@@ -68,14 +79,25 @@
     "failedToAddToList": "Falha ao adicionar produto à lista",
     "failedToRemoveFromList": "Falha ao remover produto da lista",
     "noProductsInList": "Nenhum produto nesta lista",
-    "noListsAvailable": "Nenhuma lista disponível. Crie uma lista primeiro."
+    "noListsAvailable": "Nenhuma lista disponível. Crie uma lista primeiro.",
+    "perPage": "por página",
+    "itemsPerPage": "Itens por página",
+    "view": "Ver",
+    "importProgress": "Progresso da importação",
+    "latestScrapePrice": "Último scrape: {{price}}",
+    "latestScrapeUnavailable": "Último scrape: Indisponível",
+    "latestScrapeUnavailableReason": "Último scrape: Indisponível ({{reason}})",
+    "latestScrapeAvailableNoPrice": "Último scrape: Disponível (sem preço)",
+    "latestScrapeNoData": "Último scrape: Sem dados ainda",
+    "latestScrapeUpdated": "Atualizado em {{date}}"
   },
   "search": {
     "title": "Buscar Produtos",
     "placeholder": "Buscar produtos por nome ou ASIN...",
     "searching": "Buscando...",
     "noResults": "Nenhum produto encontrado",
-    "noProducts": "Nenhum produto disponível"
+    "noProducts": "Nenhum produto disponível",
+    "clear": "Limpar busca"
   },
   "productDetail": {
     "back": "← Voltar",
@@ -156,6 +178,17 @@
     "switchToRegister": "Não tem uma conta? Registrar",
     "switchToLogin": "Já tem uma conta? Entrar"
   },
+  "setup": {
+    "title": "Bem-vindo",
+    "subtitle": "Crie sua conta de administrador para começar. Esta conta terá controle total sobre o sistema.",
+    "username": "Nome de usuário admin",
+    "password": "Senha",
+    "confirmPassword": "Confirmar senha",
+    "passwordMismatch": "As senhas não coincidem",
+    "createAdmin": "Criar Conta Admin",
+    "creating": "Criando conta...",
+    "failed": "Falha ao criar conta admin"
+  },
   "lists": {
     "title": "Minhas Listas",
     "create": "Criar Lista",
@@ -165,7 +198,9 @@
     "confirmDelete": "Tem certeza de que deseja excluir esta lista?",
     "rename": "Renomear",
     "delete": "Excluir",
-    "allProducts": "Todos os Produtos"
+    "allProducts": "Todos os Produtos",
+    "showLists": "Listas ({{count}})",
+    "closeLists": "Fechar"
   },
   "pagination": {
     "previous": "Anterior",
@@ -177,7 +212,10 @@
     "english": "English",
     "portuguese": "Português",
     "cancel": "Cancelar",
-    "save": "Salvar"
+    "save": "Salvar",
+    "skipToContent": "Pular para o conteúdo principal",
+    "dismiss": "Descartar",
+    "delete": "Excluir"
   },
   "admin": {
     "title": "Painel de Administração",
@@ -196,6 +234,8 @@
       "quotaMaxLists": "Máximo de Listas por Usuário",
       "schedulerEnabled": "Agendador Ativado",
       "schedulerCron": "Expressão Cron do Agendador",
+      "registrationEnabled": "Permitir Registro de Novos Usuários",
+      "registrationEnabledDescription": "Quando desativado, apenas administradores podem criar novas contas.",
       "edit": "Editar",
       "loading": "Carregando...",
       "noConfigFound": "Nenhuma configuração encontrada",
@@ -227,6 +267,8 @@
       "passwordPlaceholder": "Mínimo de 6 caracteres",
       "userStats": "Estatísticas: {{username}}",
       "noUsersFound": "Nenhum usuário encontrado",
+      "noUsersMatchSearch": "Nenhum usuário corresponde à sua busca",
+      "noUsersMatchSearchHint": "Tente um termo de busca diferente.",
       "confirmDisable": "Tem certeza que deseja desativar este usuário?",
       "confirmResetPassword": "Tem certeza que deseja redefinir a senha deste usuário?",
       "passwordReset": "Senha redefinida com sucesso"
@@ -301,6 +343,7 @@
   "notifications": {
     "title": "Notificações",
     "pleaseLogin": "Faça login para gerenciar notificações",
+    "delete": "Excluir",
     "channels": {
       "title": "Canais",
       "add": "Adicionar Canal",
@@ -313,6 +356,7 @@
       "noChannels": "Nenhum canal configurado. Adicione um para começar.",
       "createFailed": "Falha ao salvar canal",
       "deleteFailed": "Falha ao excluir canal",
+      "confirmDelete": "Tem certeza que deseja excluir este canal?",
       "testSuccess": "Notificação de teste enviada com sucesso!",
       "testFailed": "Falha no teste",
       "channelTypes": {
@@ -348,11 +392,13 @@
       "actions": "Ações",
       "noRules": "Nenhuma regra configurada.",
       "createFailed": "Falha ao salvar regra",
+      "confirmDelete": "Tem certeza que deseja excluir esta regra?",
       "allProducts": "Todos os produtos (regra global)",
       "days": "Dias",
       "threshold": "Limite (R$)",
       "percentage": "Porcentagem (%)",
       "windowDays": "Janela (dias)",
+      "daysUnit": "dias",
       "ruleTypes": {
         "lowestInDays": "Menor preço em N dias",
         "belowThreshold": "Preço abaixo do limite",

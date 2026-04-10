@@ -1,0 +1,76 @@
+.auditLog {
+  padding: 1rem;
+}
+
+.auditHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.auditHeader h2 {
+  font-size: 1.5rem;
+  color: var(--color-amazon-navy);
+  margin: 0;
+}
+
+.filterSelect {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background: var(--color-bg-elevated);
+  min-width: 150px;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: var(--color-amazon-orange);
+  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
+}
+
+.actionBadge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.actionCreate {
+  background: var(--color-success-subtle);
+  color: var(--color-success);
+}
+
+.actionUpdate {
+  background: var(--color-info-subtle);
+  color: var(--color-info);
+}
+
+.actionDelete {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+}
+
+.targetNone {
+  color: var(--color-text-secondary);
+}
+
+.targetUser {
+  color: var(--color-info);
+  font-weight: 600;
+}
+
+.targetConfig {
+  color: var(--color-amazon-orange);
+  font-weight: 600;
+}
+
+.targetProduct {
+  color: var(--color-success);
+  font-weight: 600;
+}

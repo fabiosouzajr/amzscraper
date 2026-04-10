@@ -1,0 +1,50 @@
+.adminPanel {
+  padding: 1rem;
+}
+
+.adminHeader {
+  background: var(--color-amazon-navy);
+  color: var(--color-text-inverse);
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.adminHeader h1 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.adminTabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.adminTab {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  color: var(--color-text-inverse);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.adminTab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.adminTab.active {
+  background: var(--color-amazon-orange);
+  border-color: var(--color-amazon-orange);
+  color: var(--color-amazon-navy);
+  font-weight: 600;
+}
+
+.adminContent {
+  padding: 0 1rem;
+}

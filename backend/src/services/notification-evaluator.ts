@@ -94,7 +94,7 @@ export class NotificationEvaluator {
   /**
    * Evaluate "below threshold" trigger
    */
-  private evaluateBelowThreshold(currentPrice: number, threshold: number): Promise<boolean> {
+  private evaluateBelowThreshold(currentPrice: number, threshold: number): boolean {
     return currentPrice < threshold;
   }
 
@@ -137,7 +137,7 @@ export class NotificationEvaluator {
       return;
     }
 
-    const product = await dbService.getProductById(productId);
+    const product = await dbService.getProductById(productId, rule.user_id);
     if (!product) return;
 
     // Build trigger description
@@ -173,7 +173,7 @@ export class NotificationEvaluator {
       trigger_type: rule.type,
       message: `${triggerDescription} - Price: R$ ${currentPrice.toFixed(2)}`,
       status,
-      error_message: errorMessage,
+      error_message: errorMessage ?? undefined,
     });
   }
 

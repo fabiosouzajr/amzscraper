@@ -1,0 +1,84 @@
+.adminSection {
+  padding: 1rem;
+}
+
+/* Inner tab navigation (channels / rules / history) */
+.adminTabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--color-border-primary);
+  margin-bottom: 1.5rem;
+}
+
+.adminTab {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+
+.adminTab:hover {
+  color: var(--color-amazon-navy);
+  background-color: var(--color-bg-secondary);
+}
+
+.adminTab.active {
+  color: var(--color-amazon-orange);
+  border-bottom-color: var(--color-amazon-orange);
+  font-weight: 600;
+}
+
+/* Channel type badges */
+.channelTypeBadge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.channelTypeBadge.typeEmail {
+  background: #e8f4f8;
+  color: #0077b6;
+}
+
+.channelTypeBadge.typeTelegram {
+  background: #e8f0fe;
+  color: #2563eb;
+}
+
+.channelTypeBadge.typeDiscord {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+/* Rule type badges */
+.ruleTypeBadge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ruleTypeBadge.typeLowestInDays {
+  background: var(--color-success-subtle);
+  color: var(--color-success);
+}
+
+.ruleTypeBadge.typeBelowThreshold {
+  background: var(--color-warning-subtle);
+  color: var(--color-warning);
+}
+
+.ruleTypeBadge.typePercentageDrop {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+}
