@@ -134,12 +134,12 @@
 }
 
 .currentPriceLabel {
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
 .currentPriceValue {
-  font-size: 2.05rem;
+  font-size: var(--font-size-lg);
   font-weight: 800;
   color: var(--color-amazon-navy);
 }
@@ -164,13 +164,13 @@
 .previousPrice .label,
 .priceDrop .label {
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
 }
 
 .previousPrice .value {
   text-decoration: line-through;
   color: var(--color-text-tertiary);
-  font-size: 0.9rem;
+  font-size: var(--font-size-md);
 }
 
 .priceDrop .value.positive {
@@ -257,7 +257,7 @@
   background: var(--color-bg-secondary);
 }
 
-/* Tablet (max-width: 768px) */
+/* ------------------ Tablet (max-width: 768px) --------------------------     */
 @media (max-width: 768px) {
   .productDetail {
     padding: 0.75rem;
@@ -307,7 +307,7 @@
   }
 }
 
-/* Small mobile (max-width: 480px) */
+/* --------------        Small mobile (max-width: 480px) --------------------     */
 @media (max-width: 480px) {
   .productDetail {
     padding: 0.75rem;

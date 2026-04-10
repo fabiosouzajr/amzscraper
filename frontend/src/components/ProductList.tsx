@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { Package } from 'lucide-react';
@@ -6,7 +6,7 @@ import { api } from '../services/api';
 import { ASINInput } from './ASINInput';
 import { CategoryFilter } from './CategoryFilter';
 import { EmptyState } from '../design-system';
-import { formatDate, formatDateTime } from '../utils/dateFormat';
+import { formatDateTime } from '../utils/dateFormat';
 import { formatPrice } from '../utils/numberFormat';
 import { getPreferredProductImageUrl, handleProductImageError } from '../utils/productImage';
 import { useAuth } from '../contexts/AuthContext';
@@ -53,6 +53,10 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
   const addProductMutation = useAddProduct();
   const deleteMutation = useDeleteProduct();
   const { data: lists = [] } = useLists();
+  const sortedLists = useMemo(
+    () => [...lists].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })),
+    [lists]
+  );
 
   const handlePullRefresh = useCallback(async () => {
     await qc.invalidateQueries({ queryKey: ['products'] });
@@ -385,9 +389,6 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
                           </div>
                         )}
                         <div className={`${styles.productRowAsinBadge} ${styles.expandedAsinBadge}`}>{product.asin}</div>
-                        <div className={styles.productDate}>
-                          {t('products.added')}: {formatDate(product.created_at)}
-                        </div>
                       </div>
                     )}
 
@@ -472,7 +473,7 @@ export function ProductList({ initialCategoryFilter = '', initialListFilter = nu
                                 {lists.length === 0 ? (
                                   <div className={styles.noListsMessage}>{t('products.noListsAvailable')}</div>
                                 ) : (
-                                  lists.map((list) => {
+                                  sortedLists.map((list) => {
                                     const isInList = product.lists?.some(l => l.id === list.id);
                                     return (
                                       <button
