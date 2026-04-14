@@ -685,3 +685,158 @@ Alert the admin when the primary selector drops below a threshold (e.g., 80% suc
 3. **Short-term:** Implement adaptive delay with exponential backoff
 4. **Medium-term:** Add proxy support via environment variable
 5. **Long-term:** Browser pool for concurrent scraping (pairs with concurrency improvements in Section 5)
+
+---
+
+## 5. Multi-User Concurrency
+
+The application supports multiple users with proper data isolation at the database level (all queries scoped to `user_id`). However, the operational layer — scraping, scheduling, and real-time updates — was built for single-user patterns and doesn't scale well with concurrent users. The main bottlenecks are the global update lock and synchronous scraping tied to HTTP requests.
+
+### 5.1 `[High]` Global Update Lock Blocks All Users
+
+**Current behavior:** A single `isUpdating` boolean prevents any concurrent price updates. When one user triggers an update or the scheduler runs, all other update requests are rejected.
+
+```typescript
+// backend/src/services/scheduler.ts:9
+private isUpdating: boolean = false;
+
+// backend/src/services/scheduler.ts:81-86
+if (this.isUpdating) {
+  const message = 'Price update already in progress, skipping...';
+  console.log(message);
+  onProgress?.({ status: 'skipped', errorMessage: message });
+  return;
+}
+```
+
+**Impact:** In a multi-tenant setup, one user scraping 100 products (100 x 6s = ~10 minutes) locks out every other user from updating. The scheduled daily update (~4,000 products for 50 users) blocks manual updates for hours. Users see "Price update already in progress" with no visibility into whose update is running or when it will finish.
+
+**Example scenario:** User A manually triggers an update for their 80 products at 11:55 PM. The midnight scheduler fires at 12:00 AM, hits `isUpdating = true`, and skips the entire system update. All users miss their nightly price check.
+
+**Suggested fix:** Replace with a per-user lock map:
+```typescript
+private updatingUsers: Set<number> = new Set();
+
+async updateUserPrices(userId: number, onProgress?: ProgressCallback) {
+  if (this.updatingUsers.has(userId)) {
+    onProgress?.({ status: 'skipped', errorMessage: 'Your update is already in progress' });
+    return;
+  }
+  this.updatingUsers.add(userId);
+  try {
+    // ... scrape user's products
+  } finally {
+    this.updatingUsers.delete(userId);
+  }
+}
+```
+This allows multiple users to update simultaneously (each using their own browser context from the pool in Section 4.1).
+
+### 5.2 `[High]` No Job Queue — Synchronous Inline Scraping
+
+**Current behavior:** When a user clicks "Update Prices", the HTTP request handler directly calls `schedulerService.updateUserPrices()`, which scrapes all products synchronously while streaming SSE progress. The request stays open for the entire duration.
+
+```typescript
+// backend/src/routes/prices.ts:48-60
+schedulerService.updateUserPrices(req.userId, sendProgress)
+  .then(() => {
+    sendProgress({ status: 'complete' });
+    res.end();
+  })
+  .catch((error) => {
+    sendProgress({ status: 'error', ... });
+    res.end();
+  });
+```
+
+**Impact:** A price update for 100 products holds an HTTP connection open for ~10 minutes. If the client disconnects (browser close, network change), the request continues running but progress is lost. There's no way to resume, check status, or queue multiple updates.
+
+**Example scenario:** A user triggers an update on mobile, then closes the browser to save battery. The update continues server-side but the SSE connection is broken. The user reopens the app — there's no way to see if the update is still running or what progress was made.
+
+**Suggested fix:** Decouple the update from the HTTP request using a simple job queue:
+1. POST `/api/prices/update` creates a job and returns `{ jobId }` immediately
+2. GET `/api/prices/update/:jobId/status` (or SSE) streams progress from the running job
+3. Jobs run in the background, independent of HTTP connections
+4. Progress state stored in memory (or SQLite for persistence across restarts)
+
+For this project's scale, a simple in-memory queue with a `Map<string, JobState>` is sufficient — no need for Redis or BullMQ.
+
+### 5.3 `[Medium]` Scheduler Processes Users Sequentially
+
+**Current behavior:** The `updateAllPrices()` method iterates through all users one at a time, processing each user's products before moving to the next.
+
+**Impact:** Total scheduler time is O(users x products_per_user). With 50 users averaging 80 products: 50 x 80 x 6s = ~6.7 hours for a full system update. This means the nightly update may not finish before the next one is scheduled.
+
+**Example scenario:** The scheduler runs at midnight with 50 users. It takes 6+ hours, finishing at 6:30 AM. By then, prices may have already changed for products scraped early in the run, and the next midnight schedule fires in just 17.5 hours.
+
+**Suggested fix:** Process multiple users in parallel (bounded by the browser pool size from Section 4.1):
+```typescript
+async updateAllPrices() {
+  const users = await dbService.getAllUsers();
+  const concurrency = parseInt(process.env.SCRAPER_CONCURRENCY || '3');
+
+  // Process users in batches
+  for (let i = 0; i < users.length; i += concurrency) {
+    const batch = users.slice(i, i + concurrency);
+    await Promise.all(batch.map(user => this.updateUserPrices(user.id)));
+  }
+}
+```
+
+### 5.4 `[Medium]` SSE Connections Not Cleaned Up on Disconnect
+
+**Current behavior:** When a client connects to the price update SSE stream, there is no `req.on('close')` handler. If the client disconnects, the server continues scraping and calling `res.write()` on a closed connection.
+
+```typescript
+// backend/src/routes/prices.ts — SSE setup with no close handler
+res.setHeader('Content-Type', 'text/event-stream');
+res.setHeader('Cache-Control', 'no-cache');
+res.setHeader('Connection', 'keep-alive');
+
+// No req.on('close', ...) anywhere in this file
+```
+
+**Impact:** Writing to a closed connection doesn't crash Node.js (it silently fails), but it wastes resources — the scraper keeps running for a user who's no longer watching. In extreme cases with many disconnected SSE clients, this could accumulate orphaned update processes.
+
+**Example scenario:** A user triggers an update, watches 10% progress, then navigates away. The scraper finishes all 100 products, writing progress events to a dead connection. Meanwhile, the `isUpdating` flag stays true, blocking other users.
+
+**Suggested fix:** Add a close handler with an abort signal:
+```typescript
+let aborted = false;
+req.on('close', () => {
+  aborted = true;
+  console.log(`Client disconnected, update will continue in background`);
+});
+
+// Pass abort check to the update function
+schedulerService.updateUserPrices(req.userId, (progress) => {
+  if (!aborted) {
+    res.write(`data: ${JSON.stringify(progress)}\n\n`);
+  }
+});
+```
+Note: The scrape itself should continue (don't waste partial work), but stop writing to the dead connection.
+
+### 5.5 `[Low]` No Admin Visibility Into Running Jobs
+
+**Current behavior:** There's no way for an admin to see which scrape jobs are currently running, queued, or recently completed. The only indication is the `isUpdating` boolean.
+
+**Impact:** When debugging "why can't I update?" or "why are prices stale?", the admin has no tools. They can't see if the scheduler ran, which users were processed, or if any errors occurred — they'd need to SSH in and read console logs.
+
+**Suggested fix:** Add a simple job status endpoint for admins:
+```typescript
+GET /api/admin/jobs
+// Returns:
+{
+  "running": [{ "userId": 3, "startedAt": "...", "progress": 45 }],
+  "recent": [{ "userId": 1, "completedAt": "...", "products": 80, "errors": 2 }]
+}
+```
+Store recent job results in memory (last 50) or in a `job_history` table. Display this in the admin System Stats panel.
+
+### Recommended Next Steps
+1. **Immediate:** Replace global `isUpdating` with per-user lock — unblocks multi-user scenarios
+2. **Immediate:** Add `req.on('close')` handler to SSE endpoint — prevents writing to dead connections
+3. **Short-term:** Decouple scraping from HTTP requests via a simple job queue pattern
+4. **Medium-term:** Parallelize user processing in the scheduler (pairs with browser pool from Section 4)
+5. **Long-term:** Admin job status endpoint for operational visibility
