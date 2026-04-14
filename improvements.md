@@ -840,3 +840,120 @@ Store recent job results in memory (last 50) or in a `job_history` table. Displa
 3. **Short-term:** Decouple scraping from HTTP requests via a simple job queue pattern
 4. **Medium-term:** Parallelize user processing in the scheduler (pairs with browser pool from Section 4)
 5. **Long-term:** Admin job status endpoint for operational visibility
+
+---
+
+## 6. System Resources
+
+The application runs as a single Node.js process with an embedded Playwright browser. For a small installation (1-5 users), resource usage is reasonable. The concerns below become relevant as the user base grows or when running on resource-constrained hardware (e.g., a Raspberry Pi, small VPS, or shared Tailscale node).
+
+### 6.1 `[Medium]` Playwright Browser Stays Resident in Manual Updates
+
+**Current behavior:** The browser is launched on the first scrape call via `initialize()` and closed after scheduled batch updates in the `finally` block. However, during manual updates triggered via the API, the browser lifecycle depends on when `close()` is called by the scheduler's finally block.
+
+```typescript
+// backend/src/services/scraper.ts:8-20
+async initialize(): Promise<void> {
+  if (!this.browser) {
+    this.browser = await firefox.launch({ headless: true });
+    this.context = await this.browser.newContext({ ... });
+  }
+}
+
+// backend/src/services/scheduler.ts:212 — closed in finally block
+finally {
+  this.isUpdating = false;
+  await scraperService.close();
+}
+```
+
+**Impact:** A headless Firefox instance consumes ~150-300MB of RAM. If the server has limited memory (e.g., a 1GB VPS), this is a significant chunk. Between scheduled runs, the browser is closed. But the manual update path also closes it in the finally block — so the main concern is the peak memory usage during scraping on memory-constrained systems.
+
+**Example scenario:** A Raspberry Pi with 1GB RAM runs the tracker. During a price update, the Playwright browser (~200MB) + Node.js (~100MB) + SQLite leaves only ~700MB free, which can cause swap thrashing or OOM kills.
+
+**Suggested fix:** Add a configurable idle timeout that closes the browser after a period of inactivity:
+```typescript
+private idleTimer: NodeJS.Timeout | null = null;
+
+async initialize() {
+  this.clearIdleTimer();
+  if (!this.browser) {
+    this.browser = await firefox.launch({ headless: true });
+  }
+}
+
+private resetIdleTimer() {
+  this.clearIdleTimer();
+  this.idleTimer = setTimeout(() => this.close(), 60_000); // Close after 1min idle
+}
+```
+Also consider exposing `SCRAPER_MEMORY_LIMIT` to configure Playwright's `--memory-pressure-off` or similar flags.
+
+### 6.2 `[Medium]` No Memory or CPU Monitoring
+
+**Current behavior:** No process monitoring, memory tracking, or health metrics are collected. If the Node.js process runs out of memory or gets OOM-killed by the OS, the only evidence is the process disappearing.
+
+**Impact:** Memory leaks (e.g., from unclosed browser contexts, accumulated event listeners, or growing query result sets) go undetected until the process crashes. On systems managed by `run.sh` (which uses `nohup`), there's no automatic restart — the user discovers the outage manually.
+
+**Example scenario:** A memory leak causes the process to grow from 100MB to 800MB over a week. On day 8, the OOM killer terminates it. The user notices hours later when the dashboard won't load.
+
+**Suggested fix:** Add basic memory tracking to the health endpoint:
+```typescript
+app.get('/health', (req, res) => {
+  const mem = process.memoryUsage();
+  res.json({
+    status: dbReady ? 'ok' : 'starting',
+    memory: {
+      rss: Math.round(mem.rss / 1024 / 1024),       // Total MB
+      heapUsed: Math.round(mem.heapUsed / 1024 / 1024),
+      heapTotal: Math.round(mem.heapTotal / 1024 / 1024),
+    },
+    uptime: Math.round(process.uptime()),
+  });
+});
+```
+For production, use a process manager (PM2) that handles auto-restart and memory limits:
+```bash
+pm2 start dist/server.js --max-memory-restart 512M
+```
+
+### 6.3 `[Medium]` Single-Threaded Node.js
+
+**Current behavior:** The application runs as a single Node.js process. All HTTP requests, scraping, scheduling, and database operations share one thread.
+
+**Impact:** On a multi-core machine, only one core is utilized. CPU-intensive operations (though rare — most work is I/O-bound) block the event loop. More importantly, a long-running synchronous operation (e.g., large JSON serialization for database export) can cause request queuing.
+
+**Example scenario:** An admin exports a large database (100MB). The JSON serialization blocks the event loop for several seconds. During that window, all API requests queue up, making the dashboard appear frozen.
+
+**Suggested fix:** For most deployments, this isn't a bottleneck — the app is I/O-bound (network requests, SQLite queries). If CPU becomes a concern:
+1. Use Node.js `cluster` module to fork workers (one per core)
+2. Or use PM2's cluster mode: `pm2 start dist/server.js -i max`
+
+**Caveat:** SQLite doesn't support concurrent writers from multiple processes. Clustering would require WAL mode (Section 2.2) and careful write coordination. For most self-hosted installations, single-process is fine.
+
+### 6.4 `[Low]` Log Files Grow Unbounded
+
+**Current behavior:** The `run.sh` script redirects output to `logs/backend.log` and `logs/frontend.log` using `nohup`. These files are never rotated or truncated.
+
+**Impact:** Over months of operation, log files can grow to gigabytes — especially if the scraper logs verbose output for each product (selector fallbacks, price parsing details). This wastes disk space and makes log analysis difficult.
+
+**Example scenario:** After 6 months, `backend.log` is 2GB. The server runs on a 20GB VPS — 10% of disk is used by logs alone.
+
+**Suggested fix:** Use `logrotate` (system-level) or a simple log rotation in `run.sh`:
+```bash
+# In run.sh, rotate before starting:
+if [ -f logs/backend.log ] && [ $(stat -f%z logs/backend.log 2>/dev/null || stat -c%s logs/backend.log) -gt 10485760 ]; then
+  mv logs/backend.log logs/backend.log.old
+fi
+```
+Or use PM2 which handles log rotation natively:
+```bash
+pm2 install pm2-logrotate
+pm2 set pm2-logrotate:max_size 10M
+```
+
+### Recommended Next Steps
+1. **Immediate:** Add memory stats to the `/health` endpoint — zero-cost observability
+2. **Short-term:** Use PM2 for production with `--max-memory-restart` and log rotation
+3. **Medium-term:** Add idle timeout to the scraper browser to reclaim memory between updates
+4. **Deferred:** Clustering — only if CPU becomes a measurable bottleneck
