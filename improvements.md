@@ -1065,3 +1065,202 @@ This is a one-line change supported by all modern browsers. Images below the fol
 2. **Short-term:** Lazy-load Dashboard component to reduce initial bundle (Recharts is heavy)
 3. **Long-term:** Consider PWA caching for offline support if mobile usage is significant
 4. **Ongoing:** Continue CSS Modules migration to reduce global CSS
+
+---
+
+## 8. DevOps & Reliability
+
+The application has solid deployment tooling (`install.sh`, `run.sh`) and comprehensive documentation. However, it lacks the automated quality gates and operational infrastructure that protect against regressions and simplify deployment. The absence of automated testing is the single highest-impact gap in the project.
+
+### 8.1 `[High]` No Automated Test Suite
+
+**Current behavior:** The `backend/test/` directory contains debug utilities (`debug-price.ts`, `selector-analyzer.ts`, `verify-price-fixes.ts`) — not automated tests. There is no test framework, no test runner, no test configuration. Zero lines of automated test code exist.
+
+**Impact:** Every code change carries regression risk. The scraper has complex fallback logic (4 price extraction methods, 3 title selectors, multiple availability patterns) that could break silently. Database migrations could lose data. API endpoints could return wrong status codes. All of this must be verified manually for every change.
+
+**Example scenario:** A developer fixes a price parsing bug for one product format but accidentally breaks parsing for another format. Without tests, this goes undetected until a user reports stale prices days later.
+
+**Suggested fix:** Start with high-value, low-effort tests:
+
+1. **Database repo tests** — test CRUD operations, migrations, cascading deletes:
+   ```bash
+   npm install -D vitest
+   ```
+   ```typescript
+   // backend/test/db/product-repo.test.ts
+   import { describe, it, expect, beforeEach } from 'vitest';
+
+   describe('ProductRepo', () => {
+     it('should create and retrieve a product', async () => { ... });
+     it('should record price history only on change', async () => { ... });
+     it('should cascade delete price history when product deleted', async () => { ... });
+   });
+   ```
+
+2. **Scraper parser tests** — test price/title/availability extraction with saved HTML snapshots:
+   ```typescript
+   // Test with real Amazon page snapshots (saved as fixtures)
+   it('should parse Brazilian Real price format', () => {
+     expect(parsePrice('R$ 1.234,56')).toBe(1234.56);
+   });
+   ```
+
+3. **API route tests** — test auth flow, product CRUD, error responses with supertest
+
+### 8.2 `[Medium]` No CI/CD Pipeline
+
+**Current behavior:** No GitHub Actions, GitLab CI, or other CI configuration exists. Code is pushed directly without automated checks.
+
+**Impact:** TypeScript type errors, broken imports, and syntax errors can be pushed to the repository. There's no automated build verification — a broken commit could go unnoticed until someone pulls and tries to run the app.
+
+**Example scenario:** A developer pushes a commit that passes `npm run dev` (which uses ts-node-dev with lenient settings) but fails `npm run build` (which runs full tsc). The next person who tries to deploy discovers the build is broken.
+
+**Suggested fix:** Add a GitHub Actions workflow:
+```yaml
+# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 18 }
+      - run: cd backend && npm ci && npm run build
+      - run: cd frontend && npm ci && npm run build
+      # Add test step once tests exist:
+      # - run: cd backend && npm test
+```
+
+### 8.3 `[Medium]` No Database Backup Automation
+
+**Current behavior:** Database backups are only available through manual export via the admin panel (GET `/api/config/export-database` — downloads the SQLite file).
+
+**Impact:** If the server's disk fails or the database corrupts, data is lost unless someone remembered to manually export recently. For a price tracker with years of historical data, this is significant.
+
+**Example scenario:** The SQLite file corrupts due to an unclean shutdown during a write (unlikely but possible without WAL mode). The last manual backup was 3 weeks ago — 3 weeks of price history is lost.
+
+**Suggested fix:** Add a scheduled backup job using the existing cron infrastructure:
+```typescript
+// Add to scheduler.ts
+private scheduleBackups() {
+  cron.schedule('0 3 * * *', async () => { // Daily at 3 AM
+    const backupPath = `database/backups/products-${Date.now()}.db`;
+    await fs.copyFile('database/products.db', backupPath);
+    // Keep last 7 backups, delete older ones
+  });
+}
+```
+Alternatively, use SQLite's `.backup` API for hot backups that don't interfere with running queries.
+
+### 8.4 `[Medium]` No Docker Support
+
+**Current behavior:** Deployment requires manually installing Node.js 18+, running `npm install` (which triggers Playwright browser download), and managing processes with `run.sh` or a process manager.
+
+**Impact:** Setting up a new installation involves multiple steps and system-level dependencies. Playwright browser installation can fail on some Linux distributions due to missing system libraries. There's no reproducible deployment artifact.
+
+**Example scenario:** A user tries to deploy on a minimal Ubuntu server. Playwright's postinstall fails because `libgbm`, `libwoff2`, and other browser dependencies aren't installed. The user spends an hour debugging system library installations.
+
+**Suggested fix:** Add a Dockerfile:
+```dockerfile
+FROM node:18-slim
+
+# Install Playwright system dependencies
+RUN npx playwright install-deps firefox chromium
+
+WORKDIR /app
+COPY backend/package*.json backend/
+RUN cd backend && npm ci
+
+COPY frontend/package*.json frontend/
+RUN cd frontend && npm ci
+
+COPY . .
+RUN cd frontend && npm run build
+RUN cd backend && npm run build
+
+# Install Playwright browsers
+RUN cd backend && npx playwright install firefox chromium
+
+EXPOSE 3000
+CMD ["node", "backend/dist/server.js"]
+```
+Add a `docker-compose.yml` for single-command deployment:
+```yaml
+services:
+  tracker:
+    build: .
+    ports: ["3000:3000"]
+    volumes: ["./database:/app/database"]
+    environment:
+      - JWT_SECRET=change-me-to-a-random-value
+      - NODE_ENV=production
+```
+
+### 8.5 `[Low]` No Structured Logging
+
+**Current behavior:** The application uses `console.log` with timestamp prefixes (via `backend/src/utils/logger.ts`). Log output is plain text.
+
+**Impact:** Plain text logs are difficult to parse programmatically. If the application is ever deployed with a log aggregation tool (ELK, Datadog, CloudWatch), parsing custom timestamp formats requires extra configuration. Filtering logs by level (info, warn, error) requires text pattern matching.
+
+**Suggested fix:** Replace the console override with a structured logger like `pino`:
+```bash
+npm install pino
+```
+```typescript
+import pino from 'pino';
+const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
+
+// Usage:
+logger.info({ userId: 3, products: 80 }, 'Starting price update');
+// Output: {"level":30,"time":1712793600000,"userId":3,"products":80,"msg":"Starting price update"}
+```
+This is low priority unless log aggregation is needed. The current console approach works fine for reading logs directly.
+
+### 8.6 `[Low]` tsconfig Includes Test Files Outside rootDir
+
+**Current behavior:** The backend `tsconfig.json` sets `rootDir: "src/"` but also includes `test/**/*`. Since test files are outside `src/`, running `tsc` produces errors. This is a pre-existing issue that doesn't affect `npm run dev` (which uses ts-node-dev) but breaks `npm run build`.
+
+**Impact:** Build errors from test file inclusion must be worked around. New developers may be confused by tsc errors that don't affect the running application.
+
+**Suggested fix:** Either:
+1. Create a separate `tsconfig.test.json` that extends the base config with a different `rootDir`
+2. Or exclude test files from the main tsconfig: `"exclude": ["test"]`
+
+### Recommended Next Steps
+1. **Immediate:** Fix tsconfig to exclude test files — removes a long-standing build annoyance
+2. **Short-term:** Add basic CI pipeline (GitHub Actions) for build verification on push
+3. **Short-term:** Start a test suite with database repo tests (highest value-to-effort ratio)
+4. **Medium-term:** Add automated database backups via the scheduler
+5. **Medium-term:** Create Dockerfile for reproducible deployment
+6. **Long-term:** Structured logging if log aggregation tools are adopted
+
+---
+
+## Summary
+
+| Section | Critical | High | Medium | Low | Total |
+|---------|----------|------|--------|-----|-------|
+| Security | 0 | 2 | 3 | 1 | 6 |
+| Database & Storage | 0 | 1 | 3 | 2 | 6 |
+| Backend & API | 0 | 0 | 2 | 3 | 5 |
+| Scraper | 0 | 1 | 4 | 2 | 7 |
+| Multi-User Concurrency | 0 | 2 | 2 | 1 | 5 |
+| System Resources | 0 | 0 | 3 | 1 | 4 |
+| Frontend Performance | 0 | 0 | 1 | 3 | 4 |
+| DevOps & Reliability | 0 | 1 | 3 | 2 | 6 |
+| **Total** | **0** | **7** | **21** | **15** | **43** |
+
+### Top 10 Highest-Impact Improvements
+
+1. **Add rate limiting to auth endpoints** (Security 1.3) — low effort, high security impact
+2. **Restrict CORS origins** (Security 1.1) — low effort, closes the biggest security hole
+3. **Enable SQLite WAL mode** (Database 2.2) — one line, eliminates read blocking during writes
+4. **Add LIMIT to getPriceHistory()** (Database 2.4) — quick fix, big impact on page load
+5. **Replace global isUpdating with per-user locks** (Concurrency 5.1) — unblocks multi-user usage
+6. **Add `loading="lazy"` to images** (Frontend 7.4) — one-line fix, saves bandwidth
+7. **Start an automated test suite** (DevOps 8.1) — highest long-term value investment
+8. **Add Helmet for security headers** (Security 1.6) — one dependency, broad protection
+9. **Match browser UA to engine** (Scraper 4.5) — reduces detection risk
+10. **Add req.on('close') to SSE** (Concurrency 5.4) — prevents resource waste on disconnect
