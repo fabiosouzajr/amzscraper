@@ -1,15 +1,16 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-04-10T12:14:17.818Z
-> Files: 206 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-04-14T13:27:23.260Z
+> Files: 207 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
 - `.codex` (~0 tok)
 - `.gitignore` — Git ignore rules (~139 tok)
 - `CLAUDE.md` — OpenWolf (~1332 tok)
+- `improvements.md` — Improvements & Optimization Opportunities (~2474 tok)
 - `install.sh` — Colors for output (~2654 tok)
-- `README.md` — Project documentation (~4413 tok)
+- `README.md` — Project documentation (~3417 tok)
 - `run.sh` — Get the directory where the script is located (~796 tok)
 - `TODO.md` — 1 asins import process feedback (~558 tok)
 
