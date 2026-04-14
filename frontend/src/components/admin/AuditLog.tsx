@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AuditLog } from '../../types';
 import { adminApi } from '../../services/api';
+import styles from './AuditLog.module.css';
+import tableStyles from './AdminTable.module.css';
 
 export function AuditLog() {
   const { t } = useTranslation();
@@ -33,14 +35,19 @@ export function AuditLog() {
 
   const getActionBadgeClass = (action: string) => {
     const actionLower = action.toLowerCase();
-    if (actionLower.includes('create') || actionLower.includes('enable')) return 'action-create';
-    if (actionLower.includes('disable') || actionLower.includes('delete')) return 'action-delete';
-    return 'action-update';
+    if (actionLower.includes('create') || actionLower.includes('enable')) return styles.actionCreate;
+    if (actionLower.includes('disable') || actionLower.includes('delete')) return styles.actionDelete;
+    return styles.actionUpdate;
   };
 
   const getTargetTypeBadgeClass = (targetType?: string) => {
-    if (!targetType) return 'target-none';
-    return `target-${targetType.toLowerCase()}`;
+    if (!targetType) return styles.targetNone;
+    const map: Record<string, string> = {
+      user: styles.targetUser,
+      config: styles.targetConfig,
+      product: styles.targetProduct,
+    };
+    return map[targetType.toLowerCase()] ?? styles.targetNone;
   };
 
   const filterTypeOptions = [
@@ -60,12 +67,12 @@ export function AuditLog() {
     : logs;
 
   return (
-    <div className="audit-log">
-      <div className="audit-header">
+    <div className={styles.auditLog}>
+      <div className={styles.auditHeader}>
         <h2>{t('admin.audit.title')}</h2>
 
         <select
-          className="filter-select"
+          className={styles.filterSelect}
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
         >
@@ -75,7 +82,7 @@ export function AuditLog() {
         </select>
 
         <select
-          className="filter-select"
+          className={styles.filterSelect}
           value={filterUserId}
           onChange={(e) => setFilterUserId(e.target.value)}
         >
@@ -89,50 +96,52 @@ export function AuditLog() {
       {loading ? (
         <div className="loading">{t('admin.audit.loading')}</div>
       ) : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>{t('admin.audit.timestamp')}</th>
-              <th>{t('admin.audit.admin')}</th>
-              <th>{t('admin.audit.action')}</th>
-              <th>{t('admin.audit.target')}</th>
-              <th>{t('admin.audit.targetId')}</th>
-              <th>{t('admin.audit.details')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredLogs.length === 0 ? (
+        <div className={tableStyles.tableWrapper}>
+          <table className={tableStyles.adminTable}>
+            <thead>
               <tr>
-                <td colSpan={6}>{t('admin.audit.noLogsFound')}</td>
+                <th>{t('admin.audit.timestamp')}</th>
+                <th>{t('admin.audit.admin')}</th>
+                <th>{t('admin.audit.action')}</th>
+                <th>{t('admin.audit.target')}</th>
+                <th>{t('admin.audit.targetId')}</th>
+                <th>{t('admin.audit.details')}</th>
               </tr>
-            ) : (
-              filteredLogs.map((log) => (
-                <tr key={log.id}>
-                  <td>{new Date(log.created_at).toLocaleString()}</td>
-                  <td>{log.admin_username}</td>
-                  <td>
-                    <span className={`action-badge ${getActionBadgeClass(log.action)}`}>
-                      {log.action}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={getTargetTypeBadgeClass(log.target_type)}>
-                      {log.target_type || '-'}
-                    </span>
-                  </td>
-                  <td>
-                    {log.target_id ? (
-                      <span>{log.target_type}:{log.target_id}</span>
-                    ) : (
-                      <span>-</span>
-                    )}
-                  </td>
-                  <td>{log.details || '-'}</td>
+            </thead>
+            <tbody>
+              {filteredLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={6}>{t('admin.audit.noLogsFound')}</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                filteredLogs.map((log) => (
+                  <tr key={log.id}>
+                    <td data-label={t('admin.audit.timestamp')}>{new Date(log.created_at).toLocaleString()}</td>
+                    <td data-label={t('admin.audit.admin')}>{log.admin_username}</td>
+                    <td data-label={t('admin.audit.action')}>
+                      <span className={`${styles.actionBadge} ${getActionBadgeClass(log.action)}`}>
+                        {log.action}
+                      </span>
+                    </td>
+                    <td data-label={t('admin.audit.target')}>
+                      <span className={getTargetTypeBadgeClass(log.target_type)}>
+                        {log.target_type || '-'}
+                      </span>
+                    </td>
+                    <td data-label={t('admin.audit.targetId')}>
+                      {log.target_id ? (
+                        <span>{log.target_type}:{log.target_id}</span>
+                      ) : (
+                        <span>-</span>
+                      )}
+                    </td>
+                    <td data-label={t('admin.audit.details')}>{log.details || '-'}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

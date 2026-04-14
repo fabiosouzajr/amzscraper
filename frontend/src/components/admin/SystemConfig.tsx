@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../services/api';
+import styles from './SystemConfig.module.css';
+import tableStyles from './AdminTable.module.css';
 
 interface ConfigItem {
   key: string;
@@ -74,7 +76,8 @@ export function SystemConfig() {
       'quota_max_products': t('admin.config.quotaMaxProducts'),
       'quota_max_lists': t('admin.config.quotaMaxLists'),
       'scheduler_enabled': t('admin.config.schedulerEnabled'),
-      'scheduler_cron': t('admin.config.schedulerCron')
+      'scheduler_cron': t('admin.config.schedulerCron'),
+      'registration_enabled': t('admin.config.registrationEnabled')
     };
     return labels[key] || key;
   };
@@ -87,7 +90,7 @@ export function SystemConfig() {
             type="time"
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
-            className="config-input"
+            className={styles.configInput}
           />
         );
       }
@@ -108,12 +111,12 @@ export function SystemConfig() {
           type="text"
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
-          className="config-input"
+          className={styles.configInput}
         />
       );
     }
     const displayValue = config.key === 'scheduler_cron' ? cronToTime(config.value) : config.value;
-    return <span className="config-value">{displayValue}</span>;
+    return <span className={styles.configValue}>{displayValue}</span>;
   };
 
   if (loading) {
@@ -121,64 +124,66 @@ export function SystemConfig() {
   }
 
   return (
-    <div className="system-config">
-      <div className="config-header">
+    <div className={styles.systemConfig}>
+      <div className={styles.configHeader}>
         <h2>{t('admin.config.title')}</h2>
       </div>
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>{t('admin.config.tableKey')}</th>
-            <th>{t('admin.config.tableValue')}</th>
-            <th>{t('admin.config.tableDescription')}</th>
-            <th>{t('admin.config.tableActions')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {configs.length === 0 ? (
+      <div className={tableStyles.tableWrapper}>
+        <table className={tableStyles.adminTable}>
+          <thead>
             <tr>
-              <td colSpan={4}>{t('admin.config.noConfigFound')}</td>
+              <th>{t('admin.config.tableKey')}</th>
+              <th>{t('admin.config.tableValue')}</th>
+              <th>{t('admin.config.tableDescription')}</th>
+              <th>{t('admin.config.tableActions')}</th>
             </tr>
-          ) : (
-            configs.map((config) => (
-              <tr key={config.key}>
-                <td>
-                  <strong>{getConfigLabel(config.key)}</strong>
-                  <div className="config-key">{config.key}</div>
-                </td>
-                <td>{renderValueInput(config)}</td>
-                <td>{config.description || '-'}</td>
-                <td>
-                  {editingKey === config.key ? (
-                    <>
-                      <button
-                        className="btn btn-small btn-success"
-                        onClick={() => handleSave(config.key)}
-                      >
-                        {t('common.save')}
-                      </button>
+          </thead>
+          <tbody>
+            {configs.length === 0 ? (
+              <tr>
+                <td colSpan={4}>{t('admin.config.noConfigFound')}</td>
+              </tr>
+            ) : (
+              configs.map((config) => (
+                <tr key={config.key}>
+                  <td>
+                    <strong>{getConfigLabel(config.key)}</strong>
+                    <div className={styles.configKey}>{config.key}</div>
+                  </td>
+                  <td>{renderValueInput(config)}</td>
+                  <td>{config.description || '-'}</td>
+                  <td>
+                    {editingKey === config.key ? (
+                      <>
+                        <button
+                          className="btn btn-small btn-success"
+                          onClick={() => handleSave(config.key)}
+                        >
+                          {t('common.save')}
+                        </button>
+                        <button
+                          className="btn btn-small"
+                          onClick={handleCancel}
+                        >
+                          {t('common.cancel')}
+                        </button>
+                      </>
+                    ) : (
                       <button
                         className="btn btn-small"
-                        onClick={handleCancel}
+                        onClick={() => handleEdit(config)}
                       >
-                        {t('common.cancel')}
+                        {t('admin.config.edit')}
                       </button>
-                    </>
-                  ) : (
-                    <button
-                      className="btn btn-small"
-                      onClick={() => handleEdit(config)}
-                    >
-                      {t('admin.config.edit')}
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

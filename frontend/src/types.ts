@@ -14,9 +14,14 @@ export interface Product {
   id: number;
   asin: string;
   description: string;
+  image_url?: string;
   categories?: Category[];
   lists?: UserList[];
   created_at: string;
+  current_price?: number;
+  available?: boolean;
+  unavailable_reason?: string;
+  last_updated?: string;
 }
 
 export interface PriceHistory {
@@ -182,4 +187,3 @@ export interface NotificationLogEntryWithUser extends NotificationLogEntry {
   product_description?: string;
   channel_name: string;
 }
-

@@ -1,0 +1,351 @@
+/* ========================================
+   Table Component Styles
+   Uses design tokens from tokens.css
+   ======================================== */
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ========================================
+   DESKTOP TABLE
+   ======================================== */
+
+.desktopTable {
+  display: table;
+  width: 100%;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* ========================================
+   VARIANTS
+   ======================================== */
+
+.default .table {
+  border: 1px solid var(--color-border-primary);
+}
+
+.striped tbody tr:nth-child(odd) {
+  background-color: var(--color-bg-secondary);
+}
+
+.bordered th,
+.bordered td {
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.bordered tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.th.left {
+  text-align: left;
+}
+
+.th.center {
+  text-align: center;
+}
+
+.th.right {
+  text-align: right;
+}
+
+.thContent {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Sort button */
+.sortButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-xs);
+  transition:
+    background-color var(--duration-fast) var(--ease-default),
+    color var(--duration-fast) var(--ease-default);
+}
+
+.sortButton:hover {
+  background-color: var(--color-bg-inset);
+  color: var(--color-text-primary);
+}
+
+.sortButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+}
+
+.sortIndicator {
+  font-size: 0.75em;
+  opacity: 0.7;
+}
+
+/* ========================================
+   ROWS
+   ======================================== */
+
+.tr {
+  transition:
+    background-color var(--duration-fast) var(--ease-default),
+    transform var(--duration-fast) var(--ease-default);
+}
+
+.tr.clickable {
+  cursor: pointer;
+}
+
+.tr.clickable:hover {
+  background-color: var(--color-bg-inset);
+}
+
+.tr.clickable:active {
+  background-color: var(--color-bg-secondary);
+}
+
+/* ========================================
+   CELLS
+   ======================================== */
+
+.td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.td.left {
+  text-align: left;
+}
+
+.td.center {
+  text-align: center;
+}
+
+.td.right {
+  text-align: right;
+}
+
+.tr:last-child .td {
+  border-bottom: none;
+}
+
+/* ========================================
+   SIZES
+   ======================================== */
+
+.sm .th,
+.sm .td {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.lg .th,
+.lg .td {
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--font-size-md);
+}
+
+/* ========================================
+   MOBILE CARDS
+   ======================================== */
+
+.mobileCards {
+  display: none;
+}
+
+@media (max-width: var(--breakpoint-tablet)) {
+  .desktopTable {
+    display: none;
+  }
+
+  .mobileCards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .card {
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    transition:
+      background-color var(--duration-fast) var(--ease-default),
+      transform var(--duration-fast) var(--ease-default),
+      box-shadow var(--duration-fast) var(--ease-default);
+  }
+
+  .card.clickable {
+    cursor: pointer;
+  }
+
+  .card.clickable:hover {
+    background-color: var(--color-bg-inset);
+    box-shadow: var(--shadow-md);
+  }
+
+  .card.clickable:active {
+    transform: scale(0.99);
+  }
+
+  .cardRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-border-secondary);
+  }
+
+  .cardRow:last-child {
+    border-bottom: none;
+  }
+
+  .cardRow.left {
+    justify-content: flex-start;
+  }
+
+  .cardRow.center {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .cardRow.right {
+    justify-content: flex-end;
+  }
+
+  .cardLabel {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+  }
+
+  .cardValue {
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    text-align: right;
+    flex: 1;
+    padding-left: var(--space-3);
+  }
+
+  .cardRow.left .cardValue {
+    text-align: left;
+  }
+
+  .cardRow.center .cardValue {
+    text-align: center;
+  }
+
+  .cardArrow {
+    color: var(--color-text-tertiary);
+    flex-shrink: 0;
+  }
+}
+
+/* ========================================
+   LOADING STATE
+   ======================================== */
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  min-height: 200px;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-bg-inset);
+  border-top-color: var(--color-accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ========================================
+   EMPTY STATE
+   ======================================== */
+
+.emptyState {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .tr,
+  .card,
+  .sortButton {
+    transition: none;
+  }
+
+  .tr.clickable:active,
+  .card.clickable:active {
+    transform: none;
+  }
+
+  .loadingSpinner {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: var(--breakpoint-mobile)) {
+  .th,
+  .td,
+  .cardRow {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+
+  .card {
+    padding: var(--space-2);
+  }
+}

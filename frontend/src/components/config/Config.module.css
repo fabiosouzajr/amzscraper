@@ -1,0 +1,295 @@
+/* Config sub-components shared styles */
+
+/* Shared section wrapper */
+.configSection {
+  display: block;
+  width: 100%;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--color-bg-inset);
+}
+
+.configSection:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.configSection h3 {
+  color: var(--color-amazon-navy);
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+/* Shared action/description layout */
+.configActions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.exportButton {
+  background: var(--color-amazon-navy);
+  color: var(--color-text-inverse);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+
+.exportButton:hover:not(:disabled) {
+  background: var(--color-text-primary);
+}
+
+.exportButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.configDescription {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Account section */
+.accountInfoCard {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  max-width: 500px;
+}
+
+.accountInfoRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.4rem 0;
+}
+
+.accountInfoRow + .accountInfoRow {
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.accountInfoLabel {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  min-width: 110px;
+}
+
+.accountInfoValue {
+  color: var(--color-amazon-navy);
+  font-weight: 500;
+}
+
+.passwordChangeForm {
+  max-width: 500px;
+  margin-top: 1rem;
+}
+
+.changePasswordButton {
+  background: var(--color-amazon-navy);
+  color: var(--color-text-inverse);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
+}
+
+.changePasswordButton:hover:not(:disabled) {
+  background: var(--color-text-primary);
+}
+
+.changePasswordButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Database section */
+.databaseInfo {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--color-border-primary);
+}
+
+.databaseStat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-bg-inset);
+}
+
+.databaseStat:last-child {
+  border-bottom: none;
+}
+
+.statLabel {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Dashboard section */
+.configDashboard {
+  width: 100%;
+}
+
+.configDashboard h3 {
+  color: var(--color-amazon-navy);
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboardCard {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboardCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.dashboardCardHeader {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-bg-inset);
+}
+
+.dashboardCardHeader h4 {
+  color: var(--color-amazon-navy);
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.dashboardCardContent {
+  flex: 1;
+  margin-bottom: 1rem;
+}
+
+.dashboardStat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-bg-inset);
+}
+
+.dashboardStat:last-child {
+  border-bottom: none;
+}
+
+.dashboardStat .statLabel {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.dashboardStat .statValue {
+  color: var(--color-amazon-navy);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.dashboardCardActions {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-bg-inset);
+}
+
+.dashboardActionButton {
+  background: var(--color-amazon-orange);
+  color: var(--color-text-inverse);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+.dashboardActionButton:hover {
+  background: var(--color-amazon-orange-hover);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .exportButton {
+    width: 100%;
+  }
+
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Print */
+@media print {
+  .exportButton {
+    display: none;
+  }
+}
+
+/* Touch-friendly targets */
+@media (hover: none) and (pointer: coarse) {
+  .exportButton {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--color-amazon-orange);
+  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
+}

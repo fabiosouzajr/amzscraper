@@ -1,186 +1,196 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Dashboard } from './components/Dashboard';
-import { ProductList } from './components/ProductList';
-import { ProductSearch } from './components/ProductSearch';
-import { ProductDetail } from './components/ProductDetail';
-import { Config } from './components/config';
-import { AdminPanel } from './components/AdminPanel';
-import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { Auth } from './components/Auth';
+import SetupWizard from './components/SetupWizard';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ImportProvider, useImport } from './contexts/ImportContext';
-import { Product } from './types';
-import './App.css';
+import { X } from 'lucide-react';
+import { ProgressBar, Skeleton, CardSkeleton } from './design-system';
+import { AppShell } from './layout/AppShell';
 
-type View = 'dashboard' | 'products' | 'search' | 'detail' | 'config' | 'admin';
+// Lazy load components that are not on the initial route
+const ProductsPage = lazy(() => import('./components/ProductsPage').then(m => ({ default: m.ProductsPage })));
+const ProductDetail = lazy(() => import('./components/ProductDetail').then(m => ({ default: m.ProductDetail })));
+const SettingsPage = lazy(() => import('./components/SettingsPage').then(m => ({ default: m.SettingsPage })));
+
+/** Full-app skeleton shown while auth state is resolving (<1 s on fast connections). */
+function AppLoadingSkeleton() {
+  return (
+    <div className="app-shell">
+      {/* Sidebar skeleton */}
+      <div className="sidebar" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', padding: 'var(--space-4)' }}>
+        <Skeleton variant="rectangular" size="lg" width="80%" />
+        <Skeleton variant="text" size="md" lines={4} />
+      </div>
+      {/* Main content skeleton */}
+      <div className="main-content" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', padding: 'var(--space-6)' }}>
+        <Skeleton variant="rectangular" size="lg" width="40%" />
+        <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+        <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+        <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+      </div>
+    </div>
+  );
+}
+
+/** Generic page skeleton shown as Suspense fallback when lazy route chunks are loading. */
+function PageSkeleton() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+      <Skeleton variant="rectangular" size="lg" width="35%" />
+      <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+      <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+      <CardSkeleton showAvatar={false} titleLines={1} descriptionLines={2} />
+    </div>
+  );
+}
 
 function ImportProgressBanner() {
   const { t } = useTranslation();
   const { importing, importProgress } = useImport();
+  const [dismissed, setDismissed] = useState(false);
 
-  if (!importing || !importProgress) return null;
+  if (!importing || !importProgress || dismissed) return null;
 
   const percent = importProgress.total > 0
     ? Math.round((importProgress.current / importProgress.total) * 100)
     : 0;
 
   return (
-    <div className="import-progress-banner">
-      <div className="import-progress-banner-inner">
-        <div className="import-progress-banner-text">
-          {importProgress.status === 'starting' && t('products.importStarting')}
-          {importProgress.status === 'processing' && (
-            <>
-              {t('products.importProcessing', {
-                current: importProgress.current,
-                total: importProgress.total,
-              })}
-              {importProgress.currentASIN && (
-                <span className="import-banner-asin"> ({importProgress.currentASIN})</span>
-              )}
-            </>
-          )}
-          {importProgress.status === 'completed' && t('products.importCompleted')}
-        </div>
-        <div className="import-progress-banner-bar-wrapper">
-          <div className="import-progress-banner-bar" style={{ width: `${percent}%` }} />
-        </div>
-        <div className="import-progress-banner-stats">
+    <div className="import-progress-bar">
+      <ProgressBar value={percent} variant="primary" size="sm" />
+      <div
+        className="import-progress-content"
+        aria-live="polite"
+        aria-atomic="false"
+        aria-label={t('products.importProgress')}
+      >
+        {importProgress.status === 'starting' && t('products.importStarting')}
+        {importProgress.status === 'processing' && (
+          <>
+            {t('products.importProcessing', {
+              current: importProgress.current,
+              total: importProgress.total,
+            })}
+            {importProgress.currentASIN && (
+              <span className="import-asin"> ({importProgress.currentASIN})</span>
+            )}
+          </>
+        )}
+        {importProgress.status === 'completed' && t('products.importCompleted')}
+        <span className="import-stats">
           <span className="progress-stat success">{t('products.importSuccess')}: {importProgress.success}</span>
           <span className="progress-stat skipped">{t('products.importSkipped')}: {importProgress.skipped}</span>
           <span className="progress-stat failed">{t('products.importFailed')}: {importProgress.failed}</span>
-        </div>
+        </span>
       </div>
+      <button
+        onClick={() => setDismissed(true)}
+        className="import-dismiss-btn"
+        aria-label={t('common.dismiss')}
+      >
+        <X size={14} />
+      </button>
     </div>
+  );
+}
+
+
+function DashboardWithCategoryClick() {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = useCallback((categoryName: string) => {
+    navigate(`/products?category=${encodeURIComponent(categoryName)}`);
+  }, [navigate]);
+
+  return <Dashboard onCategoryClick={handleCategoryClick} />;
+}
+
+function ProductDetailWithNavigation() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const from = searchParams.get('from') || '/products';
+
+  const handleBack = useCallback(() => {
+    navigate(from);
+  }, [navigate, from]);
+
+  const handleNavigate = useCallback((productId: number) => {
+    const params = new URLSearchParams();
+    params.set('from', location.pathname + location.search);
+    navigate(`/products/${productId}?${params.toString()}`);
+  }, [navigate, location.pathname, location.search]);
+
+  // Extract product ID from URL
+  const productId = useMemo(() => {
+    const match = location.pathname.match(/^\/products\/(\d+)$/);
+    return match ? parseInt(match[1], 10) : undefined;
+  }, [location.pathname]);
+
+  if (productId === undefined) {
+    return <Navigate to="/products" replace />;
+  }
+
+  return (
+    <ProductDetail
+      productId={productId}
+      onBack={handleBack}
+      onNavigate={handleNavigate}
+    />
   );
 }
 
 function AppContent() {
   const { t } = useTranslation();
-  const { user, logout, loading } = useAuth();
-  const [currentView, setCurrentView] = useState<View>('dashboard');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [initialCategoryFilter, setInitialCategoryFilter] = useState<string>('');
-
-  const handleSelectProduct = (product: Product) => {
-    setSelectedProduct(product);
-  };
-
-  const handleNavigateProduct = (productId: number) => {
-    setSelectedProduct({ id: productId } as Product);
-    setCurrentView('detail');
-  };
-
-  const handleCategoryClick = (categoryName: string) => {
-    setInitialCategoryFilter(categoryName);
-    setCurrentView('products');
-  };
+  const { user, loading, needsSetup, registrationEnabled, completeSetup } = useAuth();
 
   if (loading) {
-    return <div className="loading">{t('app.loading')}</div>;
+    return <AppLoadingSkeleton />;
+  }
+
+  if (needsSetup) {
+    return <SetupWizard onSetupComplete={completeSetup} />;
   }
 
   if (!user) {
-    return <Auth />;
+    return <Auth registrationEnabled={registrationEnabled} />;
   }
 
   return (
-    <div className="app">
-      <nav className="navbar">
-        <div className="nav-brand">{t('app.title')}</div>
-        <div className="nav-links">
-          <button
-            onClick={() => setCurrentView('dashboard')}
-            className={currentView === 'dashboard' ? 'active' : ''}
-          >
-            {t('app.dashboard')}
-          </button>
-          <button
-            onClick={() => setCurrentView('products')}
-            className={currentView === 'products' ? 'active' : ''}
-          >
-            {t('app.products')}
-          </button>
-          <button
-            onClick={() => setCurrentView('search')}
-            className={currentView === 'search' ? 'active' : ''}
-          >
-            {t('app.search')}
-          </button>
-          <button
-            onClick={() => setCurrentView('config')}
-            className={currentView === 'config' ? 'active' : ''}
-          >
-            {t('app.config')}
-          </button>
-          {user && user.role === 'ADMIN' && (
-            <button
-              onClick={() => setCurrentView('admin')}
-              className={currentView === 'admin' ? 'active' : ''}
-            >
-              {t('app.admin')}
-            </button>
-          )}
-          <div className="user-info">
-            <button
-              className={`username-button ${currentView === 'config' ? 'active' : ''}`}
-              onClick={() => setCurrentView('config')}
-              title={user.username}
-            >
-              {user.username}
-            </button>
-            <button onClick={logout} className="logout-button">
-              {t('app.logout')}
-            </button>
-          </div>
-          <LanguageSwitcher />
-        </div>
-      </nav>
-
+    <AppShell>
       <ImportProgressBanner />
 
-      <main className="main-content">
-        {currentView === 'dashboard' && <Dashboard onCategoryClick={handleCategoryClick} />}
-        {currentView === 'products' && (
-          <ProductList
-            initialCategoryFilter={initialCategoryFilter}
-            onFilterApplied={() => setInitialCategoryFilter('')}
-          />
-        )}
-        {currentView === 'search' && (
-          <div className="search-view">
-            <h2>{t('search.title')}</h2>
-            <div className="search-layout">
-              <div className="search-list-container">
-                <ProductSearch
-                  onSelectProduct={handleSelectProduct}
-                  selectedProductId={selectedProduct?.id}
-                />
-              </div>
-              {selectedProduct && (
-                <div className="search-detail-container">
-                  <ProductDetail
-                    productId={selectedProduct.id}
-                    onBack={() => setSelectedProduct(null)}
-                    onNavigate={handleNavigateProduct}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-        {currentView === 'detail' && selectedProduct && (
-          <ProductDetail
-            productId={selectedProduct.id}
-            onBack={() => setCurrentView('search')}
-            onNavigate={handleNavigateProduct}
-          />
-        )}
-        {currentView === 'config' && <Config />}
-        {currentView === 'admin' && <AdminPanel />}
+      <a href="#main-content" className="skip-to-content">
+        {t('common.skipToContent')}
+      </a>
+
+      <main className="main-content" id="main-content" role="main">
+        <Suspense fallback={<PageSkeleton />}>
+          <Routes>
+            {/* Dashboard */}
+            <Route path="/" element={<DashboardWithCategoryClick />} />
+
+            {/* Products */}
+            <Route path="/products" element={<ProductsPage />} />
+
+            {/* Search redirects to products */}
+            <Route path="/search" element={<Navigate to="/products" replace />} />
+
+            {/* Product Detail */}
+            <Route path="/products/:id" element={<ProductDetailWithNavigation />} />
+
+            {/* Settings/Config */}
+            <Route path="/settings/*" element={<SettingsPage />} />
+
+            {/* Catch all */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </main>
-    </div>
+    </AppShell>
   );
 }
 

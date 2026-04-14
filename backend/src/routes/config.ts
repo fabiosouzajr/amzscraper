@@ -146,7 +146,13 @@ router.post('/import-asins', async (req: Request, res: Response) => {
         const scrapedData = await scraperService.scrapeProduct(normalizedASIN);
 
         // Save product with categories for this user
-        const product = await dbService.addProduct(authReq.userId, normalizedASIN, scrapedData.description, scrapedData.categories);
+        const product = await dbService.addProduct(
+          authReq.userId,
+          normalizedASIN,
+          scrapedData.description,
+          scrapedData.categories,
+          scrapedData.imageUrl
+        );
         
         // Save initial price
         await dbService.addPriceHistory(product.id, scrapedData.price);

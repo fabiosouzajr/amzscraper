@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { dbService } from '../services/database';
 import { User } from '../models/types';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+import { config } from '../config';
 
 export interface AuthRequest extends Request {
   userId?: number;
@@ -13,16 +12,16 @@ export interface AuthRequest extends Request {
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       res.status(401).json({ error: 'Authentication required' });
       return;
     }
 
     const token = authHeader.substring(7);
-    
+
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; username: string; role?: string };
+      const decoded = jwt.verify(token, config.jwtSecret) as { userId: number; username: string; role?: string };
       const user = await dbService.getUserById(decoded.userId);
 
       if (!user) {
@@ -49,10 +48,11 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 };
 
 export const generateToken = (user: User): string => {
+  const options = { expiresIn: config.jwtExpiresIn } as SignOptions;
   return jwt.sign(
     { userId: user.id, username: user.username, role: user.role },
-    JWT_SECRET,
-    { expiresIn: '7d' }
+    config.jwtSecret,
+    options
   );
 };
 
@@ -60,7 +60,7 @@ export const generateToken = (user: User): string => {
 export const optionalAuthenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       // No token provided, continue without authentication
       next();
@@ -68,9 +68,9 @@ export const optionalAuthenticate = async (req: AuthRequest, res: Response, next
     }
 
     const token = authHeader.substring(7);
-    
+
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; username: string; role?: string };
+      const decoded = jwt.verify(token, config.jwtSecret) as { userId: number; username: string; role?: string };
       const user = await dbService.getUserById(decoded.userId);
 
       // Only set user if they exist and are not disabled

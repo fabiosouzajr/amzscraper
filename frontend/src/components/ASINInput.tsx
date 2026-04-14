@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styles from './ASINInput.module.css';
 
 interface ASINInputProps {
   onAdd: (asin: string) => Promise<void>;
@@ -40,16 +41,25 @@ export function ASINInput({ onAdd, isValidating = false, error, successMessage }
   const isValid = asin.trim() === '' || validateASIN(asin);
 
   return (
-    <form onSubmit={handleSubmit} className="asin-input">
-      <div className="input-group">
+    <form onSubmit={handleSubmit} className={styles.asinInput}>
+      <div className={styles.inputGroup}>
+        <label htmlFor="asin-input" className={styles.visuallyHidden}>
+          {t('asinInput.placeholder')}
+        </label>
         <input
+          id="asin-input"
+          name="asin"
           type="text"
           value={asin}
           onChange={(e) => setAsin(e.target.value.toUpperCase())}
           placeholder={t('asinInput.placeholder')}
           maxLength={10}
+          autoComplete="off"
+          spellCheck={false}
           disabled={isSubmitting || isValidating}
-          className={!isValid ? 'invalid' : ''}
+          aria-invalid={!isValid}
+          aria-describedby={!isValid && asin.trim() !== '' ? 'asin-input-error' : undefined}
+          className={!isValid ? styles.invalid : ''}
         />
         <button
           type="submit"
@@ -61,9 +71,8 @@ export function ASINInput({ onAdd, isValidating = false, error, successMessage }
       {successMessage && <div className="success-message">{successMessage}</div>}
       {error && <div className="error-message">{error}</div>}
       {!isValid && asin.trim() !== '' && (
-        <div className="error-message">{t('asinInput.invalidFormat')}</div>
+        <div id="asin-input-error" className="error-message">{t('asinInput.invalidFormat')}</div>
       )}
     </form>
   );
 }
-

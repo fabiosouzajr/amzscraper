@@ -110,6 +110,58 @@ export class ScraperService {
       description = description.trim();
       console.log(`Found product using selector "${selectorUsed}": ${description.substring(0, 60)}...`);
 
+      // Extract canonical product image URL
+      let imageUrl: string | undefined;
+      try {
+        imageUrl = await page.evaluate(() => {
+          const normalizeUrl = (raw: string | null | undefined): string | null => {
+            if (!raw) return null;
+            const trimmed = raw.trim();
+            if (!trimmed) return null;
+            if (trimmed.startsWith('//')) return `https:${trimmed}`;
+            if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+            return null;
+          };
+
+          const candidates: Array<string | null> = [];
+
+          // Common high-confidence metadata
+          // @ts-ignore - browser context
+          const ogImage = document.querySelector('meta[property="og:image"]')?.getAttribute('content');
+          // @ts-ignore - browser context
+          const imageSrc = document.querySelector('link[rel="image_src"]')?.getAttribute('href');
+          candidates.push(ogImage, imageSrc);
+
+          // Main Amazon image elements
+          // @ts-ignore - browser context
+          const landingImage = document.querySelector('#landingImage');
+          if (landingImage) {
+            candidates.push(
+              landingImage.getAttribute('data-old-hires'),
+              landingImage.getAttribute('src'),
+            );
+          }
+
+          // @ts-ignore - browser context
+          const wrapperImage = document.querySelector('#imgTagWrapperId img');
+          if (wrapperImage) {
+            candidates.push(
+              wrapperImage.getAttribute('data-old-hires'),
+              wrapperImage.getAttribute('src'),
+            );
+          }
+
+          for (const candidate of candidates) {
+            const normalized = normalizeUrl(candidate);
+            if (normalized) return normalized;
+          }
+
+          return null;
+        }) ?? undefined;
+      } catch (error) {
+        console.log('⚠ Error extracting image URL (continuing anyway):', error);
+      }
+
       // Check product availability before extracting price
       console.log('Checking product availability...');
       const availabilityCheck = await page.evaluate(() => {
@@ -143,6 +195,10 @@ export class ScraperService {
               };
             }
           }
+          // Check for marketplace-only (sold exclusively by third-party sellers)
+          if (/apenas (por|de) vendedores terceiros/i.test(availText)) {
+            return { available: true, marketplaceOnly: true };
+          }
           // #availability element found and no unavailable pattern matched → available
           return { available: true };
         }
@@ -168,7 +224,7 @@ export class ScraperService {
         }
 
         return { available: true };
-      });
+      }) as { available: boolean; marketplaceOnly?: boolean; reason?: string };
 
       if (!availabilityCheck.available) {
         console.log(`⚠ Product is unavailable: ${availabilityCheck.reason}`);
@@ -178,6 +234,7 @@ export class ScraperService {
           price: null,
           available: false,
           unavailableReason: availabilityCheck.reason,
+          imageUrl,
           categories: []
         };
         await page.close();
@@ -190,7 +247,30 @@ export class ScraperService {
       // Try multiple selectors as Amazon can have different price formats
       let price: number | null = null;
       let priceMethod: string = '';
-      try {
+
+      // Marketplace-only branch: extract cheapest offer + shipping instead of direct price
+      if (availabilityCheck.marketplaceOnly) {
+        console.log('📦 Marketplace-only product — extracting cheapest offer (item + frete)...');
+        price = await this.extractMarketplacePrice(page, asin);
+        if (price === null) {
+          console.log('⚠ No marketplace offers found, marking as unavailable');
+          await page.close();
+          return {
+            asin,
+            description,
+            price: null,
+            available: false,
+            unavailableReason: 'Apenas vendedores terceiros - sem ofertas disponíveis',
+            imageUrl,
+            categories: []
+          };
+        }
+        console.log(`✓ Marketplace price (item + frete): R$ ${price.toFixed(2)}`);
+        priceMethod = 'marketplace-offer-listing';
+      }
+
+      if (!priceMethod) {
+        try {
         console.log('Extracting price...');
         
         // Wait for visible price elements - try main price container first
@@ -209,14 +289,37 @@ export class ScraperService {
             // @ts-ignore - browser context
             const priceToPay = document.querySelector('.a-price.priceToPay');
             if (!priceToPay) return null;
-            
-            // Strategy: Look for all price elements in the priceToPay container and find the most prominent one
-            // When there's a Pix discount, Amazon often shows multiple prices, and we want the displayed one
-            
-            // First, collect all price elements within priceToPay
+
+            // Returns true if the element is inside a Pix-discount price container.
+            // Amazon wraps Pix prices in ancestors with class /pix/i or /pns/i, or
+            // sibling/parent text nodes containing the word "Pix".
+            function isPixPrice(el: any): boolean {
+              let node: any = el;
+              let depth = 0;
+              while (node && depth < 10) {
+                const cls: string = node.className || '';
+                // /pns/i matches Amazon's "reinventPricePnSWrapper" class — the Price-and-Savings
+                // widget that wraps Pix discount prices. Safe to use here because isPixPrice()
+                // is only ever called on elements inside .a-price.priceToPay.
+                if (/pix/i.test(cls) || /pns/i.test(cls)) return true;
+                // Check immediate previous sibling label (e.g. "No Pix")
+                const sibText: string = node.previousElementSibling?.textContent ?? '';
+                if (/pix/i.test(sibText)) return true;
+                // Check parent's own text nodes (label inside same container)
+                const parentOwn: string = Array.from((node.parentElement?.childNodes as any) ?? [])
+                  .filter((n: any) => n.nodeType === 3)
+                  .map((n: any) => n.textContent ?? '')
+                  .join('');
+                if (/pix/i.test(parentOwn)) return true;
+                node = node.parentElement;
+                depth++;
+              }
+              return false;
+            }
+
             // @ts-ignore
             const allPriceElements: any[] = [];
-            
+
             // Get all .a-offscreen prices within priceToPay
             // @ts-ignore
             const offscreenPrices = priceToPay.querySelectorAll('.a-offscreen');
@@ -227,17 +330,16 @@ export class ScraperService {
                 // @ts-ignore
                 const match = text.match(/R\$\s*([\d.,]+)/);
                 if (match) {
-                  // Check if this is the visible/active price (not a crossed-out old price)
                   // @ts-ignore
                   const parent = el.parentElement;
                   // @ts-ignore
-                  const isStrikethrough = parent?.classList.contains('a-text-price') || 
+                  const isStrikethrough = parent?.classList.contains('a-text-price') ||
                                           // @ts-ignore
                                           parent?.querySelector('.a-text-strike') !== null;
                   // @ts-ignore
                   const isVisible = parent?.offsetParent !== null;
-                  
-                  if (isVisible && !isStrikethrough) {
+
+                  if (isVisible && !isStrikethrough && !isPixPrice(el)) {
                     allPriceElements.push({
                       text: match[1],
                       source: 'offscreen',
@@ -250,13 +352,13 @@ export class ScraperService {
                 }
               }
             });
-            
+
             // Also get visible whole/fraction prices
             // @ts-ignore
             const wholeEl = priceToPay.querySelector('span.a-price-whole');
             // @ts-ignore
             const fractionEl = priceToPay.querySelector('span.a-price-fraction');
-            
+
             if (wholeEl) {
               // @ts-ignore
               const wholeText = wholeEl.textContent?.trim();
@@ -267,11 +369,11 @@ export class ScraperService {
               // @ts-ignore
               const parent = wholeEl.closest('.a-price');
               // @ts-ignore
-              const isStrikethrough = parent?.classList.contains('a-text-price') || 
+              const isStrikethrough = parent?.classList.contains('a-text-price') ||
                                        // @ts-ignore
                                        parent?.querySelector('.a-text-strike') !== null;
-              
-              if (wholeText && isVisible && !isStrikethrough) {
+
+              if (wholeText && isVisible && !isStrikethrough && !isPixPrice(wholeEl)) {
                 allPriceElements.push({
                   whole: wholeText,
                   fraction: fractionText || '',
@@ -283,20 +385,16 @@ export class ScraperService {
                 });
               }
             }
-            
-            // If we found multiple prices, prioritize the one with larger font size (most prominent)
+
             if (allPriceElements.length > 0) {
-              // Sort by font size (larger = more prominent)
               allPriceElements.sort((a, b) => {
                 const sizeA = parseFloat(a.fontSize) || 0;
                 const sizeB = parseFloat(b.fontSize) || 0;
-                return sizeB - sizeA; // Descending order
+                return sizeB - sizeA;
               });
-              
-              // Return the most prominent price
               return allPriceElements[0];
             }
-            
+
             return null;
           });
           
@@ -459,6 +557,7 @@ export class ScraperService {
                   description,
                   price,
                   available: true,
+                  imageUrl,
                   categories: []
                 };
                 await page.close();
@@ -513,6 +612,7 @@ export class ScraperService {
         console.error(`✗ Error extracting price for ASIN ${asin}:`, error);
         throw new Error('Price not found or invalid format');
       }
+      } // end if (!priceMethod)
 
       // Extract categories from breadcrumbs
       let categories: string[] = [];
@@ -606,6 +706,7 @@ export class ScraperService {
           price: null,
           available: false,
           unavailableReason: 'Preço não encontrado',
+          imageUrl,
           categories: categories.length > 0 ? categories : undefined
         };
         await page.close();
@@ -617,6 +718,7 @@ export class ScraperService {
         description,
         price,
         available: true,
+        imageUrl,
         categories: categories.length > 0 ? categories : undefined
       };
       await page.close();
@@ -633,6 +735,120 @@ export class ScraperService {
       }
       
       throw error;
+    }
+  }
+
+  private async extractMarketplacePrice(page: Page, asin: string): Promise<number | null> {
+    // Try extracting offers from the current product page (buybox area)
+    const productPageMin = await page.evaluate(() => {
+      const parseBRPrice = (text: string): number | null => {
+        const match = text.match(/R\$\s*([\d.,]+)/);
+        if (!match) return null;
+        const str = match[1].replace(/\./g, '').replace(',', '.');
+        const val = parseFloat(str);
+        return isNaN(val) ? null : val;
+      };
+
+      // @ts-ignore
+      const extractShipping = (container: Element): number => {
+        const text = container.textContent || '';
+        if (/frete\s+gr[aá]tis/i.test(text)) return 0;
+        const m = text.match(/frete[:\s+]*R\$\s*([\d.,]+)/i) ||
+                  text.match(/\+\s*R\$\s*([\d.,]+)[^R]*frete/i);
+        if (m) {
+          const str = m[1].replace(/\./g, '').replace(',', '.');
+          return parseFloat(str) || 0;
+        }
+        return 0; // absent shipping text → treat as free
+      };
+
+      const totals: number[] = [];
+      // @ts-ignore
+      const containers = [
+        // @ts-ignore
+        document.querySelector('#moreBuyingChoices_feature_div'),
+        // @ts-ignore
+        document.querySelector('#buyBoxAccordion'),
+        // @ts-ignore
+        document.querySelector('#buybox-see-all-buying-choices'),
+      // @ts-ignore
+      ].filter(Boolean) as Element[];
+
+      for (const container of containers) {
+        // @ts-ignore
+        container.querySelectorAll('.a-price .a-offscreen').forEach((el: Element) => {
+          const itemPrice = parseBRPrice(el.textContent || '');
+          if (itemPrice === null) return;
+          const offerRow = el.closest('.a-box, .a-row, [class*="offer"], [class*="buying"]') || container;
+          totals.push(itemPrice + extractShipping(offerRow));
+        });
+      }
+
+      return totals.length > 0 ? Math.min(...totals) : null;
+    });
+
+    if (productPageMin !== null) {
+      console.log(`✓ Found marketplace price on product page: R$ ${productPageMin.toFixed(2)}`);
+      return productPageMin;
+    }
+
+    // Fallback: navigate to offer listing page using a fresh page so the
+    // caller's page object stays on the product URL for categories extraction.
+    console.log(`No offers on product page, checking /gp/offer-listing/${asin}...`);
+    const offerPage = await this.context!.newPage();
+    try {
+      await offerPage.goto(`https://www.amazon.com.br/gp/offer-listing/${asin}?f=new`, {
+        waitUntil: 'domcontentloaded',
+        timeout: 30000
+      });
+      await offerPage.waitForTimeout(2000);
+
+      const offerListingMin = await offerPage.evaluate(() => {
+        const parseBRPrice = (text: string): number | null => {
+          const match = text.match(/R\$\s*([\d.,]+)/);
+          if (!match) return null;
+          const str = match[1].replace(/\./g, '').replace(',', '.');
+          const val = parseFloat(str);
+          return isNaN(val) ? null : val;
+        };
+
+        const totals: number[] = [];
+        // @ts-ignore
+        const offers = document.querySelectorAll('.olpOffer, [class*="offer-listing__offer"]');
+        // @ts-ignore
+        offers.forEach((offer: Element) => {
+          // @ts-ignore
+          const priceEl = offer.querySelector('.a-price .a-offscreen, .olpOfferPrice');
+          const itemPrice = parseBRPrice(priceEl?.textContent || '');
+          if (itemPrice === null) return;
+
+          // @ts-ignore
+          const shippingText = (offer.querySelector('.olpShippingPrice, .a-color-secondary')?.textContent || offer.textContent || '');
+          let shipping = 0;
+          if (!/frete\s+gr[aá]tis/i.test(shippingText)) {
+            const m = shippingText.match(/R\$\s*([\d.,]+)/);
+            if (m) {
+              const str = m[1].replace(/\./g, '').replace(',', '.');
+              shipping = parseFloat(str) || 0;
+            }
+          }
+          totals.push(itemPrice + shipping);
+        });
+
+        return totals.length > 0 ? Math.min(...totals) : null;
+      });
+
+      if (offerListingMin !== null) {
+        console.log(`✓ Found marketplace price on offer listing: R$ ${offerListingMin.toFixed(2)}`);
+      } else {
+        console.log(`⚠ Offer listing page loaded but no offers matched selectors for ${asin}`);
+      }
+      return offerListingMin;
+    } catch (e) {
+      console.log(`⚠ Error accessing offer listing for ${asin}: ${e}`);
+      return null;
+    } finally {
+      await offerPage.close();
     }
   }
 
@@ -657,4 +873,3 @@ export class ScraperService {
 
 // Singleton instance
 export const scraperService = new ScraperService();
-

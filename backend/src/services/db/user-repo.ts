@@ -1,12 +1,13 @@
 import sqlite3 from 'sqlite3';
 import bcrypt from 'bcrypt';
 import { User, UserWithPasswordHash, UserRole, UserStats, SystemStats } from '../../models/types';
+import { config } from '../../config';
 import { dbRun, dbAll, dbGet } from './helpers';
 
 export function createUserRepo(db: sqlite3.Database) {
   const repo = {
     async createUser(username: string, password: string): Promise<User> {
-      const hash = await bcrypt.hash(password, 10);
+      const hash = await bcrypt.hash(password, config.bcryptRounds);
       const id: number = await new Promise((resolve, reject) => {
         db.run(
           "INSERT INTO users (username, password_hash, role) VALUES (?, ?, 'USER')",
@@ -23,7 +24,7 @@ export function createUserRepo(db: sqlite3.Database) {
     },
 
     async createAdminUser(username: string, password: string): Promise<User> {
-      const hash = await bcrypt.hash(password, 10);
+      const hash = await bcrypt.hash(password, config.bcryptRounds);
       const id: number = await new Promise((resolve, reject) => {
         db.run(
           "INSERT INTO users (username, password_hash, role) VALUES (?, ?, 'ADMIN')",
@@ -44,7 +45,7 @@ export function createUserRepo(db: sqlite3.Database) {
       if (!validRoles.includes(role as UserRole)) {
         throw new Error(`Invalid role: ${role}. Must be one of: ${validRoles.join(', ')}`);
       }
-      const hash = await bcrypt.hash(password, 10);
+      const hash = await bcrypt.hash(password, config.bcryptRounds);
       const id: number = await new Promise((resolve, reject) => {
         db.run(
           'INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)',
@@ -84,7 +85,7 @@ export function createUserRepo(db: sqlite3.Database) {
     },
 
     async updateUserPassword(userId: number, newPassword: string): Promise<boolean> {
-      const hash = await bcrypt.hash(newPassword, 10);
+      const hash = await bcrypt.hash(newPassword, config.bcryptRounds);
       return new Promise((resolve, reject) => {
         db.run(
           'UPDATE users SET password_hash = ? WHERE id = ?',

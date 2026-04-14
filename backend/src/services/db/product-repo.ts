@@ -103,7 +103,7 @@ export function createProductRepo(
     },
 
     async addProduct(
-      userId: number, asin: string, description: string, categories?: string[]
+      userId: number, asin: string, description: string, categories?: string[], imageUrl?: string
     ): Promise<Product> {
       const quotaStr = await getConfig('quota_max_products');
       const quotaLimit = parseInt(quotaStr ?? '100', 10);
@@ -118,8 +118,8 @@ export function createProductRepo(
       }
       const productId: number = await new Promise((resolve, reject) => {
         db.run(
-          'INSERT INTO products (user_id, asin, description) VALUES (?, ?, ?)',
-          [userId, asin, description],
+          'INSERT INTO products (user_id, asin, description, image_url) VALUES (?, ?, ?, ?)',
+          [userId, asin, description, imageUrl ?? null],
           function (err) { err ? reject(err) : resolve(this.lastID); }
         );
       });
@@ -211,6 +211,18 @@ export function createProductRepo(
       });
     },
 
+    async updateProductImageUrl(
+      productId: number,
+      userId: number,
+      imageUrl: string | null
+    ): Promise<void> {
+      await dbRun(
+        db,
+        'UPDATE products SET image_url = ? WHERE id = ? AND user_id = ?',
+        [imageUrl, productId, userId]
+      );
+    },
+
     async getLastPrice(productId: number): Promise<number | null> {
       const row = await dbGet<{ price: number | null; available: number }>(
         db,
@@ -261,8 +273,11 @@ export function createProductRepo(
       const product = await repo.getProductById(productId, userId);
       if (!product) return null;
       const history = await repo.getPriceHistory(productId);
-      const currentPrice = history.length > 0 ? history[history.length - 1].price ?? undefined : undefined;
-      const previousPrice = history.length > 1 ? history[history.length - 2].price ?? undefined : undefined;
+      // getPriceHistory returns DESC by date, so index 0 is the latest observation.
+      const latestEntry = history[0];
+      const previousEntry = history[1];
+      const currentPrice = latestEntry?.price ?? undefined;
+      const previousPrice = previousEntry?.price ?? undefined;
       const priceDrop = currentPrice && previousPrice ? previousPrice - currentPrice : undefined;
       const priceDropPercentage = currentPrice && previousPrice && previousPrice > 0
         ? ((previousPrice - currentPrice) / previousPrice) * 100
@@ -273,7 +288,9 @@ export function createProductRepo(
         previous_price: previousPrice,
         price_drop: priceDrop,
         price_drop_percentage: priceDropPercentage,
-        last_updated: history.length > 0 ? history[history.length - 1].date : undefined,
+        available: latestEntry?.available,
+        unavailable_reason: latestEntry?.unavailable_reason,
+        last_updated: latestEntry?.date,
       };
     },
 
@@ -283,6 +300,7 @@ export function createProductRepo(
           p.id,
           p.asin,
           p.description,
+          p.image_url,
           p.created_at,
           current.price as current_price,
           previous.price as previous_price,
@@ -320,6 +338,7 @@ export function createProductRepo(
               id: row.id,
               asin: row.asin,
               description: row.description,
+              image_url: row.image_url ?? undefined,
               categories: categories.length > 0 ? categories : undefined,
               created_at: row.created_at,
             },
@@ -341,6 +360,7 @@ export function createProductRepo(
           p.id,
           p.asin,
           p.description,
+          p.image_url,
           p.created_at,
           current.price as current_price,
           previous.price as previous_price,
@@ -378,6 +398,7 @@ export function createProductRepo(
               id: row.id,
               asin: row.asin,
               description: row.description,
+              image_url: row.image_url ?? undefined,
               categories: categories.length > 0 ? categories : undefined,
               created_at: row.created_at,
             },
@@ -411,7 +432,22 @@ export function createProductRepo(
     async getProductsWithLists(
       userId: number, categoryFilter?: string, limit?: number, offset?: number
     ): Promise<Product[]> {
-      let sql = 'SELECT p.* FROM products p WHERE p.user_id = ?';
+      let sql = `
+        SELECT
+          p.*,
+          ph.price AS current_price,
+          ph.available AS current_available,
+          ph.unavailable_reason AS current_unavailable_reason,
+          ph.date AS last_updated
+        FROM products p
+        LEFT JOIN price_history ph ON ph.id = (
+          SELECT ph2.id
+          FROM price_history ph2
+          WHERE ph2.product_id = p.id
+          ORDER BY ph2.date DESC
+          LIMIT 1
+        )
+        WHERE p.user_id = ?`;
       const params: unknown[] = [userId];
       if (categoryFilter) {
         sql += `
@@ -435,6 +471,12 @@ export function createProductRepo(
       return Promise.all(
         rows.map(async (r) => ({
           ...r,
+          current_price: r.current_price ?? undefined,
+          available: r.current_available === null || r.current_available === undefined
+            ? undefined
+            : r.current_available === 1,
+          unavailable_reason: r.current_unavailable_reason ?? undefined,
+          last_updated: r.last_updated ?? undefined,
           categories: await repo.getProductCategories(r.id),
           lists: await dbAll<any>(
             db,

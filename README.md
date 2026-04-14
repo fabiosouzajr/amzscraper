@@ -1,549 +1,284 @@
 # Amazon Price Tracker
 
-A full-stack TypeScript web application that tracks Amazon product prices, stores data in SQLite, and provides a React frontend with dashboard, product management, price history visualization, user authentication, and product lists organization.
+Multi-tenant Amazon price tracker built with TypeScript. Scrapes Amazon.com.br using Playwright, stores price history in SQLite, and provides a React dashboard for tracking drops, increases, and trends. Features multi-user admin, notifications (Email/Telegram/Discord), product lists, CSV import/export, and configurable per-user scheduling.
 
 ## Features
 
-### Core Features
-- **User Authentication**: Secure login/register system with JWT tokens and password hashing
-- **Product Management**: Add Amazon products by ASIN with validation
-- **Price Tracking**: Automatically tracks price changes (only stores when price decreases)
-- **Dashboard**: View products with the biggest price drops
-- **Product Search**: Live search functionality with pagination showing most recently added products
-- **Price History**: View chronological price data with interactive charts
-- **Automatic Updates**: Scheduled daily price updates via cron
-- **Manual Updates**: Trigger price updates on demand
+### Core
+- **Price Tracking** — records price changes, skips unchanged prices to save storage
+- **Dashboard** — view biggest price drops and increases with category filtering
+- **Price History Charts** — interactive Recharts visualizations per product
+- **Product Search** — search by name or ASIN with pagination
+- **Automatic Updates** — configurable cron schedule for daily price scraping
+- **Manual Updates** — trigger price updates on demand with real-time SSE progress
 
-### Advanced Features
-- **Product Lists**: Create custom lists to organize products (e.g., "Wishlist", "To Buy", etc.)
-- **Categories**: Automatic product categorization from Amazon
-- **Category Filtering**: Filter products by category on dashboard and products page
-- **CSV Import/Export**: Import multiple ASINs from CSV or export all tracked ASINs
-- **Database Export**: Export the complete SQLite database for backup
-- **Account Management**: Change password functionality
-- **Internationalization**: Support for English and Portuguese (Brazil)
-- **Responsive Design**: Mobile-friendly interface
+### Multi-User & Admin
+- **Role-Based Access** — USER and ADMIN roles with JWT authentication
+- **Setup Wizard** — first-run flow to create the initial admin account
+- **User Management** — create, disable, reset passwords for users
+- **Quotas** — configurable limits on products and lists per user
+- **Registration Toggle** — admin can enable/disable new user signups
+- **Audit Log** — tracks all admin actions with timestamps
+- **System Stats** — user counts, product counts, database size overview
 
-## Technology Stack
+### Notifications
+- **Multi-Channel** — Email, Telegram, and Discord support
+- **Custom Rules** — trigger on: lowest price in N days, below threshold, percentage drop
+- **Per-Product or Global** — rules can target specific products or apply to all
+- **History & Tracking** — logs sent/failed notifications with error details
+- **Test Messages** — verify channel configuration before going live
 
-- **Backend**: Node.js, Express, TypeScript, Playwright, SQLite, node-cron, bcrypt, jsonwebtoken
-- **Frontend**: React, TypeScript, Vite, Recharts, react-i18next
-- **Database**: SQLite3
-- **Authentication**: JWT (JSON Web Tokens)
+### Organization
+- **Product Lists** — create custom collections (e.g., Wishlist, To Buy)
+- **Categories** — auto-extracted from Amazon breadcrumbs, filterable on dashboard
+- **CSV Import/Export** — bulk import ASINs from CSV or export all tracked ASINs
+- **Database Backup** — download the full SQLite database from the admin panel
 
-## Prerequisites
+### Scheduling
+- **System-Wide Cron** — admin-configurable schedule (default: daily at midnight)
+- **Per-User Schedules** — each user can set a custom cron expression
+- **Enable/Disable** — scheduler can be toggled on/off from admin panel
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Git
-- Playwright browsers (Firefox and Chromium) - installed automatically via postinstall script
+### Internationalization
+- **Languages** — English and Portuguese (Brazil)
+- **Auto-Detection** — browser language detected on first visit
+- **Locale Formatting** — dates and currency (R$) formatted per locale
+
+### Other
+- Responsive design with mobile bottom tab bar
+- Offline connectivity banner
+- Tailscale-first networking (binds `0.0.0.0`)
+
+## Tech Stack
+
+| Layer     | Technology                                        |
+|-----------|---------------------------------------------------|
+| Backend   | Node.js, Express 4.18, TypeScript 5.3             |
+| Frontend  | React 18, Vite 7.3, React Query 5, Recharts 2.10  |
+| Database  | SQLite3 (single file, auto-created with migrations)|
+| Scraper   | Playwright (Firefox headless, Chrome user-agent)   |
+| Auth      | JWT (jsonwebtoken) + bcrypt                        |
+| i18n      | i18next (en, pt-BR)                                |
+| Scheduler | node-cron                                          |
 
 ## Quick Start
 
-### Option 1: Using Installation Script (Recommended)
+### Option 1: Scripts (Recommended)
 
-1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd amzscraper
+git clone <repository-url> && cd amzscraper
+chmod +x install.sh run.sh
+./install.sh   # checks Node.js 18+, installs deps, Playwright browsers
+./run.sh       # prompts for ports, starts backend + frontend in background
 ```
 
-2. Run the installation script:
+### Option 2: Manual
+
 ```bash
-chmod +x install.sh
-./install.sh
+# Terminal 1 — Backend (Express on port 3000)
+cd backend && npm install && npm run dev
+
+# Terminal 2 — Frontend (Vite on port 5174, proxies /api to backend)
+cd frontend && npm install && npm run dev
 ```
 
-The script will:
-- Check for Node.js (v18+) and npm
-- Verify/install backend and frontend dependencies
-- Check/install Playwright browsers (Firefox and Chromium)
-- Guide you through any missing requirements
+Open `http://localhost:5174`. On first run, a **setup wizard** guides you through creating the admin account.
 
-3. Run the application:
-```bash
-chmod +x run.sh
-./run.sh
-```
-
-The run script will:
-- Prompt for backend port (default: 3030)
-- Prompt for frontend port (default: 5174)
-- Start both backend and frontend in the background
-- Display access URLs (including Tailscale if available)
-- Save process IDs for easy shutdown
-
-### Option 2: Manual Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd amzscraper
-```
-
-2. Install backend dependencies (includes automatic Playwright browser installation):
-```bash
-cd backend
-npm install
-cd ..
-```
-
-3. Install frontend dependencies:
-```bash
-cd frontend
-npm install
-cd ..
-```
-
-## Installation Script (`install.sh`)
-
-The `install.sh` script automates the installation process and checks for all requirements.
-
-### What it does:
-- ✅ Checks Node.js version (requires v18+)
-- ✅ Checks npm installation
-- ✅ Verifies backend dependencies (`backend/node_modules`)
-- ✅ Verifies frontend dependencies (`frontend/node_modules`)
-- ✅ Checks Playwright browsers (Firefox and Chromium)
-- ✅ Offers to install missing components interactively
-
-### Usage:
-```bash
-chmod +x install.sh
-./install.sh
-```
-
-### Interactive Features:
-- Prompts to install missing Node.js (with instructions)
-- Offers to install backend dependencies if missing
-- Offers to install frontend dependencies if missing
-- Offers to install Playwright browsers if missing
-
-### Exit Codes:
-- `0`: All requirements met
-- `1`: Some requirements missing
-
-**Note**: The backend `npm install` automatically runs a postinstall script that installs Playwright browsers (Firefox and Chromium). This happens automatically, so you don't need to run manual playwright install commands.
-
-## Run Script (`run.sh`)
-
-The `run.sh` script starts both backend and frontend servers with custom port configuration.
-
-### Features:
-- Configurable ports for backend and frontend
-- Port validation (1-65535)
-- Background process management with `nohup`
-- Log file generation in `logs/` directory
-- PID file storage for process management
-- Tailscale detection and URL display
-- Process continues running after terminal closes
-
-### Usage:
-```bash
-chmod +x run.sh
-./run.sh
-```
-
-### Prompts:
-1. **Backend port**: Default is `3030` (press Enter for default)
-2. **Frontend port**: Default is `5174` (press Enter for default)
-
-**Note**: The `run.sh` script defaults to port `3030`, but the backend's internal default is `3000` with automatic failover to `3001` if port `3000` is in use.
-
-### Output:
-- Process IDs (PIDs) for both services
-- Log file locations
-- Access URLs (localhost and Tailscale if available)
-- Command to stop processes
-
-### Stopping the Application:
-```bash
-kill $(cat logs/*.pid)
-```
-
-Or stop individually:
-```bash
-kill $(cat logs/backend.pid)
-kill $(cat logs/frontend.pid)
-```
-
-### Log Files:
-- `logs/backend.log` - Backend server logs
-- `logs/frontend.log` - Frontend server logs
-- `logs/backend.pid` - Backend process ID
-- `logs/frontend.pid` - Frontend process ID
-
-### Tailscale Support:
-If Tailscale is detected, the script automatically displays:
-- Tailscale IP addresses for both services
-- Tailscale hostname URLs (if available)
+**Note:** `npm install` in the backend automatically installs Playwright browsers (Firefox + Chromium) via a postinstall script.
 
 ## Configuration
 
-### Port Configuration
+### Environment Variables
 
-**Default Ports:**
-- Backend: `3000` (with automatic fallback to `3001` if port is in use)
-- Frontend: `5174` (configurable via Vite config)
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `3000` | Backend primary port |
+| `PORT_FALLBACK` | `3001` | Fallback if primary port is in use |
+| `JWT_SECRET` | *(must change)* | JWT signing key — **required** in production |
+| `JWT_EXPIRES_IN` | `7d` | Token expiry duration |
+| `NODE_ENV` | `development` | Set to `production` for production deploys |
+| `BCRYPT_ROUNDS` | `10` | Password hash rounds (4-31) |
+| `DB_PATH` | `./database/products.db` | SQLite database file path |
+| `BIND_ADDRESS` | `0.0.0.0` | Server bind address |
+| `VITE_DEV_PORT` | `5174` | Frontend dev server port |
+| `VITE_API_TARGET` | `http://localhost:3000` | API proxy target for Vite |
 
-**Using Environment Variables:**
-```bash
-# Set primary port (default: 3000)
-export PORT=3030
+### Admin-Managed Settings
 
-# Set fallback port (default: 3001)
-export PORT_FALLBACK=3031
+These are configured through the Admin Panel UI (Settings > System Config):
 
-cd backend
-npm run dev
-```
+- `quota.max_products` — maximum products per user (default: 100)
+- `quota.max_lists` — maximum lists per user (default: 20)
+- `scheduler_enabled` — enable/disable the system scheduler (default: false)
+- `scheduler_cron` — system cron expression (default: `0 0 * * *` — midnight)
+- `registration_enabled` — allow new user registration (default: true)
 
-**Automatic Port Failover:**
-The backend automatically falls back to the fallback port if the primary port is already in use. This is handled by the `portManager.ts` utility and requires no manual configuration.
+## Usage Guide
 
-**Using run.sh:**
-The script prompts for ports and validates them automatically. Note that `run.sh` defaults to port `3030`, but the backend's internal default is `3000` with `3001` as fallback.
-
-**Frontend Proxy:**
-The frontend Vite configuration proxies `/api` requests to the backend. Update `frontend/vite.config.ts` if you change the backend port:
-
-```typescript
-proxy: {
-  '/api': {
-    target: 'http://localhost:3000',  // Update this to match your backend port
-    changeOrigin: true
-  }
-}
-```
-
-## Running the Application
-
-### Development Mode
-
-#### Using run.sh (Recommended):
-```bash
-./run.sh
-```
-
-#### Manual Start:
-1. Start the backend server:
-```bash
-cd backend
-npm run dev
-```
-
-2. In a separate terminal, start the frontend:
-```bash
-cd frontend
-npm run dev
-```
-
-3. Open your browser and navigate to `http://localhost:5174` (or the port you configured)
-
-### Production Mode
-
-1. Build the backend:
-```bash
-cd backend
-npm run build
-npm start
-```
-
-2. Build the frontend:
-```bash
-cd frontend
-npm run build
-npm run preview
-```
-
-## Usage
-
-### Authentication
-
-1. **Register**: Create a new account with username (min 3 chars) and password (min 6 chars)
-2. **Login**: Use your credentials to access the application
-3. **Change Password**: Navigate to Config → Account section to change your password
+### First Run
+Open the app and complete the setup wizard to create your admin account. After setup, you can log in and start tracking products.
 
 ### Adding Products
-
-#### Single Product:
-1. Navigate to the "Products" page
-2. Enter an Amazon ASIN (10-character alphanumeric code)
-3. Click "Add Product"
-4. The app will validate the ASIN, scrape the product page, and save it to the database
-
-#### Bulk Import (CSV):
-1. Navigate to the "Products" page
-2. Click "Import ASINs"
-3. Select a CSV file containing ASINs (one per line, optional header)
-4. Monitor progress in real-time
-5. View import results (success/failed/skipped counts)
-
-#### Export ASINs:
-1. Navigate to the "Config" page
-2. Click "Export ASINs" in the Data Export section
-3. Download CSV file with all your tracked ASINs
-
-### Product Lists
-
-1. **Create List**: Use the sidebar on the Products page to create custom lists
-2. **Add to List**: Click "Add to List" on any product and select a list
-3. **View by List**: Click a list in the sidebar to filter products
-4. **Remove from List**: Click the × button next to a list badge on a product
-5. **Rename/Delete Lists**: Use the edit and delete buttons in the sidebar
-
-### Viewing Price Drops
-
-1. Navigate to the "Dashboard" page
-2. View products sorted by biggest price drops
-3. Click on a product to see detailed price history
-4. Click "Update Prices Now" to manually trigger a price update
-5. Filter by category by clicking category badges
-
-### Searching Products
-
-1. Navigate to the "Search" page
-2. **Default View**: Shows 10 most recently added products with pagination
-3. **Search Mode**: Type in the search box to find products by name or ASIN
-4. Click on a result to view detailed price history
-5. View list information for each product in search results
-
-### Viewing Product Details
-
-1. Search for a product or navigate from the dashboard/products page
-2. View the product's price history chart
-3. See chronological price data in the table below
-4. View which lists the product belongs to
-5. See product categories and metadata
-
-### Configuration
-
-1. Navigate to the "Config" page
-2. **Database Info**: View total products and database size
-3. **Export Database**: Download complete SQLite database backup
-4. **Export ASINs**: Export all tracked ASINs as CSV
-5. **Account Settings**: Change your password
-
-## Database
-
-The SQLite database is stored at `database/products.db`. It contains the following tables:
-
-- **users**: User accounts (id, username, password_hash, created_at)
-- **products**: Product information (id, user_id, asin, description, created_at)
-- **categories**: Product categories (id, name)
-- **product_categories**: Product-category relationships (product_id, category_id, level)
-- **price_history**: Price history entries (id, product_id, price, date, created_at)
-- **user_lists**: User-created lists (id, user_id, name, created_at)
-- **product_lists**: Product-list relationships (product_id, list_id)
-
-### Database Features:
-- Multi-user support with user isolation
-- Automatic category extraction from Amazon
-- Cascading deletes (deleting user deletes all their data)
-- Foreign key constraints for data integrity
-
-## Scheduled Updates
-
-The application automatically runs price updates daily at midnight (00:00). The schedule can be modified in `backend/src/services/scheduler.ts`.
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Create new user account
-- `POST /api/auth/login` - Authenticate user and get token
-- `POST /api/auth/logout` - Logout user
-- `GET /api/auth/me` - Get current user info
-- `POST /api/auth/change-password` - Change user password
-
-### Products
-- `GET /api/products` - List all products (with pagination, category filter)
-- `POST /api/products` - Add new ASIN (with validation)
-- `DELETE /api/products/:id` - Remove product
-- `GET /api/products/search?q=...` - Search products
-- `GET /api/products/:id` - Get product with price history
-- `GET /api/products/categories` - Get all available categories
-
-### Lists
-- `GET /api/lists` - Get all lists for current user
-- `POST /api/lists` - Create new list
-- `PUT /api/lists/:id` - Rename list
-- `DELETE /api/lists/:id` - Delete list
-- `POST /api/lists/:id/products` - Add product to list
-- `DELETE /api/lists/:id/products/:productId` - Remove product from list
-
-### Prices
-- `POST /api/prices/update` - Manual price update trigger
+Navigate to **Products**, enter an Amazon ASIN (10-character code found in the product URL), and click Add. For bulk additions, use **Import ASINs** with a CSV file — progress streams in real-time.
 
 ### Dashboard
-- `GET /api/dashboard/drops?limit=10` - Get biggest price drops
+The **Dashboard** shows products with the biggest price drops and increases. Filter by category using the category badges. Click any product to see its full price history.
 
-### Config
-- `GET /api/config/database-info` - Get database information
-- `GET /api/config/export-database` - Export the entire database
-- `GET /api/config/export-asins` - Export all ASINs as CSV
-- `POST /api/config/import-asins` - Import ASINs from CSV (Server-Sent Events)
+### Product Lists
+Create custom lists from the sidebar on the Products page (e.g., "Wishlist", "Electronics"). Add products to lists, then filter the products view by list.
 
-## Project Structure
+### Notifications
+Go to **Settings > Notifications** to configure channels (Email, Telegram, or Discord). Create rules to get notified when prices drop below a threshold, hit the lowest in N days, or drop by a percentage. Use the test button to verify your channel works.
+
+### Scheduling
+The system scheduler runs price updates on a cron schedule (configured by admin). Individual users can also set their own schedule under **Settings > Schedule**.
+
+### Admin Panel
+Admins access **Settings > Admin** to manage users, view system stats, configure quotas and scheduler, and review the audit log.
+
+### Import / Export
+- **Import ASINs**: CSV upload with real-time progress (Products page)
+- **Export ASINs**: download all tracked ASINs as CSV (Settings > Data)
+- **Database Backup**: download the full SQLite file (Settings > Data)
+
+## Architecture
+
+### Project Structure
 
 ```
 amzscraper/
 ├── backend/
 │   ├── src/
-│   │   ├── server.ts              # Express server setup
-│   │   ├── routes/                # API routes
-│   │   │   ├── auth.ts            # Authentication routes
-│   │   │   ├── products.ts        # Product management
-│   │   │   ├── lists.ts           # List management
-│   │   │   ├── prices.ts          # Price updates
-│   │   │   ├── dashboard.ts       # Dashboard data
-│   │   │   └── config.ts          # Configuration & export
-│   │   ├── services/              # Business logic
-│   │   │   ├── database.ts        # Database operations
-│   │   │   ├── scraper.ts         # Amazon scraping
-│   │   │   └── scheduler.ts       # Scheduled tasks
-│   │   ├── middleware/            # Express middleware
-│   │   │   └── auth.ts            # JWT authentication
-│   │   ├── models/                # TypeScript types
-│   │   └── utils/                 # Utilities
-│   ├── package.json
-│   └── tsconfig.json
+│   │   ├── server.ts                # Express setup, route registration, scheduler
+│   │   ├── config.ts                # Centralized config validation
+│   │   ├── routes/                  # API route handlers
+│   │   │   ├── auth.ts              # Register, login, logout, change-password
+│   │   │   ├── products.ts          # Product CRUD, search, categories
+│   │   │   ├── prices.ts            # Price update trigger (SSE)
+│   │   │   ├── dashboard.ts         # Price drops & increases
+│   │   │   ├── lists.ts             # List CRUD, product-list management
+│   │   │   ├── config.ts            # Import/export, scheduling, DB info
+│   │   │   ├── admin.ts             # User management, stats, audit log
+│   │   │   ├── notifications.ts     # Channels, rules, history
+│   │   │   └── setup.ts             # First-run admin creation
+│   │   ├── services/
+│   │   │   ├── scraper.ts           # Playwright Amazon scraping
+│   │   │   ├── scheduler.ts         # Cron scheduling, price update orchestration
+│   │   │   └── db/                  # Database layer (no ORM)
+│   │   │       ├── database.ts      # SQLite connection & service wrapper
+│   │   │       ├── migrations.ts    # Schema creation & evolution
+│   │   │       ├── product-repo.ts  # Product & price history queries
+│   │   │       ├── user-repo.ts     # User CRUD & authentication
+│   │   │       ├── list-repo.ts     # List management queries
+│   │   │       ├── notification-repo.ts  # Notification CRUD & logging
+│   │   │       └── admin-repo.ts    # System config, stats, audit log
+│   │   ├── middleware/
+│   │   │   ├── auth.ts              # JWT verification & token generation
+│   │   │   └── admin.ts             # Admin-only route protection
+│   │   └── utils/                   # Validation, logging, port management
+│   └── package.json
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx                # Main app component
-│   │   ├── components/            # React components
-│   │   │   ├── Auth.tsx           # Login/Register
-│   │   │   ├── Dashboard.tsx      # Price drops dashboard
-│   │   │   ├── ProductList.tsx     # Product management
-│   │   │   ├── ProductSearch.tsx   # Product search
-│   │   │   ├── ProductDetail.tsx      # Price history
-│   │   │   ├── ListsSidebar.tsx   # List management
-│   │   │   ├── Config.tsx         # Configuration
-│   │   │   └── ...
-│   │   ├── contexts/              # React contexts
-│   │   │   └── AuthContext.tsx   # Authentication state
-│   │   ├── services/              # API client
-│   │   │   └── api.ts             # API methods
-│   │   ├── i18n/                  # Internationalization
-│   │   │   ├── config.ts
-│   │   │   └── locales/
-│   │   │       ├── en.json        # English translations
-│   │   │       └── pt-BR.json    # Portuguese translations
-│   │   └── types.ts               # TypeScript types
-│   ├── package.json
-│   └── vite.config.ts
-├── database/
-│   └── products.db                # SQLite database
-├── logs/                          # Application logs (created by run.sh)
-│   ├── backend.log
-│   ├── frontend.log
-│   ├── backend.pid
-│   └── frontend.pid
-├── install.sh                     # Installation script
-├── run.sh                         # Run script
+│   │   ├── App.tsx                  # Route definitions, auth guard
+│   │   ├── components/              # Page & feature components
+│   │   │   ├── Dashboard.tsx        # Price drops/increases overview
+│   │   │   ├── ProductsPage.tsx     # Product listing with list sidebar
+│   │   │   ├── ProductDetail.tsx    # Single product + price chart
+│   │   │   ├── Auth.tsx             # Login/register form
+│   │   │   ├── SetupWizard.tsx      # First-run admin setup
+│   │   │   ├── AdminPanel.tsx       # Admin UI (tabs)
+│   │   │   ├── Notifications.tsx    # Notification management
+│   │   │   ├── SettingsPage.tsx     # Settings router
+│   │   │   └── ...                  # Config, lists, charts, forms
+│   │   ├── design-system/           # Reusable UI (Button, Card, Modal, Table, etc.)
+│   │   ├── layout/                  # AppShell, BottomTabBar, OfflineBanner
+│   │   ├── contexts/                # AuthContext, ImportContext
+│   │   ├── hooks/                   # React Query wrappers (useProducts, useLists, etc.)
+│   │   ├── services/api.ts          # Fetch-based API client
+│   │   ├── i18n/                    # i18next config + en.json, pt-BR.json
+│   │   └── utils/                   # Date, number, image formatting
+│   └── package.json
+├── database/                        # SQLite DB file (auto-created, gitignored)
+├── docs/                            # API docs, plans, specs
+├── logs/                            # Runtime logs (created by run.sh)
+├── install.sh                       # Installation automation
+├── run.sh                           # Process management
 └── README.md
 ```
 
-## Internationalization
+### Database
 
-The application supports multiple languages:
-- **English** (en) - Default
-- **Portuguese (Brazil)** (pt-BR)
+| Table | Purpose |
+|---|---|
+| `users` | User accounts with roles (USER/ADMIN) and disable status |
+| `products` | Tracked products with ASIN, user ownership |
+| `price_history` | Price records per product (nullable price for unavailable items) |
+| `categories` | Category names extracted from Amazon |
+| `product_categories` | Product-category relationships with hierarchy level |
+| `user_lists` | User-created product collections |
+| `product_lists` | Many-to-many product-list memberships |
+| `audit_log` | Admin action history |
+| `system_config` | Key-value system settings (quotas, scheduler, registration) |
+| `user_schedule` | Per-user cron schedule configuration |
+| `notification_channels` | Email/Telegram/Discord channel configs per user |
+| `notification_rules` | Notification trigger rules per user/product |
+| `notification_log` | Sent/failed notification history |
 
-Switch languages using the language selector in the navigation bar. All UI text is translated, including:
-- Navigation menus
-- Form labels and buttons
-- Error messages
-- Success messages
-- Product information
+### API
 
-## Notes
+REST API with SSE streaming for long-running operations (price updates, ASIN imports). All endpoints except `/api/auth/*` and `/api/setup/*` require JWT authentication. Admin endpoints require the ADMIN role.
 
-- The scraper uses Playwright to navigate Amazon pages and extract product information
-- Price history is only stored when the current price is lower than the previous price
-- The app scrapes Amazon Brazil (amazon.com.br) - modify the URL in `scraper.ts` for other regions
-- **Automatic Port Failover**: The backend automatically falls back to port 3001 if port 3000 is in use, requiring no manual configuration
-- Rate limiting: The scraper includes delays between requests to avoid being blocked
-- User data is isolated - each user only sees their own products and lists
-- Passwords are hashed using bcrypt before storage
-- JWT tokens are used for authentication and expire after a set period
+Route groups: `/api/auth`, `/api/products`, `/api/prices`, `/api/dashboard`, `/api/lists`, `/api/config`, `/api/admin`, `/api/notifications`, `/api/setup`, `/health`
+
+For the complete API reference, see [Backend API Documentation](docs/backend/BACKEND_API_DOCUMENTATION.md).
+
+### Key Patterns
+- **No ORM** — direct SQL with parameterized queries in the `services/db/` layer
+- **SSE Streaming** — price updates and ASIN imports stream progress to the frontend
+- **React Query** — data fetching via custom hooks (`useProducts`, `useLists`, etc.)
+- **CSS Modules** — component-scoped styles alongside each component
+- **Design System** — reusable UI components (Button, Card, Modal, Table, Tabs, etc.)
+
+## Deployment
+
+### Production Checklist
+
+1. Set `JWT_SECRET` to a strong random value (app exits if default is used in production)
+2. Set `NODE_ENV=production`
+3. Build both packages:
+   ```bash
+   cd backend && npm run build
+   cd frontend && npm run build
+   ```
+4. Set up a reverse proxy (nginx, Caddy) for SSL termination
+5. Use a process manager (PM2, systemd) to keep the backend running
+6. Ensure the `database/` directory exists and is writable
+7. Verify Playwright browsers are installed (`npx playwright install firefox chromium`)
+
+### Running in Production
+
+```bash
+cd backend && node dist/server.js
+```
+
+Serve the frontend build (`frontend/dist/`) via your reverse proxy, proxying `/api` requests to the backend.
 
 ## Troubleshooting
 
-### Installation Issues
+**Node.js version:** Requires v18+. Use [nvm](https://github.com/nvm-sh/nvm) to install: `nvm install 18 && nvm use 18`
 
-**Node.js version too old:**
+**Playwright browsers not found:** Re-run `cd backend && npm install` (postinstall script handles it) or manually: `npx playwright install firefox chromium`
+
+**Port already in use:** Backend auto-falls back to `PORT_FALLBACK` (default 3001). Or set custom ports via environment variables.
+
+**Database errors:** Ensure `database/` directory exists and is writable: `mkdir -p database && chmod 755 database`
+
+**Scraper failures:** Check internet connectivity. Amazon may have changed page structure — review backend logs for selector warnings.
+
+**Stopping processes started with run.sh:**
 ```bash
-# Using nvm (recommended)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-nvm install 18
-nvm use 18
-```
-
-**Playwright browser not found:**
-```bash
-# Option 1: Re-run npm install to trigger the postinstall script
-cd backend
-npm install
-
-# Option 2: Manual installation
-cd backend
-npx playwright install firefox chromium
-```
-
-**Dependencies installation fails:**
-- Ensure you have Node.js v18+ installed
-- Try deleting `node_modules` and `package-lock.json`, then run `npm install` again
-- Check your internet connection
-
-### Runtime Issues
-
-**Port already in use:**
-- The backend automatically falls back to port 3001 if port 3000 is in use
-- You can also use `run.sh` to specify different ports
-- Or manually set `PORT` and `PORT_FALLBACK` environment variables for backend
-- Update `vite.config.ts` for frontend port
-
-**Database errors:**
-- Ensure the `database/` directory exists and is writable
-- Check file permissions: `chmod 755 database/`
-
-**CORS errors:**
-- Make sure the backend is running on the port specified in `vite.config.ts` proxy
-- Check that the frontend proxy target matches your backend port
-
-**Authentication issues:**
-- Clear browser localStorage: `localStorage.clear()` in browser console
-- Check that JWT_SECRET is set in backend (if using environment variables)
-
-**Scraper fails:**
-- Ensure Playwright browsers are installed: `npx playwright install firefox`
-- Check internet connection
-- Amazon may have changed their page structure - check scraper logs
-
-**Process won't stop:**
-```bash
-# Find and kill processes
-ps aux | grep node
-kill <PID>
-
-# Or use the PID files
 kill $(cat logs/*.pid)
 ```
-
-### Log Files
-
-Check log files for detailed error messages:
-- `logs/backend.log` - Backend errors and debug info
-- `logs/frontend.log` - Frontend build and runtime errors
-
-## Security Considerations
-
-- Passwords are hashed using bcrypt (10 rounds)
-- JWT tokens are used for stateless authentication
-- All API routes (except auth) require authentication
-- User data is isolated at the database level
-- SQL injection protection via parameterized queries
-- XSS protection via React's built-in escaping
 
 ## License
 

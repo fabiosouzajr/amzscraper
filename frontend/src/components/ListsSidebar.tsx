@@ -1,18 +1,27 @@
 import { useState, useEffect } from 'react';
+import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import { UserList } from '../types';
 import { useTranslation } from 'react-i18next';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import { LISTS_KEY } from '../hooks/useLists';
+import styles from './ListsSidebar.module.css';
 
 interface ListsSidebarProps {
   onListClick?: (listId: number | null) => void;
   selectedListId?: number | null;
   onListChange?: () => void; // Callback when lists are created/updated/deleted
+  navMode?: boolean; // Inline nav mode: no card wrapper, no sticky positioning
 }
 
-export function ListsSidebar({ onListClick, selectedListId, onListChange }: ListsSidebarProps) {
+export function ListsSidebar({ onListClick, selectedListId, onListChange, navMode = false }: ListsSidebarProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const isMobile = useMediaQuery('(max-width: 767px)');
+  const qc = useQueryClient();
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [lists, setLists] = useState<UserList[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +63,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
       setLists([...lists, newList]);
       setNewListName('');
       setShowCreateForm(false);
-      // Notify parent component that lists have changed
+      qc.invalidateQueries({ queryKey: LISTS_KEY });
       onListChange?.();
     } catch (err: any) {
       setError(err.message || 'Failed to create list');
@@ -72,9 +81,9 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
       await api.deleteList(listId);
       setLists(lists.filter(list => list.id !== listId));
       if (selectedListId === listId && onListClick) {
-        onListClick(null); // Clear selection
+        onListClick(null);
       }
-      // Notify parent component that lists have changed
+      qc.invalidateQueries({ queryKey: LISTS_KEY });
       onListChange?.();
     } catch (err: any) {
       setError(err.message || 'Failed to delete list');
@@ -101,10 +110,17 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
       setLists(lists.map(list => list.id === listId ? updated : list));
       setEditingListId(null);
       setEditingName('');
-      // Notify parent component that lists have changed
+      qc.invalidateQueries({ queryKey: LISTS_KEY });
       onListChange?.();
     } catch (err: any) {
       setError(err.message || 'Failed to update list');
+    }
+  };
+
+  const handleListClickAndClose = (listId: number | null) => {
+    onListClick?.(listId);
+    if (isMobile) {
+      setIsCollapsed(true);
     }
   };
 
@@ -112,22 +128,34 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
     return null;
   }
 
-  return (
-    <div className="lists-sidebar">
-      <div className="lists-sidebar-header">
+  const sidebarContent = (
+    <>
+      <div className={styles.listsSidebarHeader}>
         <h3>{t('lists.title')}</h3>
-        <button
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          className="create-list-button"
-        >
-          {t('lists.create')}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className={styles.createListButton}
+          >
+            {t('lists.create')}
+          </button>
+          {isMobile && (
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className={styles.listsSidebarCloseButton}
+              title={t('lists.closeLists')}
+              aria-label={t('lists.closeLists')}
+            >
+              <X size={20} />
+            </button>
+          )}
+        </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
       {showCreateForm && (
-        <form onSubmit={handleCreateList} className="create-list-form">
+        <form onSubmit={handleCreateList} className={styles.createListForm}>
           <input
             type="text"
             value={newListName}
@@ -136,7 +164,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
             disabled={creating}
             autoFocus
           />
-          <div className="form-actions">
+          <div className={styles.formActions}>
             <button type="submit" disabled={creating || !newListName.trim()}>
               {t('lists.create')}
             </button>
@@ -156,27 +184,27 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
       {loading ? (
         <div className="loading">{t('lists.loading')}</div>
       ) : (
-        <div className="lists-list">
+        <div className={styles.listsList}>
           {/* All Products option */}
           <div
-            className={`list-item all-products-item ${selectedListId === null ? 'selected' : ''}`}
-            onClick={() => onListClick?.(null)}
+            className={`${styles.listItem} ${styles.allProductsItem}${selectedListId === null ? ` ${styles.selected}` : ''}`}
+            onClick={() => handleListClickAndClose(null)}
           >
-            <div className="list-name">
+            <div className={styles.listName}>
               {t('lists.allProducts')}
             </div>
           </div>
-          
+
           {lists.length === 0 ? (
             <p className="empty-state">{t('lists.noLists')}</p>
           ) : (
             lists.map((list) => (
               <div
                 key={list.id}
-                className={`list-item ${selectedListId === list.id ? 'selected' : ''}`}
+                className={`${styles.listItem}${selectedListId === list.id ? ` ${styles.selected}` : ''}`}
               >
                 {editingListId === list.id ? (
-                  <div className="list-edit-form">
+                  <div className={styles.listEditForm}>
                     <input
                       type="text"
                       value={editingName}
@@ -190,7 +218,7 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
                       }}
                       autoFocus
                     />
-                    <div className="list-edit-actions">
+                    <div className={styles.listEditActions}>
                       <button onClick={() => handleSaveEdit(list.id)}>
                         {t('common.save')}
                       </button>
@@ -202,12 +230,12 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
                 ) : (
                   <>
                     <div
-                      className="list-name"
-                      onClick={() => onListClick?.(list.id)}
+                      className={styles.listName}
+                      onClick={() => handleListClickAndClose(list.id)}
                     >
                       {list.name}
                     </div>
-                    <div className="list-actions">
+                    <div className={styles.listActions}>
                       <button
                         onClick={() => handleStartEdit(list)}
                         className="edit-button"
@@ -230,7 +258,44 @@ export function ListsSidebar({ onListClick, selectedListId, onListChange }: List
           )}
         </div>
       )}
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile toggle button */}
+        <button
+          className={styles.listsSidebarToggle}
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          aria-expanded={!isCollapsed}
+          aria-label={t('lists.showLists', { count: lists.length })}
+        >
+          <span>{t('lists.showLists', { count: lists.length })}</span>
+          {isCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+        </button>
+
+        {/* Mobile overlay */}
+        {!isCollapsed && (
+          <>
+            <div
+              className={styles.listsSidebarBackdrop}
+              onClick={() => setIsCollapsed(true)}
+              aria-hidden="true"
+            />
+            <div className={`${styles.listsSidebar} ${styles.listsSidebarOverlay}`}>
+              {sidebarContent}
+            </div>
+          </>
+        )}
+      </>
+    );
+  }
+
+  // Desktop: render normally (or inline in nav mode)
+  return (
+    <div className={navMode ? styles.listsSidebarNav : styles.listsSidebar}>
+      {sidebarContent}
     </div>
   );
 }
-

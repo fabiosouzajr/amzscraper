@@ -1,4 +1,5 @@
 import net from 'net';
+import { config } from '../config';
 
 /**
  * Utility to find an available port with failover support
@@ -7,16 +8,9 @@ import net from 'net';
  * @returns A Promise that resolves to an available port
  */
 export async function getAvailablePort(
-  primaryPort: number = parseInt(process.env.PORT || '3000', 10),
-  fallbackPort: number = parseInt(process.env.PORT_FALLBACK || '3001', 10)
+  primaryPort: number = config.port,
+  fallbackPort: number = config.portFallback
 ): Promise<number> {
-  // Validate port numbers
-  if (isNaN(primaryPort) || primaryPort < 1 || primaryPort > 65535) {
-    throw new Error(`Invalid primary port: ${primaryPort}`);
-  }
-  if (isNaN(fallbackPort) || fallbackPort < 1 || fallbackPort > 65535) {
-    throw new Error(`Invalid fallback port: ${fallbackPort}`);
-  }
 
   // Try primary port first
   const primaryAvailable = await isPortAvailable(primaryPort);
@@ -63,6 +57,6 @@ function isPortAvailable(port: number): Promise<boolean> {
       resolve(true);
     });
 
-    server.listen(port, '0.0.0.0');
+    server.listen(port, config.bindAddress);
   });
 }

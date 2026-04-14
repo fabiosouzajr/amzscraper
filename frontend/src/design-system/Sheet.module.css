@@ -1,0 +1,314 @@
+/* ========================================
+   Sheet Component Styles
+   Uses design tokens from tokens.css
+   ======================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(26, 26, 24, 0.6);
+  z-index: var(--z-modal);
+  display: flex;
+}
+
+/* ========================================
+   POSITIONS
+   ======================================== */
+
+.overlay.right {
+  justify-content: flex-end;
+}
+
+.overlay.left {
+  justify-content: flex-start;
+}
+
+.overlay.top {
+  align-items: flex-start;
+}
+
+.overlay.bottom {
+  align-items: flex-end;
+}
+
+/* ========================================
+   SHEET
+   ======================================== */
+
+.sheet {
+  background-color: var(--color-bg-elevated);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========================================
+   SIZES (for left/right sheets)
+   ======================================== */
+
+.right.sm,
+.left.sm {
+  width: 320px;
+}
+
+.right.md,
+.left.md {
+  width: 400px;
+}
+
+.right.lg,
+.left.lg {
+  width: var(--detail-panel-width);
+}
+
+.right.xl,
+.left.xl {
+  width: 600px;
+}
+
+.right.full,
+.left.full {
+  width: 100%;
+  max-width: none;
+}
+
+/* ========================================
+   SIZES (for top/bottom sheets)
+   ======================================== */
+
+.top.sm,
+.bottom.sm {
+  height: 320px;
+}
+
+.top.md,
+.bottom.md {
+  height: 400px;
+}
+
+.top.lg,
+.bottom.lg {
+  height: 500px;
+}
+
+.top.xl,
+.bottom.xl {
+  height: 600px;
+}
+
+.top.full,
+.bottom.full {
+  height: 100%;
+  max-height: none;
+}
+
+/* ========================================
+   ANIMATIONS - RIGHT
+   ======================================== */
+
+.overlay.right .sheet {
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  max-height: 100vh;
+  animation: slideInRight var(--duration-slow) var(--ease-enter);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ========================================
+   ANIMATIONS - LEFT
+   ======================================== */
+
+.overlay.left .sheet {
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  max-height: 100vh;
+  animation: slideInLeft var(--duration-slow) var(--ease-enter);
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ========================================
+   ANIMATIONS - TOP
+   ======================================== */
+
+.overlay.top .sheet {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  max-width: 100vw;
+  animation: slideInTop var(--duration-slow) var(--ease-enter);
+}
+
+@keyframes slideInTop {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   ANIMATIONS - BOTTOM
+   ======================================== */
+
+.overlay.bottom .sheet {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  max-width: 100vw;
+  animation: slideInBottom var(--duration-slow) var(--ease-enter);
+}
+
+@keyframes slideInBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-primary);
+  flex-shrink: 0;
+}
+
+.headerContent {
+  flex: 1;
+}
+
+/* ========================================
+   CLOSE BUTTON
+   ======================================== */
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  transition:
+    background-color var(--duration-fast) var(--ease-default),
+    color var(--duration-fast) var(--ease-default);
+}
+
+.closeButton:hover {
+  background-color: var(--color-bg-inset);
+  color: var(--color-text-primary);
+}
+
+.closeButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+}
+
+.closeButton:active {
+  transform: scale(0.95);
+}
+
+/* Inline close button (for sheets without header) */
+.closeButtonInline {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 1;
+}
+
+/* ========================================
+   CONTENT
+   ======================================== */
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-5);
+  position: relative;
+}
+
+/* Adjust padding when inline close button is present */
+.content:has(.closeButtonInline) {
+  padding-top: calc(var(--space-5) * 2);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--color-border-primary);
+  background-color: var(--color-bg-secondary);
+  flex-shrink: 0;
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet {
+    animation: none;
+  }
+
+  .closeButton:active {
+    transform: none;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: var(--breakpoint-mobile)) {
+  .sheet {
+    border-radius: 0 !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+  }
+
+  .right .sheet,
+  .left .sheet {
+    width: 100% !important;
+  }
+
+  .top .sheet,
+  .bottom .sheet {
+    height: auto;
+    max-height: 85vh;
+  }
+
+  .header,
+  .content,
+  .footer {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+}

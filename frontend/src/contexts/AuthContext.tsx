@@ -9,6 +9,9 @@ interface AuthContextType {
   register: (username: string, password: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
+  needsSetup: boolean;
+  registrationEnabled: boolean;
+  completeSetup: (token: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,28 +20,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [needsSetup, setNeedsSetup] = useState(false);
+  const [registrationEnabled, setRegistrationEnabled] = useState(true);
 
   useEffect(() => {
-    // Check for stored token on mount
-    const storedToken = localStorage.getItem('authToken');
-    if (storedToken) {
-      setToken(storedToken);
-      // Verify token and get user info
-      api.getCurrentUser()
-        .then((userData) => {
+    const initialize = async () => {
+      // Check if first-run setup is needed
+      try {
+        const setupStatus = await api.getSetupStatus();
+        setNeedsSetup(setupStatus.needsSetup);
+        setRegistrationEnabled(setupStatus.registrationEnabled);
+
+        if (setupStatus.needsSetup) {
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // If setup status check fails, proceed with normal auth flow
+      }
+
+      // Check for stored token on mount
+      const storedToken = localStorage.getItem('authToken');
+      if (storedToken) {
+        setToken(storedToken);
+        // Verify token and get user info
+        try {
+          const userData = await api.getCurrentUser();
           setUser(userData);
-        })
-        .catch(() => {
+        } catch {
           // Invalid token, clear it
           localStorage.removeItem('authToken');
           setToken(null);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
+        }
+      }
       setLoading(false);
-    }
+    };
+
+    initialize();
   }, []);
 
   const login = async (username: string, password: string) => {
@@ -62,8 +80,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     api.logout();
   };
 
+  const completeSetup = async (newToken: string) => {
+    try {
+      localStorage.setItem('authToken', newToken);
+      setToken(newToken);
+      const userData = await api.getCurrentUser();
+      setUser(userData);
+      setNeedsSetup(false);
+    } catch (error) {
+      // If user fetch fails, clear partial state so the app doesn't get stuck
+      localStorage.removeItem('authToken');
+      setToken(null);
+      throw error; // Re-throw so SetupWizard can show an error
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, needsSetup, registrationEnabled, completeSetup }}>
       {children}
     </AuthContext.Provider>
   );

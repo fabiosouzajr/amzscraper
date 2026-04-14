@@ -1,8 +1,7 @@
-// Load .env before anything else
-import 'dotenv/config';
-
 // Import logger first to add timestamps to all console output
 import './utils/logger';
+// Import config (which loads .env)
+import { config } from './config';
 
 import express from 'express';
 import cors from 'cors';
@@ -14,6 +13,7 @@ import authRouter from './routes/auth';
 import listsRouter from './routes/lists';
 import adminRouter from './routes/admin';
 import notificationsRouter from './routes/notifications';
+import setupRouter from './routes/setup';
 import { schedulerService } from './services/scheduler';
 import { getAvailablePort } from './utils/portManager';
 import { dbService } from './services/database';
@@ -22,10 +22,25 @@ async function startServer() {
   const app = express();
 
   // Middleware
-  app.use(cors());
+  app.use(cors({
+    origin: true,  // Allow all origins in development
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }));
   app.use(express.json());
 
+  // Readiness gate — block requests until DB migrations finish
+  let dbReady = false;
+  app.use((req, res, next) => {
+    if (!dbReady && req.path !== '/health') {
+      return res.status(503).json({ error: 'Server is starting up. Please retry shortly.' });
+    }
+    next();
+  });
+
   // Routes
+  app.use('/api/setup', setupRouter);
   app.use('/api/auth', authRouter);
   app.use('/api/lists', listsRouter);
   app.use('/api/products', productsRouter);
@@ -37,7 +52,7 @@ async function startServer() {
 
   // Health check
   app.get('/health', (req, res) => {
-    res.json({ status: 'ok' });
+    res.json({ status: dbReady ? 'ok' : 'starting' });
   });
 
   // Get available port with failover support
@@ -49,17 +64,17 @@ async function startServer() {
     process.exit(1);
   }
 
-  // Start server - listen on all interfaces (0.0.0.0) to allow Tailscale access
-  const server = app.listen(PORT, '0.0.0.0', async () => {
+  // Start server - listen on configured bind address to allow Tailscale access
+  const server = app.listen(PORT, config.bindAddress, async () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Server accessible on all interfaces (including Tailscale)`);
 
     // Wait for DB tables/migrations to finish before starting the scheduler
     await dbService.ready;
+    dbReady = true;
 
     // Ensure initial admin exists (must run after DB is ready)
-    const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME;
-    const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
+    const { initialAdminUsername, initialAdminPassword } = config;
 
     if (initialAdminUsername && initialAdminPassword) {
       try {
@@ -76,8 +91,17 @@ async function startServer() {
       }
     }
 
-    // Start scheduler for automatic daily updates
-    schedulerService.start();
+    // Start scheduler for automatic daily updates (reads config from system_config)
+    const schedulerEnabledConfig = await dbService.getConfig('scheduler_enabled');
+    const schedulerCronConfig = await dbService.getConfig('scheduler_cron');
+    const schedulerEnabled = schedulerEnabledConfig !== 'false';
+    const schedulerCron = schedulerCronConfig || '0 0 * * *';
+
+    if (schedulerEnabled) {
+      schedulerService.start(schedulerCron);
+    } else {
+      console.log('System scheduler is disabled via system_config');
+    }
   });
 
   // Handle server errors

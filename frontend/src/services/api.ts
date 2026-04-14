@@ -14,6 +14,30 @@ const getAuthHeaders = (): HeadersInit => {
   return headers;
 };
 
+// Simple in-memory cache for deduplicating repeated API calls
+const _cache = new Map<string, { data: unknown; timestamp: number }>();
+
+function cachedFetch<T>(key: string, fetcher: () => Promise<T>, ttlMs: number = 60000): Promise<T> {
+  const entry = _cache.get(key);
+  if (entry && Date.now() - entry.timestamp < ttlMs) {
+    return Promise.resolve(entry.data as T);
+  }
+  return fetcher().then(data => {
+    _cache.set(key, { data, timestamp: Date.now() });
+    return data;
+  });
+}
+
+export function invalidateCache(keyPrefix?: string): void {
+  if (!keyPrefix) {
+    _cache.clear();
+    return;
+  }
+  for (const key of _cache.keys()) {
+    if (key.startsWith(keyPrefix)) _cache.delete(key);
+  }
+}
+
 export const api = {
   // Authentication
   async login(username: string, password: string): Promise<{ user: User; token: string }> {
@@ -55,6 +79,26 @@ export const api = {
       // Don't throw error on logout failure
       console.error('Logout request failed');
     }
+  },
+
+  // Setup
+  async getSetupStatus(): Promise<{ needsSetup: boolean; registrationEnabled: boolean }> {
+    const response = await fetch(`${API_BASE_URL}/setup/status`);
+    if (!response.ok) throw new Error('Failed to check setup status');
+    return response.json();
+  },
+
+  async setupAdmin(username: string, password: string): Promise<{ user: User; token: string }> {
+    const response = await fetch(`${API_BASE_URL}/setup/admin`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Setup failed');
+    }
+    return response.json();
   },
 
   async getCurrentUser(): Promise<User> {
@@ -219,13 +263,15 @@ export const api = {
   },
 
   async getCategoryTree(): Promise<CategoryTreeNode[]> {
-    const response = await fetch(`${API_BASE_URL}/products/categories/tree`, {
-      headers: getAuthHeaders(),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch category tree');
-    }
-    return response.json();
+    return cachedFetch('categoryTree', async () => {
+      const response = await fetch(`${API_BASE_URL}/products/categories/tree`, {
+        headers: getAuthHeaders(),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch category tree');
+      }
+      return response.json();
+    }, 300000); // 5-minute TTL — categories rarely change
   },
 
   async addProduct(asin: string): Promise<Product> {
@@ -238,6 +284,7 @@ export const api = {
       const error = await response.json();
       throw new Error(error.error || 'Failed to add product');
     }
+    invalidateCache('categoryTree'); // new product may add new categories
     return response.json();
   },
 
@@ -249,6 +296,7 @@ export const api = {
     if (!response.ok) {
       throw new Error('Failed to delete product');
     }
+    invalidateCache('categoryTree'); // deleted product may remove categories
   },
 
   // Dashboard
@@ -358,11 +406,13 @@ export const api = {
   // Notification API methods
   notifications: {
     async getChannels(): Promise<NotificationChannel[]> {
-      const response = await fetch(`${API_BASE_URL}/notifications/channels`, {
-        headers: getAuthHeaders()
-      });
-      if (!response.ok) throw new Error('Failed to fetch notification channels');
-      return response.json();
+      return cachedFetch('channels', async () => {
+        const response = await fetch(`${API_BASE_URL}/notifications/channels`, {
+          headers: getAuthHeaders()
+        });
+        if (!response.ok) throw new Error('Failed to fetch notification channels');
+        return response.json();
+      }, 60000); // 1-minute TTL
     },
 
     async createChannel(data: { type: NotificationChannelType; name: string; config: EmailConfig | TelegramConfig | DiscordConfig }): Promise<NotificationChannel> {
@@ -372,6 +422,7 @@ export const api = {
         body: JSON.stringify({ ...data, config: typeof data.config === 'string' ? data.config : JSON.stringify(data.config) })
       });
       if (!response.ok) throw new Error('Failed to create notification channel');
+      invalidateCache('channels');
       return response.json();
     },
 
@@ -382,6 +433,7 @@ export const api = {
         body: JSON.stringify(data)
       });
       if (!response.ok) throw new Error('Failed to update notification channel');
+      invalidateCache('channels');
       return response.json();
     },
 
@@ -391,6 +443,7 @@ export const api = {
         headers: getAuthHeaders()
       });
       if (!response.ok) throw new Error('Failed to delete notification channel');
+      invalidateCache('channels');
     },
 
     async testChannel(id: number): Promise<{ success: boolean; error?: string }> {

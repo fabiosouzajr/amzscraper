@@ -1,0 +1,298 @@
+/* ========================================
+   Toast Component Styles
+   Uses design tokens from tokens.css
+   ======================================== */
+
+/* ========================================
+   TOAST CONTAINER
+   ======================================== */
+
+.container {
+  position: fixed;
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  pointer-events: none;
+  max-width: 400px;
+  padding: var(--space-4);
+  animation: slideIn var(--duration-normal) var(--ease-enter);
+}
+
+/* Position variants */
+.container.topRight {
+  top: 0;
+  right: 0;
+  align-items: flex-end;
+}
+
+.container.topCenter {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+
+.container.topLeft {
+  top: 0;
+  left: 0;
+  align-items: flex-start;
+}
+
+.container.bottomRight {
+  bottom: 0;
+  right: 0;
+  align-items: flex-end;
+}
+
+.container.bottomCenter {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+
+.container.bottomLeft {
+  bottom: 0;
+  left: 0;
+  align-items: flex-start;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   TOAST ITEM
+   ======================================== */
+
+.toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+  min-width: 280px;
+  max-width: 100%;
+  animation: toastIn var(--duration-normal) var(--ease-enter);
+  overflow: hidden;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast.bottomRight,
+.toast.bottomCenter,
+.toast.bottomLeft {
+  animation-name: toastInBottom;
+}
+
+@keyframes toastInBottom {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========================================
+   ICON
+   ======================================== */
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: inherit;
+}
+
+/* ========================================
+   CONTENT
+   ======================================== */
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.message {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+/* ========================================
+   CLOSE BUTTON
+   ======================================== */
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: currentColor;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-xs);
+  flex-shrink: 0;
+  transition: opacity var(--duration-fast) var(--ease-default),
+    background-color var(--duration-fast) var(--ease-default);
+}
+
+.closeButton:hover {
+  opacity: 1;
+  background-color: var(--color-bg-inset);
+}
+
+.closeButton:active {
+  transform: scale(0.95);
+}
+
+/* ========================================
+   VARIANTS
+   ======================================== */
+
+.success {
+  background-color: var(--color-success-subtle);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.error {
+  background-color: var(--color-danger-subtle);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.info {
+  background-color: var(--color-info-subtle);
+  border-color: var(--color-info);
+  color: var(--color-info);
+}
+
+.warning {
+  background-color: var(--color-warning-subtle);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+/* ========================================
+   PROGRESS BAR
+   ======================================== */
+
+.progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: currentColor;
+  opacity: 0.3;
+  overflow: hidden;
+}
+
+.progressInner {
+  height: 100%;
+  background-color: currentColor;
+  opacity: 1;
+  animation: progress linear forwards;
+  transform-origin: left;
+}
+
+@keyframes progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .container,
+  .toast {
+    animation: none;
+  }
+
+  .progressInner {
+    animation: none;
+  }
+
+  .closeButton:active {
+    transform: none;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: var(--breakpoint-mobile)) {
+  .container {
+    max-width: none;
+    left: 0;
+    right: 0;
+    padding: var(--space-2);
+  }
+
+  .container.topRight,
+  .container.topLeft {
+    align-items: center;
+  }
+
+  .container.bottomRight,
+  .container.bottomLeft {
+    align-items: center;
+  }
+
+  .container.topCenter,
+  .container.bottomCenter {
+    transform: none;
+  }
+
+  .toast {
+    min-width: auto;
+  padding: var(--space-3);
+  }
+}
