@@ -363,3 +363,144 @@ The `DESC` ordering matches the typical query pattern (most recent first). This 
 3. **Short-term:** Add the composite `(product_id, date DESC)` index — one migration line
 4. **Medium-term:** Implement price history retention policy with a configurable `retention_days` setting
 5. **Long-term:** Add admin-triggered VACUUM or auto-vacuum for disk space reclamation
+
+---
+
+## 3. Backend & API
+
+The backend is well-structured with a clean separation between routes, services, and the database layer. Error responses are consistent (`{ error: "message" }` format throughout), and the codebase uses async/await cleanly. The main gaps are around request validation, connection draining on shutdown, and observability.
+
+### 3.1 `[Medium]` No Request Validation Middleware
+
+**Current behavior:** Each route handler manually checks for required fields with ad-hoc `if` statements. There's no schema validation layer.
+
+```typescript
+// backend/src/routes/auth.ts — manual checks repeated in every handler
+if (!username || !password) {
+  return res.status(400).json({ error: 'Username and password are required' });
+}
+if (username.length < 3) {
+  return res.status(400).json({ error: 'Username must be at least 3 characters' });
+}
+if (password.length < 6) {
+  return res.status(400).json({ error: 'Password must be at least 6 characters' });
+}
+```
+
+**Impact:** Validation logic is duplicated across routes (e.g., ASIN validation in products.ts and config.ts). Missing validations are easy to introduce — there's no guarantee a new route will validate all inputs. Adding a new field to an endpoint means remembering to validate it manually.
+
+**Example scenario:** A developer adds a new notification rule type but forgets to validate the `params` JSON structure. Malformed params get stored in the database and cause errors when the notification system tries to evaluate them.
+
+**Suggested fix:** Introduce Zod for schema validation with a middleware wrapper:
+```typescript
+import { z } from 'zod';
+
+const loginSchema = z.object({
+  username: z.string().min(3).max(30),
+  password: z.string().min(6),
+});
+
+function validate(schema: z.ZodSchema) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ error: result.error.issues[0].message });
+    }
+    req.body = result.data;
+    next();
+  };
+}
+
+router.post('/login', validate(loginSchema), async (req, res) => { ... });
+```
+
+### 3.2 `[Medium]` Graceful Shutdown Doesn't Drain Connections
+
+**Current behavior:** SIGTERM/SIGINT handlers stop the scheduler and exit immediately. In-flight HTTP requests and active SSE connections are dropped.
+
+```typescript
+// backend/src/server.ts:119-129
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully...');
+  schedulerService.stop();
+  process.exit(0);
+});
+```
+
+**Impact:** If the server is restarted during a price update (which can run for minutes), the update is interrupted mid-way. SSE clients get a broken connection with no completion signal. Any in-flight API requests return network errors.
+
+**Example scenario:** A PM2 restart or systemd reload sends SIGTERM while 50 products are being updated. The scraper stops mid-product, the browser process may be orphaned, and the client sees "connection reset."
+
+**Suggested fix:** Use `server.close()` to stop accepting new connections and drain existing ones:
+```typescript
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down...');
+  schedulerService.stop();
+  server.close(() => {
+    scraperService.close().then(() => {
+      console.log('All connections drained, exiting.');
+      process.exit(0);
+    });
+  });
+  // Force exit after 30s if drain doesn't complete
+  setTimeout(() => process.exit(1), 30_000);
+});
+```
+
+### 3.3 `[Low]` No API Versioning
+
+**Current behavior:** All endpoints are under `/api/` with no version prefix. Any breaking change to the API affects all clients immediately.
+
+**Impact:** Low for a self-hosted application with a single frontend. If an external client (mobile app, browser extension, third-party tool) ever integrates with the API, breaking changes would require coordinated deployments.
+
+**Suggested fix:** Not urgent — only becomes relevant if the API is opened to third-party consumers. If needed, prefix routes with `/api/v1/` and maintain backwards compatibility when introducing `/api/v2/`.
+
+### 3.4 `[Low]` Health Endpoint Doesn't Check Live DB Connectivity
+
+**Current behavior:** The `/health` endpoint checks a boolean flag (`dbReady`) set once during startup after migrations complete. It doesn't test live database connectivity.
+
+```typescript
+// backend/src/server.ts:54-56
+app.get('/health', (req, res) => {
+  res.json({ status: dbReady ? 'ok' : 'starting' });
+});
+```
+
+**Impact:** If the SQLite file becomes corrupted, the disk fills up, or the file is moved/deleted after startup, the health endpoint still returns `{ status: 'ok' }`. Load balancers or monitoring systems would not detect the failure.
+
+**Suggested fix:** Add a lightweight DB query to the health check:
+```typescript
+app.get('/health', async (req, res) => {
+  if (!dbReady) return res.json({ status: 'starting' });
+  try {
+    await dbAll(db, 'SELECT 1');
+    res.json({ status: 'ok' });
+  } catch {
+    res.status(503).json({ status: 'unhealthy' });
+  }
+});
+```
+
+### 3.5 `[Low]` No Request ID for Log Correlation
+
+**Current behavior:** Log entries use `console.log` with timestamps (via the logger utility) but have no request ID or correlation token. Each log line is independent.
+
+**Impact:** When debugging an issue from logs, there's no way to trace a specific user request across multiple log entries (e.g., auth check → product fetch → scraper call → database write). In a multi-user environment, interleaved log lines from concurrent requests are difficult to separate.
+
+**Suggested fix:** Add a simple request ID middleware:
+```typescript
+import { randomUUID } from 'crypto';
+
+app.use((req, res, next) => {
+  req.id = randomUUID().slice(0, 8);
+  res.setHeader('X-Request-ID', req.id);
+  next();
+});
+```
+Then include `req.id` in log messages. This is low priority but becomes valuable as user count grows.
+
+### Recommended Next Steps
+1. **Short-term:** Fix graceful shutdown to drain connections and close the scraper browser
+2. **Short-term:** Add Zod validation to auth and product routes — the most field-heavy endpoints
+3. **Long-term:** Add request IDs if log analysis becomes difficult with multiple concurrent users
+4. **Deferred:** API versioning — only if third-party API consumers are planned
