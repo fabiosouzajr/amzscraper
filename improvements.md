@@ -504,3 +504,184 @@ Then include `req.id` in log messages. This is low priority but becomes valuable
 2. **Short-term:** Add Zod validation to auth and product routes — the most field-heavy endpoints
 3. **Long-term:** Add request IDs if log analysis becomes difficult with multiple concurrent users
 4. **Deferred:** API versioning — only if third-party API consumers are planned
+
+---
+
+## 4. Scraper
+
+The scraper is the most complex and robust part of the application. It uses Playwright Firefox with a multi-method fallback chain for price extraction, handles availability detection in both Portuguese and English, and extracts categories from breadcrumbs. The main concerns are around scalability (single browser instance), detection avoidance (browser/UA mismatch), and resilience (CAPTCHA recovery).
+
+### 4.1 `[High]` Single Browser Instance — Bottleneck and SPOF
+
+**Current behavior:** One Playwright browser is shared across all users and all operations. Products are scraped sequentially with a 2-second delay between each.
+
+```typescript
+// backend/src/services/scraper.ts:5-6
+private browser: Browser | null = null;
+private context: BrowserContext | null = null;
+
+// Only one browser, reused:
+async initialize(): Promise<void> {
+  if (!this.browser) {
+    this.browser = await firefox.launch({ headless: true });
+    this.context = await this.browser.newContext({ ... });
+  }
+}
+```
+
+**Impact:** With 50 users x 80 products, a full system update takes: 4,000 products x (4s page load + 2s delay) = ~6.7 hours. If the browser crashes mid-update, all remaining products are skipped. During manual updates, one user's request blocks all others (see also Section 5: Concurrency).
+
+**Example scenario:** The midnight scheduler starts processing User A's 100 products. At product #30, Playwright throws a browser crash error. The entire update fails — Users B through Z get no updates that night.
+
+**Suggested fix:** Implement a browser pool with configurable concurrency:
+```typescript
+class ScraperPool {
+  private pool: Browser[] = [];
+  private maxBrowsers = parseInt(process.env.SCRAPER_CONCURRENCY || '2');
+
+  async acquire(): Promise<{ browser: Browser; context: BrowserContext }> {
+    // Return an available browser or launch a new one (up to max)
+    // Isolate contexts per user for cookie/session separation
+  }
+
+  async release(browser: Browser): Promise<void> {
+    // Return browser to pool or close if pool is full
+  }
+}
+```
+Even going from 1 to 2 concurrent browsers cuts update time in half. Each user's scrape runs in an isolated browser context to prevent session cross-contamination.
+
+### 4.2 `[Medium]` Fixed 2-Second Delay Between Products
+
+**Current behavior:** A hardcoded 2-second delay is applied between every product scrape, regardless of Amazon's response behavior.
+
+```typescript
+// backend/src/services/scheduler.ts:185
+await new Promise(resolve => setTimeout(resolve, 2000));
+```
+
+**Impact:** The delay is either too aggressive (Amazon may still rate-limit at 2s intervals for large batches) or too conservative (if Amazon responds quickly and doesn't show rate-limiting signals, time is wasted). There's no backoff on errors — if a request gets a 503 or timeout, the next request fires 2 seconds later with the same intensity.
+
+**Example scenario:** After scraping 200 products, Amazon starts returning 503 responses. The scraper retries at the same 2-second pace, gets blocked, and fails the remaining products.
+
+**Suggested fix:** Implement adaptive delay with exponential backoff:
+```typescript
+let delay = 2000; // Base delay
+const MIN_DELAY = 1500;
+const MAX_DELAY = 30000;
+
+// On success: gradually reduce delay (min 1.5s)
+delay = Math.max(MIN_DELAY, delay * 0.9);
+
+// On error/rate-limit: double delay (max 30s)
+delay = Math.min(MAX_DELAY, delay * 2);
+
+await new Promise(resolve => setTimeout(resolve, delay));
+```
+
+### 4.3 `[Medium]` No Proxy Support
+
+**Current behavior:** All requests originate from the server's IP address. There's no proxy configuration in the Playwright launch options.
+
+**Impact:** With a single IP, Amazon can easily identify and block the scraper once request volume increases. This is especially relevant for multi-user setups where hundreds of products are scraped from one address.
+
+**Example scenario:** After consistently scraping 500+ products from one IP over several weeks, Amazon blocks the IP entirely. All scraping stops, affecting every user.
+
+**Suggested fix:** Add proxy support via environment variable:
+```typescript
+const proxyConfig = process.env.SCRAPER_PROXY
+  ? { server: process.env.SCRAPER_PROXY }
+  : undefined;
+
+this.browser = await firefox.launch({
+  headless: true,
+  proxy: proxyConfig,
+});
+```
+For advanced setups, support a proxy list with rotation — but even a single proxy is an improvement over direct connection, as it separates the server's operational IP from the scraping IP.
+
+### 4.4 `[Medium]` CAPTCHA Detection Without Recovery
+
+**Current behavior:** The scraper detects CAPTCHAs by checking page text but throws an error with no recovery mechanism.
+
+```typescript
+// backend/src/services/scraper.ts:97-99
+const bodyText = await page.textContent('body');
+if (bodyText && (bodyText.toLowerCase().includes('captcha') ||
+    bodyText.toLowerCase().includes('robot') ||
+    bodyText.toLowerCase().includes('verify'))) {
+  throw new Error('Amazon is showing a captcha or blocking the request');
+}
+```
+
+**Impact:** When a CAPTCHA is triggered, the current product fails and the error is logged to the console. The 2-retry mechanism (`retries` parameter) will attempt the same page again — which will likely show the same CAPTCHA. No administrator is notified, and the scraper doesn't adjust its behavior (e.g., increasing delays or pausing).
+
+**Example scenario:** Amazon starts showing CAPTCHAs after 100 products. The remaining 300 products all fail with retry exhaustion. The admin doesn't know until they check logs manually the next day.
+
+**Suggested fix:**
+1. On CAPTCHA detection, pause scraping and increase delay significantly (e.g., 5-minute cooldown)
+2. Log CAPTCHA events to a dedicated counter in `system_config` for admin visibility
+3. Add an admin notification (using the existing notification system) when CAPTCHA rate exceeds a threshold
+4. Consider rotating the browser context (clear cookies, get new session) after CAPTCHA
+
+### 4.5 `[Medium]` Firefox Browser with Chrome User-Agent
+
+**Current behavior:** The scraper launches Firefox but sends a Chrome user-agent string.
+
+```typescript
+// backend/src/services/scraper.ts:12-13
+this.browser = await firefox.launch({ headless: true });
+this.context = await this.browser.newContext({
+  userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+});
+```
+
+**Impact:** Sophisticated bot detection (which Amazon uses) can fingerprint the browser engine via JavaScript APIs (`navigator.plugins`, `navigator.webdriver`, WebGL renderer strings, CSS feature queries). A Firefox browser reporting itself as Chrome creates a detectable inconsistency. This makes it easier for Amazon to identify and block the scraper.
+
+**Example scenario:** Amazon's bot detection runs:
+```javascript
+// Server-side check: UA says Chrome, but...
+navigator.userAgent // "Chrome/120..."
+CSS.supports('selector(::-moz-range-thumb)') // true (Firefox-only)
+// Mismatch detected → flag as bot
+```
+
+**Suggested fix:** Either:
+1. **Match UA to browser:** Use a Firefox user-agent string:
+   ```
+   Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0
+   ```
+2. **Or switch to Chromium:** Since the UA claims Chrome, launch Chromium instead of Firefox. Chromium is generally better for avoiding detection because Chrome is the most common browser.
+
+### 4.6 `[Low]` Hardcoded for Amazon.com.br
+
+**Current behavior:** The scraper URL, price parsing (Brazilian Real format), and availability patterns (Portuguese) are all hardcoded for Amazon Brazil.
+
+**Impact:** Users who want to track products from other Amazon regions (US, UK, DE, etc.) cannot do so without modifying the source code. This limits the app's usefulness for international users.
+
+**Suggested fix:** Make the region configurable via `system_config`:
+```typescript
+const region = await getConfig('scraper.region') || 'com.br';
+const url = `https://www.amazon.${region}/dp/${asin}`;
+```
+This would also require locale-aware price parsing (different decimal/thousands separators) and language-specific availability patterns. This is a significant effort — only worth pursuing if there's user demand.
+
+### 4.7 `[Low]` Broken Selectors Not Surfaced to Admin
+
+**Current behavior:** When a CSS selector fails and the scraper falls back to the next method, it logs to the console but doesn't record the event anywhere persistent.
+
+**Impact:** If Amazon changes their page structure and a primary selector breaks, the scraper silently falls back to less reliable methods. Over time, all selectors could break one by one without anyone noticing until prices stop being extracted entirely.
+
+**Suggested fix:** Track selector success rates in `system_config` or a dedicated stats table. Surface them in the admin System Stats panel:
+```
+Price selectors:  .a-price.priceToPay (92%) | #corePrice (6%) | fallback (2%)
+Title selectors:  #productTitle (99%) | h1.a-size-large (1%)
+```
+Alert the admin when the primary selector drops below a threshold (e.g., 80% success rate).
+
+### Recommended Next Steps
+1. **Immediate:** Match user-agent to the actual browser engine (Firefox UA or switch to Chromium)
+2. **Short-term:** Add CAPTCHA recovery with cooldown + admin notification
+3. **Short-term:** Implement adaptive delay with exponential backoff
+4. **Medium-term:** Add proxy support via environment variable
+5. **Long-term:** Browser pool for concurrent scraping (pairs with concurrency improvements in Section 5)
