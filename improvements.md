@@ -957,3 +957,111 @@ pm2 set pm2-logrotate:max_size 10M
 2. **Short-term:** Use PM2 for production with `--max-memory-restart` and log rotation
 3. **Medium-term:** Add idle timeout to the scraper browser to reclaim memory between updates
 4. **Deferred:** Clustering — only if CPU becomes a measurable bottleneck
+
+---
+
+## 7. Frontend Performance
+
+The frontend is well-architected with React Query for data fetching (good cache defaults, no refetch-on-focus), route-level code splitting for the heaviest pages, and a custom design system. The main opportunities are around further code splitting, image optimization, and progressive enhancement.
+
+### 7.1 `[Medium]` Eagerly Loaded Components in Initial Bundle
+
+**Current behavior:** Dashboard, Auth, SetupWizard, and AppShell are imported eagerly. Only ProductsPage, ProductDetail, and SettingsPage are lazy-loaded.
+
+```typescript
+// frontend/src/App.tsx:4-6, 11 — eagerly imported
+import { Dashboard } from './components/Dashboard';
+import { Auth } from './components/Auth';
+import SetupWizard from './components/SetupWizard';
+import { AppShell } from './layout/AppShell';
+
+// frontend/src/App.tsx:14-16 — lazy-loaded
+const ProductsPage = lazy(() => import('./components/ProductsPage').then(...));
+const ProductDetail = lazy(() => import('./components/ProductDetail').then(...));
+const SettingsPage = lazy(() => import('./components/SettingsPage').then(...));
+```
+
+**Impact:** The initial JavaScript bundle includes Dashboard (with Recharts chart components) and SetupWizard (only used once, on first run). This increases first-load parse and execute time, especially on mobile devices. Recharts alone can add ~100KB to the initial bundle.
+
+**Example scenario:** A returning user on a slow mobile connection loads the app. The browser must download, parse, and execute the Dashboard code (including Recharts) even though the user might navigate directly to Products via a bookmark.
+
+**Suggested fix:** Lazy-load Dashboard and SetupWizard:
+```typescript
+const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
+const SetupWizard = lazy(() => import('./components/SetupWizard'));
+```
+Keep Auth and AppShell eager since they're needed immediately on every page load.
+
+### 7.2 `[Low]` Global CSS Loaded on Every Page
+
+**Current behavior:** `index.css` (~550 lines) is imported in `main.tsx` and loaded in its entirety on every page, regardless of which route the user visits.
+
+**Impact:** While 550 lines of CSS is not large in absolute terms (~15-20KB), it includes styles for components that may not be rendered on the current page. This is a minor inefficiency — the bigger concern is maintainability as the file grows.
+
+**Suggested fix:** This is a low priority optimization. The ongoing migration to CSS Modules is the right long-term approach — as more styles move to `*.module.css` files, `index.css` will naturally shrink to only global reset/variables/utilities. No action needed beyond continuing the current migration.
+
+### 7.3 `[Low]` No Service Worker or PWA Caching
+
+**Current behavior:** The app shows an offline banner when connectivity is lost but cannot serve any cached content. Every page load requires a network connection.
+
+```typescript
+// frontend/src/layout/OfflineBanner.tsx — shows status only, no caching
+```
+
+**Impact:** Users on intermittent connections (mobile, spotty WiFi) see a blank page or loading state when offline. Price history data they viewed seconds ago is unavailable without a connection. This matters more for a price tracker used on mobile during shopping.
+
+**Suggested fix:** Add a Vite PWA plugin for basic caching:
+```bash
+npm install vite-plugin-pwa
+```
+```typescript
+// vite.config.ts
+import { VitePWA } from 'vite-plugin-pwa';
+
+plugins: [
+  VitePWA({
+    registerType: 'autoUpdate',
+    workbox: {
+      runtimeCaching: [
+        { urlPattern: /\/api\/products/, handler: 'StaleWhileRevalidate' },
+        { urlPattern: /\/api\/dashboard/, handler: 'StaleWhileRevalidate' },
+      ],
+    },
+  }),
+]
+```
+This allows previously viewed data to be served from cache while the app attempts to fetch fresh data in the background.
+
+### 7.4 `[Low]` Product Images Not Lazy-Loaded
+
+**Current behavior:** Product thumbnail images load eagerly — all images in the visible and off-screen product list rows are fetched immediately.
+
+```typescript
+// frontend/src/components/ProductList.tsx:407-412
+<img
+  src={getPreferredProductImageUrl(product)}
+  alt={product.description}
+  className="product-thumbnail"
+  onError={(e) => handleProductImageError(e, product.asin)}
+/>
+```
+
+**Impact:** On a page with 20 products (default pagination), all 20 thumbnail images are fetched on page load, even if only 5-8 are visible above the fold. Each Amazon product image is typically 50-200KB, so this is 1-4MB of unnecessary immediate downloads.
+
+**Suggested fix:** Add the native `loading="lazy"` attribute:
+```typescript
+<img
+  src={getPreferredProductImageUrl(product)}
+  alt={product.description}
+  className="product-thumbnail"
+  loading="lazy"
+  onError={(e) => handleProductImageError(e, product.asin)}
+/>
+```
+This is a one-line change supported by all modern browsers. Images below the fold are only fetched when the user scrolls near them.
+
+### Recommended Next Steps
+1. **Immediate:** Add `loading="lazy"` to product images — one-line fix, saves bandwidth
+2. **Short-term:** Lazy-load Dashboard component to reduce initial bundle (Recharts is heavy)
+3. **Long-term:** Consider PWA caching for offline support if mobile usage is significant
+4. **Ongoing:** Continue CSS Modules migration to reduce global CSS
