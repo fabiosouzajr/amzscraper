@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-04-14T13:27:23.260Z
-> Files: 207 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T13:26:26.996Z
+> Files: 216 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -308,6 +308,18 @@
 - `dateFormat.ts` — Formats a date based on the current language (~618 tok)
 - `numberFormat.ts` — Formats a number with the correct decimal and thousand separators based on language (~507 tok)
 - `productImage.ts` — Exports getLegacyAmazonImageUrl, getPreferredProductImageUrl, handleProductImageError (~209 tok)
+
+## graphify-out/
+
+- `.graphify_chunk_00.json` (~4334 tok)
+- `.graphify_chunk_01.json` (~4842 tok)
+- `.graphify_chunk_02.json` (~5298 tok)
+- `.graphify_chunk_03.json` (~4439 tok)
+- `.graphify_chunk_04.json` (~5167 tok)
+- `.graphify_chunk_05.json` (~4463 tok)
+- `.graphify_chunk_06.json` (~3645 tok)
+- `.graphify_chunk_07.json` (~5043 tok)
+- `.graphify_chunk_08.json` (~4528 tok)
 
 ## logs/
 

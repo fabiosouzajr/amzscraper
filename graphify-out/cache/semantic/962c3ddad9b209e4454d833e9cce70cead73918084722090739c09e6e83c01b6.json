@@ -1,0 +1,1 @@
+{"nodes": [{"id": "admin_systemstats_systemstats", "label": "SystemStats \u2014 Admin System Statistics Panel", "file_type": "code", "source_file": "frontend/src/components/admin/SystemStats.tsx", "source_location": null, "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [], "hyperedges": []}

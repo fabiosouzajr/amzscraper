@@ -1,0 +1,1 @@
+{"nodes": [{"id": "utils_portmanager_portmanager", "label": "PortManager \u2014 Port Detection and Fallback Utility", "file_type": "code", "source_file": "backend/src/utils/portManager.ts", "source_location": null, "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [], "hyperedges": []}
