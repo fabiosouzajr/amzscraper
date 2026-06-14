@@ -71,3 +71,29 @@
 
 | Time | Action | File(s) | Outcome | ~Tokens |
 |------|--------|---------|---------|--------|
+
+## Session: 2026-06-14 12:12
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 12:25 | Edited backend/src/services/scheduler.ts | modified if() | ~99 |
+| 12:25 | Edited backend/src/services/scheduler.ts | 2→2 lines | ~19 |
+| 12:25 | Edited backend/src/services/scheduler.ts | 3→3 lines | ~59 |
+| 12:26 | Edited backend/src/routes/prices.ts | 11→10 lines | ~73 |
+| 12:26 | Session end: 4 writes across 2 files (scheduler.ts, prices.ts) | 4 reads | ~14902 tok |
+| 12:27 | Session end: 4 writes across 2 files (scheduler.ts, prices.ts) | 4 reads | ~14902 tok |
+| 12:29 | Edited install.sh | added error handling | ~224 |
+| 12:29 | Edited install.sh | 3→2 lines | ~15 |
+| 12:29 | Edited install.sh | modified install_playwright_browsers() | ~76 |
+| 12:30 | Edited install.sh | 11→11 lines | ~118 |
+| 12:30 | Edited install.sh | 3→2 lines | ~35 |
+| 12:30 | Edited install.sh | 4→3 lines | ~18 |
+| 12:30 | Session end: 10 writes across 3 files (scheduler.ts, prices.ts, install.sh) | 5 reads | ~17507 tok |
+
+## Session: 2026-06-14 12:51
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 13:12 | Edited backend/src/services/scraper.ts | added 2 condition(s) | ~1540 |
+| 16:14 | Fix price-parser carousel contamination (scoped fallback + mark-unavailable) | backend/src/services/scraper.ts | bug-006 fixed, verified live on 3 ASINs | ~9k |
+| 13:14 | Session end: 1 writes across 1 files (scraper.ts) | 1 reads | ~12139 tok |

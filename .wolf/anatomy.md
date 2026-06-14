@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T13:26:26.996Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-14T16:12:02.388Z
 > Files: 216 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -9,7 +9,7 @@
 - `.gitignore` — Git ignore rules (~139 tok)
 - `CLAUDE.md` — OpenWolf (~1332 tok)
 - `improvements.md` — Improvements & Optimization Opportunities (~2474 tok)
-- `install.sh` — Colors for output (~2654 tok)
+- `install.sh` — Colors for output (~2058 tok)
 - `README.md` — Project documentation (~3417 tok)
 - `run.sh` — Get the directory where the script is located (~796 tok)
 - `TODO.md` — 1 asins import process feedback (~558 tok)
@@ -59,7 +59,7 @@
 - `dashboard.ts` — API routes: GET (2 endpoints) (~430 tok)
 - `lists.ts` — API routes: GET, POST, PUT, DELETE (7 endpoints) (~2208 tok)
 - `notifications.ts` — API routes: GET, POST, PUT, DELETE (10 endpoints) (~2613 tok)
-- `prices.ts` — API routes: POST (1 endpoints) (~674 tok)
+- `prices.ts` — API routes: POST (1 endpoints) (~659 tok)
 - `products.ts` — API routes: GET, POST, DELETE (8 endpoints) (~2300 tok)
 - `setup.ts` — API routes: GET, POST (2 endpoints) (~832 tok)
 
@@ -68,8 +68,8 @@
 - `database.ts` — Exports DatabaseService, dbService (~584 tok)
 - `notification-channel.ts` — Send notification via Email (SMTP) (~1274 tok)
 - `notification-evaluator.ts` — Evaluate all applicable rules for a product after a price update (~1888 tok)
-- `scheduler.ts` — Exports SchedulerService (~3570 tok)
-- `scraper.ts` — Exports ScraperService (~10599 tok)
+- `scheduler.ts` — Exports SchedulerService (~3564 tok)
+- `scraper.ts` — Exports ScraperService (~11279 tok)
 
 ## backend/src/services/db/
 

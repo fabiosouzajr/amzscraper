@@ -499,74 +499,111 @@ export class ScraperService {
           }
         }
         
-        // Method 3: Find any visible price whole/fraction elements if previous methods failed
+        // Method 3: Scoped fallback — search ONLY inside known main-price
+        // containers, never the whole document. This prevents grabbing prices
+        // from recommendation carousels / sponsored / "similar items" widgets.
+        // Previously a document-wide search picked up the first visible price
+        // anywhere on the page (e.g. an `a-carousel-card` recommendation),
+        // producing phantom prices for products whose main buy-box price was
+        // absent (marketplace-only, unavailable, or unrecognized layout).
         if (!priceFound) {
-          try {
-            await page.waitForSelector('span.a-price-whole', { timeout: 10000, state: 'visible' });
-            
-            // Find the first visible price whole and fraction elements
-            const visiblePriceData = await page.evaluate(() => {
-              // @ts-ignore - browser context
-              const wholeEls = document.querySelectorAll('span.a-price-whole');
+          const scopedPrice = await page.evaluate(() => {
+            // @ts-ignore - browser context
+            const MAIN_CONTAINERS = [
+              '.a-price.priceToPay',
+              '#corePriceDisplay_desktop_feature_div',
+              '#corePrice_feature_div',
+              '#apex_offerDisplay_desktop',
+              '#buybox',
+              '#price',
+              '#priceblock_ourprice',
+              '#priceblock_dealprice',
+              '#priceblock_saleprice'
+            ];
+            // Any price whose ancestor matches REJECT is a recommendation /
+            // sponsored / similar-items price, not the main product price.
+            const REJECT = '.a-carousel, .a-carousel-card, [data-a-carousel-options], [class*="arousel"], #similarities_feature_div, #sims-consolidated, [id*="sims"], [data-cel-widget*="similarit"], #sp_detail';
+
+            function inRejected(el: any): boolean {
+              return !!el.closest(REJECT);
+            }
+            // Skip crossed-out list prices ("De: R$X") — we want the pay price.
+            function isStrikethrough(el: any): boolean {
+              const p = el.closest('.a-price');
+              return !!(p && (p.classList.contains('a-text-price') || p.getAttribute('data-a-strike') === 'true'));
+            }
+
+            for (let s = 0; s < MAIN_CONTAINERS.length; s++) {
+              const sel = MAIN_CONTAINERS[s];
               // @ts-ignore
-              const fractionEls = document.querySelectorAll('span.a-price-fraction');
-              
-              // Find first visible whole element
-              for (let i = 0; i < wholeEls.length; i++) {
-                // @ts-ignore
-                if (wholeEls[i].offsetParent !== null) {
-                  // @ts-ignore
-                  const wholeText = wholeEls[i].textContent?.trim();
-                  // @ts-ignore
-                  const fractionText = fractionEls[i]?.textContent?.trim();
-                  if (wholeText) {
-                    return { whole: wholeText, fraction: fractionText || '' };
-                  }
+              const container = document.querySelector(sel);
+              if (!container || inRejected(container)) continue;
+
+              // Prefer the offscreen "R$ x,yy" string within the container.
+              const offscreens = container.querySelectorAll('.a-offscreen');
+              for (let i = 0; i < offscreens.length; i++) {
+                const off = offscreens[i];
+                if (inRejected(off) || isStrikethrough(off)) continue;
+                const t = (off.textContent || '').trim();
+                if (t.includes('R$')) {
+                  return { source: 'offscreen', text: t, selector: sel };
                 }
               }
-              return null;
-            });
-            
-            if (visiblePriceData) {
-              wholePart = visiblePriceData.whole;
-              fractionPart = visiblePriceData.fraction;
-              priceMethod = 'visible span.a-price-whole + span.a-price-fraction';
+
+              // Otherwise visible whole + fraction within the container.
+              const wholeEls = container.querySelectorAll('span.a-price-whole');
+              const fractionEls = container.querySelectorAll('span.a-price-fraction');
+              for (let i = 0; i < wholeEls.length; i++) {
+                const el = wholeEls[i];
+                if (el.offsetParent === null || inRejected(el) || isStrikethrough(el)) continue;
+                const wholeText = el.textContent ? el.textContent.trim() : '';
+                if (wholeText) {
+                  const fr = fractionEls[i] && fractionEls[i].textContent ? fractionEls[i].textContent.trim() : '';
+                  return { source: 'visible', whole: wholeText, fraction: fr, selector: sel };
+                }
+              }
+            }
+            return null;
+          }) as { source: string; text?: string; whole?: string; fraction?: string; selector: string } | null;
+
+          if (scopedPrice) {
+            if (scopedPrice.source === 'offscreen') {
+              // Brazilian format: dots = thousands sep, comma = decimal sep.
+              const priceStr = (scopedPrice.text || '').replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.');
+              const parsed = parseFloat(priceStr);
+              if (!isNaN(parsed)) {
+                price = parsed;
+                priceMethod = `scoped main-container offscreen (${scopedPrice.selector})`;
+                console.log(`✓ Found price using method: ${priceMethod} (R$ ${price.toFixed(2)})`);
+                priceFound = true;
+              }
+            } else {
+              wholePart = scopedPrice.whole || null;
+              fractionPart = scopedPrice.fraction || null;
+              priceMethod = `scoped main-container visible (${scopedPrice.selector})`;
               console.log(`✓ Found price using method: ${priceMethod}`);
               console.log(`  Raw wholePart: "${wholePart}", raw fractionPart: "${fractionPart}"`);
               priceFound = true;
             }
-          } catch (error) {
-            console.log('✗ Visible price elements not found, trying .a-offscreen...');
           }
         }
-        
-        // Method 4: Fallback to .a-offscreen if visible elements not found
+
+        // No price found in any main-price container → the product has no
+        // buyable price (marketplace-only without offers, unavailable, or a
+        // layout we don't recognize). Record it as unavailable rather than
+        // scraping an unrelated price from elsewhere on the page.
         if (!priceFound) {
-          const priceText = await page.textContent('.a-price .a-offscreen').catch(() => null);
-          if (priceText && priceText.trim()) {
-            // Extract price from text like "R$ 342,40" or "R$ 1.234,56"
-            const match = priceText.match(/[\d.,]+/);
-            if (match) {
-              const priceStr = match[0].replace(/\./g, '').replace(',', '.');
-              price = parseFloat(priceStr);
-              if (!isNaN(price)) {
-                priceMethod = '.a-price .a-offscreen';
-                console.log(`✓ Found price using method: ${priceMethod} (R$ ${price.toFixed(2)})`);
-                const result = {
-                  asin,
-                  description,
-                  price,
-                  available: true,
-                  imageUrl,
-                  categories: []
-                };
-                await page.close();
-                return result;
-              }
-            }
-          }
-          
-          throw new Error('Price not found - no visible price elements detected');
+          console.log('⚠ No price found in any main-price container — marking unavailable');
+          await page.close();
+          return {
+            asin,
+            description,
+            price: null,
+            available: false,
+            unavailableReason: 'Preço não disponível',
+            imageUrl,
+            categories: []
+          };
         }
         
         // If price was already extracted from offscreen, skip the wholePart/fractionPart parsing

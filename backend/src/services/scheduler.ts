@@ -75,13 +75,13 @@ export class SchedulerService {
       updated?: number;
       skipped?: number;
       errors?: number;
-      errorMessage?: string;
+      error?: string;
     }) => void
   ): Promise<void> {
     if (this.isUpdating) {
       const message = 'Price update already in progress, skipping...';
       console.log(message);
-      onProgress?.({ status: 'skipped', errorMessage: message });
+      onProgress?.({ status: 'skipped', error: message });
       return;
     }
 
@@ -92,7 +92,7 @@ export class SchedulerService {
       if (!user) {
         const error = `User with ID ${userId} not found`;
         console.error(error);
-        onProgress?.({ status: 'error', errorMessage: error });
+        onProgress?.({ status: 'error', error });
         return;
       }
 
@@ -206,7 +206,7 @@ export class SchedulerService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error('Error during price update:', error);
-      onProgress?.({ status: 'error', errorMessage });
+      onProgress?.({ status: 'error', error: errorMessage });
     } finally {
       this.isUpdating = false;
       await scraperService.close();

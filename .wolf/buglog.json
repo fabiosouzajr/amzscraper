@@ -1,4 +1,105 @@
 {
   "version": 1,
-  "bugs": []
+  "bugs": [
+    {
+      "id": "bug-001",
+      "timestamp": "2026-06-14T15:25:59.852Z",
+      "error_message": "Wrong reference: errorMessage should be error",
+      "file": "backend/src/services/scheduler.ts",
+      "root_cause": "Used \"errorMessage\" instead of \"error\"",
+      "fix": "Changed errorMessage → error",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-14T15:25:59.852Z"
+    },
+    {
+      "id": "bug-001",
+      "timestamp": "2026-06-14T00:00:00.000Z",
+      "error_message": "Failed to trigger price update (generic message shown instead of real error)",
+      "file": "backend/src/services/scheduler.ts, backend/src/routes/prices.ts",
+      "root_cause": "Field name mismatch: backend sent errorMessage, frontend read progress.error (undefined). Also route sent redundant {status:complete} after scheduler already sent {status:completed}, falling to default case.",
+      "fix": "Renamed errorMessage->error in all onProgress calls in scheduler.ts and prices.ts sendProgress type. Removed redundant sendProgress({status:complete}) in prices.ts.",
+      "tags": [
+        "sse",
+        "price-update",
+        "field-mismatch",
+        "frontend"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-14"
+    },
+    {
+      "id": "bug-003",
+      "timestamp": "2026-06-14T15:29:40.773Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "install.sh",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "sh"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-14T15:29:40.773Z"
+    },
+    {
+      "id": "bug-004",
+      "timestamp": "2026-06-14T15:29:53.101Z",
+      "error_message": "Significant refactor of ",
+      "file": "install.sh",
+      "root_cause": "11 lines replaced/restructured",
+      "fix": "Rewrote 21→9 lines (11 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "sh"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-14T15:29:53.101Z"
+    },
+    {
+      "id": "bug-005",
+      "timestamp": "2026-06-14T16:12:02.402Z",
+      "error_message": "Wrong operator: !== should be ===",
+      "file": "backend/src/services/scraper.ts",
+      "root_cause": "Used \"!==\" instead of \"===\"",
+      "fix": "Changed operator !== → ===",
+      "tags": [
+        "auto-detected",
+        "operator-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-14T16:12:02.402Z"
+    },
+    {
+      "id": "bug-006",
+      "timestamp": "2026-06-14T16:14:00.000Z",
+      "error_message": "Phantom prices: B076X71VMB (marketplace-only) showed 'R$ 16.90' belonging to no real offer; unavailable products displayed a price",
+      "file": "backend/src/services/scraper.ts",
+      "root_cause": "Price fallback Methods 3 & 4 searched the ENTIRE document (document.querySelectorAll('span.a-price-whole') / page.textContent('.a-price .a-offscreen')). When the main buy-box price was absent (marketplace-only, unavailable, unknown layout) they grabbed the first visible price anywhere — typically a recommendation carousel card (li.a-carousel-card / idAsinFaceoutContainer), e.g. R$16,90. Confirmed live via Playwright MCP.",
+      "fix": "Replaced Methods 3 & 4 with a single scoped fallback searching only an allowlist of main-price containers (.a-price.priceToPay, #corePriceDisplay_desktop_feature_div, #corePrice_feature_div, #apex_offerDisplay_desktop, #buybox, #price, #priceblock_*), rejecting candidates whose ancestor matches a carousel/sponsored/similar-items selector and skipping strikethrough list prices. If no main-region price is found, returns price:null + available:false + reason 'Preço não disponível' instead of a stray number. Verified: B076X71VMB->null(unavailable), B076KZYYRJ->16,90, B08T6MCKMK->53,36.",
+      "tags": [
+        "scraper",
+        "price-parsing",
+        "carousel",
+        "fallback-scope",
+        "availability",
+        "ts"
+      ],
+      "related_bugs": ["bug-005"],
+      "occurrences": 1,
+      "last_seen": "2026-06-14T16:14:00.000Z"
+    }
+  ]
 }

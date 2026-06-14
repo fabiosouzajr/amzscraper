@@ -39,7 +39,7 @@ router.post('/update', async (req: AuthRequest, res: Response) => {
       updated?: number;
       skipped?: number;
       errors?: number;
-      errorMessage?: string;
+      error?: string;
     }) => {
       res.write(`data: ${JSON.stringify(progress)}\n\n`);
     };
@@ -47,7 +47,6 @@ router.post('/update', async (req: AuthRequest, res: Response) => {
     // Run update with progress callbacks
     schedulerService.updateUserPrices(req.userId, sendProgress)
       .then(() => {
-        sendProgress({ status: 'complete' });
         res.end();
       })
       .catch((error) => {

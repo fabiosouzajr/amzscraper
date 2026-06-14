@@ -1,0 +1,1377 @@
+- generic [ref=e2]:
+  - navigation "Menu de atalhos" [ref=e3]:
+    - heading "Ir para" [level=2] [ref=e4]
+    - list "Ir para" [ref=e5]:
+      - listitem [ref=e6]:
+        - link "conteúdo principal" [ref=e7] [cursor=pointer]:
+          - /url: "#skippedLink"
+          - text: Conteúdo principal
+      - listitem [ref=e8]:
+        - link "Sobre este produto" [ref=e9] [cursor=pointer]:
+          - /url: "#featurebullets_feature_div"
+      - listitem [ref=e10]:
+        - link "Pular para as opções de compra" [ref=e11] [cursor=pointer]:
+          - /url: "#buybox"
+          - text: Opções de compra
+      - listitem [ref=e12]:
+        - link "Avaliações" [ref=e13] [cursor=pointer]:
+          - /url: "#customerReviews"
+    - separator [ref=e14]
+    - heading "Atalhos do teclado" [level=2] [ref=e15]
+    - list "Atalhos do teclado" [ref=e16]:
+      - listitem [ref=e17]:
+        - link "Pesquisa, alt, barra para frente" [ref=e18] [cursor=pointer]:
+          - /url: javascript:void(0)
+          - generic [ref=e19]:
+            - generic [ref=e20]: Pesquisar
+            - generic [ref=e21]:
+              - generic [ref=e22]: alt
+              - generic [ref=e23]: +
+              - generic [ref=e24]: /
+      - listitem [ref=e25]:
+        - link "Carrinho, shift, alt, c" [ref=e26] [cursor=pointer]:
+          - /url: javascript:void(0)
+          - generic [ref=e27]:
+            - generic [ref=e28]: Carrinho
+            - generic [ref=e29]:
+              - generic [ref=e30]: shift
+              - generic [ref=e31]: +
+              - generic [ref=e32]: alt
+              - generic [ref=e33]: +
+              - generic [ref=e34]: C
+      - listitem [ref=e35]:
+        - link "Início, shift, alt, h" [ref=e36] [cursor=pointer]:
+          - /url: javascript:void(0)
+          - generic [ref=e37]:
+            - generic [ref=e38]: Página inicial
+            - generic [ref=e39]:
+              - generic [ref=e40]: shift
+              - generic [ref=e41]: +
+              - generic [ref=e42]: alt
+              - generic [ref=e43]: +
+              - generic [ref=e44]: H
+      - listitem [ref=e45]:
+        - link "Seus pedidos, shift, alt, o" [ref=e46] [cursor=pointer]:
+          - /url: javascript:void(0)
+          - generic [ref=e47]:
+            - generic [ref=e48]: Seus Pedidos
+            - generic [ref=e49]:
+              - generic [ref=e50]: shift
+              - generic [ref=e51]: +
+              - generic [ref=e52]: alt
+              - generic [ref=e53]: +
+              - generic [ref=e54]: O
+      - listitem [ref=e55]:
+        - button "Adicionar ao carrinho, shift, alt, K" [ref=e56] [cursor=pointer]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: Adicionar ao carrinho
+            - generic [ref=e59]:
+              - generic [ref=e60]: shift
+              - generic [ref=e61]: +
+              - generic [ref=e62]: alt
+              - generic [ref=e63]: +
+              - generic [ref=e64]: K
+      - listitem [ref=e65]:
+        - button "Resumo do produto, shift, alt, d" [ref=e66] [cursor=pointer]:
+          - generic [ref=e67]:
+            - generic [ref=e68]: Resumo do produto
+            - generic [ref=e69]:
+              - generic [ref=e70]: shift
+              - generic [ref=e71]: +
+              - generic [ref=e72]: alt
+              - generic [ref=e73]: +
+              - generic [ref=e74]: D
+      - listitem [ref=e75]:
+        - button "Mostrar/ocultar atalhos, shift, alt, z" [ref=e76] [cursor=pointer]:
+          - generic [ref=e77]:
+            - generic [ref=e78]: Mostrar/ocultar atalhos
+            - generic [ref=e79]:
+              - generic [ref=e80]: shift
+              - generic [ref=e81]: +
+              - generic [ref=e82]: alt
+              - generic [ref=e83]: +
+              - generic [ref=e84]: Z
+    - generic [ref=e90]: Para se mover entre os produtos, use as setas para cima ou para baixo do teclado.
+  - banner [ref=e91]:
+    - navigation "Principal" [ref=e92]:
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - link "Amazon.com.br" [ref=e96] [cursor=pointer]:
+            - /url: /ref=nav_logo
+            - generic: .com.br
+          - button "A entrega será feita em Bela Vista 01319900 Atualizar CEP" [ref=e99] [cursor=pointer]:
+            - generic [ref=e101]:
+              - generic [ref=e102]: A entrega será feita em Bela Vista 01319900
+              - generic [ref=e103]: Atualizar CEP
+        - search [ref=e106]:
+          - generic [ref=e109]:
+            - generic [ref=e111]: Ferramentas e Materiais de Construção
+            - combobox "Selecione o departamento que deseja pesquisar no" [ref=e113] [cursor=pointer]:
+              - option "Todos os departamentos"
+              - option "Alexa Skills"
+              - option "Alimentos e Bebidas"
+              - option "Amazon Mercado"
+              - option "Amazon Now"
+              - option "Amazon Quase Novo"
+              - option "Apps e Jogos"
+              - option "Audiolivros Audible"
+              - option "Automotivo"
+              - option "Bebês"
+              - option "Beleza"
+              - option "Beleza de luxo"
+              - option "Bolsas, Malas e Mochilas"
+              - option "Brinquedos e Jogos"
+              - option "Casa"
+              - option "CD e Vinil"
+              - option "Computadores e Informática"
+              - option "Cozinha"
+              - option "Dispositivos Amazon"
+              - option "DVD e Blu-Ray"
+              - option "Eletrodomésticos"
+              - option "Eletrônicos"
+              - option "Esportes e Aventura"
+              - option "Ferramentas e Materiais de Construção" [selected]
+              - option "Games"
+              - option "Industrial"
+              - option "Instrumentos Musicais"
+              - option "Jardim e Piscina"
+              - option "Livros"
+              - option "Loja Kindle"
+              - option "Material para Escritório e Papelaria"
+              - option "Móveis e Decoração"
+              - option "Pet Shop"
+              - option "Prime Video"
+              - option "Programe e Poupe"
+              - option "Roupas, Calçados e Joias"
+              - option "Roupas, sapatos e joias femininas"
+              - option "Roupas, sapatos e joias masculinas"
+              - option "Roupas, sapatos e joias para meninas"
+              - option "Roupas, sapatos e joias para meninos"
+              - option "Roupas, sapatos e joias para bebês"
+              - option "Saúde e Cuidados Pessoais"
+          - searchbox "Pesquisar Amazon.com.br" [ref=e116]
+          - generic "Ir" [ref=e119] [cursor=pointer]:
+            - button "Ir" [ref=e120]
+        - generic [ref=e122]:
+          - generic [ref=e123]:
+            - link "Olá, faça seu login Contas e Listas" [ref=e124] [cursor=pointer]:
+              - /url: https://www.amazon.com.br/ap/signin?openid.return_to=https%3A%2F%2Fwww.amazon.com.br%2Fdp%2FB076KZYYRJ%3Fref_%3Dnav_ya_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=brflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0
+              - generic [ref=e126]: Olá, faça seu login
+              - generic [ref=e127]: Contas e Listas
+            - button "Expandir conta e listas" [ref=e128] [cursor=pointer]
+          - link "Devoluções e Pedidos" [ref=e129] [cursor=pointer]:
+            - /url: /gp/css/order-history?ref_=nav_orders_first
+            - generic [ref=e130]: Devoluções
+            - generic [ref=e131]: e Pedidos
+          - link "0 itens no carrinho" [ref=e132] [cursor=pointer]:
+            - /url: /gp/cart/view.html?ref_=nav_cart
+            - generic [ref=e134]: "0"
+            - generic [ref=e137]: Carrinho
+      - generic [ref=e141]:
+        - link "Faça seu login" [ref=e142] [cursor=pointer]:
+          - /url: https://www.amazon.com.br/ap/signin?openid.return_to=https%3A%2F%2Fwww.amazon.com.br%2Fdp%2FB076KZYYRJ%3Fref_%3Dnav_custrec_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=brflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0
+          - generic [ref=e143]: Faça seu login
+        - generic [ref=e144]:
+          - text: Cliente novo?
+          - link "Novo na Amazon? Comece aqui para criar uma conta" [ref=e145] [cursor=pointer]:
+            - /url: https://www.amazon.com.br/ap/register?openid.return_to=https%3A%2F%2Fwww.amazon.com.br%2Fdp%2FB076KZYYRJ%2F%3F_encoding%3DUTF8%26ref_%3Dnav_custrec_newcust&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=brflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0
+            - text: Comece aqui.
+      - generic [ref=e150]:
+        - button "Abrir o menu Todas as categorias" [ref=e152] [cursor=pointer]:
+          - generic [ref=e154]: Todos
+        - list [ref=e158]:
+          - listitem [ref=e159]:
+            - link "Venda na Amazon" [ref=e161] [cursor=pointer]:
+              - /url: /gp/browse.html?node=17877554011&ld=ASBRSOA_retail_sell_header_t1&ref_=nav_cs_sell
+          - listitem [ref=e162]:
+            - link "Chega em 15 min" [ref=e164] [cursor=pointer]:
+              - /url: /alm/storefront?almBrandId=10zZeC1FBwm&ref_=nav_cs_amnow
+          - listitem [ref=e165]:
+            - link "Ofertas do Dia" [ref=e167] [cursor=pointer]:
+              - /url: /deals?ref_=nav_cs_gb
+          - listitem [ref=e168]:
+            - link "Mais Vendidos" [ref=e170] [cursor=pointer]:
+              - /url: /gp/bestsellers/?ref_=nav_cs_bestsellers
+          - listitem [ref=e171]:
+            - generic [ref=e172]:
+              - link "Prime" [ref=e173] [cursor=pointer]:
+                - /url: /prime?ref_=nav_cs_primelink_nonmember
+              - button "Detalhes de Prime" [ref=e174] [cursor=pointer]
+          - listitem [ref=e175]:
+            - link "Games" [ref=e177] [cursor=pointer]:
+              - /url: /Games-Consoles/b/?ie=UTF8&node=7791985011&ref_=nav_cs_video_games
+          - listitem [ref=e178]:
+            - link "Música" [ref=e180] [cursor=pointer]:
+              - /url: /music/unlimited?ref_=nav_cs_music
+          - listitem [ref=e181]:
+            - link "Eletrônicos" [ref=e183] [cursor=pointer]:
+              - /url: /Eletronicos-e-Tecnologia/b/?ie=UTF8&node=16209062011&ref_=nav_cs_electronics
+          - listitem [ref=e184]:
+            - link "Casa" [ref=e186] [cursor=pointer]:
+              - /url: /Casa/b/?ie=UTF8&node=16191000011&ref_=nav_cs_home
+          - listitem [ref=e187]:
+            - link "Brinquedos e Jogos" [ref=e189] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16194299011&ref_=nav_cs_toys
+          - listitem [ref=e190]:
+            - link "Livros" [ref=e192] [cursor=pointer]:
+              - /url: /Livros/b/?ie=UTF8&node=6740748011&ref_=nav_cs_books
+          - listitem [ref=e193]:
+            - link "Computadores" [ref=e195] [cursor=pointer]:
+              - /url: /Computadores-Informatica/b/?ie=UTF8&node=16339926011&ref_=nav_cs_pc
+          - listitem [ref=e196]:
+            - link "Novidades na Amazon" [ref=e198] [cursor=pointer]:
+              - /url: /gp/browse.html?node=207658984011&ref_=nav_cs_mtech
+          - listitem [ref=e199]:
+            - link "Beleza" [ref=e201] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16194414011&ref_=nav_cs_beauty
+          - listitem [ref=e202]:
+            - link "Mercado" [ref=e204] [cursor=pointer]:
+              - /url: /fmc/everyday-essentials/?ref_=nav_cs_ee_desktop_disco
+          - listitem [ref=e205]:
+            - link "Alimentos e Bebidas" [ref=e207] [cursor=pointer]:
+              - /url: /gp/browse.html?node=18991079011&ref_=nav_cs_grocery
+          - listitem [ref=e208]:
+            - link "Bebês" [ref=e210] [cursor=pointer]:
+              - /url: /gp/browse.html?node=17242603011&ref_=nav_cs_baby
+          - listitem [ref=e211]:
+            - link "Cuidados Pessoais" [ref=e213] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16215417011&ref_=nav_cs_hpc
+          - listitem [ref=e214]:
+            - link "Ferramentas e Construção" [ref=e216] [cursor=pointer]:
+              - /url: /Ferramentas-Construcao/b/?ie=UTF8&node=16957182011&ref_=nav_cs_hi
+          - listitem [ref=e217]:
+            - link "Amazon Moda" [ref=e219] [cursor=pointer]:
+              - /url: /gp/browse.html?node=17365811011&ref_=nav_cs_fashion
+          - listitem [ref=e220]:
+            - link "Pet Shop" [ref=e222] [cursor=pointer]:
+              - /url: /gp/browse.html?node=18991136011&ref_=nav_cs_pets
+          - listitem [ref=e223]:
+            - link "Automotivos" [ref=e225] [cursor=pointer]:
+              - /url: /gp/browse.html?node=18914209011&ref_=nav_cs_automotive
+          - listitem [ref=e226]:
+            - link "eBooks Kindle" [ref=e228] [cursor=pointer]:
+              - /url: /ebooks-kindle/b/?ie=UTF8&node=5475882011&ref_=nav_cs_kindle_books
+          - listitem [ref=e229]:
+            - link "Atendimento ao Cliente" [ref=e231] [cursor=pointer]:
+              - /url: /gp/help/customer/display.html?nodeId=508510&ref_=nav_cs_help
+        - link "Assista à Copa do Mundo FIFA na CazéTV" [ref=e234] [cursor=pointer]:
+          - /url: /r/?_encoding=UTF8&aid=MKBwpiETSQ6xt3B9ljHY7A&dest=https%3A%2F%2Fwww.primevideo.com%2Fregion%2Fna%2Ftournament%2Famzn1.dv.icid.192f3995-6a2d-4d90-b248-192698760767%2Fref%3Ddvm_crs_nav_br_se_dt_swm_eg_al_fifa_tp&ref_=nav_swm_undefined&pf_rd_p=ce419e43-cee0-4050-8049-0baacc9993d0&pf_rd_s=nav-sitewide-msg&pf_rd_t=4201&pf_rd_i=navbar-4201&pf_rd_m=A2Q3Y263D00KWC&pf_rd_r=1EMKS651VRCEYVCQZN4P
+      - dialog [ref=e235]
+  - generic [ref=e237]:
+    - heading "O resumo do produto apresenta as principais informações do produto Atalho do teclado shift + alt + D" [level=1] [ref=e239]:
+      - button "O resumo do produto apresenta as principais informações do produto" [ref=e241] [cursor=pointer]:
+        - generic [ref=e242]: O resumo do produto apresenta as principais informações do produto
+      - separator [ref=e244]
+      - generic [ref=e245]:
+        - text: Atalho do teclado
+        - generic [ref=e246]: shift + alt + D
+    - main [ref=e247]:
+      - generic [ref=e248]:
+        - generic [ref=e251]:
+          - iframe [ref=e252]:
+            - generic [ref=f5e4]:
+              - generic [ref=f5e5]: "Clique para navegar até a página de detalhes do produto Anúncio patrocinado. Imagem do produto. Imagem com a marca. 3M, Fita Crepe, 19mm X 50m, 1 unidade. Preço: R$ 7,11."
+              - generic [ref=f5e11]:
+                - img "Imagem do produto" [ref=f5e15]
+                - generic [ref=f5e17]:
+                  - generic [ref=f5e18]: 3M3M, Fita Crepe, 19mm X 50m, 1 unidade
+                  - generic [ref=f5e19]:
+                    - generic [ref=f5e20]: Economize 10%
+                    - generic [ref=f5e21]: com Programe e Poupe
+                  - generic [ref=f5e22]: Os melhores projetos começam com Scotch
+              - link "Clique para navegar até a página de detalhes do produto" [ref=f5e24] [cursor=pointer]:
+                - /url: https://www.amazon.com.br/dp/B07HPX1GT1?aref=UnGT1Jt9o5&aaxitk=1810aa2425e23338e71b2361bfb6fe24&language=pt_BR&pf_rd_p=75cf75cd-c6f3-4965-9159-0b30fbada942&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=9gCgi&pd_rd_w=uM1dY&pd_rd_r=7389dc55-e974-40e1-9d5d-9202a04b0e7a&ref=dacx_dp_590773264625348925_592186328116003760
+          - button "Deixe comentários sobre o anúncio patrocinado" [ref=e254] [cursor=pointer]:
+            - generic [ref=e255]: Patrocinado
+        - list [ref=e261]:
+          - listitem [ref=e262]:
+            - link "Ferramentas e Materiais de Construção" [ref=e264] [cursor=pointer]:
+              - /url: /Ferramentas-Construcao/b/ref=dp_bc_1?ie=UTF8&node=16957182011
+          - listitem [ref=e265]: ›
+          - listitem [ref=e266]:
+            - link "Ferragens" [ref=e268] [cursor=pointer]:
+              - /url: /Ferragens/b/ref=dp_bc_2?ie=UTF8&node=17113543011
+          - listitem [ref=e269]: ›
+          - listitem [ref=e270]:
+            - link "Adesivos e Vedadores" [ref=e272] [cursor=pointer]:
+              - /url: /b/ref=dp_bc_3?ie=UTF8&node=17113584011
+          - listitem [ref=e273]: ›
+          - listitem [ref=e274]:
+            - link "Adesivos Universais" [ref=e276] [cursor=pointer]:
+              - /url: /b/ref=dp_bc_4?ie=UTF8&node=17113723011
+      - generic [ref=e277]:
+        - generic [ref=e278]:
+          - generic [ref=e289]:
+            - generic [ref=e296]:
+              - generic [ref=e297]: R$16,90
+              - generic [ref=e298]:
+                - text: R$
+                - generic [ref=e299]:
+                  - text: "16"
+                  - generic [ref=e300]: ","
+                - text: "90"
+            - generic [ref=e302]:
+              - generic [ref=e304]:
+                - generic [ref=e309]: Entrega GRÁTIS Amanhã, 15 de Junho no seu primeiro pedido. Se pedir dentro de 1 h 51 mins
+                - button "Entregando em Bela Vista, 01319900. Atualizar local" [ref=e312] [cursor=pointer]:
+                  - generic [ref=e318]: Entregando em Bela Vista, 01319900. Atualizar local
+              - generic [ref=e321]: Somente 5 em estoque.
+              - generic [ref=e329]:
+                - generic [ref=e330]: "Quantidade:"
+                - combobox "Quantidade:" [ref=e331]:
+                  - option "1" [selected]
+                  - option "2"
+                  - option "3"
+                  - option "4"
+                  - option "5"
+                - generic [ref=e334] [cursor=pointer]: Quantidade:1
+              - generic [ref=e340] [cursor=pointer]:
+                - button "Adicionar ao carrinho" [ref=e341]
+                - generic [ref=e342]: Adicionar ao carrinho
+              - generic [ref=e347] [cursor=pointer]:
+                - button "Comprar agora" [ref=e348]
+                - generic [ref=e349]: Comprar agora
+              - generic [ref=e352]:
+                - group "Detalhes do vendedor, do frete e da opção de compra" [ref=e354]:
+                  - generic [ref=e355]:
+                    - heading "Enviado por" [level=4] [ref=e356]:
+                      - generic [ref=e357]: Enviado por
+                    - generic [ref=e360]: Amazon
+                  - generic [ref=e361]:
+                    - heading "Vendido por" [level=4] [ref=e362]:
+                      - generic [ref=e363]: Vendido por
+                    - link "Mo Criativo" [ref=e366] [cursor=pointer]:
+                      - /url: /gp/help/seller/at-a-glance.html/ref=dp_merchant_link?ie=UTF8&seller=A18ZPF08AJWDB0&asin=B076KZYYRJ&ref_=dp_merchant_link&isAmazonFulfilled=1
+                  - generic [ref=e367]:
+                    - heading "Devolução" [level=4] [ref=e368]:
+                      - generic [ref=e369]: Devolução
+                    - button "Elegível para Devolução, Reembolso em até 30 dias após o recebimento" [ref=e372] [cursor=pointer]:
+                      - generic [ref=e373]: Elegível para Devolução, Reembolso em até 30 dias após o recebimento
+                  - generic [ref=e376]:
+                    - heading "Pagamento" [level=4] [ref=e377]:
+                      - generic [ref=e378]: Pagamento
+                    - button "Transação segura" [ref=e381] [cursor=pointer]:
+                      - generic [ref=e382]: Transação segura
+                - button "Ver mais" [ref=e384] [cursor=pointer]: Ver mais
+            - generic [ref=e386]:
+              - separator [ref=e387]
+              - link "Adicionar à Lista" [ref=e392] [cursor=pointer]:
+                - /url: https://www.amazon.com.br/ap/signin?openid.return_to=https%3A%2F%2Fwww.amazon.com.br%2Fgp%2Faw%2Fd%2FB076KZYYRJ&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=bramazon&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&
+          - generic [ref=e396]:
+            - generic [ref=e397]: Outros vendedores na Amazon
+            - separator [ref=e398]
+            - button "Comparar outras 54 ofertas a partir de R$15,00 Frete GRÁTIS no seu primeiro pedido." [ref=e401] [cursor=pointer]:
+              - text: Comparar outras 54 ofertas a partir de
+              - generic [ref=e402]:
+                - generic [ref=e403]: R$15,00
+                - generic [ref=e404]:
+                  - text: R$
+                  - generic [ref=e405]:
+                    - text: "15"
+                    - generic [ref=e406]: ","
+                  - text: "00"
+              - generic [ref=e407]: Frete GRÁTIS no seu primeiro pedido.
+          - generic [ref=e410]:
+            - iframe [ref=e411]:
+              - generic [ref=f6e4]:
+                - generic [ref=f6e5]: "Anúncio patrocinado. Logotipo da marca. Imagem do produto. Scotch, 3M, Fixa Forte, Fita Dupla Face para Cozinha, 24mm x 1,5m Preço: R$ 25,10 Adicionar ao Carrinho"
+                - link "Clique para navegar até a página de detalhes do produto" [ref=f6e8] [cursor=pointer]:
+                  - /url: https://www.amazon.com.br/dp/B079ZXKZK2?aref=ibNEV7ChoV&aaxitk=a14c24cb3241aa5f768c995472021c5a&language=pt_BR&pd_rd_plhdr=t&ref=dacx_dp_576461567328777394_587159308000609184
+                - generic [ref=f6e9]:
+                  - img "Logotipo da marca" [ref=f6e13]
+                  - img "Imagem do produto" [ref=f6e17]
+            - button "Deixe comentários sobre o anúncio patrocinado" [ref=e413] [cursor=pointer]:
+              - generic [ref=e414]: Patrocinado
+        - generic [ref=e416]:
+          - generic [ref=e418]:
+            - button "Compartilhar" [ref=e419]:
+              - button "Compartilhar" [ref=e420] [cursor=pointer]
+            - generic [ref=e424]:
+              - generic [ref=e426]:
+                - list
+                - list [ref=e427]:
+                  - listitem [ref=e428] [cursor=pointer]:
+                    - button "Cola instantânea TekBond 793 20g Bico Anti-entupimento" [ref=e431]:
+                      - img "Cola instantânea TekBond 793 20g Bico Anti-entupimento" [ref=e432]
+              - link "Clique para ver a imagem completa" [ref=e436] [cursor=pointer]:
+                - /url: "#"
+              - radiogroup "Miniaturas de imagem" [ref=e438]:
+                - listitem [ref=e439]:
+                  - radio [ref=e444] [cursor=pointer]
+                - listitem [ref=e446]:
+                  - radio [ref=e451] [cursor=pointer]
+          - generic [ref=e454]:
+            - generic:
+              - button
+          - generic:
+            - link:
+              - generic:
+                - list
+        - generic [ref=e455]:
+          - heading "Cola instantânea TekBond 793 20g Bico Anti-entupimento" [level=1] [ref=e458]
+          - 'link "Marca: TEK BOND" [ref=e461] [cursor=pointer]':
+            - /url: /s/ref=bl_dp_s_web_16957182011?ie=UTF8&node=16957182011&field-brandtextbin=TEK+BOND
+          - generic [ref=e463]:
+            - generic "4,7 de 5 estrelas" [ref=e465]:
+              - button "4,7 de 5 estrelas" [ref=e467] [cursor=pointer]:
+                - text: 4,7
+                - generic [ref=e469]: 4,7 de 5 estrelas
+            - link "2.919 Análises" [ref=e472] [cursor=pointer]:
+              - /url: "#averageCustomerReviewsAnchor"
+              - text: (2.919)
+          - generic [ref=e476]: Mais de 300 compras no mês passado
+          - separator [ref=e477]
+          - generic [ref=e480]:
+            - generic [ref=e482]:
+              - generic [ref=e483]: R$ 16,90
+              - generic [ref=e485]:
+                - text: R$
+                - generic [ref=e486]:
+                  - text: "16"
+                  - generic [ref=e487]: ","
+                - text: "90"
+            - button "Ver opções de pagamento" [ref=e490] [cursor=pointer]: Ver opções de pagamento
+            - generic:
+              - table
+            - generic [ref=e496]:
+              - text: Faça login para resgatar.
+              - generic [ref=e497] [cursor=pointer]: R$20
+              - generic [ref=e498]:
+                - text: off. Insira o código COMPRANOAPP na finalização da compra. Válido na sua primeira compra na Amazon, pelo App
+                - link "Termos" [ref=e501] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e506]:
+            - button "Pagamentos e Segurança" [ref=e510] [cursor=pointer]
+            - button "Enviado pela Amazon" [ref=e514] [cursor=pointer]
+            - button "Política de devolução" [ref=e519] [cursor=pointer]
+          - generic [ref=e524]:
+            - text: Disponível a um preço mais baixo em
+            - link "outros vendedores" [ref=e525] [cursor=pointer]:
+              - /url: /gp/offer-listing/B076KZYYRJ/ref=dp_olp_pn
+            - text: que talvez não ofereçam a entrega Prime grátis.
+          - list [ref=e529]:
+            - rowgroup [ref=e530]:
+              - listitem [ref=e531]: Marca TEK BOND
+              - listitem [ref=e532]: Usos específicos do produto Aplicações industriais e artesanato envolvendo materiais porosos e compostos de borracha
+              - listitem [ref=e533]: Material Resina epóxi
+              - listitem [ref=e534]: Forma do produto Líquido
+              - listitem [ref=e535]: Características especiais Cura rápida, Adere a materiais porosos, Bico antientupimento
+          - generic [ref=e537]:
+            - separator [ref=e538]
+            - heading "Sobre este item" [level=1] [ref=e539]
+            - list [ref=e540]:
+              - listitem [ref=e541]: Adesivo Instantaneo TekBond Multiuso
+              - listitem [ref=e542]: Ideal para superfícies porosas
+              - listitem [ref=e543]: Produto monocomponente, não requer mistura.
+              - listitem [ref=e544]: Dispositivo Antientupimento
+              - listitem [ref=e545]: Qualidade e eficiencia
+            - generic [ref=e546]:
+              - text: ›
+              - link "Ver mais detalhes do produto" [ref=e547] [cursor=pointer]:
+                - /url: "#productDetails"
+          - generic [ref=e551]:
+            - heading "Marca em destaque TEK BOND" [level=2] [ref=e552]:
+              - paragraph [ref=e554]: Marca em destaque
+              - paragraph [ref=e555]: TEK BOND
+            - list [ref=e556]:
+              - listitem [ref=e557]:
+                - paragraph [ref=e558]: 95% de classificações positivas de 10K+ clientes
+              - listitem [ref=e559]:
+                - paragraph [ref=e560]: 5K+ pedidos recentes desta marca
+          - link "Relatar um problema com este produto" [ref=e566] [cursor=pointer]:
+            - /url: "#"
+        - generic [ref=e568]:
+          - separator [ref=e569]
+          - generic [ref=e572]:
+            - iframe [ref=e573]:
+              - generic [ref=f7e4]:
+                - link "Fita Isolante Foxlux PVC Antichamas 10m x 19mm Preta 600V Alta Elasticidade Espessura 0,15mm" [ref=f7e6] [cursor=pointer]:
+                  - /url: https://aax-us-east-retail-direct.amazon.com/x/c/RBuugxmN5L09ydNRvkKsd5sAAAGexuiB8AEAAAIfAQBvbm9fdHhuX2JpZDYgICBvbm9fdHhuX2ltcDIgICCn3zLG/clv1c_ek8OM3GX57OOBXdb_a1gTdHQwHMCk7kzRO6OijoCPhyDxU1UaTdAZBHfHiagwUHxvVwrp48mWOVTK9k6epiE5Ta6hjtwxzkCwpEiFE6OpiuybfauPlEIpIvgiw1XOh-sXEt2tccgrddkzurzJE4uWPDDfdOdt0AQIszmGnSORgol8Bq3jeYQg6zS43GH44Kn0V1SPw4ydj5Ng9JEMi5GKDwhmyn5qXvA4mR8_oMlFSLNJ5T5TxFiFxtGiZHV6ckF17BA5z0vEVS8Om7Y2SIOxhyZ7G9UGqRe8Uh9Fhii36DocqFVmzqtsDABEyVQWXkTC43BncAJHR4LqUu2chemW5YkW--G7v84pCQRtrzvhqtUF3pQFhsVcnQ9hP84ywEw0g/https://www.amazon.com.br/sspa/click?ie=UTF8&spc=MTo1NTcyMjM4OTAyMDg1OTc6MTc4MTQ1MzU4NjpzcF9ocXBfc2hhcmVkOjMwMTIyMDkzMTAwNzkwMjo6Ojo&url=%2Fdp%2FB077VTMHXQ%2Fref%3Dsspa_dk_hqp_detail_aax_0%3Fpsc%3D1%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9ocXBfc2hhcmVk
+                - img "Fita Isolante Foxlux PVC Antichamas 10m x 19mm Preta 600V Alta Elasticidade Espessura 0,15mm" [ref=f7e7]
+                - generic [ref=f7e8]:
+                  - generic [ref=f7e9]: Fita Isolante Foxlux PVC Antichamas 10m x 19mm Preta 600V Alta Elasticidade Espessura...
+                  - generic [ref=f7e10]:
+                    - generic [ref=f7e11]: "318"
+                    - text: R$ 6,34
+            - button "Deixe comentários sobre o anúncio patrocinado" [ref=e575] [cursor=pointer]:
+              - generic [ref=e576]: Patrocinado
+      - generic [ref=e582]:
+        - separator [ref=e583]
+        - heading "Frequentemente comprados juntos" [level=2] [ref=e584]
+        - generic [ref=e585]:
+          - group "Frequentemente comprados juntos" [ref=e586]:
+            - generic [ref=e587]:
+              - generic [ref=e588]:
+                - 'checkbox "Este item: Cola instantânea TekBond 793 20g Bico Anti-entupimento" [checked] [ref=e594]'
+                - generic [ref=e599]:
+                  - generic [ref=e601]: "Este item: Cola instantânea TekBond 793 20g Bico Anti-entupimento"
+                  - generic [ref=e608]:
+                    - generic [ref=e609]: R$15,00
+                    - generic [ref=e610]:
+                      - text: R$
+                      - generic [ref=e611]:
+                        - text: "15"
+                        - generic [ref=e612]: ","
+                      - text: "00"
+              - generic [ref=e613]:
+                - generic [ref=e614]:
+                  - generic [ref=e615]: +
+                  - checkbox "Adesivo Instantâneo Tekbond 200 20g A Bico Antientupimento, unidade" [checked] [ref=e619]
+                  - link "Adesivo Instantâneo Tekbond 200 20g A Bico Antientupimento, unidade" [ref=e623] [cursor=pointer]:
+                    - /url: /Adesivo-Instant%C3%A2neo-200-Bico-Anti-entupimento/dp/B078XGVXMR/ref=pd_bxgy_thbs_d_sccl_1/138-2188440-7994416?pd_rd_w=kDVHh&content-id=amzn1.sym.47455c19-0288-451a-a02f-0d639e613616&pf_rd_p=47455c19-0288-451a-a02f-0d639e613616&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B078XGVXMR&psc=1
+                    - img "Adesivo Instantâneo Tekbond 200 20g A Bico Antientupimento, unidade" [ref=e624]
+                - generic [ref=e625]:
+                  - link "Adesivo Instantâneo Tekbond 200 20g A Bico Antientupimento, unidade" [ref=e627] [cursor=pointer]:
+                    - /url: /Adesivo-Instant%C3%A2neo-200-Bico-Anti-entupimento/dp/B078XGVXMR/ref=pd_bxgy_d_sccl_1/138-2188440-7994416?pd_rd_w=kDVHh&content-id=amzn1.sym.47455c19-0288-451a-a02f-0d639e613616&pf_rd_p=47455c19-0288-451a-a02f-0d639e613616&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B078XGVXMR&psc=1
+                    - generic [ref=e628]: Adesivo Instantâneo Tekbond 200 20g A Bico Antientupimento, unidade
+                  - generic [ref=e629]:
+                    - generic [ref=e635]:
+                      - generic [ref=e636]: R$13,90
+                      - generic [ref=e637]:
+                        - text: R$
+                        - generic [ref=e638]:
+                          - text: "13"
+                          - generic [ref=e639]: ","
+                        - text: "90"
+                    - generic [ref=e640]: "Quantidade mínima necessária: 2"
+              - generic [ref=e641]:
+                - generic [ref=e642]:
+                  - generic [ref=e643]: +
+                  - checkbox "Scotch, 3M, Fixa Forte, Fita Dupla Face, Fixação Extrema, 24mm x 2m" [checked] [ref=e647]
+                  - link "Scotch, 3M, Fixa Forte, Fita Dupla Face, Fixação Extrema, 24mm x 2m" [ref=e651] [cursor=pointer]:
+                    - /url: /HB004492250-Forte-Espuma-Extrema-Multicolor/dp/B0779BRVVS/ref=pd_bxgy_thbs_d_sccl_2/138-2188440-7994416?pd_rd_w=kDVHh&content-id=amzn1.sym.47455c19-0288-451a-a02f-0d639e613616&pf_rd_p=47455c19-0288-451a-a02f-0d639e613616&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B0779BRVVS&psc=1
+                    - img "Scotch, 3M, Fixa Forte, Fita Dupla Face, Fixação Extrema, 24mm x 2m" [ref=e652]
+                - generic [ref=e653]:
+                  - link "Scotch, 3M, Fixa Forte, Fita Dupla Face, Fixação Extrema, 24mm x 2m" [ref=e655] [cursor=pointer]:
+                    - /url: /HB004492250-Forte-Espuma-Extrema-Multicolor/dp/B0779BRVVS/ref=pd_bxgy_d_sccl_2/138-2188440-7994416?pd_rd_w=kDVHh&content-id=amzn1.sym.47455c19-0288-451a-a02f-0d639e613616&pf_rd_p=47455c19-0288-451a-a02f-0d639e613616&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B0779BRVVS&psc=1
+                    - generic [ref=e656]: Scotch, 3M, Fixa Forte, Fita Dupla Face, Fixação Extrema, 24mm x 2m
+                  - generic [ref=e663]:
+                    - generic [ref=e664]: R$32,20
+                    - generic [ref=e665]:
+                      - text: R$
+                      - generic [ref=e666]:
+                        - text: "32"
+                        - generic [ref=e667]: ","
+                      - text: "20"
+          - generic [ref=e668]:
+            - generic [ref=e669]:
+              - generic [ref=e671]:
+                - text: "Preço total:"
+                - generic [ref=e672]:
+                  - generic [ref=e673]: R$ 75.00
+                  - generic [ref=e674]:
+                    - text: R$
+                    - generic [ref=e675]: 75,
+                    - text: "00"
+              - generic [ref=e681] [cursor=pointer]:
+                - button "Adicionar todos os 3 ao carrinho, Cola instantânea TekBond 793 20g Bico Anti-entupimento" [ref=e682]
+                - generic [ref=e683]: Adicionar todos os 3 ao carrinho
+            - generic [ref=e684]:
+              - generic [ref=e688]: Estes itens são enviados e vendidos por vendedores diferentes.
+              - link "Mostrar detalhes de Frequentemente comprados juntos,Foco direto nas informações do produto para obter detalhes," [ref=e690] [cursor=pointer]:
+                - /url: javascript:void(0)
+                - text: Ver detalhes
+      - generic [ref=e693]:
+        - separator [ref=e694]
+        - group [ref=e697]:
+          - heading "Compre produtos semelhantes com entrega rápida" [level=2] [ref=e702]
+          - group [ref=e707]:
+            - list [ref=e708]:
+              - listitem [ref=e709]:
+                - generic [ref=e711]:
+                  - link [ref=e712] [cursor=pointer]:
+                    - /url: /Super-Bonder-Ultra-20g-Loctite/dp/B07SYBNBNF/ref=dp-upsell-widget_d_sccl_1_1/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B07SYBNBNF&psc=1
+                    - img [ref=e714]
+                  - generic [ref=e716]:
+                    - link "Loctite Super Bonder Mega, Adesivo instantâneo para reparos, Cola transparente para materiais diversos com acabamento profissional, 1x20g" [ref=e717] [cursor=pointer]:
+                      - /url: /Super-Bonder-Ultra-20g-Loctite/dp/B07SYBNBNF/ref=dp-upsell-widget_d_sccl_1_1/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B07SYBNBNF&psc=1
+                      - generic [ref=e719]: Loctite Super Bonder Mega, Adesivo instantâneo para reparos, Cola transparente para materiais diversos com acabamento profissional, 1x20g
+                    - link "4,8 de 5 estrelas, 4.223 classificações" [ref=e722] [cursor=pointer]:
+                      - /url: /product-reviews/B07SYBNBNF/ref=dp-upsell-widget_d_sccl_1_1_cr/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B07SYBNBNF
+                      - generic [ref=e724]: 4,8 de 5 estrelas
+                      - text: "4.223"
+                    - generic [ref=e725]:
+                      - link "R$18,96" [ref=e728] [cursor=pointer]:
+                        - /url: /Super-Bonder-Ultra-20g-Loctite/dp/B07SYBNBNF/ref=dp-upsell-widget_d_sccl_1_1/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B07SYBNBNF&psc=1
+                        - generic [ref=e730]:
+                          - generic [ref=e731]: R$18,96
+                          - generic [ref=e732]:
+                            - text: R$
+                            - generic [ref=e733]: 18,
+                            - text: "96"
+                      - generic [ref=e735]: Receba até Hoje, 14 de jun
+                    - text: Opção de frete GRÁTIS disponível
+              - listitem [ref=e736]:
+                - generic [ref=e738]:
+                  - link [ref=e739] [cursor=pointer]:
+                    - /url: /Adesivo-Instant%C3%A2neo-200-Bico-Anti-entupimento/dp/B078XGVXMR/ref=dp-upsell-widget_d_sccl_1_2/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B078XGVXMR&psc=1
+                    - img [ref=e741]
+                  - generic [ref=e743]:
+                    - link "Adesivo Instantâneo Tekbond 200 20g A Bico Antientupimento, unidade" [ref=e744] [cursor=pointer]:
+                      - /url: /Adesivo-Instant%C3%A2neo-200-Bico-Anti-entupimento/dp/B078XGVXMR/ref=dp-upsell-widget_d_sccl_1_2/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B078XGVXMR&psc=1
+                      - generic [ref=e746]: Adesivo Instantâneo Tekbond 200 20g A Bico Antientupimento, unidade
+                    - link "4,7 de 5 estrelas, 1.422 classificações" [ref=e749] [cursor=pointer]:
+                      - /url: /product-reviews/B078XGVXMR/ref=dp-upsell-widget_d_sccl_1_2_cr/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B078XGVXMR
+                      - generic [ref=e751]: 4,7 de 5 estrelas
+                      - text: "1.422"
+                    - link "R$13,90" [ref=e755] [cursor=pointer]:
+                      - /url: /Adesivo-Instant%C3%A2neo-200-Bico-Anti-entupimento/dp/B078XGVXMR/ref=dp-upsell-widget_d_sccl_1_2/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B078XGVXMR&psc=1
+                      - generic [ref=e757]:
+                        - generic [ref=e758]: R$13,90
+                        - generic [ref=e759]:
+                          - text: R$
+                          - generic [ref=e760]: 13,
+                          - text: "90"
+              - listitem [ref=e761]:
+                - generic [ref=e763]:
+                  - link [ref=e764] [cursor=pointer]:
+                    - /url: /Tekbond-TEK5GGOV-Cola-Resist%C3%AAncia-Multicolor/dp/B076KQ1SCQ/ref=dp-upsell-widget_d_sccl_1_3/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B076KQ1SCQ&psc=1
+                    - img [ref=e766]
+                  - generic [ref=e768]:
+                    - link "Cola De Alta Resistencia Tekbond 5 Gramas - 50643" [ref=e769] [cursor=pointer]:
+                      - /url: /Tekbond-TEK5GGOV-Cola-Resist%C3%AAncia-Multicolor/dp/B076KQ1SCQ/ref=dp-upsell-widget_d_sccl_1_3/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B076KQ1SCQ&psc=1
+                      - generic [ref=e771]: Cola De Alta Resistencia Tekbond 5 Gramas - 50643
+                    - link "4,4 de 5 estrelas, 982 classificações" [ref=e774] [cursor=pointer]:
+                      - /url: /product-reviews/B076KQ1SCQ/ref=dp-upsell-widget_d_sccl_1_3_cr/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B076KQ1SCQ
+                      - generic [ref=e776]: 4,4 de 5 estrelas
+                      - text: "982"
+                    - link "R$7,90" [ref=e780] [cursor=pointer]:
+                      - /url: /Tekbond-TEK5GGOV-Cola-Resist%C3%AAncia-Multicolor/dp/B076KQ1SCQ/ref=dp-upsell-widget_d_sccl_1_3/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B076KQ1SCQ&psc=1
+                      - generic [ref=e782]:
+                        - generic [ref=e783]: R$7,90
+                        - generic [ref=e784]:
+                          - text: R$
+                          - generic [ref=e785]: 7,
+                          - text: "90"
+              - listitem [ref=e786]:
+                - generic [ref=e788]:
+                  - link [ref=e789] [cursor=pointer]:
+                    - /url: /Instant%C3%A2nea-ThreeBond-Antientupimento-Pl%C3%A1stico-Borracha/dp/B0FGG25TB8/ref=dp-upsell-widget_d_sccl_1_4/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B0FGG25TB8&psc=1
+                    - img [ref=e791]
+                  - generic [ref=e793]:
+                    - link "Super Cola Instantânea ThreeBond 20g | Bico Antientupimento | Cola Plástico, Metal, Borracha, Madeira, Vidro" [ref=e794] [cursor=pointer]:
+                      - /url: /Instant%C3%A2nea-ThreeBond-Antientupimento-Pl%C3%A1stico-Borracha/dp/B0FGG25TB8/ref=dp-upsell-widget_d_sccl_1_4/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B0FGG25TB8&psc=1
+                      - generic [ref=e796]: Super Cola Instantânea ThreeBond 20g | Bico Antientupimento | Cola Plástico, Metal, Borracha, Madeira, Vidro
+                    - link "4,8 de 5 estrelas, 112 classificações" [ref=e799] [cursor=pointer]:
+                      - /url: /product-reviews/B0FGG25TB8/ref=dp-upsell-widget_d_sccl_1_4_cr/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B0FGG25TB8
+                      - generic [ref=e801]: 4,8 de 5 estrelas
+                      - text: "112"
+                    - generic [ref=e802]:
+                      - link "R$18,90" [ref=e805] [cursor=pointer]:
+                        - /url: /Instant%C3%A2nea-ThreeBond-Antientupimento-Pl%C3%A1stico-Borracha/dp/B0FGG25TB8/ref=dp-upsell-widget_d_sccl_1_4/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B0FGG25TB8&psc=1
+                        - generic [ref=e807]:
+                          - generic [ref=e808]: R$18,90
+                          - generic [ref=e809]:
+                            - text: R$
+                            - generic [ref=e810]: 18,
+                            - text: "90"
+                      - generic [ref=e812]: Receba até amanhã, 15 de jun
+                    - text: Opção de frete GRÁTIS disponível
+              - listitem [ref=e813]:
+                - generic [ref=e815]:
+                  - link [ref=e816] [cursor=pointer]:
+                    - /url: /Tekbond-62689-Cola-Resist%C3%AAncia-Multicolor/dp/B07DFQ66GL/ref=dp-upsell-widget_d_sccl_1_5/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B07DFQ66GL&psc=1
+                    - img [ref=e818]
+                  - generic [ref=e820]:
+                    - link "Cola de Contato 30G Blister" [ref=e821] [cursor=pointer]:
+                      - /url: /Tekbond-62689-Cola-Resist%C3%AAncia-Multicolor/dp/B07DFQ66GL/ref=dp-upsell-widget_d_sccl_1_5/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B07DFQ66GL&psc=1
+                      - generic [ref=e823]: Cola de Contato 30G Blister
+                    - link "4,4 de 5 estrelas, 1.098 classificações" [ref=e826] [cursor=pointer]:
+                      - /url: /product-reviews/B07DFQ66GL/ref=dp-upsell-widget_d_sccl_1_5_cr/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B07DFQ66GL
+                      - generic [ref=e828]: 4,4 de 5 estrelas
+                      - text: "1.098"
+                    - generic [ref=e829]:
+                      - link "1º mais vendido":
+                        - /url: /gp/bestsellers/hi/17113713011/ref=zg_b_bs_17113713011_1/ref=dp-upsell-widget_d_sccl_1_5_bsb/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B07DFQ66GL
+                        - generic [ref=e833] [cursor=pointer]: 1º mais vendido
+                    - generic [ref=e834]:
+                      - link "R$7,36" [ref=e837] [cursor=pointer]:
+                        - /url: /Tekbond-62689-Cola-Resist%C3%AAncia-Multicolor/dp/B07DFQ66GL/ref=dp-upsell-widget_d_sccl_1_5/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B07DFQ66GL&psc=1
+                        - generic [ref=e839]:
+                          - generic [ref=e840]: R$7,36
+                          - generic [ref=e841]:
+                            - text: R$
+                            - generic [ref=e842]: 7,
+                            - text: "36"
+                      - generic [ref=e844]: Entrega em jun 24 - 26
+                    - text: Frete por R$ 13,05
+              - listitem [ref=e845]:
+                - generic [ref=e847]:
+                  - link [ref=e848] [cursor=pointer]:
+                    - /url: /Cola-instant%C3%A2nea-TekBond-Bico-Anti-entupimento/dp/B08BGPB681/ref=dp-upsell-widget_d_sccl_1_6/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B08BGPB681&psc=1
+                    - img [ref=e850]
+                  - generic [ref=e852]:
+                    - link "Cola instantânea TekBond 793 20g Bico Anti-entupimento" [ref=e853] [cursor=pointer]:
+                      - /url: /Cola-instant%C3%A2nea-TekBond-Bico-Anti-entupimento/dp/B08BGPB681/ref=dp-upsell-widget_d_sccl_1_6/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B08BGPB681&psc=1
+                      - generic [ref=e855]: Cola instantânea TekBond 793 20g Bico Anti-entupimento
+                    - link "4,8 de 5 estrelas, 572 classificações" [ref=e858] [cursor=pointer]:
+                      - /url: /product-reviews/B08BGPB681/ref=dp-upsell-widget_d_sccl_1_6_cr/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B08BGPB681
+                      - generic [ref=e860]: 4,8 de 5 estrelas
+                      - text: "572"
+                    - generic [ref=e861]:
+                      - link "R$13,00" [ref=e864] [cursor=pointer]:
+                        - /url: /Cola-instant%C3%A2nea-TekBond-Bico-Anti-entupimento/dp/B08BGPB681/ref=dp-upsell-widget_d_sccl_1_6/138-2188440-7994416?pd_rd_w=ayJYe&content-id=amzn1.sym.56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_p=56aec2a0-5491-4b8d-bb36-646100e48f33&pf_rd_r=1EMKS651VRCEYVCQZN4P&pd_rd_wg=KVqQz&pd_rd_r=42c54ca1-e677-4fb6-85b0-b7ce9968f996&pd_rd_i=B08BGPB681&psc=1
+                        - generic [ref=e866]:
+                          - generic [ref=e867]: R$13,00
+                          - generic [ref=e868]:
+                            - text: R$
+                            - generic [ref=e869]: 13,
+                            - text: "00"
+                      - generic [ref=e871]: Receba até domingo, junho 21
+                    - text: Opção de frete GRÁTIS disponível
+      - generic [ref=e877]:
+        - generic [ref=e880]:
+          - heading "Descrição do produto" [level=2] [ref=e883]
+          - paragraph [ref=e885]: TekBond adesivo instantaneo 793 Bico Antientupimento 20g. Adesivo a base de cianoacrilato de média viscosidade desenvolvido para colagens que necessitam de alta velocidade de cura em substratos de difícil adesão principalmente para materiais porosos. Adere diversos tipos de materiais, como compostos de borracha, EPDM, borracha nitrílica, neoprene, EVA e Viton. É um produto monocomponente e não requer mistura. O processo de cura inicia-se quando uma fina camada de adesivo é aplicada entre as superfícies entrando em contato com a umidade do ar atmosférico. É um adesivo multiuso, muito utilizado no setor moveleiro e no setor industrial.
+        - generic:
+          - navigation:
+            - navigation "Navigate within the product detail page":
+              - navigation "Back to top jump link":
+                - generic:
+                  - generic: topo
+              - navigation "About this item widget jump link":
+                - generic:
+                  - generic: Sobre este produto
+              - navigation "Similar widget jump link":
+                - generic:
+                  - generic: Semelhante
+              - navigation "From the brand widget jump link":
+                - generic:
+                  - generic: Da marca
+              - navigation "Product information widget jump link":
+                - generic:
+                  - generic: Informações do produto
+              - navigation "Customer reviews widget jump link":
+                - generic:
+                  - generic: Avaliações
+            - navigation "Back to top Image jump link":
+              - img "Cola instantânea TekBond 793 20g Bico Anti-entupimento"
+            - navigation "Back to top title jump link":
+              - generic: Cola instantânea TekBond 793 20g Bico Anti-entupimento
+        - generic [ref=e886]:
+          - separator [ref=e887]
+          - generic [ref=e889]:
+            - heading "Especificações do produto" [level=1] [ref=e890]
+            - generic [ref=e894]:
+              - generic [ref=e897]:
+                - button "Características e Especificações" [ref=e900] [cursor=pointer]:
+                  - heading "Características e Especificações" [level=5] [ref=e902]
+                - button "Medidas" [ref=e905] [cursor=pointer]:
+                  - heading "Medidas" [level=5] [ref=e907]
+                - button "Detalhes Adicionais" [ref=e910] [cursor=pointer]:
+                  - heading "Detalhes Adicionais" [level=5] [ref=e912]
+              - button "Detalhes do Produto" [ref=e919] [cursor=pointer]:
+                - heading "Detalhes do Produto" [level=5] [ref=e921]
+      - generic [ref=e927]:
+        - heading "Vídeos de produtos" [level=2] [ref=e929]
+        - generic [ref=e934]:
+          - region "Video Player" [ref=e935]:
+            - generic [ref=e938]:
+              - button "Play" [ref=e939] [cursor=pointer]
+              - slider "Progress Bar" [ref=e942] [cursor=pointer]: .
+              - generic [ref=e943]: "-0:00"
+              - generic [ref=e945]:
+                - menu
+              - button "Mute" [ref=e946] [cursor=pointer]
+          - generic [ref=e949]:
+            - link [ref=e950] [cursor=pointer]:
+              - /url: /gp/profile/amzn1.account.AHHJHPYDNJ7YUUOUENX6BLYGTUFQ
+            - generic [ref=e951]:
+              - link "Michel Simioni" [ref=e953] [cursor=pointer]:
+                - /url: /gp/profile/amzn1.account.AHHJHPYDNJ7YUUOUENX6BLYGTUFQ
+              - generic [ref=e955]:
+                - text: "Avaliação de clientes: Produto"
+                - link "Confira a avaliação completa" [ref=e956] [cursor=pointer]:
+                  - /url: /gp/customer-reviews/R13DP14RS5INQJ?ref=va_cr_lb
+          - button "Play" [ref=e957] [cursor=pointer]
+      - generic [ref=e1031]:
+        - separator [ref=e1032]
+        - region "Produtos relacionados a este item" [ref=e1033]:
+          - generic [ref=e1035]:
+            - heading "Produtos relacionados a este item" [level=2] [ref=e1036]
+            - link "Patrocinado" [ref=e1040] [cursor=pointer]:
+              - /url: "#sp_detail2_feedbackForm"
+              - generic [ref=e1041]:
+                - text: Patrocinado
+                - img [ref=e1042]
+          - list [ref=e1050]:
+            - listitem [ref=e1051]:
+              - generic [ref=e1052]:
+                - link "Fita Veda Rosca Tekbond, 18mmx50m" [ref=e1053] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyODQ4MjQ5NDAyMDI6Ojo6&url=%2Fdp%2FB0D2F7PFQ9%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB0D2F7PFQ9%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1056]
+                  - generic [ref=e1057]: Fita Veda Rosca Tekbond, 18mmx50m
+                - link "5,0 de 5 estrelas 2 classificações" [ref=e1059] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyODQ4MjQ5NDAyMDI6Ojo6&url=%2Fdp%2FB0D2F7PFQ9%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB0D2F7PFQ9%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "2"
+                - link "R$ 15,89" [ref=e1062] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyODQ4MjQ5NDAyMDI6Ojo6&url=%2Fdp%2FB0D2F7PFQ9%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB0D2F7PFQ9%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1063]:
+                    - generic [ref=e1064]: R$ 15,89
+                    - generic [ref=e1065]:
+                      - text: R$
+                      - generic [ref=e1066]:
+                        - text: "15"
+                        - generic [ref=e1067]: ","
+                      - text: "89"
+                - link "Amazon Prime" [ref=e1068] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyODQ4MjQ5NDAyMDI6Ojo6&url=%2Fdp%2FB0D2F7PFQ9%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB0D2F7PFQ9%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1070]
+            - listitem [ref=e1071]:
+              - generic [ref=e1072]:
+                - link "GM Bear Mini Retifica Profissional Lixadeira Completa Acessório,3 Velocidade,mini Cordless Multi-purpose Rotary Tool With Accessories" [ref=e1073] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEwNzM5MDg4OTU3MDI6Ojo6&url=%2Fdp%2FB0G12SGH4T%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB0G12SGH4T%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1076]
+                  - generic [ref=e1077]: GM Bear Mini Retifica Profissional Lixadeira Completa Acessório,3 Velocidade,mini C...
+                - link "3,9 de 5 estrelas 18 classificações" [ref=e1079] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEwNzM5MDg4OTU3MDI6Ojo6&url=%2Fdp%2FB0G12SGH4T%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB0G12SGH4T%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "18"
+                - link "R$ 129,00" [ref=e1082] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEwNzM5MDg4OTU3MDI6Ojo6&url=%2Fdp%2FB0G12SGH4T%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB0G12SGH4T%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1083]:
+                    - generic [ref=e1084]: R$ 129,00
+                    - generic [ref=e1085]:
+                      - text: R$
+                      - generic [ref=e1086]:
+                        - text: "129"
+                        - generic [ref=e1087]: ","
+                      - text: "00"
+                - link "Amazon Prime" [ref=e1088] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEwNzM5MDg4OTU3MDI6Ojo6&url=%2Fdp%2FB0G12SGH4T%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB0G12SGH4T%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1090]
+            - listitem [ref=e1091]:
+              - generic [ref=e1092]:
+                - link "Kit 2 Moedor de Pimenta e Sal com Funil de Silicone Em Aço Inox e Vidro Moedor de sal grosso moedor sal moedor pimenta Moedor de Sal porta sal saleiro de mesa saleiro e pimenteiro - Bertaglia®" [ref=e1093] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDA5NTQ4NDkwMzMzMDI6Ojo6&url=%2Fdp%2FB0D19NNMLD%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB0D19NNMLD%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1096]
+                  - generic [ref=e1097]: Kit 2 Moedor de Pimenta e Sal com Funil de Silicone Em Aço Inox e Vidro Moedor de s...
+                - link "4,3 de 5 estrelas 181 classificações" [ref=e1099] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDA5NTQ4NDkwMzMzMDI6Ojo6&url=%2Fdp%2FB0D19NNMLD%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB0D19NNMLD%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "181"
+                - 'link "-20% R$ 39,99 De: R$ 49,99 De: R$ 49,99" [ref=e1102] [cursor=pointer]':
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDA5NTQ4NDkwMzMzMDI6Ojo6&url=%2Fdp%2FB0D19NNMLD%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB0D19NNMLD%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - text: "-20%"
+                  - generic [ref=e1103]:
+                    - generic [ref=e1104]: R$ 39,99
+                    - generic [ref=e1105]:
+                      - text: R$
+                      - generic [ref=e1106]:
+                        - text: "39"
+                        - generic [ref=e1107]: ","
+                      - text: "99"
+                  - generic [ref=e1108]: "De: R$ 49,99"
+                  - generic [ref=e1109]:
+                    - text: "De:"
+                    - generic [ref=e1110]:
+                      - generic [ref=e1111]: R$ 49,99
+                      - text: R$49,99
+                - link "Amazon Prime" [ref=e1112] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDA5NTQ4NDkwMzMzMDI6Ojo6&url=%2Fdp%2FB0D19NNMLD%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB0D19NNMLD%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1114]
+            - listitem [ref=e1115]:
+              - generic [ref=e1116]:
+                - link "Pistão Amortecedor de Porta de Armario A Gas Força Normal - 60N 80N 100N - 4 UNIDADES" [ref=e1117] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDA3NTI1NTI3MzA3MDI6Ojo6&url=%2Fdp%2FB0F3LQ624D%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB0F3LQ624D%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1120]
+                  - generic [ref=e1121]: Pistão Amortecedor de Porta de Armario A Gas Força Normal - 60N 80N 100N - 4 UNIDADES
+                - link "4,9 de 5 estrelas 34 classificações" [ref=e1123] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDA3NTI1NTI3MzA3MDI6Ojo6&url=%2Fdp%2FB0F3LQ624D%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB0F3LQ624D%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "34"
+                - 'link "-40% R$ 35,34 De: R$ 58,90 De: R$ 58,90" [ref=e1126] [cursor=pointer]':
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDA3NTI1NTI3MzA3MDI6Ojo6&url=%2Fdp%2FB0F3LQ624D%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB0F3LQ624D%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - text: "-40%"
+                  - generic [ref=e1127]:
+                    - generic [ref=e1128]: R$ 35,34
+                    - generic [ref=e1129]:
+                      - text: R$
+                      - generic [ref=e1130]:
+                        - text: "35"
+                        - generic [ref=e1131]: ","
+                      - text: "34"
+                  - generic [ref=e1132]: "De: R$ 58,90"
+                  - generic [ref=e1133]:
+                    - text: "De:"
+                    - generic [ref=e1134]:
+                      - generic [ref=e1135]: R$ 58,90
+                      - text: R$58,90
+            - listitem [ref=e1136]:
+              - generic [ref=e1137]:
+                - link "ROYAL CANIN Ração Mini Cães Adultos +8 Anos 2,5Kg para Todas Todos os tamanhos de raça Adulto - Sabor Outro" [ref=e1138] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEwMDQ1MTI3MzAyMDI6Ojo6&url=%2Fdp%2FB07Y2CDCB9%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB07Y2CDCB9%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1141]
+                  - generic [ref=e1142]: ROYAL CANIN Ração Mini Cães Adultos +8 Anos 2,5Kg para Todas Todos os tamanhos de r...
+                - link "4,8 de 5 estrelas 73 classificações" [ref=e1144] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEwMDQ1MTI3MzAyMDI6Ojo6&url=%2Fdp%2FB07Y2CDCB9%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB07Y2CDCB9%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "73"
+                - 'link "-41% R$ 109,90 De: R$ 187,77 De: R$ 187,77" [ref=e1147] [cursor=pointer]':
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEwMDQ1MTI3MzAyMDI6Ojo6&url=%2Fdp%2FB07Y2CDCB9%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB07Y2CDCB9%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - text: "-41%"
+                  - generic [ref=e1148]:
+                    - generic [ref=e1149]: R$ 109,90
+                    - generic [ref=e1150]:
+                      - text: R$
+                      - generic [ref=e1151]:
+                        - text: "109"
+                        - generic [ref=e1152]: ","
+                      - text: "90"
+                  - generic [ref=e1153]: "De: R$ 187,77"
+                  - generic [ref=e1154]:
+                    - text: "De:"
+                    - generic [ref=e1155]:
+                      - generic [ref=e1156]: R$ 187,77
+                      - text: R$187,77
+                - link "Amazon Prime" [ref=e1157] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEwMDQ1MTI3MzAyMDI6Ojo6&url=%2Fdp%2FB07Y2CDCB9%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB07Y2CDCB9%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1159]
+            - listitem [ref=e1160]:
+              - generic [ref=e1161]:
+                - link "Fita Isolante Foxlux PVC Antichamas 10m x 19mm Preta 600V Alta Elasticidade Espessura 0,15mm" [ref=e1162] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyMjA5MzEwMDc5MDI6Ojo6&url=%2Fdp%2FB077VTMHXQ%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB077VTMHXQ%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1165]
+                  - generic [ref=e1166]: Fita Isolante Foxlux PVC Antichamas 10m x 19mm Preta 600V Alta Elasticidade Espessu...
+                - link "4,7 de 5 estrelas 319 classificações" [ref=e1168] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyMjA5MzEwMDc5MDI6Ojo6&url=%2Fdp%2FB077VTMHXQ%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB077VTMHXQ%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "319"
+                - generic [ref=e1170]:
+                  - generic:
+                    - link "1º mais vendido":
+                      - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyMjA5MzEwMDc5MDI6Ojo6&url=%2Fdp%2FB077VTMHXQ%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB077VTMHXQ%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                      - generic [ref=e1172] [cursor=pointer]: 1º mais vendido
+                - link "R$ 6,34" [ref=e1174] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyMjA5MzEwMDc5MDI6Ojo6&url=%2Fdp%2FB077VTMHXQ%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB077VTMHXQ%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1175]:
+                    - generic [ref=e1176]: R$ 6,34
+                    - generic [ref=e1177]:
+                      - text: R$
+                      - generic [ref=e1178]:
+                        - text: "6"
+                        - generic [ref=e1179]: ","
+                      - text: "34"
+                - link "Amazon Prime" [ref=e1180] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyMjA5MzEwMDc5MDI6Ojo6&url=%2Fdp%2FB077VTMHXQ%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB077VTMHXQ%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1182]
+            - listitem [ref=e1183]:
+              - generic [ref=e1184]:
+                - link "Cascola Extra sem Toluol, Cola de Contato de Alta Resistência, Adesivo de Contato de Secagem Rápida, 1x30g" [ref=e1185] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyNDEyMTgyNzk5MDI6Ojo6&url=%2Fdp%2FB075X4HQCF%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB075X4HQCF%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1188]
+                  - generic [ref=e1189]: Cascola Extra sem Toluol, Cola de Contato de Alta Resistência, Adesivo de Contato d...
+                - link "4,5 de 5 estrelas 2.100 classificações" [ref=e1191] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyNDEyMTgyNzk5MDI6Ojo6&url=%2Fdp%2FB075X4HQCF%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB075X4HQCF%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "2.100"
+                - link "R$ 24,90" [ref=e1194] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyNDEyMTgyNzk5MDI6Ojo6&url=%2Fdp%2FB075X4HQCF%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB075X4HQCF%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1195]:
+                    - generic [ref=e1196]: R$ 24,90
+                    - generic [ref=e1197]:
+                      - text: R$
+                      - generic [ref=e1198]:
+                        - text: "24"
+                        - generic [ref=e1199]: ","
+                      - text: "90"
+                - link "Amazon Prime" [ref=e1200] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2NDU1NzI5MDA5OTA3Njc5OjE3ODE0NTM1ODY6c3BfZGV0YWlsMjozMDEyNDEyMTgyNzk5MDI6Ojo6&url=%2Fdp%2FB075X4HQCF%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB075X4HQCF%26pd_rd_w%3DDTOGC%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3D1EMKS651VRCEYVCQZN4P%26pd_rd_wg%3DKVqQz%26pd_rd_r%3D42c54ca1-e677-4fb6-85b0-b7ce9968f996%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1202]
+      - generic [ref=e1205]:
+        - generic "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1208]:
+          - link "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1209] [cursor=pointer]:
+            - /url: https://www.amazon.com.br/stores/Mustela/page/DF6D95BF-3140-4169-A46F-5A83BA1B37F1?aaxitk=ab3124bd6a25c06208656e0d86e647a3&channel=dsp_av&aref=hU7sWLlP47&sref=AR_590109612722760817_585250095239572978_591822763808020050
+            - generic [ref=e1210]: O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve.
+          - img "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1212]
+        - button "Deixe comentários sobre o anúncio patrocinado" [ref=e1214] [cursor=pointer]:
+          - generic [ref=e1215]: Patrocinado
+      - generic "Melhores avaliações" [ref=e1219]:
+        - separator [ref=e1220]
+        - generic [ref=e1222]:
+          - generic [ref=e1223]:
+            - generic [ref=e1228]:
+              - heading "Avaliações de clientes" [level=2] [ref=e1230]
+              - generic [ref=e1232]:
+                - generic [ref=e1234]:
+                  - generic [ref=e1237]: 4,7 de 5 estrelas
+                  - generic [ref=e1240]: 4,7 de 5
+                - generic [ref=e1241]: 2.919 avaliações globais
+              - list [ref=e1246]:
+                - listitem [ref=e1247]:
+                  - link "85 por cento das avaliações têm 5 estrelas" [ref=e1250] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076KZYYRJ/ref=acr_dp_hist_5?ie=UTF8&filterByStar=five_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1251]: 5 estrelas
+                    - progressbar [ref=e1253]
+                    - generic [ref=e1254]: 85%
+                - listitem [ref=e1255]:
+                  - link "9 por cento das avaliações têm 4 estrelas" [ref=e1258] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076KZYYRJ/ref=acr_dp_hist_4?ie=UTF8&filterByStar=four_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1259]: 4 estrelas
+                    - progressbar [ref=e1261]
+                    - generic [ref=e1262]: 9%
+                - listitem [ref=e1263]:
+                  - link "3 por cento das avaliações têm 3 estrelas" [ref=e1266] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076KZYYRJ/ref=acr_dp_hist_3?ie=UTF8&filterByStar=three_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1267]: 3 estrelas
+                    - progressbar [ref=e1269]
+                    - generic [ref=e1270]: 3%
+                - listitem [ref=e1271]:
+                  - link "1 por cento das avaliações têm 2 estrelas" [ref=e1274] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076KZYYRJ/ref=acr_dp_hist_2?ie=UTF8&filterByStar=two_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1275]: 2 estrelas
+                    - progressbar [ref=e1277]
+                    - generic [ref=e1278]: 1%
+                - listitem [ref=e1279]:
+                  - link "2 por cento das avaliações têm 1 estrelas" [ref=e1282] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076KZYYRJ/ref=acr_dp_hist_1?ie=UTF8&filterByStar=one_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1283]: 1 estrela
+                    - progressbar [ref=e1285]
+                    - generic [ref=e1286]: 2%
+              - button "Como as avaliações e classificações de clientes funcionam" [ref=e1291] [cursor=pointer]: Como as avaliações e classificações de clientes funcionam
+            - separator [ref=e1293]
+            - separator [ref=e1294]
+            - generic [ref=e1297]:
+              - generic "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1300]:
+                - link "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1301] [cursor=pointer]:
+                  - /url: https://www.amazon.com.br/credit/application/landing?aaxitk=7e1a6581d44a3148c86ed114ed99cc7f&plattr=CBCC_P_AA_ACCLNK_BAU_HAU_X_Display_NX&aref=lRmYTgeSiB
+                  - generic [ref=e1302]: O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve.
+                - img "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1303]
+              - button "Deixe comentários sobre o anúncio patrocinado" [ref=e1305] [cursor=pointer]:
+                - generic [ref=e1306]: Patrocinado
+          - generic [ref=e1311]:
+            - generic [ref=e1314]:
+              - group [ref=e1317]:
+                - generic [ref=e1318]:
+                  - heading "Avaliações com imagens" [level=3] [ref=e1320]
+                  - link "Ver todas as fotos" [ref=e1323] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - group [ref=e1327]:
+                  - list [ref=e1328]:
+                    - listitem [ref=e1329]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1331] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1332]
+                    - listitem [ref=e1334]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1336] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1337]
+                    - listitem [ref=e1339]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1341] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1342]
+                    - listitem [ref=e1344]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1346] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1347]
+                    - listitem [ref=e1349]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1351] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1352]
+                    - listitem [ref=e1354]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1356] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1357]
+                    - listitem [ref=e1359]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1361] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1362]
+                    - listitem [ref=e1364]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1366] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1367]
+                    - listitem [ref=e1369]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1371] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1372]
+                    - listitem [ref=e1374]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1376] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1377]
+                    - listitem [ref=e1379]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1381] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1382]
+                    - listitem [ref=e1384]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1386] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1387]
+              - separator [ref=e1389]
+            - generic [ref=e1394]:
+              - generic [ref=e1395]:
+                - heading "Melhores avaliações de Brasil" [level=3] [ref=e1396]
+                - list [ref=e1397]:
+                  - generic [ref=e1401] [cursor=pointer]:
+                    - button "Traduzir todas as avaliações para português" [ref=e1402]
+                    - generic [ref=e1403]: Traduzir todas as avaliações para português
+                  - listitem [ref=e1404]:
+                    - generic [ref=e1407]:
+                      - link "Toshio Nishida" [ref=e1409] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AGEZWWQ6FEX4WSKSFNOGNTNKBTDA?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1412]
+                        - generic [ref=e1414]: Toshio Nishida
+                      - generic [ref=e1417]: 5 de 5 estrelas
+                      - link "Produto bom, vale a pena." [ref=e1418] [cursor=pointer]:
+                        - /url: /review/R2EU2E3E5P20PY/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Produto bom, vale a pena." [level=5] [ref=e1419]
+                      - generic [ref=e1420]: Avaliado no Brasil em 7 de maio de 2026
+                      - link "Compra verificada" [ref=e1424] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1434]: Produto bom, muito rápido na colagem.
+                      - generic [ref=e1436]:
+                        - generic [ref=e1440] [cursor=pointer]:
+                          - button "Útil" [ref=e1441]
+                          - generic [ref=e1443]: Útil
+                        - img [ref=e1444]
+                        - button "Análise do relatório" [ref=e1446] [cursor=pointer]: Relatório
+                  - listitem [ref=e1447]:
+                    - generic [ref=e1450]:
+                      - link "Lili" [ref=e1452] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AEROR64JNECMF62APTUFUAPLGQHQ?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1455]
+                        - generic [ref=e1457]: Lili
+                      - generic [ref=e1460]: 5 de 5 estrelas
+                      - link "Satisfação Plena." [ref=e1461] [cursor=pointer]:
+                        - /url: /review/R1L1H9B7P098R2/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Satisfação Plena." [level=5] [ref=e1462]
+                      - generic [ref=e1463]: Avaliado no Brasil em 16 de maio de 2026
+                      - link "Compra verificada" [ref=e1467] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1477]: Que cola fantástica! Lembra daquela outra que colava até a tampa? Que tinha que colocar em pé na geladeira? Esquece isso. Com essa você cola normalmente, seca em questão de segundos e já pode usar sem medo. Guarde em qualquer lugar fresco, longe de crianças, sem frescura. Você não vai se arrepender. 💛
+                      - generic [ref=e1478]: Uma pessoa achou isso útil
+                      - generic [ref=e1480]:
+                        - generic [ref=e1484] [cursor=pointer]:
+                          - button "Útil" [ref=e1485]
+                          - generic [ref=e1487]: Útil
+                        - img [ref=e1488]
+                        - button "Análise do relatório" [ref=e1490] [cursor=pointer]: Relatório
+                  - listitem [ref=e1491]:
+                    - generic [ref=e1494]:
+                      - link "Adriana d." [ref=e1496] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AHHM6LLRKUAT724B6GDNBDI52AFQ?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1499]
+                        - generic [ref=e1501]: Adriana d.
+                      - generic [ref=e1504]: 5 de 5 estrelas
+                      - link "Vale a compra" [ref=e1505] [cursor=pointer]:
+                        - /url: /review/R3SV997453TLE5/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Vale a compra" [level=5] [ref=e1506]
+                      - generic [ref=e1507]: Avaliado no Brasil em 29 de abril de 2026
+                      - link "Compra verificada" [ref=e1511] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1521]: Várias utilidades. Cola bem, desde que siga as instruções. Tipo a conhecida Super Bonder. É transparente.
+                      - generic [ref=e1523]:
+                        - generic [ref=e1527] [cursor=pointer]:
+                          - button "Útil" [ref=e1528]
+                          - generic [ref=e1530]: Útil
+                        - img [ref=e1531]
+                        - button "Análise do relatório" [ref=e1533] [cursor=pointer]: Relatório
+                  - listitem [ref=e1534]:
+                    - generic [ref=e1537]:
+                      - link "CLEBIO BARBOSA" [ref=e1539] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AHCRHHPJA3EKQEOTZ5JQ4VXG5MOQ?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1542]
+                        - generic [ref=e1544]: CLEBIO BARBOSA
+                      - generic [ref=e1547]: 5 de 5 estrelas
+                      - link "Recomendado" [ref=e1548] [cursor=pointer]:
+                        - /url: /review/R1DDWAZXSLUWWW/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Recomendado" [level=5] [ref=e1549]
+                      - generic [ref=e1550]: Avaliado no Brasil em 12 de maio de 2026
+                      - link "Compra verificada" [ref=e1554] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1564]: Cola bem, uso para colar PETG e PLA em impressões 3D
+                      - button "Recomendado" [ref=e1567] [cursor=pointer]:
+                        - img "Recomendado" [ref=e1568]
+                      - generic [ref=e1570]:
+                        - generic [ref=e1574] [cursor=pointer]:
+                          - button "Útil" [ref=e1575]
+                          - generic [ref=e1577]: Útil
+                        - img [ref=e1578]
+                        - button "Análise do relatório" [ref=e1580] [cursor=pointer]: Relatório
+                  - listitem [ref=e1581]:
+                    - generic [ref=e1584]:
+                      - link "Izabel Coelho" [ref=e1586] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AEC2UTUIG7JS7GFA6X66BDIYPAKQ?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1589]
+                        - generic [ref=e1591]: Izabel Coelho
+                      - generic [ref=e1594]: 5 de 5 estrelas
+                      - link "Bom" [ref=e1595] [cursor=pointer]:
+                        - /url: /review/RU3E19LN03ITB/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Bom" [level=5] [ref=e1596]
+                      - generic [ref=e1597]: Avaliado no Brasil em 1 de maio de 2026
+                      - link "Compra verificada" [ref=e1601] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1611]: Bom e eficiente porém não serve para todos os tipos de imprevistos que possam surgir
+                      - generic [ref=e1613]:
+                        - generic [ref=e1617] [cursor=pointer]:
+                          - button "Útil" [ref=e1618]
+                          - generic [ref=e1620]: Útil
+                        - img [ref=e1621]
+                        - button "Análise do relatório" [ref=e1623] [cursor=pointer]: Relatório
+                  - listitem [ref=e1624]:
+                    - generic [ref=e1627]:
+                      - link "Cliente Amazon" [ref=e1629] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AFGAGRU3EHNPL2Z7RQBPLQUBNONA?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1632]
+                        - generic [ref=e1634]: Cliente Amazon
+                      - generic [ref=e1637]: 4 de 5 estrelas
+                      - link "Boa qualidade" [ref=e1638] [cursor=pointer]:
+                        - /url: /review/R1477RUOI8XNJW/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Boa qualidade" [level=5] [ref=e1639]
+                      - generic [ref=e1640]: Avaliado no Brasil em 6 de junho de 2026
+                      - link "Compra verificada" [ref=e1644] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1654]: Boa qualidade
+                      - generic [ref=e1656]:
+                        - generic [ref=e1660] [cursor=pointer]:
+                          - button "Útil" [ref=e1661]
+                          - generic [ref=e1663]: Útil
+                        - img [ref=e1664]
+                        - button "Análise do relatório" [ref=e1666] [cursor=pointer]: Relatório
+                      - link "Traduzir avaliação para português" [ref=e1669] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                  - listitem [ref=e1670]:
+                    - generic [ref=e1673]:
+                      - link "Marcelo Diógenes" [ref=e1675] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AF6KC56AYRDE2LFSGGD2D7X2QCNQ?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1678]
+                        - generic [ref=e1680]: Marcelo Diógenes
+                      - generic [ref=e1683]: 5 de 5 estrelas
+                      - link "excelente" [ref=e1684] [cursor=pointer]:
+                        - /url: /review/R141E0KH4VEIND/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "excelente" [level=5] [ref=e1685]
+                      - generic [ref=e1686]: Avaliado no Brasil em 7 de junho de 2026
+                      - link "Compra verificada" [ref=e1690] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1700]: Produto muito bom.
+                      - generic [ref=e1702]:
+                        - generic [ref=e1706] [cursor=pointer]:
+                          - button "Útil" [ref=e1707]
+                          - generic [ref=e1709]: Útil
+                        - img [ref=e1710]
+                        - button "Análise do relatório" [ref=e1712] [cursor=pointer]: Relatório
+                  - listitem [ref=e1713]:
+                    - generic [ref=e1716]:
+                      - link "Gerson dos Santos" [ref=e1718] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AE6NPP52VULWNIHCDGCKEO2KXJPA?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1721]
+                        - generic [ref=e1723]: Gerson dos Santos
+                      - generic [ref=e1726]: 5 de 5 estrelas
+                      - link "Bom" [ref=e1727] [cursor=pointer]:
+                        - /url: /review/R1GQDT3684NUQV/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Bom" [level=5] [ref=e1728]
+                      - generic [ref=e1729]: Avaliado no Brasil em 31 de maio de 2026
+                      - link "Compra verificada" [ref=e1733] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1743]: Bom produto e recebi td certo
+                      - generic [ref=e1745]:
+                        - generic [ref=e1749] [cursor=pointer]:
+                          - button "Útil" [ref=e1750]
+                          - generic [ref=e1752]: Útil
+                        - img [ref=e1753]
+                        - button "Análise do relatório" [ref=e1755] [cursor=pointer]: Relatório
+              - link "Veja mais avaliações" [ref=e1757] [cursor=pointer]:
+                - /url: /product-reviews/B076KZYYRJ/ref=cm_cr_dp_d_show_all_top?_encoding=UTF8&ie=UTF8&reviewerType=all_reviews
+                - generic [ref=e1758]: Veja mais avaliações
+      - generic [ref=e1765]:
+        - generic "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1768]:
+          - link "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1769] [cursor=pointer]:
+            - /url: https://www.amazon.com.br/Collagen-Tratamento-Condicionante-Pept%C3%ADdeos-Reconstr%C3%B3i/dp/B0G45KPX15/?aaxitk=4a1ca8255ec6dbb997ef606abdd929f7&_encoding=UTF8&pd_rd_w=zVIWN&content-id=amzn1.sym.bf7da100-788c-42f7-a758-daf2733de9ce&pf_rd_p=bf7da100-788c-42f7-a758-daf2733de9ce&pf_rd_r=HGT00D9EDRNHJE42V6DF&pd_rd_wg=1ZVxP&pd_rd_r=8907c2c7-fb7b-4efc-8779-d5333072097a&ref_=pd_hp_d_btf_cr_cartx&aref=GOHSb4mf2u
+            - generic [ref=e1770]: O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve.
+          - img "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1772]
+        - button "Deixe comentários sobre o anúncio patrocinado" [ref=e1774] [cursor=pointer]:
+          - generic [ref=e1775]: Patrocinado
+  - complementary "Itens que você visualizou recentemente e recomendações baseadas em seu histórico:"
+  - generic [ref=e1777]:
+    - button "Voltar ao início" [ref=e1778] [cursor=pointer]:
+      - generic [ref=e1779]: Voltar ao início
+    - generic [ref=e1780]:
+      - generic [ref=e1781]:
+        - heading "Conheça-nos" [level=6] [ref=e1782]
+        - list [ref=e1783]:
+          - listitem [ref=e1784]:
+            - link "Sobre a Amazon" [ref=e1785] [cursor=pointer]:
+              - /url: https://www.aboutamazon.com.br/
+          - listitem [ref=e1786]:
+            - link "Informações corporativas" [ref=e1787] [cursor=pointer]:
+              - /url: /gp/browse.html?node=23490129011&ref_=footer_gw_m_b_corporate
+          - listitem [ref=e1788]:
+            - link "Carreiras" [ref=e1789] [cursor=pointer]:
+              - /url: https://www.amazon.jobs
+          - listitem [ref=e1790]:
+            - link "Comunicados à imprensa" [ref=e1791] [cursor=pointer]:
+              - /url: /gp/browse.html?node=15155858011&ref_=footer_community
+          - listitem [ref=e1792]:
+            - link "Comunidade" [ref=e1793] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16593314011&ref_=footer_community
+          - listitem [ref=e1794]:
+            - link "Acessibilidade" [ref=e1795] [cursor=pointer]:
+              - /url: /gp/browse.html?node=23454858011&ref_=footer_accessibility
+          - listitem [ref=e1796]:
+            - link "Amazon Science" [ref=e1797] [cursor=pointer]:
+              - /url: https://www.amazon.science
+      - generic [ref=e1799]:
+        - heading "Ganhe dinheiro conosco" [level=6] [ref=e1800]
+        - list [ref=e1801]:
+          - listitem [ref=e1802]:
+            - link "Venda na Amazon" [ref=e1803] [cursor=pointer]:
+              - /url: https://venda.amazon.com.br/?ld=SDBRSOA_footerDesk_T1
+          - listitem [ref=e1804]:
+            - link "Proteja e construa a sua marca" [ref=e1805] [cursor=pointer]:
+              - /url: https://brandservices.amazon.com.br?ref=AOBRABRLGNRFOOT&ld=AOBRABRLGNRFOOT
+          - listitem [ref=e1806]:
+            - link "Forneça para a Amazon" [ref=e1807] [cursor=pointer]:
+              - /url: https://supply.amazon.com/?ref_=footer_sta&lang=pt-BR
+          - listitem [ref=e1808]:
+            - link "Publique seus livros" [ref=e1809] [cursor=pointer]:
+              - /url: https://kdp.amazon.com?language=pt_BR
+          - listitem [ref=e1810]:
+            - link "Seja um associado" [ref=e1811] [cursor=pointer]:
+              - /url: https://associados.amazon.com.br
+          - listitem [ref=e1812]:
+            - link "Anuncie seus produtos" [ref=e1813] [cursor=pointer]:
+              - /url: https://advertising.amazon.com/pt-br?ref=footer_advtsing_BR
+      - generic [ref=e1815]:
+        - heading "Pagamento" [level=6] [ref=e1816]
+        - list [ref=e1817]:
+          - listitem [ref=e1818]:
+            - link "Meios de Pagamento" [ref=e1819] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16568920011&ref_=footer_pay_tc
+          - listitem [ref=e1820]:
+            - link "Compre com Pontos" [ref=e1821] [cursor=pointer]:
+              - /url: /gp/browse.html?node=24028636011&ref_=footer_pay_tc
+          - listitem [ref=e1822]:
+            - link "Cartão de crédito Amazon" [ref=e1823] [cursor=pointer]:
+              - /url: /credit/application/landing?ref_=footer_pay_tc
+      - generic [ref=e1825]:
+        - heading "Deixe-nos ajudar você" [level=6] [ref=e1826]
+        - list [ref=e1827]:
+          - listitem [ref=e1828]:
+            - link "Sua conta" [ref=e1829] [cursor=pointer]:
+              - /url: https://www.amazon.com.br/gp/css/homepage.html?ref_=footer_ya
+          - listitem [ref=e1830]:
+            - link "Frete e prazo de entrega" [ref=e1831] [cursor=pointer]:
+              - /url: /gp/help/customer/display.html?nodeId=201365500&ref_=footer_shiprates
+          - listitem [ref=e1832]:
+            - link "Devoluções e reembolsos" [ref=e1833] [cursor=pointer]:
+              - /url: /gp/help/customer/display.html?nodeId=GNW5VKFXMF72FFMR&ref_=footer_hy_f_4
+          - listitem [ref=e1834]:
+            - link "Gerencie seu conteúdo e dispositivos" [ref=e1835] [cursor=pointer]:
+              - /url: /hz/mycd/myx?ref_=footer_myk
+          - listitem [ref=e1836]:
+            - link "Recalls e alertas de segurança do produto" [ref=e1837] [cursor=pointer]:
+              - /url: https://www.amazon.com.br/your-product-safety-alerts?ref_=footer_bsx_ypsa
+          - listitem [ref=e1838]:
+            - link "Ajuda" [ref=e1839] [cursor=pointer]:
+              - /url: /gp/help/customer/display.html?nodeId=508510&ref_=footer_gw_m_b_he
+    - generic [ref=e1841]:
+      - link "Amazon Brazil Home" [ref=e1844] [cursor=pointer]:
+        - /url: /ref=footer_logo
+      - button "Escolha um país/região para fazer suas compras. A seleção atual é Brasil." [ref=e1848] [cursor=pointer]:
+        - generic [ref=e1850]: Brasil
+    - generic [ref=e1851]:
+      - list [ref=e1852]:
+        - listitem [ref=e1853]:
+          - link "Condições de Uso" [ref=e1854] [cursor=pointer]:
+            - /url: /gp/help/customer/display.html?nodeId=201283910&ref_=footer_cou
+        - listitem [ref=e1855]:
+          - link "Notificação de Privacidade" [ref=e1856] [cursor=pointer]:
+            - /url: /gp/help/customer/display.html?nodeId=201283950&ref_=footer_privacy
+        - listitem [ref=e1857]:
+          - link "Cookies" [ref=e1858] [cursor=pointer]:
+            - /url: /gp/help/customer/display.html?nodeId=201890250&ref_=footer_cookies
+        - listitem [ref=e1859]:
+          - link "Anúncios Baseados em Interesses" [ref=e1860] [cursor=pointer]:
+            - /url: /gp/help/customer/display.html?nodeId=201283970&ref_=footer_iba
+      - generic [ref=e1861]: © 2021-2026 Amazon.com, Inc. ou suas afiliadas
+    - list [ref=e1863]:
+      - listitem [ref=e1864]: Amazon Serviços de Varejo do Brasil Ltda. | CNPJ 15.436.940/0001-03
+    - list [ref=e1866]:
+      - listitem [ref=e1867]:
+        - text: "Av. Juscelino Kubitschek, 2041, Torre E, 18° andar - São Paulo CEP: 04543-011|"
+        - link "Fale conosco" [ref=e1868] [cursor=pointer]:
+          - /url: https://www.amazon.com.br/gp/help/customer/contact-us?ref=footer_gw_m_b_cu
+        - text: "| ajuda-amazon@amazon.com.br"
+    - list [ref=e1870]:
+      - listitem [ref=e1871]: "Formas de pagamento aceitas: cartões de crédito (Visa, MasterCard, Elo e American Express), cartões de débito (Visa e Elo), Boleto e Pix."

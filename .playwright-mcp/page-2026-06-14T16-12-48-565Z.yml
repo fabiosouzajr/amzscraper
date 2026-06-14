@@ -1,0 +1,1376 @@
+- generic [ref=e2]:
+  - navigation "Menu de atalhos" [ref=e3]:
+    - heading "Ir para" [level=2] [ref=e4]
+    - list "Ir para" [ref=e5]:
+      - listitem [ref=e6]:
+        - link "conteúdo principal" [ref=e7] [cursor=pointer]:
+          - /url: "#skippedLink"
+          - text: Conteúdo principal
+      - listitem [ref=e8]:
+        - link "Sobre este produto" [ref=e9] [cursor=pointer]:
+          - /url: "#featurebullets_feature_div"
+      - listitem [ref=e10]:
+        - link "Pular para as opções de compra" [ref=e11] [cursor=pointer]:
+          - /url: "#buybox"
+          - text: Opções de compra
+      - listitem [ref=e12]:
+        - link "Avaliações" [ref=e13] [cursor=pointer]:
+          - /url: "#customerReviews"
+    - separator [ref=e14]
+    - heading "Atalhos do teclado" [level=2] [ref=e15]
+    - list "Atalhos do teclado" [ref=e16]:
+      - listitem [ref=e17]:
+        - link "Pesquisa, alt, barra para frente" [ref=e18] [cursor=pointer]:
+          - /url: javascript:void(0)
+          - generic [ref=e19]:
+            - generic [ref=e20]: Pesquisar
+            - generic [ref=e21]:
+              - generic [ref=e22]: alt
+              - generic [ref=e23]: +
+              - generic [ref=e24]: /
+      - listitem [ref=e25]:
+        - link "Carrinho, shift, alt, c" [ref=e26] [cursor=pointer]:
+          - /url: javascript:void(0)
+          - generic [ref=e27]:
+            - generic [ref=e28]: Carrinho
+            - generic [ref=e29]:
+              - generic [ref=e30]: shift
+              - generic [ref=e31]: +
+              - generic [ref=e32]: alt
+              - generic [ref=e33]: +
+              - generic [ref=e34]: C
+      - listitem [ref=e35]:
+        - link "Início, shift, alt, h" [ref=e36] [cursor=pointer]:
+          - /url: javascript:void(0)
+          - generic [ref=e37]:
+            - generic [ref=e38]: Página inicial
+            - generic [ref=e39]:
+              - generic [ref=e40]: shift
+              - generic [ref=e41]: +
+              - generic [ref=e42]: alt
+              - generic [ref=e43]: +
+              - generic [ref=e44]: H
+      - listitem [ref=e45]:
+        - link "Seus pedidos, shift, alt, o" [ref=e46] [cursor=pointer]:
+          - /url: javascript:void(0)
+          - generic [ref=e47]:
+            - generic [ref=e48]: Seus Pedidos
+            - generic [ref=e49]:
+              - generic [ref=e50]: shift
+              - generic [ref=e51]: +
+              - generic [ref=e52]: alt
+              - generic [ref=e53]: +
+              - generic [ref=e54]: O
+      - listitem [ref=e55]:
+        - button "Resumo do produto, shift, alt, d" [ref=e56] [cursor=pointer]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: Resumo do produto
+            - generic [ref=e59]:
+              - generic [ref=e60]: shift
+              - generic [ref=e61]: +
+              - generic [ref=e62]: alt
+              - generic [ref=e63]: +
+              - generic [ref=e64]: D
+      - listitem [ref=e65]:
+        - button "Mostrar/ocultar atalhos, shift, alt, z" [ref=e66] [cursor=pointer]:
+          - generic [ref=e67]:
+            - generic [ref=e68]: Mostrar/ocultar atalhos
+            - generic [ref=e69]:
+              - generic [ref=e70]: shift
+              - generic [ref=e71]: +
+              - generic [ref=e72]: alt
+              - generic [ref=e73]: +
+              - generic [ref=e74]: Z
+    - generic [ref=e80]: Para se mover entre os produtos, use as setas para cima ou para baixo do teclado.
+  - banner [ref=e81]:
+    - navigation "Principal" [ref=e82]:
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - link "Amazon.com.br" [ref=e86] [cursor=pointer]:
+            - /url: /ref=nav_logo
+            - generic: .com.br
+          - button "A entrega será feita em Bela Vista 01319900 Atualizar CEP" [ref=e89] [cursor=pointer]:
+            - generic [ref=e91]:
+              - generic [ref=e92]: A entrega será feita em Bela Vista 01319900
+              - generic [ref=e93]: Atualizar CEP
+        - search [ref=e96]:
+          - generic [ref=e99]:
+            - generic [ref=e101]: Ferramentas e Materiais de Construção
+            - combobox "Selecione o departamento que deseja pesquisar no" [ref=e103] [cursor=pointer]:
+              - option "Todos os departamentos"
+              - option "Alexa Skills"
+              - option "Alimentos e Bebidas"
+              - option "Amazon Mercado"
+              - option "Amazon Now"
+              - option "Amazon Quase Novo"
+              - option "Apps e Jogos"
+              - option "Audiolivros Audible"
+              - option "Automotivo"
+              - option "Bebês"
+              - option "Beleza"
+              - option "Beleza de luxo"
+              - option "Bolsas, Malas e Mochilas"
+              - option "Brinquedos e Jogos"
+              - option "Casa"
+              - option "CD e Vinil"
+              - option "Computadores e Informática"
+              - option "Cozinha"
+              - option "Dispositivos Amazon"
+              - option "DVD e Blu-Ray"
+              - option "Eletrodomésticos"
+              - option "Eletrônicos"
+              - option "Esportes e Aventura"
+              - option "Ferramentas e Materiais de Construção" [selected]
+              - option "Games"
+              - option "Industrial"
+              - option "Instrumentos Musicais"
+              - option "Jardim e Piscina"
+              - option "Livros"
+              - option "Loja Kindle"
+              - option "Material para Escritório e Papelaria"
+              - option "Móveis e Decoração"
+              - option "Pet Shop"
+              - option "Prime Video"
+              - option "Programe e Poupe"
+              - option "Roupas, Calçados e Joias"
+              - option "Roupas, sapatos e joias femininas"
+              - option "Roupas, sapatos e joias masculinas"
+              - option "Roupas, sapatos e joias para meninas"
+              - option "Roupas, sapatos e joias para meninos"
+              - option "Roupas, sapatos e joias para bebês"
+              - option "Saúde e Cuidados Pessoais"
+          - searchbox "Pesquisar Amazon.com.br" [ref=e106]
+          - generic "Ir" [ref=e109] [cursor=pointer]:
+            - button "Ir" [ref=e110]
+        - generic [ref=e112]:
+          - generic [ref=e113]:
+            - link "Olá, faça seu login Contas e Listas" [ref=e114] [cursor=pointer]:
+              - /url: https://www.amazon.com.br/ap/signin?openid.return_to=https%3A%2F%2Fwww.amazon.com.br%2Fdp%2FB076X71VMB%3Fref_%3Dnav_ya_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=brflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0
+              - generic [ref=e116]: Olá, faça seu login
+              - generic [ref=e117]: Contas e Listas
+            - button "Expandir conta e listas" [ref=e118] [cursor=pointer]
+          - link "Devoluções e Pedidos" [ref=e119] [cursor=pointer]:
+            - /url: /gp/css/order-history?ref_=nav_orders_first
+            - generic [ref=e120]: Devoluções
+            - generic [ref=e121]: e Pedidos
+          - link "0 itens no carrinho" [ref=e122] [cursor=pointer]:
+            - /url: /gp/cart/view.html?ref_=nav_cart
+            - generic [ref=e124]: "0"
+            - generic [ref=e127]: Carrinho
+      - generic [ref=e131]:
+        - link "Faça seu login" [ref=e132] [cursor=pointer]:
+          - /url: https://www.amazon.com.br/ap/signin?openid.return_to=https%3A%2F%2Fwww.amazon.com.br%2Fdp%2FB076X71VMB%3Fref_%3Dnav_custrec_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=brflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0
+          - generic [ref=e133]: Faça seu login
+        - generic [ref=e134]:
+          - text: Cliente novo?
+          - link "Novo na Amazon? Comece aqui para criar uma conta" [ref=e135] [cursor=pointer]:
+            - /url: https://www.amazon.com.br/ap/register?openid.return_to=https%3A%2F%2Fwww.amazon.com.br%2Fdp%2FB076X71VMB%2F%3F_encoding%3DUTF8%26ref_%3Dnav_custrec_newcust&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=brflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0
+            - text: Comece aqui.
+      - generic [ref=e140]:
+        - button "Abrir o menu Todas as categorias" [ref=e142] [cursor=pointer]:
+          - generic [ref=e144]: Todos
+        - list [ref=e148]:
+          - listitem [ref=e149]:
+            - link "Venda na Amazon" [ref=e151] [cursor=pointer]:
+              - /url: /gp/browse.html?node=17877554011&ld=ASBRSOA_retail_sell_header_t1&ref_=nav_cs_sell
+          - listitem [ref=e152]:
+            - link "Chega em 15 min" [ref=e154] [cursor=pointer]:
+              - /url: /alm/storefront?almBrandId=10zZeC1FBwm&ref_=nav_cs_amnow
+          - listitem [ref=e155]:
+            - link "Ofertas do Dia" [ref=e157] [cursor=pointer]:
+              - /url: /deals?ref_=nav_cs_gb
+          - listitem [ref=e158]:
+            - link "Mais Vendidos" [ref=e160] [cursor=pointer]:
+              - /url: /gp/bestsellers/?ref_=nav_cs_bestsellers
+          - listitem [ref=e161]:
+            - generic [ref=e162]:
+              - link "Prime" [ref=e163] [cursor=pointer]:
+                - /url: /prime?ref_=nav_cs_primelink_nonmember
+              - button "Detalhes de Prime" [ref=e164] [cursor=pointer]
+          - listitem [ref=e165]:
+            - link "Games" [ref=e167] [cursor=pointer]:
+              - /url: /Games-Consoles/b/?ie=UTF8&node=7791985011&ref_=nav_cs_video_games
+          - listitem [ref=e168]:
+            - link "Música" [ref=e170] [cursor=pointer]:
+              - /url: /music/unlimited?ref_=nav_cs_music
+          - listitem [ref=e171]:
+            - link "Eletrônicos" [ref=e173] [cursor=pointer]:
+              - /url: /Eletronicos-e-Tecnologia/b/?ie=UTF8&node=16209062011&ref_=nav_cs_electronics
+          - listitem [ref=e174]:
+            - link "Casa" [ref=e176] [cursor=pointer]:
+              - /url: /Casa/b/?ie=UTF8&node=16191000011&ref_=nav_cs_home
+          - listitem [ref=e177]:
+            - link "Brinquedos e Jogos" [ref=e179] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16194299011&ref_=nav_cs_toys
+          - listitem [ref=e180]:
+            - link "Livros" [ref=e182] [cursor=pointer]:
+              - /url: /Livros/b/?ie=UTF8&node=6740748011&ref_=nav_cs_books
+          - listitem [ref=e183]:
+            - link "Computadores" [ref=e185] [cursor=pointer]:
+              - /url: /Computadores-Informatica/b/?ie=UTF8&node=16339926011&ref_=nav_cs_pc
+          - listitem [ref=e186]:
+            - link "Novidades na Amazon" [ref=e188] [cursor=pointer]:
+              - /url: /gp/browse.html?node=207658984011&ref_=nav_cs_mtech
+          - listitem [ref=e189]:
+            - link "Beleza" [ref=e191] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16194414011&ref_=nav_cs_beauty
+          - listitem [ref=e192]:
+            - link "Mercado" [ref=e194] [cursor=pointer]:
+              - /url: /fmc/everyday-essentials/?ref_=nav_cs_ee_desktop_disco
+          - listitem [ref=e195]:
+            - link "Alimentos e Bebidas" [ref=e197] [cursor=pointer]:
+              - /url: /gp/browse.html?node=18991079011&ref_=nav_cs_grocery
+          - listitem [ref=e198]:
+            - link "Bebês" [ref=e200] [cursor=pointer]:
+              - /url: /gp/browse.html?node=17242603011&ref_=nav_cs_baby
+          - listitem [ref=e201]:
+            - link "Cuidados Pessoais" [ref=e203] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16215417011&ref_=nav_cs_hpc
+          - listitem [ref=e204]:
+            - link "Ferramentas e Construção" [ref=e206] [cursor=pointer]:
+              - /url: /Ferramentas-Construcao/b/?ie=UTF8&node=16957182011&ref_=nav_cs_hi
+          - listitem [ref=e207]:
+            - link "Amazon Moda" [ref=e209] [cursor=pointer]:
+              - /url: /gp/browse.html?node=17365811011&ref_=nav_cs_fashion
+          - listitem [ref=e210]:
+            - link "Pet Shop" [ref=e212] [cursor=pointer]:
+              - /url: /gp/browse.html?node=18991136011&ref_=nav_cs_pets
+          - listitem [ref=e213]:
+            - link "Automotivos" [ref=e215] [cursor=pointer]:
+              - /url: /gp/browse.html?node=18914209011&ref_=nav_cs_automotive
+          - listitem [ref=e216]:
+            - link "eBooks Kindle" [ref=e218] [cursor=pointer]:
+              - /url: /ebooks-kindle/b/?ie=UTF8&node=5475882011&ref_=nav_cs_kindle_books
+          - listitem [ref=e219]:
+            - link "Atendimento ao Cliente" [ref=e221] [cursor=pointer]:
+              - /url: /gp/help/customer/display.html?nodeId=508510&ref_=nav_cs_help
+        - link "Prime Video" [ref=e225] [cursor=pointer]:
+          - /url: /gp/video/ssoredirect/?ie=UTF8&pvp=%2Fdetail%2Famzn1.dv.gti.f5b53647-e608-46ed-8228-a609fd9b2d7e%2F%3Fref_%3Ddvm_crs_nav_br_s_dt_swm_l_al_nore_tp&ref_=nav_swm_dvm_crs_nav_br_s_dt_swm_l_al_nore_tp&pf_rd_p=17b013b1-e7fd-431c-9eef-5dca933a8194&pf_rd_s=nav-sitewide-msg&pf_rd_t=4201&pf_rd_i=navbar-4201&pf_rd_m=A2Q3Y263D00KWC&pf_rd_r=P6N8TTWAQDBWFSG398KR
+          - img "Prime Video" [ref=e226]
+      - dialog [ref=e227]
+  - generic [ref=e229]:
+    - heading "O resumo do produto apresenta as principais informações do produto Atalho do teclado shift + alt + D" [level=1] [ref=e231]:
+      - button "O resumo do produto apresenta as principais informações do produto" [ref=e233] [cursor=pointer]:
+        - generic [ref=e234]: O resumo do produto apresenta as principais informações do produto
+      - separator [ref=e236]
+      - generic [ref=e237]:
+        - text: Atalho do teclado
+        - generic [ref=e238]: shift + alt + D
+    - main [ref=e239]:
+      - generic [ref=e240]:
+        - generic [ref=e243]:
+          - iframe [ref=e244]:
+            - generic [ref=f1e4]:
+              - generic [ref=f1e5]: "Clique para navegar até a página de detalhes do produto Anúncio patrocinado. Imagem do produto. Imagem com a marca. Kit jogo de Ferramentas com Maleta + Kit chave catraca reversível Caixa de Ferramentas Completa. Preço: R$ 150,00."
+              - generic [ref=f1e11]:
+                - img "Imagem do produto" [ref=f1e15]
+                - generic [ref=f1e17]:
+                  - generic [ref=f1e18]: LSMI MARKETKit jogo de Ferramentas com Maleta + Kit chave catraca reversível Caixa de Ferramentas Completa
+                  - generic [ref=f1e20]:
+                    - generic [ref=f1e21]: "Preço: R$ 150,00"
+                    - generic [ref=f1e22]:
+                      - generic [ref=f1e23]: R$
+                      - generic [ref=f1e24]: "150"
+                      - generic [ref=f1e25]: "00"
+                  - 'link "4.5 de 5 estrelas., 151 avaliações de clientes. Clique para navegar até a página de detalhes do produto Anúncio patrocinado. Imagem do produto. Imagem com a marca. Kit jogo de Ferramentas com Maleta + Kit chave catraca reversível Caixa de Ferramentas Completa. Preço: R$ 150,00." [ref=f1e26] [cursor=pointer]':
+                    - /url: https://www.amazon.com.br/product-reviews/B0DC5KCBGM?aref=JFwCeJzY3G&aaxitk=7b06f81206001236a7672843c2ad4228&language=pt_BR
+                    - img "4.5 de 5 estrelas., 151 avaliações de clientes." [ref=f1e27]:
+                      - generic [ref=f1e28]: 4,5
+                      - img [ref=f1e31]
+                      - img [ref=f1e36]
+                      - img [ref=f1e41]
+                      - img [ref=f1e46]
+                      - img [ref=f1e51]
+                      - generic [ref=f1e55]: "151"
+              - link "Clique para navegar até a página de detalhes do produto" [ref=f1e57] [cursor=pointer]:
+                - /url: https://www.amazon.com.br/dp/B0DC5KCBGM?aref=JFwCeJzY3G&aaxitk=7b06f81206001236a7672843c2ad4228&language=pt_BR&pf_rd_p=75cf75cd-c6f3-4965-9159-0b30fbada942&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_w=odJHx&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&ref=dacx_dp_592337149930552444_579350954723450497
+          - button "Deixe comentários sobre o anúncio patrocinado" [ref=e246] [cursor=pointer]:
+            - generic [ref=e247]: Patrocinado
+        - generic [ref=e251]:
+          - heading "Considere esses itens alternativos" [level=2] [ref=e253]
+          - group [ref=e254]:
+            - group [ref=e258]:
+              - list [ref=e259]:
+                - listitem [ref=e260]:
+                  - listitem [ref=e261]:
+                    - generic [ref=e263]:
+                      - link "Caixa Organizadora com 7 Compartimentos, Estojo para Anzóis e Acessórios de Pesca, Transparente e Preto PARAFUSOS PORCAS ARRU" [ref=e266] [cursor=pointer]:
+                        - /url: /Organizadora-Compartimentos-Acess%C3%B3rios-Transparente-PARAFUSOS/dp/B0FNDLDMQ7/ref=dp_fod_d_sccl_1/138-2188440-7994416?pd_rd_w=dtrUo&content-id=amzn1.sym.4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_p=4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&pd_rd_i=B0FNDLDMQ7&psc=1
+                        - img "Caixa Organizadora com 7 Compartimentos, Estojo para Anzóis e Acessórios de Pesca, Transparente e Preto PARAFUSOS PORCAS ARRU" [ref=e268]
+                      - generic [ref=e270]:
+                        - link "Caixa Organizadora com 7 Compartimentos, Estojo para Anzóis e Acessórios de Pesca, Transparente e Preto PARAFUSOS PORCAS ARRUELAS ANZOL CHUMBO CHUMBADA GARATÉIA" [ref=e272] [cursor=pointer]:
+                          - /url: /Organizadora-Compartimentos-Acess%C3%B3rios-Transparente-PARAFUSOS/dp/B0FNDLDMQ7/ref=dp_fod_d_sccl_1/138-2188440-7994416?pd_rd_w=dtrUo&content-id=amzn1.sym.4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_p=4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&pd_rd_i=B0FNDLDMQ7&psc=1
+                          - generic [ref=e273]:
+                            - generic [ref=e274]: Caixa Organizadora com 7 Compartimentos, Estojo para Anzóis e Acessórios de Pesca, Transparente e Preto PARAFUSOS PORCAS ARRUELAS ANZOL CHUMBO CHUMBADA GARATÉIA
+                            - generic [ref=e275]: Caixa Organizadora com 7 Compartimentos, Estojo para Anzóis e Acessórios de Pesca, Transparente e…
+                        - link "3,0 de 5 estrelas com 3 avaliações" [ref=e277] [cursor=pointer]:
+                          - /url: /product-reviews/B0FNDLDMQ7/ref=dp_fod_cr_0/?_encoding=UTF8&pd_rd_w=dtrUo&content-id=amzn1.sym.4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_p=4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&ref_=dp_fod
+                          - text: 3,0
+                          - text: "3"
+                        - link "R$16,90" [ref=e281] [cursor=pointer]:
+                          - /url: "#"
+                          - generic [ref=e283]:
+                            - generic [ref=e284]: R$16,90
+                            - generic [ref=e285]:
+                              - text: R$
+                              - generic [ref=e286]: 16,
+                              - text: "90"
+                - listitem [ref=e289]:
+                  - listitem [ref=e290]:
+                    - generic [ref=e292]:
+                      - link "Box Caixa Organizadora C/Divisórias MDC 8002 25396 Arqplast" [ref=e295] [cursor=pointer]:
+                        - /url: /Caixa-Organizadora-Divis%C3%B3rias-25396-Arqplast/dp/B09YDLWGTG/ref=dp_fod_d_sccl_2/138-2188440-7994416?pd_rd_w=dtrUo&content-id=amzn1.sym.4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_p=4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&pd_rd_i=B09YDLWGTG&psc=1
+                        - img "Box Caixa Organizadora C/Divisórias MDC 8002 25396 Arqplast" [ref=e297]
+                      - generic [ref=e299]:
+                        - link "Box Caixa Organizadora C/Divisórias MDC 8002 25396 Arqplast" [ref=e301] [cursor=pointer]:
+                          - /url: /Caixa-Organizadora-Divis%C3%B3rias-25396-Arqplast/dp/B09YDLWGTG/ref=dp_fod_d_sccl_2/138-2188440-7994416?pd_rd_w=dtrUo&content-id=amzn1.sym.4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_p=4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&pd_rd_i=B09YDLWGTG&psc=1
+                          - generic [ref=e302]:
+                            - generic [ref=e303]: Box Caixa Organizadora C/Divisórias MDC 8002 25396 Arqplast
+                            - generic [ref=e304]: Box Caixa Organizadora C/Divisórias MDC 8002 25396 Arqplast
+                        - link "4,0 de 5 estrelas com 18 avaliações" [ref=e306] [cursor=pointer]:
+                          - /url: /product-reviews/B09YDLWGTG/ref=dp_fod_cr_1/?_encoding=UTF8&pd_rd_w=dtrUo&content-id=amzn1.sym.4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_p=4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&ref_=dp_fod
+                          - text: 4,0
+                          - text: "18"
+                        - link "R$17,90" [ref=e310] [cursor=pointer]:
+                          - /url: "#"
+                          - generic [ref=e312]:
+                            - generic [ref=e313]: R$17,90
+                            - generic [ref=e314]:
+                              - text: R$
+                              - generic [ref=e315]: 17,
+                              - text: "90"
+                - listitem [ref=e318]:
+                  - listitem [ref=e319]:
+                    - generic [ref=e321]:
+                      - link "Box Organizador, Paramount, P, 16x9x3,5 cm, Cristal" [ref=e324] [cursor=pointer]:
+                        - /url: /Box-Organizador-Paramount-16x9x3-Cristal/dp/B07KXVFW5W/ref=dp_fod_d_sccl_3/138-2188440-7994416?pd_rd_w=dtrUo&content-id=amzn1.sym.4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_p=4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&pd_rd_i=B07KXVFW5W&psc=1
+                        - img "Box Organizador, Paramount, P, 16x9x3,5 cm, Cristal" [ref=e326]
+                      - generic [ref=e328]:
+                        - link "Box Organizador, Paramount, P, 16x9x3,5 cm, Cristal" [ref=e330] [cursor=pointer]:
+                          - /url: /Box-Organizador-Paramount-16x9x3-Cristal/dp/B07KXVFW5W/ref=dp_fod_d_sccl_3/138-2188440-7994416?pd_rd_w=dtrUo&content-id=amzn1.sym.4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_p=4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&pd_rd_i=B07KXVFW5W&psc=1
+                          - generic [ref=e331]:
+                            - generic [ref=e332]: Box Organizador, Paramount, P, 16x9x3,5 cm, Cristal
+                            - generic [ref=e333]: Box Organizador, Paramount, P, 16x9x3,5 cm, Cristal
+                        - link "4,4 de 5 estrelas com 173 avaliações" [ref=e335] [cursor=pointer]:
+                          - /url: /product-reviews/B07KXVFW5W/ref=dp_fod_cr_2/?_encoding=UTF8&pd_rd_w=dtrUo&content-id=amzn1.sym.4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_p=4f53009d-6d67-4b5d-99e2-f94097efb59f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=3ugi9&pd_rd_r=12a6b946-69fd-4c00-a8ac-818ea12411a2&ref_=dp_fod
+                          - text: 4,4
+                          - text: "173"
+                        - link "R$10,71" [ref=e339] [cursor=pointer]:
+                          - /url: "#"
+                          - generic [ref=e341]:
+                            - generic [ref=e342]: R$10,71
+                            - generic [ref=e343]:
+                              - text: R$
+                              - generic [ref=e344]: 10,
+                              - text: "71"
+        - list [ref=e351]:
+          - listitem [ref=e352]:
+            - link "Ferramentas e Materiais de Construção" [ref=e354] [cursor=pointer]:
+              - /url: /Ferramentas-Construcao/b/ref=dp_bc_1?ie=UTF8&node=16957182011
+          - listitem [ref=e355]: ›
+          - listitem [ref=e356]:
+            - link "Ferramentas Elétricas e Manuais" [ref=e358] [cursor=pointer]:
+              - /url: /Ferramentasletricas-Manuais/b/ref=dp_bc_2?ie=UTF8&node=17113547011
+          - listitem [ref=e359]: ›
+          - listitem [ref=e360]:
+            - link "Organizadores de Ferramentas" [ref=e362] [cursor=pointer]:
+              - /url: /Organizadores-Ferramentas/b/ref=dp_bc_3?ie=UTF8&node=17113621011
+          - listitem [ref=e363]: ›
+          - listitem [ref=e364]:
+            - link "Caixas de Ferramentas" [ref=e366] [cursor=pointer]:
+              - /url: /Caixas-Ferramentas/b/ref=dp_bc_4?ie=UTF8&node=17114128011
+      - generic [ref=e367]:
+        - generic [ref=e368]:
+          - generic [ref=e373]:
+            - generic [ref=e374]: Preço mais alto do que o habitual
+            - button "Saiba mais" [ref=e376] [cursor=pointer]: Saiba mais
+          - generic [ref=e385]:
+            - button "Entregando em Bela Vista, 01319900. Atualizar local" [ref=e388] [cursor=pointer]:
+              - generic [ref=e394]: Entregando em Bela Vista, 01319900. Atualizar local
+            - link "Ver todas as opções de compra" [ref=e399] [cursor=pointer]:
+              - /url: /gp/offer-listing/B076X71VMB/ref=dp_olp_unknown_mbc
+            - separator [ref=e400]
+            - link "Adicionar à Lista" [ref=e405] [cursor=pointer]:
+              - /url: https://www.amazon.com.br/ap/signin?openid.return_to=https%3A%2F%2Fwww.amazon.com.br%2Fgp%2Faw%2Fd%2FB076X71VMB&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=bramazon&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&
+        - generic [ref=e407]:
+          - generic [ref=e409]:
+            - button "Compartilhar" [ref=e410]:
+              - button "Compartilhar" [ref=e411] [cursor=pointer]
+            - generic [ref=e415]:
+              - generic [ref=e417]:
+                - list
+                - list [ref=e418]:
+                  - listitem [ref=e419] [cursor=pointer]:
+                    - button "STANLEY Caixa Organizadora Pequena de 9 Compartimentos STST14003" [ref=e422]:
+                      - img "STANLEY Caixa Organizadora Pequena de 9 Compartimentos STST14003" [ref=e423]
+              - link "Clique para ver a imagem completa" [ref=e427] [cursor=pointer]:
+                - /url: "#"
+              - radiogroup "Miniaturas de imagem" [ref=e429]:
+                - listitem [ref=e430]:
+                  - radio [ref=e435] [cursor=pointer]
+                - listitem [ref=e437]:
+                  - radio [ref=e442] [cursor=pointer]
+                - listitem [ref=e444]:
+                  - radio [ref=e449] [cursor=pointer]
+                - listitem [ref=e451]:
+                  - radio [ref=e456] [cursor=pointer]
+                - listitem [ref=e458]:
+                  - radio [ref=e463] [cursor=pointer]
+                - listitem [ref=e465]:
+                  - radio [ref=e470] [cursor=pointer]
+          - generic [ref=e473]:
+            - generic:
+              - button
+          - generic:
+            - link:
+              - generic:
+                - list
+        - generic [ref=e474]:
+          - heading "STANLEY Caixa Organizadora Pequena de 9 Compartimentos STST14003" [level=1] [ref=e477]
+          - link "Visite a loja Stanley" [ref=e480] [cursor=pointer]:
+            - /url: /stores/STANLEY/page/56C4C5B5-334D-4A15-9892-6DDFF1D15E72?lp_asin=B076X71VMB&ref_=ast_bln
+          - generic [ref=e482]:
+            - generic "4,6 de 5 estrelas" [ref=e484]:
+              - button "4,6 de 5 estrelas" [ref=e486] [cursor=pointer]:
+                - text: 4,6
+                - generic [ref=e488]: 4,6 de 5 estrelas
+            - link "350 Análises" [ref=e491] [cursor=pointer]:
+              - /url: "#averageCustomerReviewsAnchor"
+              - text: (350)
+          - separator [ref=e492]
+          - generic [ref=e497]:
+            - button "Pagamentos e Segurança" [ref=e501] [cursor=pointer]
+            - button "Política de devolução" [ref=e506] [cursor=pointer]
+          - list [ref=e513]:
+            - rowgroup [ref=e514]:
+              - listitem [ref=e515]: Marca Stanley
+              - listitem [ref=e516]: Cor Amarelo/Preto
+              - listitem [ref=e517]: Material Plástico
+              - listitem [ref=e518]: Características especiais Compartimentos e tampa clara
+              - listitem [ref=e519]: Adequação do controle por rádio Para organização de objetos pequenos
+          - generic [ref=e521]:
+            - separator [ref=e522]
+            - heading "Sobre este item" [level=1] [ref=e523]
+            - list [ref=e524]:
+              - listitem [ref=e525]: Marca STANLEY
+              - listitem [ref=e526]: Tamanho 102 x 201 x 36 mm
+              - listitem [ref=e527]: Cor amarelo e preto
+              - listitem [ref=e528]: Peso 114 gramas
+              - listitem [ref=e529]: Comprimento 10 centímetros
+              - listitem [ref=e530]: Largura 20 centímetros
+              - listitem [ref=e531]: Altura 3,6 centímetros
+            - button "Mostrar Mais:" [ref=e533] [cursor=pointer]: "Mostrar Mais:"
+            - generic [ref=e535]:
+              - text: ›
+              - link "Ver mais detalhes do produto" [ref=e536] [cursor=pointer]:
+                - /url: "#productDetails"
+          - generic [ref=e540]:
+            - heading "Marca em destaque Stanley" [level=2] [ref=e541]:
+              - paragraph [ref=e543]: Marca em destaque
+              - paragraph [ref=e544]: Stanley
+            - list [ref=e545]:
+              - listitem [ref=e546]:
+                - paragraph [ref=e547]: 97% de classificações positivas de 10K+ clientes
+              - listitem [ref=e548]:
+                - paragraph [ref=e549]: 5K+ pedidos recentes desta marca
+          - link "Relatar um problema com este produto" [ref=e555] [cursor=pointer]:
+            - /url: "#"
+        - generic [ref=e557]:
+          - separator [ref=e558]
+          - generic [ref=e560]:
+            - generic:
+              - link "Conheça nossa Loja de Ferramentas e Construção":
+                - /url: /gp/browse.html?rw_useCurrentProtocol=1&node=16957182011&ref_=amb_link_2leog3Q8RtO2BbA3J655-Q_1
+                - img "Conheça nossa Loja de Ferramentas e Construção" [ref=e561] [cursor=pointer]
+            - text: Conheça nossa Loja de Ferramentas e Construção
+            - link "Clique aqui e confira." [ref=e562] [cursor=pointer]:
+              - /url: /gp/browse.html?rw_useCurrentProtocol=1&node=16957182011&ref_=amb_link_2leog3Q8RtO2BbA3J655-Q_3
+      - generic [ref=e566]:
+        - separator [ref=e567]
+        - region "Produtos relacionados a este item" [ref=e568]:
+          - generic [ref=e570]:
+            - heading "Produtos relacionados a este item" [level=2] [ref=e571]
+            - link "Patrocinado" [ref=e575] [cursor=pointer]:
+              - /url: "#sp_detail_feedbackForm"
+              - generic [ref=e576]:
+                - text: Patrocinado
+                - img [ref=e577]
+          - list [ref=e585]:
+            - listitem [ref=e586]:
+              - generic [ref=e587]:
+                - link "Bosch Broca SDS Plus-1 para concreto Ø 10 x 100 x 160 mm" [ref=e588] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDg0NDYyOTY2NTkwMjo6Ojo&url=%2Fdp%2FB015SI8ZPU%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB015SI8ZPU%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img [ref=e591]
+                  - generic [ref=e592]: Bosch Broca SDS Plus-1 para concreto Ø 10 x 100 x 160 mm
+                - link "4,7 de 5 estrelas 137 classificações" [ref=e594] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDg0NDYyOTY2NTkwMjo6Ojo&url=%2Fdp%2FB015SI8ZPU%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB015SI8ZPU%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw#customerReviews
+                  - text: "137"
+                - link "R$ 14,16" [ref=e597] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDg0NDYyOTY2NTkwMjo6Ojo&url=%2Fdp%2FB015SI8ZPU%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB015SI8ZPU%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - generic [ref=e598]:
+                    - generic [ref=e599]: R$ 14,16
+                    - generic [ref=e600]:
+                      - text: R$
+                      - generic [ref=e601]:
+                        - text: "14"
+                        - generic [ref=e602]: ","
+                      - text: "16"
+                - link "Amazon Prime" [ref=e603] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDg0NDYyOTY2NTkwMjo6Ojo&url=%2Fdp%2FB015SI8ZPU%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB015SI8ZPU%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img "Amazon Prime" [ref=e605]
+            - listitem [ref=e606]:
+              - generic [ref=e607]:
+                - link "Bosch Broca SDS Plus-1 para concreto Ø 6 x 50 x 110 mm" [ref=e608] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDg0NDYyOTY2NjAwMjo6Ojo&url=%2Fdp%2FB015SI8T7Y%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB015SI8T7Y%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img [ref=e611]
+                  - generic [ref=e612]: Bosch Broca SDS Plus-1 para concreto Ø 6 x 50 x 110 mm
+                - link "4,8 de 5 estrelas 192 classificações" [ref=e614] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDg0NDYyOTY2NjAwMjo6Ojo&url=%2Fdp%2FB015SI8T7Y%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB015SI8T7Y%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw#customerReviews
+                  - text: "192"
+                - link "R$ 10,36" [ref=e617] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDg0NDYyOTY2NjAwMjo6Ojo&url=%2Fdp%2FB015SI8T7Y%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB015SI8T7Y%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - generic [ref=e618]:
+                    - generic [ref=e619]: R$ 10,36
+                    - generic [ref=e620]:
+                      - text: R$
+                      - generic [ref=e621]:
+                        - text: "10"
+                        - generic [ref=e622]: ","
+                      - text: "36"
+                - link "Amazon Prime" [ref=e623] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDg0NDYyOTY2NjAwMjo6Ojo&url=%2Fdp%2FB015SI8T7Y%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB015SI8T7Y%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img "Amazon Prime" [ref=e625]
+            - listitem [ref=e626]:
+              - generic [ref=e627]:
+                - link "Bosch Kit de Pontas e Brocas X-Line 33 pçs" [ref=e628] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDYwMjo6Ojo&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img [ref=e631]
+                  - generic [ref=e632]: Bosch Kit de Pontas e Brocas X-Line 33 pçs
+                - link "4,8 de 5 estrelas 21.382 classificações" [ref=e634] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDYwMjo6Ojo&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw#customerReviews
+                  - text: "21.382"
+                - generic [ref=e636]:
+                  - link "Escolha da Amazon":
+                    - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDYwMjo6Ojo&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                    - generic [ref=e638] [cursor=pointer]: Escolha da Amazon
+                - 'link "-56% R$ 73,10 De: R$ 169,90 De: R$ 169,90" [ref=e640] [cursor=pointer]':
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDYwMjo6Ojo&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - text: "-56%"
+                  - generic [ref=e641]:
+                    - generic [ref=e642]: R$ 73,10
+                    - generic [ref=e643]:
+                      - text: R$
+                      - generic [ref=e644]:
+                        - text: "73"
+                        - generic [ref=e645]: ","
+                      - text: "10"
+                  - generic [ref=e646]: "De: R$ 169,90"
+                  - generic [ref=e647]:
+                    - text: "De:"
+                    - generic [ref=e648]:
+                      - generic [ref=e649]: R$ 169,90
+                      - text: R$169,90
+                - link "Amazon Prime" [ref=e650] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDYwMjo6Ojo&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img "Amazon Prime" [ref=e652]
+            - listitem [ref=e653]:
+              - generic [ref=e654]:
+                - link "Bosch Kit de pontas e brocas V-Line 41 peças" [ref=e655] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDUwMjo6Ojo&url=%2Fdp%2FB07CTN73L1%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB07CTN73L1%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img [ref=e658]
+                  - generic [ref=e659]: Bosch Kit de pontas e brocas V-Line 41 peças
+                - link "4,8 de 5 estrelas 16.038 classificações" [ref=e661] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDUwMjo6Ojo&url=%2Fdp%2FB07CTN73L1%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB07CTN73L1%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw#customerReviews
+                  - text: "16.038"
+                - generic [ref=e663]:
+                  - generic:
+                    - link "1º mais vendido":
+                      - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDUwMjo6Ojo&url=%2Fdp%2FB07CTN73L1%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB07CTN73L1%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                      - generic [ref=e665] [cursor=pointer]: 1º mais vendido
+                - link "R$ 106,00" [ref=e667] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDUwMjo6Ojo&url=%2Fdp%2FB07CTN73L1%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB07CTN73L1%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - generic [ref=e668]:
+                    - generic [ref=e669]: R$ 106,00
+                    - generic [ref=e670]:
+                      - text: R$
+                      - generic [ref=e671]:
+                        - text: "106"
+                        - generic [ref=e672]: ","
+                      - text: "00"
+                - link "Amazon Prime" [ref=e673] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDUzMzcyMzI5MDUwMjo6Ojo&url=%2Fdp%2FB07CTN73L1%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB07CTN73L1%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img "Amazon Prime" [ref=e675]
+            - listitem [ref=e676]:
+              - generic [ref=e677]:
+                - link "Afiador de Facas com Pedra de Amolar, 19,5 cm, Cabo Ergonômico, Portátil, Granulação Equilibrada" [ref=e678] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMTEzNDcxMzUyMTAwMjo6Ojo&url=%2Fdp%2FB0G5YYSQ31%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB0G5YYSQ31%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img [ref=e681]
+                  - generic [ref=e682]: Afiador de Facas com Pedra de Amolar, 19,5 cm, Cabo Ergonômico, Portátil, Granulaçã...
+                - link "3,5 de 5 estrelas 2 classificações" [ref=e684] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMTEzNDcxMzUyMTAwMjo6Ojo&url=%2Fdp%2FB0G5YYSQ31%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB0G5YYSQ31%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw#customerReviews
+                  - text: "2"
+                - 'link "-23% R$ 15,99 De: R$ 20,99 De: R$ 20,99" [ref=e687] [cursor=pointer]':
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMTEzNDcxMzUyMTAwMjo6Ojo&url=%2Fdp%2FB0G5YYSQ31%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB0G5YYSQ31%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - text: "-23%"
+                  - generic [ref=e688]:
+                    - generic [ref=e689]: R$ 15,99
+                    - generic [ref=e690]:
+                      - text: R$
+                      - generic [ref=e691]:
+                        - text: "15"
+                        - generic [ref=e692]: ","
+                      - text: "99"
+                  - generic [ref=e693]: "De: R$ 20,99"
+                  - generic [ref=e694]:
+                    - text: "De:"
+                    - generic [ref=e695]:
+                      - generic [ref=e696]: R$ 20,99
+                      - text: R$20,99
+                - link "Amazon Prime" [ref=e697] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMTEzNDcxMzUyMTAwMjo6Ojo&url=%2Fdp%2FB0G5YYSQ31%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB0G5YYSQ31%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img "Amazon Prime" [ref=e699]
+            - listitem [ref=e700]:
+              - generic [ref=e701]:
+                - link "Alicate Universal 8" [ref=e702] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMTE4NTkwNTExMjIwMjo6Ojo&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img [ref=e705]
+                  - generic [ref=e706]: Alicate Universal 8
+                - link "4,7 de 5 estrelas 412 classificações" [ref=e708] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMTE4NTkwNTExMjIwMjo6Ojo&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw#customerReviews
+                  - text: "412"
+                - link "R$ 52,90" [ref=e711] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMTE4NTkwNTExMjIwMjo6Ojo&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - generic [ref=e712]:
+                    - generic [ref=e713]: R$ 52,90
+                    - generic [ref=e714]:
+                      - text: R$
+                      - generic [ref=e715]:
+                        - text: "52"
+                        - generic [ref=e716]: ","
+                      - text: "90"
+                - link "Amazon Prime" [ref=e717] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMTE4NTkwNTExMjIwMjo6Ojo&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img "Amazon Prime" [ref=e719]
+                - link "Economize 6% com o cupom" [ref=e721] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMTE4NTkwNTExMjIwMjo6Ojo&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - generic [ref=e722]:
+                    - generic [ref=e723]: Economize 6%
+                    - text: com o cupom
+            - listitem [ref=e724]:
+              - generic [ref=e725]:
+                - link "Bosch Kit de pontas e brocas em titânio X-Line com 40 peças" [ref=e726] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDU2MTg2NTcyMTEwMjo6Ojo&url=%2Fdp%2FB083HZQH4B%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB083HZQH4B%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img [ref=e729]
+                  - generic [ref=e730]: Bosch Kit de pontas e brocas em titânio X-Line com 40 peças
+                - link "4,7 de 5 estrelas 473 classificações" [ref=e732] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDU2MTg2NTcyMTEwMjo6Ojo&url=%2Fdp%2FB083HZQH4B%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB083HZQH4B%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw#customerReviews
+                  - text: "473"
+                - link "R$ 111,00" [ref=e735] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDU2MTg2NTcyMTEwMjo6Ojo&url=%2Fdp%2FB083HZQH4B%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB083HZQH4B%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - generic [ref=e736]:
+                    - generic [ref=e737]: R$ 111,00
+                    - generic [ref=e738]:
+                      - text: R$
+                      - generic [ref=e739]:
+                        - text: "111"
+                        - generic [ref=e740]: ","
+                      - text: "00"
+                - link "Amazon Prime" [ref=e741] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo2MzIyODI2OTUzNTEwNDE3OjE3ODE0NTM1NjU6c3BfZGV0YWlsOjMwMDU2MTg2NTcyMTEwMjo6Ojo&url=%2Fdp%2FB083HZQH4B%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB083HZQH4B%26pd_rd_w%3DvCk5T%26content-id%3Damzn1.sym.01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_p%3D01db1132-7a41-4b6b-bb8e-16b3635a59d0%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWw
+                  - img "Amazon Prime" [ref=e743]
+      - generic [ref=e749]:
+        - heading "Vídeos de produtos semelhantes" [level=3] [ref=e752]
+        - group [ref=e756]:
+          - group [ref=e760]:
+            - list [ref=e761]:
+              - listitem [ref=e762]:
+                - button "Clique para reproduzir o vídeo, duration 0:33, Sumario de produtos" [ref=e764] [cursor=pointer]:
+                  - generic [ref=e766]:
+                    - img [ref=e767]
+                    - textbox [ref=e769]
+                - link "STANLEY Caixa Organizadora STST83319 Capacidade de 45kg 1.124 R$955,45" [ref=e772] [cursor=pointer]:
+                  - /url: /Stanley-Organizadora-Ferramentas-Resistente-Capacidade/dp/B087JR65KJ/ref=vse_cards_0?_encoding=UTF8&pd_rd_w=zJQvi&content-id=amzn1.sym.6a57eff3-52b6-4e91-97ab-b7898d024a7f&pf_rd_p=6a57eff3-52b6-4e91-97ab-b7898d024a7f&pf_rd_r=P6N8TTWAQDBWFSG398KR&pd_rd_wg=CKxwo&pd_rd_r=18e044f8-dd49-47c6-b806-a4b12915c010
+                  - generic [ref=e776]:
+                    - generic [ref=e778]: STANLEY Caixa Organizadora STST83319 Capacidade de 45kg
+                    - generic [ref=e779]: "1.124"
+                    - generic [ref=e782]:
+                      - generic [ref=e783]: R$955,45
+                      - generic [ref=e784]:
+                        - text: R$
+                        - generic [ref=e785]:
+                          - text: "955"
+                          - generic [ref=e786]: ","
+                        - text: "45"
+      - generic [ref=e787]:
+        - generic [ref=e788]:
+          - separator [ref=e789]
+          - generic [ref=e791]:
+            - heading "Especificações do produto" [level=1] [ref=e792]
+            - generic [ref=e796]:
+              - generic [ref=e799]:
+                - button "Medidas" [ref=e802] [cursor=pointer]:
+                  - heading "Medidas" [level=5] [ref=e804]
+                - button "Estilo" [ref=e807] [cursor=pointer]:
+                  - heading "Estilo" [level=5] [ref=e809]
+                - button "Materiais e Cuidados" [ref=e812] [cursor=pointer]:
+                  - heading "Materiais e Cuidados" [level=5] [ref=e814]
+              - generic [ref=e818]:
+                - button "Características e Especificações" [ref=e821] [cursor=pointer]:
+                  - heading "Características e Especificações" [level=5] [ref=e823]
+                - button "Detalhes do Produto" [ref=e826] [cursor=pointer]:
+                  - heading "Detalhes do Produto" [level=5] [ref=e828]
+        - generic [ref=e830]:
+          - separator [ref=e831]
+          - heading "Do fabricante" [level=2] [ref=e832]
+          - generic [ref=e835]:
+            - img "STANLEY Generic Banner" [ref=e839]
+            - img "STANLEY" [ref=e843]
+        - generic:
+          - navigation:
+            - navigation "Navigate within the product detail page":
+              - navigation "Back to top jump link":
+                - generic:
+                  - generic: topo
+              - navigation "About this item widget jump link":
+                - generic:
+                  - generic: Sobre este produto
+              - navigation "Similar widget jump link":
+                - generic:
+                  - generic: Semelhante
+              - navigation "Product information widget jump link":
+                - generic:
+                  - generic: Informações do produto
+              - navigation "From the brand widget jump link":
+                - generic:
+                  - generic: Da marca
+              - navigation "Customer reviews widget jump link":
+                - generic:
+                  - generic: Avaliações
+            - navigation "Back to top Image jump link":
+              - img "STANLEY Caixa Organizadora Pequena de 9 Compartimentos STST14003"
+            - navigation "Back to top title jump link":
+              - generic: STANLEY Caixa Organizadora Pequena de 9 Compartimentos STST14003
+        - generic [ref=e846]:
+          - heading "Descrição do produto" [level=2] [ref=e849]
+          - paragraph [ref=e851]: Com a Caixa Organizadora Pequena é ideal para armazenamento de pequenos objetos evitando perdas desnecessárias no dia a dia. É fabricado com polipropileno resistente e conta com 9 compartimentos, além de tampa clara para melhor visualização dos objetos armazenados.
+      - generic [ref=e857]:
+        - heading "Vídeos de produtos" [level=2] [ref=e859]
+        - generic [ref=e864]:
+          - region "Video Player" [ref=e865]:
+            - generic [ref=e868]:
+              - button "Play" [ref=e869] [cursor=pointer]
+              - slider "Progress Bar" [ref=e872] [cursor=pointer]: .
+              - generic [ref=e873]: "-0:00"
+              - generic [ref=e875]:
+                - menu
+              - button "Mute" [ref=e876] [cursor=pointer]
+          - generic [ref=e879]:
+            - link [ref=e880] [cursor=pointer]:
+              - /url: /gp/profile/amzn1.account.AH5LY6O2X36LVY7AMQTOO23HASPQ
+            - generic [ref=e881]:
+              - link "Edivan" [ref=e883] [cursor=pointer]:
+                - /url: /gp/profile/amzn1.account.AH5LY6O2X36LVY7AMQTOO23HASPQ
+              - generic [ref=e885]:
+                - text: "Avaliação de clientes: Caixa organizadora"
+                - link "Confira a avaliação completa" [ref=e886] [cursor=pointer]:
+                  - /url: /gp/customer-reviews/R2Q1YZ0LAP10RP?ref=va_cr_lb
+          - button "Play" [ref=e887] [cursor=pointer]
+      - generic [ref=e961]:
+        - separator [ref=e962]
+        - region "Produtos relacionados a este item" [ref=e963]:
+          - generic [ref=e965]:
+            - heading "Produtos relacionados a este item" [level=2] [ref=e966]
+            - link "Patrocinado" [ref=e970] [cursor=pointer]:
+              - /url: "#sp_detail2_feedbackForm"
+              - generic [ref=e971]:
+                - text: Patrocinado
+                - img [ref=e972]
+          - list [ref=e980]:
+            - listitem [ref=e981]:
+              - generic [ref=e982]:
+                - link "Afiador de Facas com Pedra de Amolar, 19,5 cm, Cabo Ergonômico, Portátil, Granulação Equilibrada" [ref=e983] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDExMzQ3MTM1MjEwMDI6Ojo6&url=%2Fdp%2FB0G5YYSQ31%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB0G5YYSQ31%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e986]
+                  - generic [ref=e987]: Afiador de Facas com Pedra de Amolar, 19,5 cm, Cabo Ergonômico, Portátil, Granulaçã...
+                - link "3,5 de 5 estrelas 2 classificações" [ref=e989] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDExMzQ3MTM1MjEwMDI6Ojo6&url=%2Fdp%2FB0G5YYSQ31%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB0G5YYSQ31%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "2"
+                - 'link "-23% R$ 15,99 De: R$ 20,99 De: R$ 20,99" [ref=e992] [cursor=pointer]':
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDExMzQ3MTM1MjEwMDI6Ojo6&url=%2Fdp%2FB0G5YYSQ31%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB0G5YYSQ31%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - text: "-23%"
+                  - generic [ref=e993]:
+                    - generic [ref=e994]: R$ 15,99
+                    - generic [ref=e995]:
+                      - text: R$
+                      - generic [ref=e996]:
+                        - text: "15"
+                        - generic [ref=e997]: ","
+                      - text: "99"
+                  - generic [ref=e998]: "De: R$ 20,99"
+                  - generic [ref=e999]:
+                    - text: "De:"
+                    - generic [ref=e1000]:
+                      - generic [ref=e1001]: R$ 20,99
+                      - text: R$20,99
+                - link "Amazon Prime" [ref=e1002] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDExMzQ3MTM1MjEwMDI6Ojo6&url=%2Fdp%2FB0G5YYSQ31%2Fref%3Dsspa_dk_detail_0%3Fpsc%3D1%26pd_rd_i%3DB0G5YYSQ31%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1004]
+            - listitem [ref=e1005]:
+              - generic [ref=e1006]:
+                - link "Bosch Kit de pontas e brocas em titânio X-Line com 40 peças" [ref=e1007] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA1NjE4NjU3MjExMDI6Ojo6&url=%2Fdp%2FB083HZQH4B%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB083HZQH4B%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1010]
+                  - generic [ref=e1011]: Bosch Kit de pontas e brocas em titânio X-Line com 40 peças
+                - link "4,7 de 5 estrelas 473 classificações" [ref=e1013] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA1NjE4NjU3MjExMDI6Ojo6&url=%2Fdp%2FB083HZQH4B%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB083HZQH4B%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "473"
+                - link "R$ 111,00" [ref=e1016] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA1NjE4NjU3MjExMDI6Ojo6&url=%2Fdp%2FB083HZQH4B%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB083HZQH4B%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1017]:
+                    - generic [ref=e1018]: R$ 111,00
+                    - generic [ref=e1019]:
+                      - text: R$
+                      - generic [ref=e1020]:
+                        - text: "111"
+                        - generic [ref=e1021]: ","
+                      - text: "00"
+                - link "Amazon Prime" [ref=e1022] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA1NjE4NjU3MjExMDI6Ojo6&url=%2Fdp%2FB083HZQH4B%2Fref%3Dsspa_dk_detail_1%3Fpsc%3D1%26pd_rd_i%3DB083HZQH4B%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1024]
+            - listitem [ref=e1025]:
+              - generic [ref=e1026]:
+                - link "Alicate Universal 8" [ref=e1027] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDExODU5MDUxMTIyMDI6Ojo6&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1030]
+                  - generic [ref=e1031]: Alicate Universal 8
+                - link "4,7 de 5 estrelas 412 classificações" [ref=e1033] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDExODU5MDUxMTIyMDI6Ojo6&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "412"
+                - link "R$ 52,90" [ref=e1036] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDExODU5MDUxMTIyMDI6Ojo6&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1037]:
+                    - generic [ref=e1038]: R$ 52,90
+                    - generic [ref=e1039]:
+                      - text: R$
+                      - generic [ref=e1040]:
+                        - text: "52"
+                        - generic [ref=e1041]: ","
+                      - text: "90"
+                - link "Amazon Prime" [ref=e1042] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDExODU5MDUxMTIyMDI6Ojo6&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1044]
+                - link "Economize 6% com o cupom" [ref=e1046] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDExODU5MDUxMTIyMDI6Ojo6&url=%2Fdp%2FB076KSCR6Q%2Fref%3Dsspa_dk_detail_2%3Fpsc%3D1%26pd_rd_i%3DB076KSCR6Q%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1047]:
+                    - generic [ref=e1048]: Economize 6%
+                    - text: com o cupom
+            - listitem [ref=e1049]:
+              - generic [ref=e1050]:
+                - link "Kit 3 Ganchos Adesivos Metálicos Fixação Potente Fácil de Instalar Ideal para Ambientes Modernos Formato Oval Removível sem Danos e Sem Necessidade de Furos" [ref=e1051] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NjE1NDM2MTc4MDI6Ojo6&url=%2Fdp%2FB0FJG9FRV8%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB0FJG9FRV8%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1054]
+                  - generic [ref=e1055]: Kit 3 Ganchos Adesivos Metálicos Fixação Potente Fácil de Instalar Ideal para Ambie...
+                - link "4,3 de 5 estrelas 81 classificações" [ref=e1057] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NjE1NDM2MTc4MDI6Ojo6&url=%2Fdp%2FB0FJG9FRV8%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB0FJG9FRV8%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "81"
+                - link "R$ 9,90" [ref=e1060] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NjE1NDM2MTc4MDI6Ojo6&url=%2Fdp%2FB0FJG9FRV8%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB0FJG9FRV8%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1061]:
+                    - generic [ref=e1062]: R$ 9,90
+                    - generic [ref=e1063]:
+                      - text: R$
+                      - generic [ref=e1064]:
+                        - text: "9"
+                        - generic [ref=e1065]: ","
+                      - text: "90"
+                - link "Amazon Prime" [ref=e1066] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NjE1NDM2MTc4MDI6Ojo6&url=%2Fdp%2FB0FJG9FRV8%2Fref%3Dsspa_dk_detail_3%3Fpsc%3D1%26pd_rd_i%3DB0FJG9FRV8%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1068]
+            - listitem [ref=e1069]:
+              - generic [ref=e1070]:
+                - link "Bosch Broca SDS Plus-1 para concreto Ø 6 x 50 x 110 mm" [ref=e1071] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NDQ2Mjk2NjYwMDI6Ojo6&url=%2Fdp%2FB015SI8T7Y%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB015SI8T7Y%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1074]
+                  - generic [ref=e1075]: Bosch Broca SDS Plus-1 para concreto Ø 6 x 50 x 110 mm
+                - link "4,8 de 5 estrelas 192 classificações" [ref=e1077] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NDQ2Mjk2NjYwMDI6Ojo6&url=%2Fdp%2FB015SI8T7Y%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB015SI8T7Y%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "192"
+                - link "R$ 10,36" [ref=e1080] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NDQ2Mjk2NjYwMDI6Ojo6&url=%2Fdp%2FB015SI8T7Y%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB015SI8T7Y%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1081]:
+                    - generic [ref=e1082]: R$ 10,36
+                    - generic [ref=e1083]:
+                      - text: R$
+                      - generic [ref=e1084]:
+                        - text: "10"
+                        - generic [ref=e1085]: ","
+                      - text: "36"
+                - link "Amazon Prime" [ref=e1086] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NDQ2Mjk2NjYwMDI6Ojo6&url=%2Fdp%2FB015SI8T7Y%2Fref%3Dsspa_dk_detail_4%3Fpsc%3D1%26pd_rd_i%3DB015SI8T7Y%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1088]
+            - listitem [ref=e1089]:
+              - generic [ref=e1090]:
+                - link "Bosch Broca SDS Plus-1 para concreto Ø 10 x 100 x 160 mm" [ref=e1091] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NDQ2Mjk2NjU5MDI6Ojo6&url=%2Fdp%2FB015SI8ZPU%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB015SI8ZPU%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1094]
+                  - generic [ref=e1095]: Bosch Broca SDS Plus-1 para concreto Ø 10 x 100 x 160 mm
+                - link "4,7 de 5 estrelas 137 classificações" [ref=e1097] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NDQ2Mjk2NjU5MDI6Ojo6&url=%2Fdp%2FB015SI8ZPU%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB015SI8ZPU%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "137"
+                - link "R$ 14,16" [ref=e1100] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NDQ2Mjk2NjU5MDI6Ojo6&url=%2Fdp%2FB015SI8ZPU%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB015SI8ZPU%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - generic [ref=e1101]:
+                    - generic [ref=e1102]: R$ 14,16
+                    - generic [ref=e1103]:
+                      - text: R$
+                      - generic [ref=e1104]:
+                        - text: "14"
+                        - generic [ref=e1105]: ","
+                      - text: "16"
+                - link "Amazon Prime" [ref=e1106] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA4NDQ2Mjk2NjU5MDI6Ojo6&url=%2Fdp%2FB015SI8ZPU%2Fref%3Dsspa_dk_detail_5%3Fpsc%3D1%26pd_rd_i%3DB015SI8ZPU%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1108]
+            - listitem [ref=e1109]:
+              - generic [ref=e1110]:
+                - link "Bosch Kit de Pontas e Brocas X-Line 33 pçs" [ref=e1111] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA1MzM3MjMyOTA2MDI6Ojo6&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img [ref=e1114]
+                  - generic [ref=e1115]: Bosch Kit de Pontas e Brocas X-Line 33 pçs
+                - link "4,8 de 5 estrelas 21.382 classificações" [ref=e1117] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA1MzM3MjMyOTA2MDI6Ojo6&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy#customerReviews
+                  - text: "21.382"
+                - generic [ref=e1119]:
+                  - link "Escolha da Amazon":
+                    - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA1MzM3MjMyOTA2MDI6Ojo6&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                    - generic [ref=e1121] [cursor=pointer]: Escolha da Amazon
+                - 'link "-56% R$ 73,10 De: R$ 169,90 De: R$ 169,90" [ref=e1123] [cursor=pointer]':
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA1MzM3MjMyOTA2MDI6Ojo6&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - text: "-56%"
+                  - generic [ref=e1124]:
+                    - generic [ref=e1125]: R$ 73,10
+                    - generic [ref=e1126]:
+                      - text: R$
+                      - generic [ref=e1127]:
+                        - text: "73"
+                        - generic [ref=e1128]: ","
+                      - text: "10"
+                  - generic [ref=e1129]: "De: R$ 169,90"
+                  - generic [ref=e1130]:
+                    - text: "De:"
+                    - generic [ref=e1131]:
+                      - generic [ref=e1132]: R$ 169,90
+                      - text: R$169,90
+                - link "Amazon Prime" [ref=e1133] [cursor=pointer]:
+                  - /url: /sspa/click?ie=UTF8&spc=MTo3NjE4MDI5NzI5NjM0MjA1OjE3ODE0NTM1NjU6c3BfZGV0YWlsMjozMDA1MzM3MjMyOTA2MDI6Ojo6&url=%2Fdp%2FB07CTN7X2Y%2Fref%3Dsspa_dk_detail_6%3Fpsc%3D1%26pd_rd_i%3DB07CTN7X2Y%26pd_rd_w%3DMnqio%26content-id%3Damzn1.sym.b600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_p%3Db600d26a-c49c-4e0d-89ce-d393d57156e9%26pf_rd_r%3DP6N8TTWAQDBWFSG398KR%26pd_rd_wg%3DCKxwo%26pd_rd_r%3D18e044f8-dd49-47c6-b806-a4b12915c010%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9kZXRhaWwy
+                  - img "Amazon Prime" [ref=e1135]
+      - generic [ref=e1138]:
+        - generic "Sponsored Ad" [ref=e1141]:
+          - link "Click to learn more about this sponsored product" [ref=e1142] [cursor=pointer]:
+            - /url: https://www.amazon.com.br/gp/video/ssoredirect/?aaxitk=fc13184ace3f3e689fdb8283e54a1d43&pvp=/detail/amzn1.dv.gti.88de2837-bb3f-4f7b-b41a-9c1ce670ee9a/?ref_=dvm_crs_hou_br_s_oth_l_ft_thby_tp&aref=Cr8YnsEoIJ
+            - generic [ref=e1143]: Click to learn more about this sponsored product
+          - img "Click to learn more about this sponsored product" [ref=e1145]
+        - button "Deixe comentários sobre o anúncio patrocinado" [ref=e1147] [cursor=pointer]:
+          - generic [ref=e1148]: Patrocinado
+      - generic "Melhores avaliações" [ref=e1152]:
+        - separator [ref=e1153]
+        - generic [ref=e1155]:
+          - generic [ref=e1156]:
+            - generic [ref=e1161]:
+              - heading "Avaliações de clientes" [level=2] [ref=e1163]
+              - generic [ref=e1165]:
+                - generic [ref=e1167]:
+                  - generic [ref=e1170]: 4,6 de 5 estrelas
+                  - generic [ref=e1173]: 4,6 de 5
+                - generic [ref=e1174]: 350 avaliações globais
+              - list [ref=e1179]:
+                - listitem [ref=e1180]:
+                  - link "75 por cento das avaliações têm 5 estrelas" [ref=e1183] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076X71VMB/ref=acr_dp_hist_5?ie=UTF8&filterByStar=five_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1184]: 5 estrelas
+                    - progressbar [ref=e1186]
+                    - generic [ref=e1187]: 75%
+                - listitem [ref=e1188]:
+                  - link "16 por cento das avaliações têm 4 estrelas" [ref=e1191] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076X71VMB/ref=acr_dp_hist_4?ie=UTF8&filterByStar=four_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1192]: 4 estrelas
+                    - progressbar [ref=e1194]
+                    - generic [ref=e1195]: 16%
+                - listitem [ref=e1196]:
+                  - link "6 por cento das avaliações têm 3 estrelas" [ref=e1199] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076X71VMB/ref=acr_dp_hist_3?ie=UTF8&filterByStar=three_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1200]: 3 estrelas
+                    - progressbar [ref=e1202]
+                    - generic [ref=e1203]: 6%
+                - listitem [ref=e1204]:
+                  - link "1 por cento das avaliações têm 2 estrelas" [ref=e1207] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076X71VMB/ref=acr_dp_hist_2?ie=UTF8&filterByStar=two_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1208]: 2 estrelas
+                    - progressbar [ref=e1210]
+                    - generic [ref=e1211]: 1%
+                - listitem [ref=e1212]:
+                  - link "2 por cento das avaliações têm 1 estrelas" [ref=e1215] [cursor=pointer]:
+                    - /url: /portal/customer-reviews/B076X71VMB/ref=acr_dp_hist_1?ie=UTF8&filterByStar=one_star&reviewerType=all_reviews#reviews-filter-bar
+                    - generic [ref=e1216]: 1 estrela
+                    - progressbar [ref=e1218]
+                    - generic [ref=e1219]: 2%
+              - button "Como as avaliações e classificações de clientes funcionam" [ref=e1224] [cursor=pointer]: Como as avaliações e classificações de clientes funcionam
+            - separator [ref=e1226]
+            - separator [ref=e1227]
+            - generic [ref=e1230]:
+              - generic "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1233]:
+                - link "Click to learn more about this sponsored product" [ref=e1234] [cursor=pointer]:
+                  - /url: https://www.primevideo.com/storefront/subscription/mgmbr/?aref=Wqlqtm7nD8
+                  - generic [ref=e1235]: O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve.
+                - img "O suporte de acessibilidade para este conteúdo está em andamento. Estamos a trabalhar para fornecer uma versão acessível em breve." [ref=e1237]
+              - button "Deixe comentários sobre o anúncio patrocinado" [ref=e1239] [cursor=pointer]:
+                - generic [ref=e1240]: Patrocinado
+          - generic [ref=e1245]:
+            - generic [ref=e1248]:
+              - group [ref=e1251]:
+                - generic [ref=e1252]:
+                  - heading "Avaliações com imagens" [level=3] [ref=e1254]
+                  - link "Ver todas as fotos" [ref=e1257] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - group [ref=e1261]:
+                  - list [ref=e1262]:
+                    - listitem [ref=e1263]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1265] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1266]
+                    - listitem [ref=e1268]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1270] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1271]
+                    - listitem [ref=e1273]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1275] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1276]
+                    - listitem [ref=e1278]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1280] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1281]
+                    - listitem [ref=e1283]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1285] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1286]
+                    - listitem [ref=e1288]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1290] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1291]
+                    - listitem [ref=e1293]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1295] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1296]
+                    - listitem [ref=e1298]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1300] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1301]
+                    - listitem [ref=e1303]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1305] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1306]
+                    - listitem [ref=e1308]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1310] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1311]
+                    - listitem [ref=e1313]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1315] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1316]
+                    - listitem [ref=e1318]:
+                      - button "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1320] [cursor=pointer]:
+                        - img "Imagem do cliente, clique para abrir a avaliação de clientes" [ref=e1321]
+              - separator [ref=e1323]
+            - generic [ref=e1328]:
+              - generic [ref=e1329]:
+                - heading "Melhores avaliações de Brasil" [level=3] [ref=e1330]
+                - list [ref=e1331]:
+                  - listitem [ref=e1332]:
+                    - generic [ref=e1335]:
+                      - link "Gilson Santos" [ref=e1337] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AEOGOXY47TICBXCBOSSJM4EMHDSQ?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1340]
+                        - generic [ref=e1342]: Gilson Santos
+                      - generic [ref=e1345]: 5 de 5 estrelas
+                      - link "Qualidade" [ref=e1346] [cursor=pointer]:
+                        - /url: /review/R8O1LJAPLZC0P/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Qualidade" [level=5] [ref=e1347]
+                      - generic [ref=e1348]: Avaliado no Brasil em 19 de agosto de 2025
+                      - link "Compra verificada" [ref=e1352] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1362]: Bom produto
+                      - generic [ref=e1364]:
+                        - generic [ref=e1368] [cursor=pointer]:
+                          - button "Útil" [ref=e1369]
+                          - generic [ref=e1371]: Útil
+                        - img [ref=e1372]
+                        - button "Análise do relatório" [ref=e1374] [cursor=pointer]: Relatório
+                  - listitem [ref=e1375]:
+                    - generic [ref=e1378]:
+                      - link "ADRS" [ref=e1380] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AG2ES26NQJYIJJMBMQQPM3ZKBFHA?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1383]
+                        - generic [ref=e1385]: ADRS
+                      - generic [ref=e1388]: 5 de 5 estrelas
+                      - link "me surpreendeu. Mas é pequeno." [ref=e1389] [cursor=pointer]:
+                        - /url: /review/R50V5L8C8LYNB/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "me surpreendeu. Mas é pequeno." [level=5] [ref=e1390]
+                      - generic [ref=e1391]: Avaliado no Brasil em 15 de maio de 2023
+                      - link "Compra verificada" [ref=e1395] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1405]: Muito bom, mas pequeno
+                      - generic [ref=e1406]: Uma pessoa achou isso útil
+                      - generic [ref=e1408]:
+                        - generic [ref=e1412] [cursor=pointer]:
+                          - button "Útil" [ref=e1413]
+                          - generic [ref=e1415]: Útil
+                        - img [ref=e1416]
+                        - button "Análise do relatório" [ref=e1418] [cursor=pointer]: Relatório
+                  - listitem [ref=e1419]:
+                    - generic [ref=e1422]:
+                      - link "Davy araujo" [ref=e1424] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AGIDPBN6XURITOLMY3KA6JN7D3YA?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1427]
+                        - generic [ref=e1429]: Davy araujo
+                      - generic [ref=e1432]: 5 de 5 estrelas
+                      - link "Prática" [ref=e1433] [cursor=pointer]:
+                        - /url: /review/RD0Y6FX0P4GBC/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Prática" [level=5] [ref=e1434]
+                      - generic [ref=e1435]: Avaliado no Brasil em 12 de maio de 2023
+                      - link "Compra verificada" [ref=e1439] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - generic [ref=e1447]:
+                        - generic [ref=e1449]:
+                          - region "Video Player" [ref=e1450]: .
+                          - button "Reproduzir vídeo" [ref=e1452] [cursor=pointer]
+                        - paragraph [ref=e1457]: Resistente e bem acabado
+                      - generic [ref=e1458]: 5 pessoas acharam isso útil
+                      - generic [ref=e1460]:
+                        - generic [ref=e1464] [cursor=pointer]:
+                          - button "Útil" [ref=e1465]
+                          - generic [ref=e1467]: Útil
+                        - img [ref=e1468]
+                        - button "Análise do relatório" [ref=e1470] [cursor=pointer]: Relatório
+                  - listitem [ref=e1471]:
+                    - generic [ref=e1474]:
+                      - link "NASCIMENTO" [ref=e1476] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AGGOK74AYL22HAVTY6FT35MLLACA?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1479]
+                        - generic [ref=e1481]: NASCIMENTO
+                      - generic [ref=e1484]: 4 de 5 estrelas
+                      - link "===Muito bom" [ref=e1485] [cursor=pointer]:
+                        - /url: /review/R1ITP9RRH49AB5/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "===Muito bom" [level=5] [ref=e1486]
+                      - generic [ref=e1487]: Avaliado no Brasil em 5 de maio de 2022
+                      - link "Compra verificada" [ref=e1491] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1501]: bom, compartimento tamanho padrao dos outros porem devia custar menos pois é muito menor que da marca Paramount que custa um real a mais.
+                      - generic [ref=e1502]: Uma pessoa achou isso útil
+                      - generic [ref=e1504]:
+                        - generic [ref=e1508] [cursor=pointer]:
+                          - button "Útil" [ref=e1509]
+                          - generic [ref=e1511]: Útil
+                        - img [ref=e1512]
+                        - button "Análise do relatório" [ref=e1514] [cursor=pointer]: Relatório
+                  - listitem [ref=e1515]:
+                    - generic [ref=e1518]:
+                      - link "Dani Martins" [ref=e1520] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AGOTKMH5RODO2CXTCNK5ISNPWUYA?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1523]
+                        - generic [ref=e1525]: Dani Martins
+                      - generic [ref=e1528]: 5 de 5 estrelas
+                      - link "Material bom!" [ref=e1529] [cursor=pointer]:
+                        - /url: /review/R38F8JFENNCPBV/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Material bom!" [level=5] [ref=e1530]
+                      - generic [ref=e1531]: Avaliado no Brasil em 8 de março de 2024
+                      - link "Compra verificada" [ref=e1535] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1545]: Valeu a pena adquirir!
+                      - generic [ref=e1547]:
+                        - generic [ref=e1551] [cursor=pointer]:
+                          - button "Útil" [ref=e1552]
+                          - generic [ref=e1554]: Útil
+                        - img [ref=e1555]
+                        - button "Análise do relatório" [ref=e1557] [cursor=pointer]: Relatório
+                  - listitem [ref=e1558]:
+                    - generic [ref=e1561]:
+                      - link "VALDECI" [ref=e1563] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AGO24Q633X6IFZNVXSVVBKFR6ZLQ?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1566]
+                        - generic [ref=e1568]: VALDECI
+                      - generic [ref=e1571]: 5 de 5 estrelas
+                      - link "Recomendo!!!" [ref=e1572] [cursor=pointer]:
+                        - /url: /review/R189005UW9LB62/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Recomendo!!!" [level=5] [ref=e1573]
+                      - generic [ref=e1574]: Avaliado no Brasil em 22 de junho de 2023
+                      - link "Compra verificada" [ref=e1578] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1588]: Me ajudou bastante a organizar as miudezas de eletrônica. Boa qualidade. Recomendo!!!
+                      - generic [ref=e1590]:
+                        - generic [ref=e1594] [cursor=pointer]:
+                          - button "Útil" [ref=e1595]
+                          - generic [ref=e1597]: Útil
+                        - img [ref=e1598]
+                        - button "Análise do relatório" [ref=e1600] [cursor=pointer]: Relatório
+                  - listitem [ref=e1601]:
+                    - generic [ref=e1604]:
+                      - link "Bona" [ref=e1606] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AFDAOLLGOXAP6JQJHDOWWFHYNR2Q?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1609]
+                        - generic [ref=e1611]: Bona
+                      - generic [ref=e1614]: 5 de 5 estrelas
+                      - link "Excelente" [ref=e1615] [cursor=pointer]:
+                        - /url: /review/R1JXU8RXUD7W76/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Excelente" [level=5] [ref=e1616]
+                      - generic [ref=e1617]: Avaliado no Brasil em 25 de março de 2024
+                      - link "Compra verificada" [ref=e1621] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1631]: Produto de excelente qualidade
+                      - generic [ref=e1633]:
+                        - generic [ref=e1637] [cursor=pointer]:
+                          - button "Útil" [ref=e1638]
+                          - generic [ref=e1640]: Útil
+                        - img [ref=e1641]
+                        - button "Análise do relatório" [ref=e1643] [cursor=pointer]: Relatório
+                  - listitem [ref=e1644]:
+                    - generic [ref=e1647]:
+                      - link "Flavio Calveiro" [ref=e1649] [cursor=pointer]:
+                        - /url: /gp/profile/amzn1.account.AFGRZXN3V46JRXUG5KMV5YING2CQ?ref=cm_cr_dp_d_bdcrb_top
+                        - img [ref=e1652]
+                        - generic [ref=e1654]: Flavio Calveiro
+                      - generic [ref=e1657]: 5 de 5 estrelas
+                      - link "Vale a pena" [ref=e1658] [cursor=pointer]:
+                        - /url: /review/R3B5GSEPEZUYU8/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8
+                        - heading "Vale a pena" [level=5] [ref=e1659]
+                      - generic [ref=e1660]: Avaliado no Brasil em 8 de agosto de 2023
+                      - link "Compra verificada" [ref=e1664] [cursor=pointer]:
+                        - /url: /gp/help/customer/display.html/ref=cm_cr_dp_d_rvw_avp?ie=UTF8&nodeId=G8UYX7LALQC8V9KA
+                      - paragraph [ref=e1674]: Ótimo custo benefício
+                      - generic [ref=e1676]:
+                        - button "Vale a pena" [ref=e1677] [cursor=pointer]:
+                          - img "Vale a pena" [ref=e1678]
+                        - button "Vale a pena" [ref=e1679] [cursor=pointer]:
+                          - img "Vale a pena" [ref=e1680]
+                      - generic [ref=e1681]: Uma pessoa achou isso útil
+                      - generic [ref=e1683]:
+                        - generic [ref=e1687] [cursor=pointer]:
+                          - button "Útil" [ref=e1688]
+                          - generic [ref=e1690]: Útil
+                        - img [ref=e1691]
+                        - button "Análise do relatório" [ref=e1693] [cursor=pointer]: Relatório
+              - link "Veja mais avaliações" [ref=e1695] [cursor=pointer]:
+                - /url: /product-reviews/B076X71VMB/ref=cm_cr_dp_d_show_all_top?_encoding=UTF8&ie=UTF8&reviewerType=all_reviews
+                - generic [ref=e1696]: Veja mais avaliações
+      - generic [ref=e1703]:
+        - iframe [ref=e1704]:
+          - generic [ref=f2e4]:
+            - generic [ref=f2e5]: "Clique para navegar até a página de detalhes do produto Anúncio patrocinado. Imagem do produto. Imagem com a marca. Old Spice Desodorante Antitranspirante Gel Refrescante 80 g. Preço: R$ 18,09."
+            - generic [ref=f2e8]:
+              - img "Logotipo da marca" [ref=f2e13]
+              - img "Imagem do produto" [ref=f2e18]
+            - link "Clique para navegar até a página de detalhes do produto" [ref=f2e22] [cursor=pointer]:
+              - /url: https://www.amazon.com.br/dp/B0CZBXNBLZ?aref=ZpNHivXuYz&aaxitk=abd8ef4c3019fdde7c2fe7563664fc84&language=pt_BR&pd_rd_plhdr=t&ref=dacx_dp_580133849431584788_588512614778559889
+        - button "Deixe comentários sobre o anúncio patrocinado" [ref=e1706] [cursor=pointer]:
+          - generic [ref=e1707]: Patrocinado
+  - complementary "Itens que você visualizou recentemente e recomendações baseadas em seu histórico:"
+  - generic [ref=e1709]:
+    - button "Voltar ao início" [ref=e1710] [cursor=pointer]:
+      - generic [ref=e1711]: Voltar ao início
+    - generic [ref=e1712]:
+      - generic [ref=e1713]:
+        - heading "Conheça-nos" [level=6] [ref=e1714]
+        - list [ref=e1715]:
+          - listitem [ref=e1716]:
+            - link "Sobre a Amazon" [ref=e1717] [cursor=pointer]:
+              - /url: https://www.aboutamazon.com.br/
+          - listitem [ref=e1718]:
+            - link "Informações corporativas" [ref=e1719] [cursor=pointer]:
+              - /url: /gp/browse.html?node=23490129011&ref_=footer_gw_m_b_corporate
+          - listitem [ref=e1720]:
+            - link "Carreiras" [ref=e1721] [cursor=pointer]:
+              - /url: https://www.amazon.jobs
+          - listitem [ref=e1722]:
+            - link "Comunicados à imprensa" [ref=e1723] [cursor=pointer]:
+              - /url: /gp/browse.html?node=15155858011&ref_=footer_community
+          - listitem [ref=e1724]:
+            - link "Comunidade" [ref=e1725] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16593314011&ref_=footer_community
+          - listitem [ref=e1726]:
+            - link "Acessibilidade" [ref=e1727] [cursor=pointer]:
+              - /url: /gp/browse.html?node=23454858011&ref_=footer_accessibility
+          - listitem [ref=e1728]:
+            - link "Amazon Science" [ref=e1729] [cursor=pointer]:
+              - /url: https://www.amazon.science
+      - generic [ref=e1731]:
+        - heading "Ganhe dinheiro conosco" [level=6] [ref=e1732]
+        - list [ref=e1733]:
+          - listitem [ref=e1734]:
+            - link "Venda na Amazon" [ref=e1735] [cursor=pointer]:
+              - /url: https://venda.amazon.com.br/?ld=SDBRSOA_footerDesk_T1
+          - listitem [ref=e1736]:
+            - link "Proteja e construa a sua marca" [ref=e1737] [cursor=pointer]:
+              - /url: https://brandservices.amazon.com.br?ref=AOBRABRLGNRFOOT&ld=AOBRABRLGNRFOOT
+          - listitem [ref=e1738]:
+            - link "Forneça para a Amazon" [ref=e1739] [cursor=pointer]:
+              - /url: https://supply.amazon.com/?ref_=footer_sta&lang=pt-BR
+          - listitem [ref=e1740]:
+            - link "Publique seus livros" [ref=e1741] [cursor=pointer]:
+              - /url: https://kdp.amazon.com?language=pt_BR
+          - listitem [ref=e1742]:
+            - link "Seja um associado" [ref=e1743] [cursor=pointer]:
+              - /url: https://associados.amazon.com.br
+          - listitem [ref=e1744]:
+            - link "Anuncie seus produtos" [ref=e1745] [cursor=pointer]:
+              - /url: https://advertising.amazon.com/pt-br?ref=footer_advtsing_BR
+      - generic [ref=e1747]:
+        - heading "Pagamento" [level=6] [ref=e1748]
+        - list [ref=e1749]:
+          - listitem [ref=e1750]:
+            - link "Meios de Pagamento" [ref=e1751] [cursor=pointer]:
+              - /url: /gp/browse.html?node=16568920011&ref_=footer_pay_tc
+          - listitem [ref=e1752]:
+            - link "Compre com Pontos" [ref=e1753] [cursor=pointer]:
+              - /url: /gp/browse.html?node=24028636011&ref_=footer_pay_tc
+          - listitem [ref=e1754]:
+            - link "Cartão de crédito Amazon" [ref=e1755] [cursor=pointer]:
+              - /url: /credit/application/landing?ref_=footer_pay_tc
+      - generic [ref=e1757]:
+        - heading "Deixe-nos ajudar você" [level=6] [ref=e1758]
+        - list [ref=e1759]:
+          - listitem [ref=e1760]:
+            - link "Sua conta" [ref=e1761] [cursor=pointer]:
+              - /url: https://www.amazon.com.br/gp/css/homepage.html?ref_=footer_ya
+          - listitem [ref=e1762]:
+            - link "Frete e prazo de entrega" [ref=e1763] [cursor=pointer]:
+              - /url: /gp/help/customer/display.html?nodeId=201365500&ref_=footer_shiprates
+          - listitem [ref=e1764]:
+            - link "Devoluções e reembolsos" [ref=e1765] [cursor=pointer]:
+              - /url: /gp/help/customer/display.html?nodeId=GNW5VKFXMF72FFMR&ref_=footer_hy_f_4
+          - listitem [ref=e1766]:
+            - link "Gerencie seu conteúdo e dispositivos" [ref=e1767] [cursor=pointer]:
+              - /url: /hz/mycd/myx?ref_=footer_myk
+          - listitem [ref=e1768]:
+            - link "Recalls e alertas de segurança do produto" [ref=e1769] [cursor=pointer]:
+              - /url: https://www.amazon.com.br/your-product-safety-alerts?ref_=footer_bsx_ypsa
+          - listitem [ref=e1770]:
+            - link "Ajuda" [ref=e1771] [cursor=pointer]:
+              - /url: /gp/help/customer/display.html?nodeId=508510&ref_=footer_gw_m_b_he
+    - generic [ref=e1773]:
+      - link "Amazon Brazil Home" [ref=e1776] [cursor=pointer]:
+        - /url: /ref=footer_logo
+      - button "Escolha um país/região para fazer suas compras. A seleção atual é Brasil." [ref=e1780] [cursor=pointer]:
+        - generic [ref=e1782]: Brasil
+    - generic [ref=e1783]:
+      - list [ref=e1784]:
+        - listitem [ref=e1785]:
+          - link "Condições de Uso" [ref=e1786] [cursor=pointer]:
+            - /url: /gp/help/customer/display.html?nodeId=201283910&ref_=footer_cou
+        - listitem [ref=e1787]:
+          - link "Notificação de Privacidade" [ref=e1788] [cursor=pointer]:
+            - /url: /gp/help/customer/display.html?nodeId=201283950&ref_=footer_privacy
+        - listitem [ref=e1789]:
+          - link "Cookies" [ref=e1790] [cursor=pointer]:
+            - /url: /gp/help/customer/display.html?nodeId=201890250&ref_=footer_cookies
+        - listitem [ref=e1791]:
+          - link "Anúncios Baseados em Interesses" [ref=e1792] [cursor=pointer]:
+            - /url: /gp/help/customer/display.html?nodeId=201283970&ref_=footer_iba
+      - generic [ref=e1793]: © 2021-2026 Amazon.com, Inc. ou suas afiliadas
+    - list [ref=e1795]:
+      - listitem [ref=e1796]: Amazon Serviços de Varejo do Brasil Ltda. | CNPJ 15.436.940/0001-03
+    - list [ref=e1798]:
+      - listitem [ref=e1799]:
+        - text: "Av. Juscelino Kubitschek, 2041, Torre E, 18° andar - São Paulo CEP: 04543-011|"
+        - link "Fale conosco" [ref=e1800] [cursor=pointer]:
+          - /url: https://www.amazon.com.br/gp/help/customer/contact-us?ref=footer_gw_m_b_cu
+        - text: "| ajuda-amazon@amazon.com.br"
+    - list [ref=e1802]:
+      - listitem [ref=e1803]: "Formas de pagamento aceitas: cartões de crédito (Visa, MasterCard, Elo e American Express), cartões de débito (Visa e Elo), Boleto e Pix."

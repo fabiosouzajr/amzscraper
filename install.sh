@@ -12,7 +12,6 @@ MISSING_REQUIREMENTS=false
 
 # Initialize browser status variables
 FIREFOX_OK=false
-CHROMIUM_OK=false
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Amazon Scraper Installation Check${NC}"
@@ -76,58 +75,30 @@ check_node_modules() {
 # Function to check Playwright browsers
 check_playwright_browsers() {
     cd backend 2>/dev/null || return 1
-    
+
     # Check if playwright is installed
     if [ ! -d "node_modules/playwright" ]; then
         cd ..
         return 1
     fi
-    
-    # Playwright stores browsers in ~/.cache/ms-playwright or in node_modules/.cache/playwright
-    # Check for firefox (primary browser used in scraper)
-    FIREFOX_FOUND=false
-    if [ -d "$HOME/.cache/ms-playwright" ]; then
-        if ls -d "$HOME/.cache/ms-playwright/firefox-"* 2>/dev/null | head -1 | grep -q .; then
-            FIREFOX_FOUND=true
-        fi
-    fi
-    if [ "$FIREFOX_FOUND" = false ] && [ -d "node_modules/.cache/playwright" ]; then
-        if ls -d "node_modules/.cache/playwright/firefox-"* 2>/dev/null | head -1 | grep -q .; then
-            FIREFOX_FOUND=true
-        fi
-    fi
-    
-    if [ "$FIREFOX_FOUND" = true ]; then
+
+    # Ask Playwright for the exact executable path it expects — catches version mismatches
+    FIREFOX_EXEC=$(node -e "
+try {
+  const { firefox } = require('playwright');
+  console.log(firefox.executablePath());
+} catch(e) { process.exit(1); }
+" 2>/dev/null)
+
+    if [ -n "$FIREFOX_EXEC" ] && [ -f "$FIREFOX_EXEC" ]; then
         echo -e "${GREEN}✓${NC} Playwright Firefox browser is installed"
         FIREFOX_OK=true
     else
-        echo -e "${YELLOW}✗${NC} Playwright Firefox browser is not installed"
+        echo -e "${YELLOW}✗${NC} Playwright Firefox browser is not installed or version mismatch"
         MISSING_REQUIREMENTS=true
         FIREFOX_OK=false
     fi
-    
-    # Check for chromium (used in tests)
-    CHROMIUM_FOUND=false
-    if [ -d "$HOME/.cache/ms-playwright" ]; then
-        if ls -d "$HOME/.cache/ms-playwright/chromium-"* 2>/dev/null | head -1 | grep -q .; then
-            CHROMIUM_FOUND=true
-        fi
-    fi
-    if [ "$CHROMIUM_FOUND" = false ] && [ -d "node_modules/.cache/playwright" ]; then
-        if ls -d "node_modules/.cache/playwright/chromium-"* 2>/dev/null | head -1 | grep -q .; then
-            CHROMIUM_FOUND=true
-        fi
-    fi
-    
-    if [ "$CHROMIUM_FOUND" = true ]; then
-        echo -e "${GREEN}✓${NC} Playwright Chromium browser is installed"
-        CHROMIUM_OK=true
-    else
-        echo -e "${YELLOW}✗${NC} Playwright Chromium browser is not installed"
-        MISSING_REQUIREMENTS=true
-        CHROMIUM_OK=false
-    fi
-    
+
     cd ..
 }
 
@@ -182,23 +153,11 @@ install_frontend_deps() {
 # Function to install Playwright browsers
 install_playwright_browsers() {
     echo ""
-    echo -e "${BLUE}Installing Playwright browsers...${NC}"
+    echo -e "${BLUE}Installing Playwright Firefox browser...${NC}"
     cd backend
-    
-    # Install firefox (primary browser)
-    if [ "$FIREFOX_OK" != "true" ]; then
-        echo -e "${BLUE}Installing Firefox...${NC}"
-        npx playwright install firefox
-    fi
-    
-    # Install chromium (for tests)
-    if [ "$CHROMIUM_OK" != "true" ]; then
-        echo -e "${BLUE}Installing Chromium...${NC}"
-        npx playwright install chromium
-    fi
-    
+    npx playwright install firefox
     cd ..
-    echo -e "${GREEN}✓ Playwright browsers installation complete${NC}"
+    echo -e "${GREEN}✓ Playwright Firefox installation complete${NC}"
 }
 
 # Main check sequence
@@ -238,7 +197,6 @@ if [ $NODE_OK -eq 0 ] && [ $NPM_OK -eq 0 ]; then
     else
         echo -e "${YELLOW}⚠ Skipping Playwright browser check (backend dependencies not installed)${NC}"
         FIREFOX_OK=false
-        CHROMIUM_OK=false
     fi
 else
     echo ""
@@ -246,7 +204,6 @@ else
     BACKEND_DEPS_OK=1
     FRONTEND_DEPS_OK=1
     FIREFOX_OK=false
-    CHROMIUM_OK=false
 fi
 
 # Summary and installation prompts
@@ -300,9 +257,9 @@ else
         
         # Re-check Playwright browsers if backend deps are now installed
         if [ -d "backend/node_modules/playwright" ]; then
-            if [ "$FIREFOX_OK" != "true" ] || [ "$CHROMIUM_OK" != "true" ]; then
+            if [ "$FIREFOX_OK" != "true" ]; then
                 echo ""
-                read -p "Install Playwright browsers (Firefox and Chromium)? (y/n) " -n 1 -r
+                read -p "Install Playwright Firefox browser? (y/n) " -n 1 -r
                 echo
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
                     install_playwright_browsers
