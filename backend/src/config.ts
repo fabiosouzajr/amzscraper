@@ -19,6 +19,9 @@ export interface AppConfig {
   initialAdminUsername: string | null;
   initialAdminPassword: string | null;
 
+  // Telegram
+  telegramBotToken: string;
+
   // Environment
   nodeEnv: 'development' | 'production' | 'test';
   isProduction: boolean;
@@ -70,6 +73,7 @@ function loadConfig(): AppConfig {
     dbPath,
     initialAdminUsername: process.env.INITIAL_ADMIN_USERNAME || null,
     initialAdminPassword: process.env.INITIAL_ADMIN_PASSWORD || null,
+    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN || '',
     nodeEnv,
     isProduction,
   };
