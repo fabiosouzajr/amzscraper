@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { AuthRequest, authenticate } from '../middleware/auth';
 import { dbService } from '../services/database';
 import { notificationChannelService } from '../services/notification-channel';
+import { config } from '../config';
 
 const router = Router();
 
@@ -50,6 +51,10 @@ router.post('/channels', async (req: AuthRequest, res: Response): Promise<void |
 !['email', 'telegram', 'discord'].includes(type)
 ) {
       return res.status(400).json({ error: 'Type must be email, telegram, or discord' });
+    }
+
+    if (type === 'telegram' && !config.telegramBotToken) {
+      return res.status(400).json({ error: 'TELEGRAM_BOT_TOKEN is not configured on this server. Ask the admin to set it.' });
     }
 
     // Check quota
