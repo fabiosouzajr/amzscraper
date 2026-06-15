@@ -86,13 +86,7 @@ Expected:
 }
 ```
 
-### Step 5: Communicate the Bot Token to Users
-
-Each user who sets up a Telegram notification channel in amzscraper needs to enter the **bot token** alongside their personal Chat ID. Share the token with your users through a secure channel (private message, internal docs, etc.).
-
-> If you prefer not to share the raw token, you can create a pinned message or internal wiki page that users reference during setup.
-
-### Step 6 (Optional): Set Bot Commands in Telegram
+### Step 5 (Optional): Set Bot Commands in Telegram
 
 Makes `/start` appear as a suggested command in the Telegram UI.
 
@@ -131,26 +125,17 @@ start - Get your Chat ID to link this bot to amzscraper
 
 4. Copy that number.
 
-### Step 2: Get the Bot Token
-
-Ask your amzscraper admin for the **Bot Token**. It looks like:
-
-```text
-8469732834:AAFrJ-ixveS_hoVm97h-EMo3x2trwiu_2Ho
-```
-
-### Step 3: Add a Telegram Channel in amzscraper
+### Step 2: Add a Telegram Channel in amzscraper
 
 1. Open amzscraper → **Settings → Notifications**
 2. Click **Add Channel**
 3. Set **Type** to **Telegram**
-4. Fill in the two fields:
-   - **Bot Token** — the token from Step 2 (provided by your admin)
+4. Fill in:
    - **Chat ID** — the number from Step 1
 5. Click **Save**
 6. Click **Test** to verify — you should receive a test message in Telegram immediately
 
-### Step 4: Create a Notification Rule
+### Step 3: Create a Notification Rule
 
 1. Go to any product's detail page
 2. Open the **Notifications** tab
