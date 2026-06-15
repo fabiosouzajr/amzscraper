@@ -33,7 +33,6 @@ export function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
   const [toAddress, setToAddress] = useState(emailCfg?.to_address ?? '');
 
   const telegramCfg = channel && channel.type === 'telegram' ? (channel.config as TelegramConfig) : null;
-  const [botToken, setBotToken] = useState(telegramCfg?.bot_token ?? '');
   const [chatId, setChatId] = useState(telegramCfg?.chat_id ?? '');
 
   const discordCfg = channel && channel.type === 'discord' ? (channel.config as DiscordConfig) : null;
@@ -57,7 +56,7 @@ export function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
           to_address: toAddress,
         };
       case 'telegram':
-        return { bot_token: botToken, chat_id: chatId };
+        return { chat_id: chatId };
       case 'discord':
         return { webhook_url: webhookUrl };
     }
@@ -171,16 +170,10 @@ export function ChannelForm({ channel, onClose, onSaved }: ChannelFormProps) {
         )}
 
         {channelType === 'telegram' && (
-          <>
-            <div className={styles.formGroup}>
-              <label>{t('notifications.channels.telegram.botToken')}</label>
-              <input type="text" value={botToken} onChange={(e) => setBotToken(e.target.value)} required />
-            </div>
-            <div className={styles.formGroup}>
-              <label>{t('notifications.channels.telegram.chatId')}</label>
-              <input type="text" value={chatId} onChange={(e) => setChatId(e.target.value)} required />
-            </div>
-          </>
+          <div className={styles.formGroup}>
+            <label>{t('notifications.channels.telegram.chatId')}</label>
+            <input type="text" value={chatId} onChange={(e) => setChatId(e.target.value)} required />
+          </div>
         )}
 
         {channelType === 'discord' && (
