@@ -2,6 +2,7 @@
 
 **Date:** 2026-06-15
 **Status:** Approved
+**Grilled:** 2026-06-15
 
 ---
 
@@ -35,12 +36,10 @@ Scheduler → PriceUpdate → NotificationEvaluator → NotificationChannelServi
 **Channel config shape:**
 
 ```json
-{ "bot_token": "<amzbrbot token>", "chat_id": "123456789" }
+{ "chat_id": "123456789" }
 ```
 
-All users share the same `bot_token` (the `amzbrbot` token the admin creates via BotFather). Each user has a unique `chat_id`.
-
-**Bot token in channel config vs env var:** The current implementation stores `bot_token` per channel (in `config` JSON blob). This means users must enter the bot token when creating a Telegram channel. The admin must communicate the token to users (or document it in settings). This is the existing design — not changed here.
+All users share the same bot token (the `@amzbrbot` token the admin creates via BotFather). Each user has a unique `chat_id`. The bot token lives exclusively in `TELEGRAM_BOT_TOKEN` env var — never in the database. See [ADR-0001](../adr/0001-global-bot-token.md).
 
 ---
 
@@ -48,7 +47,7 @@ All users share the same `bot_token` (the `amzbrbot` token the admin creates via
 
 ### 1. Bot Listener (`backend/src/services/telegram.ts`) — NEW
 
-A long-polling listener that responds to `/start` with the user's Chat ID. This is the only missing piece of the user flow.
+Long-polling listener that responds to `/start` with the user's Chat ID. Uses `node-telegram-bot-api`.
 
 ```typescript
 import TelegramBot from 'node-telegram-bot-api';
@@ -68,27 +67,58 @@ export function initTelegramBot(token: string): void {
 }
 ```
 
+No graceful shutdown needed — process exit abandons polling intentionally.
+
 ### 2. Env Var + Config (`backend/src/config.ts`) — MODIFY
 
+Add to `AppConfig` interface and `loadConfig()`:
+
 ```typescript
-TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN || '',
+telegramBotToken: string;
+// ...
+telegramBotToken: process.env.TELEGRAM_BOT_TOKEN || '',
 ```
 
-### 3. Server Startup (`backend/src/server.ts`) — MODIFY
+### 3. `sendTelegram` reads from app config — MODIFY `notification-channel.ts`
+
+`sendTelegram` no longer reads `config.bot_token` from the channel record. It receives the token as a parameter (or reads from app config directly). `TelegramConfig` becomes `{ chat_id: string }`.
+
+### 4. DB Migration — MODIFY `migrations.ts`
+
+Strip `bot_token` from all existing `telegram` channel config blobs:
+
+```typescript
+// in a new migration step:
+await dbRun(db, `
+  UPDATE notification_channels
+  SET config = json_remove(config, '$.bot_token')
+  WHERE type = 'telegram' AND json_extract(config, '$.bot_token') IS NOT NULL
+`);
+```
+
+### 5. Creation Guard — MODIFY `routes/notifications.ts`
+
+Return `400` when creating a `telegram` channel if `config.telegramBotToken` is not set.
+
+### 6. Frontend `ChannelForm.tsx` — MODIFY
+
+Remove "Bot Token" field from the Telegram channel form. Only "Chat ID" remains.
+
+### 7. Server Startup (`backend/src/server.ts`) — MODIFY
 
 ```typescript
 import { initTelegramBot } from './services/telegram';
 // after DB migrations:
-initTelegramBot(config.TELEGRAM_BOT_TOKEN);
+initTelegramBot(config.telegramBotToken);
 ```
 
-### 4. New Dependency
+### 8. New Dependency
 
 ```bash
 cd backend && npm install node-telegram-bot-api @types/node-telegram-bot-api
 ```
 
-### 5. Reference Document (`docs/telegram-setup.md`) — NEW
+### 9. Reference Document (`docs/telegram-setup.md`) — NEW (already exists, verify content)
 
 User-facing guide covering admin setup + per-user channel configuration.
 
@@ -100,8 +130,7 @@ User-facing guide covering admin setup + per-user channel configuration.
 Admin: BotFather → create bot → get token → set TELEGRAM_BOT_TOKEN → restart server
 User:  Open @amzbrbot → /start → get Chat ID
 User:  Settings → Notifications → Add Channel → Telegram
-       Bot Token: <admin provides this>
-       Chat ID:   <from /start reply>
+       Chat ID: <from /start reply>
 ```
 
 ---
