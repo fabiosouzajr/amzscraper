@@ -1,329 +1,521 @@
-/* Product Detail */
+/* ── Container ───────────────────────────────────────────────────────── */
+
 .productDetail {
-  background: var(--color-bg-elevated);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-4);
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
 }
 
-.productDetailHeader {
+/* ── Header ──────────────────────────────────────────────────────────── */
+
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--space-3);
+  min-height: 36px;
 }
 
 .backButton {
-  background: var(--color-text-secondary);
-  color: var(--color-text-inverse);
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+  height: var(--touch-target-min);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.85rem;
-  transition: background 0.2s;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-body);
+  transition: background var(--duration-fast) var(--ease-default),
+              color var(--duration-fast) var(--ease-default);
+  touch-action: manipulation;
 }
 
 .backButton:hover {
-  background: var(--color-text-primary);
+  background: var(--color-bg-inset);
+  color: var(--color-text-primary);
+}
+
+.backButton:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .productNavigation {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
 }
 
 .navButton {
-  background: #2563eb;
-  color: var(--color-text-inverse);
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.85rem;
-  transition: background 0.2s;
-  min-width: 70px;
+  font-size: var(--font-size-md);
+  font-family: var(--font-body);
+  transition: background var(--duration-fast) var(--ease-default),
+              color var(--duration-fast) var(--ease-default);
+  touch-action: manipulation;
 }
 
 .navButton:hover:not(:disabled) {
-  background: #1d4ed8;
+  background: var(--color-bg-inset);
+  color: var(--color-text-primary);
 }
 
 .navButton:disabled {
-  background: var(--color-border-secondary);
+  opacity: 0.35;
   cursor: not-allowed;
-  opacity: 0.6;
 }
 
-.productHeader {
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-bg-inset);
+.navButton:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
 }
 
-.productHeader :global(.product-categories) {
-  margin-bottom: 0.75rem;
+.navCounter {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  min-width: 44px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Product title ───────────────────────────────────────────────────── */
+
+.productTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+  text-wrap: pretty;
+  margin-block: var(--space-2);
+}
+
+.productTitleLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.productTitleLink:hover {
+  color: var(--color-accent-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.productTitleLink:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-xs);
+}
+
+/* ── Meta + categories (above image) ────────────────────────────────── */
+
+.metaAndCategories {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.15rem;
-  align-items: center;
+  flex-direction: column;
+  gap: var(--space-2);
+  position: relative;
 }
 
-.productHeader h2 {
-  color: var(--color-amazon-navy);
-  margin-bottom: 0.75rem;
-  line-height: 1.3;
-  font-size: 1.25rem;
-}
+/* ── Image + Price (side by side, always) ────────────────────────────── */
 
-.productMeta {
+.imageAndPrice {
   display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-}
-
-.productMetaPrimary {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.productMetaAsin {
-  flex-shrink: 0;
-}
-
-.productMetaAdded {
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-.priceInfoBody {
-  display: flex;
+  gap: var(--space-4);
   align-items: flex-start;
-  gap: 1rem;
 }
 
-.priceData {
-  flex: 1;
-}
-
-.productThumbnailWrapperLg {
-  width: 120px;
-  height: 120px;
-}
-
-.productThumbnailWrapperLg :global(.product-thumbnail) {
-  width: 120px;
-  height: 120px;
-}
-
-.currentPrice {
+.heroImage {
+  flex: 0 0 42%;
+  max-width: 200px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-bottom: 0.55rem;
+  justify-content: center;
+  flex-shrink: 0;
 }
+
+.heroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.priceBlock {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Chart (full width, below image+price row) ───────────────────────── */
+
+.chartSection {
+  width: 100%;
+}
+
+/* Price block */
 
 .currentPriceLabel {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: var(--space-1);
 }
 
 .currentPriceValue {
-  font-size: var(--font-size-lg);
-  font-weight: 800;
-  color: var(--color-amazon-navy);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.1em;
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: var(--space-3);
 }
 
-.priceComparison {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
+.currencySymbol {
+  font-size: 0.42em;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  padding-top: 0.18em;
+  flex-shrink: 0;
 }
 
-.previousPrice,
-.priceDrop {
-  display: flex;
-  justify-content: space-between;
+.priceAmount {
+  /* inherits .currentPriceValue styles */
+}
+
+.priceDropPill {
+  display: inline-flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  background: var(--color-bg-secondary);
-  border-radius: 4px;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-success-subtle);
+  color: var(--color-success);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: var(--space-3);
+  white-space: nowrap;
 }
 
-.previousPrice .label,
-.priceDrop .label {
+.pillPercent {
+  opacity: 0.8;
+}
+
+.previousPriceRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.previousPriceLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.previousPriceValue {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  text-decoration: line-through;
+  font-variant-numeric: tabular-nums;
+}
+
+.lastUpdated {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.noPriceData {
+  padding: var(--space-6);
+  text-align: center;
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
 }
 
-.previousPrice .value {
-  text-decoration: line-through;
+/* Chart section */
+
+.chartSection {
+  min-width: 0;
+  padding-top: var(--space-3);
+}
+
+.chartTitle {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-tertiary);
-  font-size: var(--font-size-md);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: var(--space-2);
 }
 
-.priceDrop .value.positive {
-  color: var(--color-success);
-  font-weight: 600;
-  font-size: 0.9rem;
+.chartLoading {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
 }
 
-.lastUpdated {
-  margin-top: 0.75rem;
-  font-size: 0.75rem;
+/* ── Meta strip ──────────────────────────────────────────────────────── */
+
+.metaStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.metaCloseButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-xs);
+  color: var(--color-text-tertiary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-default),
+              color var(--duration-fast) var(--ease-default);
+  touch-action: manipulation;
+}
+
+.metaCloseButton:hover {
+  background: var(--color-bg-inset);
+  color: var(--color-text-primary);
+}
+
+.metaCloseButton:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Base chip */
+.metaChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  background: var(--color-bg-secondary);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
+  border-left: 2px solid transparent;
+  white-space: nowrap;
+}
+
+/* ASIN — code identifier: neutral border, monospace value */
+.chipAsin {
+  border-left-color: var(--color-border-secondary);
+}
+
+.chipAsin .chipLabel {
+  color: var(--color-text-tertiary);
+}
+
+.chipAsin .chipValue {
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+/* Adicionado — temporal: warm amber border */
+.chipAdded {
+  border-left-color: var(--color-warning);
+}
+
+.chipAdded .chipLabel {
+  color: var(--color-warning);
+  opacity: 0.8;
+}
+
+.chipAdded .chipValue {
   color: var(--color-text-secondary);
-  text-align: right;
 }
 
-.noPriceData {
-  padding: 1.5rem;
-  text-align: center;
+/* Em Listas — organizational: accent border */
+.chipLists {
+  border-left-color: var(--color-accent-primary);
+}
+
+.chipLists .chipLabel {
+  color: var(--color-accent-primary);
+  opacity: 0.8;
+}
+
+.chipLists .chipValue {
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
 }
 
-.priceChart {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-bg-inset);
+/* Shared label/value typography */
+.chipLabel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-.priceChart h3 {
-  margin-bottom: 0.55rem;
-  color: var(--color-amazon-navy);
+.chipValue {
+  font-family: var(--font-body);
+  color: var(--color-text-secondary);
+}
+
+/* ── Categories ──────────────────────────────────────────────────────── */
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.catItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.catSep {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+  margin: 0 var(--space-1);
+  user-select: none;
+}
+
+/* Truncation ellipsis between first and last category */
+.catEllipsis {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.1em;
+  padding: 0 var(--space-1);
+  cursor: default;
+  user-select: none;
+}
+
+/* ── Collapsible history ─────────────────────────────────────────────── */
+
+.historySection {
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.historyToggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-body);
+  color: var(--color-text-secondary);
+  text-align: left;
+  touch-action: manipulation;
+  min-height: var(--touch-target-min);
+  transition: color var(--duration-fast) var(--ease-default);
+}
+
+.historyToggle:hover {
+  color: var(--color-text-primary);
+}
+
+.historyToggle:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-xs);
+}
+
+.historyChevron {
+  display: inline-block;
+  transition: transform var(--duration-fast) var(--ease-default);
+  font-style: normal;
   font-size: 1rem;
 }
 
-.priceChart :global(.recharts-wrapper) {
-  margin-top: 0.5rem;
+.historyChevronOpen {
+  transform: rotate(180deg);
 }
 
-.chartFrame {
-  width: 100%;
-}
-
-.chartFrameMobile {
-  width: 80%;
-  margin: 0 auto;
-}
-
-.priceHistoryTable {
-  margin-top: 1.25rem;
-  padding-top: 1.25rem;
-  border-top: 2px solid var(--color-bg-inset);
+.historyTableWrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin-bottom: var(--space-3);
 }
 
-.priceHistoryTable h3 {
-  margin-bottom: 0.75rem;
-  color: var(--color-amazon-navy);
-  font-size: 1rem;
-}
-
-.priceHistoryTable table {
+.historyTable {
   width: 100%;
   border-collapse: collapse;
-  min-width: 350px;
+  min-width: 280px;
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
 }
 
-.priceHistoryTable th,
-.priceHistoryTable td {
-  padding: 0.5rem 0.75rem;
+.historyTable th,
+.historyTable td {
+  padding: var(--space-2) var(--space-3);
   text-align: left;
-  border-bottom: 1px solid var(--color-bg-inset);
-  font-size: 0.9rem;
+  border-bottom: 1px solid var(--color-border-primary);
 }
 
-.priceHistoryTable th {
+.historyTable th {
   background: var(--color-bg-secondary);
-  font-weight: 600;
-  color: var(--color-amazon-navy);
-  font-size: 0.85rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
 }
 
-.priceHistoryTable tr:hover {
+.historyTable td {
+  color: var(--color-text-primary);
+}
+
+.historyTable tr:hover td {
   background: var(--color-bg-secondary);
 }
 
-/* ------------------ Tablet (max-width: 768px) --------------------------     */
-@media (max-width: 768px) {
+/* ── Narrow mobile ───────────────────────────────────────────────────── */
+
+@media (max-width: 479px) {
   .productDetail {
-    padding: 0.75rem;
-  }
-
-  .productDetailHeader {
-    margin-bottom: 0.75rem;
-  }
-
-  .productHeader {
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-  }
-
-  .productHeader h2 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .productMeta {
-    gap: 0.5rem;
-  }
-
-  .currentPrice {
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 0.5rem;
-  }
-
-  .currentPriceValue {
-    font-size: 2.2rem;
-    font-weight: 800;
-  }
-
-  .priceChart {
-    margin-top: 1rem;
-    padding-top: 1rem;
-  }
-
-  .priceHistoryTable {
-    margin-top: 1rem;
-    padding-top: 1rem;
-  }
-
-  .chartFrameMobile {
-    width: 80%;
-  }
-}
-
-/* --------------        Small mobile (max-width: 480px) --------------------     */
-@media (max-width: 480px) {
-  .productDetail {
-    padding: 0.75rem;
-  }
-
-  .priceHistoryTable {
-    overflow-x: auto;
-  }
-
-  .priceHistoryTable table {
-    min-width: 400px;
-    font-size: 0.875rem;
-  }
-
-  .priceHistoryTable th,
-  .priceHistoryTable td {
-    padding: 0.5rem;
+    padding: var(--space-3);
+    gap: var(--space-3);
   }
 }

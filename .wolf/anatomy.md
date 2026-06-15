@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-14T16:12:02.388Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-15T13:52:22.871Z
 > Files: 216 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -16,7 +16,7 @@
 
 ## .claude/
 
-- `settings.json` (~441 tok)
+- `settings.json` (~675 tok)
 - `settings.local.json` (~1871 tok)
 
 ## .claude/1f16fed8-2386-4620-8577-d379807b2f86/tool-results/
@@ -180,7 +180,7 @@
 - `CategoryTreeFilter.tsx` — TreeNode — uses useState, useEffect (~1138 tok)
 - `ChannelForm.tsx` — ChannelForm — renders form, modal — uses useState (~2391 tok)
 - `Dashboard.module.css` — Styles: 61 rules, 6 media queries (~2676 tok)
-- `Dashboard.tsx` — MiniPriceChart — renders chart — uses useState, useCallback, useMemo (~3869 tok)
+- `Dashboard.tsx` — MiniPriceChart (~4255 tok)
 - `LanguageSwitcher.module.css` — Styles: 5 rules, 1 media queries (~210 tok)
 - `LanguageSwitcher.tsx` — LanguageSwitcher (~169 tok)
 - `ListsSidebar.module.css` — Styles: 42 rules, 1 media queries, 1 animations (~1518 tok)
@@ -190,15 +190,15 @@
 - `NotificationForms.module.css` — Styles: 13 rules (~367 tok)
 - `Notifications.module.css` — Styles: 16 rules (~575 tok)
 - `Notifications.tsx` — formatRuleParams — renders table — uses useState, useEffect (~3920 tok)
-- `PriceChart.tsx` — PriceChart — renders chart (~231 tok)
-- `ProductDetail.module.css` — Styles: 45 rules, 2 media queries (~1562 tok)
-- `ProductDetail.tsx` — PriceChart — renders table, chart — uses useState, useEffect (~2854 tok)
+- `PriceChart.tsx` — yTickFormatter (~436 tok)
+- `ProductDetail.module.css` — Styles: 68 rules (~3274 tok)
+- `ProductDetail.tsx` — PriceChart — renders table (~3562 tok)
 - `ProductList.module.css` — Styles: 78 rules (~4805 tok)
 - `ProductList.tsx` — ProductList — uses useState, useCallback, useEffect (~7089 tok)
 - `ProductNotifications.module.css` — Styles: 33 rules, 1 media queries (~1191 tok)
 - `ProductNotifications.tsx` — formatRuleParams — renders form, table — uses useState, useEffect (~3270 tok)
 - `ProductsPage.module.css` — Styles: 27 rules, 2 media queries (~1377 tok)
-- `ProductsPage.tsx` — ProductDetailSheet — renders form — uses useNavigate, useState, useCallback, useEffect (~2018 tok)
+- `ProductsPage.tsx` — ProductDetailSheet — renders form (~2017 tok)
 - `PullToRefreshIndicator.module.css` — Styles: 4 rules (~116 tok)
 - `PullToRefreshIndicator.tsx` — Visual indicator for pull-to-refresh. Shows an arrow that rotates (~259 tok)
 - `RuleForm.tsx` — RuleForm — renders form, modal — uses useState (~1506 tok)

@@ -75,7 +75,6 @@ export function ProductsPage() {
   const searchParams = new URLSearchParams(location.search);
   const initialCategoryFilter = searchParams.get('category') || '';
   const initialListFilter = searchParams.get('list') ? parseInt(searchParams.get('list')!) : null;
-
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -202,7 +201,7 @@ export function ProductsPage() {
         onClose={handleSheetClose}
         position={isMobile ? 'bottom' : 'right'}
         size={isMobile ? 'full' : 'lg'}
-        showCloseButton={!isMobile}
+        showCloseButton={false}
       >
         {selectedProductId !== null && (
           <Suspense fallback={<div className="loading">{t('productDetail.loading')}</div>}>

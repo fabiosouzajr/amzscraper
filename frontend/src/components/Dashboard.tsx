@@ -6,11 +6,15 @@ import { PriceDrop } from '../types';
 import { usePriceDrops, usePriceIncreases, usePullToRefresh } from '../hooks';
 import { formatDateTime } from '../utils/dateFormat';
 import { PullToRefreshIndicator } from './PullToRefreshIndicator';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import styles from './Dashboard.module.css';
 
 const MiniPriceChart = lazy(() => import('./MiniPriceChart').then(m => ({ default: m.MiniPriceChart })));
+const ProductDetailSheet = lazy(() =>
+  import('./ProductDetail').then(m => ({ default: m.ProductDetail }))
+);
 import { formatPrice, formatPercentage } from '../utils/numberFormat';
-import { Card, Button, ProgressBar, EmptyState } from '../design-system';
+import { Card, Button, ProgressBar, EmptyState, Sheet } from '../design-system';
 
 interface DashboardProps {
   onCategoryClick: (categoryName: string) => void;
@@ -19,7 +23,7 @@ interface DashboardProps {
 interface PriceChangeCardProps {
   item: PriceDrop;
   variant: 'drop' | 'increase';
-  onCategoryClick: (categoryName: string) => void;
+  onProductClick: (productId: number) => void;
 }
 
 type LowestPriceBadgeWindow = 7 | 30 | 365;
@@ -71,7 +75,7 @@ function getLowestPriceBadgeWindow(item: PriceDrop): LowestPriceBadgeWindow | nu
   return null;
 }
 
-const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onCategoryClick }: PriceChangeCardProps) {
+const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onProductClick }: PriceChangeCardProps) {
   const { t } = useTranslation();
   const cardClass = variant === 'drop' ? styles.priceDropCard : styles.priceIncreaseCard;
   const changePanelClass = variant === 'drop' ? styles.changePanelDrop : styles.changePanelIncrease;
@@ -90,7 +94,7 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
     <Card
       elevation={1}
       padding="sm"
-      onClick={() => onCategoryClick('')}
+      onClick={() => onProductClick(item.product.id)}
       className={cardClass}
     >
       {lowestBadgeWindow && (
@@ -131,6 +135,7 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
           target="_blank"
           rel="noopener noreferrer"
           className="product-link"
+          onClick={(e) => e.stopPropagation()}
         >
           {item.product.description}
         </a>
@@ -155,9 +160,10 @@ const PriceChangeCard = React.memo(function PriceChangeCard({ item, variant, onC
   );
 });
 
-export function Dashboard({ onCategoryClick }: DashboardProps) {
+export function Dashboard({ onCategoryClick: _onCategoryClick }: DashboardProps) {
   const { t } = useTranslation();
   const qc = useQueryClient();
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const { data: drops = [], isLoading: dropsLoading } = usePriceDrops(20);
   const { data: increases = [], isLoading: increasesLoading } = usePriceIncreases(20);
   const loading = dropsLoading || increasesLoading;
@@ -166,6 +172,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
   const [updateStatus, setUpdateStatus] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'date' | 'dropAmount' | 'increaseAmount'>('date');
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
   const sortPriceChanges = useCallback(
     (items: PriceDrop[]) => {
@@ -194,6 +201,18 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
   const { progress: pullProgress, refreshing: pullRefreshing } = usePullToRefresh({
     onRefresh: handlePullRefresh,
   });
+
+  const handleProductClick = useCallback((productId: number) => {
+    setSelectedProductId(productId);
+  }, []);
+
+  const handleSheetClose = useCallback(() => {
+    setSelectedProductId(null);
+  }, []);
+
+  const handleSheetNavigate = useCallback((productId: number) => {
+    setSelectedProductId(productId);
+  }, []);
 
   const handleUpdatePrices = async () => {
     setUpdating(true);
@@ -237,7 +256,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
             // Invalidate queries to refresh price changes after completion
             setTimeout(() => {
               qc.invalidateQueries({ queryKey: ['priceDrops'] });
-              qc.invalidateQueries({ queryKey: ['priceIncreases'] });
+              qc.invalidateQueries({ queryKey: ['priceIncreases'] }),
               setUpdating(false);
               setUpdateProgress(0);
               setUpdateStatus('');
@@ -338,7 +357,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                     key={drop.product.id}
                     item={drop}
                     variant="drop"
-                    onCategoryClick={onCategoryClick}
+                    onProductClick={handleProductClick}
                   />
                 ))}
               </div>
@@ -354,7 +373,7 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
                     key={increase.product.id}
                     item={increase}
                     variant="increase"
-                    onCategoryClick={onCategoryClick}
+                    onProductClick={handleProductClick}
                   />
                 ))}
               </div>
@@ -362,6 +381,26 @@ export function Dashboard({ onCategoryClick }: DashboardProps) {
           )}
         </>
       )}
+
+      <Sheet
+        isOpen={selectedProductId !== null}
+        onClose={handleSheetClose}
+        position={isMobile ? 'bottom' : 'right'}
+        size={isMobile ? 'full' : 'lg'}
+        showCloseButton={false}
+      >
+        {selectedProductId !== null && (
+          <Suspense fallback={<div className="loading">{t('productDetail.loading')}</div>}>
+            <ProductDetailSheet
+              productId={selectedProductId}
+              onClose={handleSheetClose}
+              onNavigate={handleSheetNavigate}
+              isSheet
+              showBackButton={isMobile}
+            />
+          </Suspense>
+        )}
+      </Sheet>
     </div>
   );
 }
