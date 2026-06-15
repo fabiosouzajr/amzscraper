@@ -5,6 +5,7 @@ import {
   TelegramConfig,
   DiscordConfig,
 } from '../models/types';
+import { config as appConfig } from '../config';
 
 export interface NotificationPayload {
   productName: string;
@@ -51,7 +52,7 @@ export class NotificationChannelService {
    * Send notification via Telegram Bot API
    */
   async sendTelegram(config: TelegramConfig, payload: NotificationPayload): Promise<void> {
-    const telegramUrl = `https://api.telegram.org/bot${config.bot_token}/sendMessage`;
+    const telegramUrl = `https://api.telegram.org/bot${appConfig.telegramBotToken}/sendMessage`;
     const message = `🔔 *Price Alert: ${payload.productName}*\n\n${payload.triggerDescription}\n\n💰 Current Price: R$ ${payload.currentPrice.toFixed(2)}\n\n[View Product](${payload.productUrl})\n\n\`ASIN: ${payload.asin}\``;
 
     const response = await fetch(telegramUrl, {

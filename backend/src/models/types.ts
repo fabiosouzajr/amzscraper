@@ -135,7 +135,6 @@ export interface EmailConfig {
 }
 
 export interface TelegramConfig {
-  bot_token: string;
   chat_id: string;
 }
 
