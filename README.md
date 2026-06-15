@@ -5,6 +5,7 @@ Multi-tenant Amazon price tracker built with TypeScript. Scrapes Amazon.com.br u
 ## Features
 
 ### Core
+
 - **Price Tracking** — records price changes, skips unchanged prices to save storage
 - **Dashboard** — view biggest price drops and increases with category filtering
 - **Price History Charts** — interactive Recharts visualizations per product
@@ -13,6 +14,7 @@ Multi-tenant Amazon price tracker built with TypeScript. Scrapes Amazon.com.br u
 - **Manual Updates** — trigger price updates on demand with real-time SSE progress
 
 ### Multi-User & Admin
+
 - **Role-Based Access** — USER and ADMIN roles with JWT authentication
 - **Setup Wizard** — first-run flow to create the initial admin account
 - **User Management** — create, disable, reset passwords for users
@@ -22,6 +24,7 @@ Multi-tenant Amazon price tracker built with TypeScript. Scrapes Amazon.com.br u
 - **System Stats** — user counts, product counts, database size overview
 
 ### Notifications
+
 - **Multi-Channel** — Email, Telegram, and Discord support
 - **Custom Rules** — trigger on: lowest price in N days, below threshold, percentage drop
 - **Per-Product or Global** — rules can target specific products or apply to all
@@ -29,22 +32,26 @@ Multi-tenant Amazon price tracker built with TypeScript. Scrapes Amazon.com.br u
 - **Test Messages** — verify channel configuration before going live
 
 ### Organization
+
 - **Product Lists** — create custom collections (e.g., Wishlist, To Buy)
 - **Categories** — auto-extracted from Amazon breadcrumbs, filterable on dashboard
 - **CSV Import/Export** — bulk import ASINs from CSV or export all tracked ASINs
 - **Database Backup** — download the full SQLite database from the admin panel
 
 ### Scheduling
+
 - **System-Wide Cron** — admin-configurable schedule (default: daily at midnight)
 - **Per-User Schedules** — each user can set a custom cron expression
 - **Enable/Disable** — scheduler can be toggled on/off from admin panel
 
 ### Internationalization
+
 - **Languages** — English and Portuguese (Brazil)
 - **Auto-Detection** — browser language detected on first visit
 - **Locale Formatting** — dates and currency (R$) formatted per locale
 
 ### Other
+
 - Responsive design with mobile bottom tab bar
 - Offline connectivity banner
 - Tailscale-first networking (binds `0.0.0.0`)
@@ -116,27 +123,35 @@ These are configured through the Admin Panel UI (Settings > System Config):
 ## Usage Guide
 
 ### First Run
+
 Open the app and complete the setup wizard to create your admin account. After setup, you can log in and start tracking products.
 
 ### Adding Products
+
 Navigate to **Products**, enter an Amazon ASIN (10-character code found in the product URL), and click Add. For bulk additions, use **Import ASINs** with a CSV file — progress streams in real-time.
 
 ### Dashboard
+
 The **Dashboard** shows products with the biggest price drops and increases. Filter by category using the category badges. Click any product to see its full price history.
 
 ### Product Lists
+
 Create custom lists from the sidebar on the Products page (e.g., "Wishlist", "Electronics"). Add products to lists, then filter the products view by list.
 
-### Notifications
+### 
+
 Go to **Settings > Notifications** to configure channels (Email, Telegram, or Discord). Create rules to get notified when prices drop below a threshold, hit the lowest in N days, or drop by a percentage. Use the test button to verify your channel works.
 
 ### Scheduling
+
 The system scheduler runs price updates on a cron schedule (configured by admin). Individual users can also set their own schedule under **Settings > Schedule**.
 
 ### Admin Panel
+
 Admins access **Settings > Admin** to manage users, view system stats, configure quotas and scheduler, and review the audit log.
 
 ### Import / Export
+
 - **Import ASINs**: CSV upload with real-time progress (Products page)
 - **Export ASINs**: download all tracked ASINs as CSV (Settings > Data)
 - **Database Backup**: download the full SQLite file (Settings > Data)
@@ -145,7 +160,7 @@ Admins access **Settings > Admin** to manage users, view system stats, configure
 
 ### Project Structure
 
-```
+```Text
 amzscraper/
 ├── backend/
 │   ├── src/
@@ -233,6 +248,7 @@ Route groups: `/api/auth`, `/api/products`, `/api/prices`, `/api/dashboard`, `/a
 For the complete API reference, see [Backend API Documentation](docs/backend/BACKEND_API_DOCUMENTATION.md).
 
 ### Key Patterns
+
 - **No ORM** — direct SQL with parameterized queries in the `services/db/` layer
 - **SSE Streaming** — price updates and ASIN imports stream progress to the frontend
 - **React Query** — data fetching via custom hooks (`useProducts`, `useLists`, etc.)
@@ -276,6 +292,7 @@ Serve the frontend build (`frontend/dist/`) via your reverse proxy, proxying `/a
 **Scraper failures:** Check internet connectivity. Amazon may have changed page structure — review backend logs for selector warnings.
 
 **Stopping processes started with run.sh:**
+
 ```bash
 kill $(cat logs/*.pid)
 ```

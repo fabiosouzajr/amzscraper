@@ -342,6 +342,22 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-15T13:52:06.046Z"
+    },
+    {
+      "id": "bug-022",
+      "timestamp": "2026-06-15T14:22:30.977Z",
+      "error_message": "Incorrect value in code",
+      "file": "docs/telegram-setup.md",
+      "root_cause": "Had `\n8469732834:AAFrJ-ixveS_hoVm97h-EMo3x2trwiu_2Ho\n`",
+      "fix": "Changed to `text\n8469732834:AAFrJ-ixveS_hoVm97h-EMo3x2trwiu_2",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-15T14:22:30.977Z"
     }
   ]
 }

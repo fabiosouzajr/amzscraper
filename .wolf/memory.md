@@ -204,3 +204,22 @@
 | 10:52 | Edited frontend/src/components/ProductDetail.module.css | CSS: position | ~32 |
 | 10:52 | Edited frontend/src/components/ProductDetail.module.css | CSS: position, top, right | ~142 |
 | 10:52 | Session end: 29 writes across 5 files (ProductDetail.tsx, ProductDetail.module.css, PriceChart.tsx, Dashboard.tsx, ProductsPage.tsx) | 8 reads | ~27804 tok |
+
+## Session: 2026-06-15 11:01
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 11:18 | Created docs/superpowers/specs/2026-06-15-telegram-bot-design.md | — | ~1067 |
+| 11:19 | Created docs/telegram-setup.md | — | ~1218 |
+| 11:20 | Created docs/superpowers/specs/2026-06-15-telegram-bot-design.md | — | ~1128 |
+| 11:21 | Edited docs/superpowers/specs/2026-06-15-telegram-bot-design.md | 2→2 lines | ~14 |
+| 11:21 | Edited docs/superpowers/specs/2026-06-15-telegram-bot-design.md | 9→10 lines | ~108 |
+| 11:21 | Edited docs/superpowers/specs/2026-06-15-telegram-bot-design.md | 2→2 lines | ~25 |
+| 11:21 | Created docs/telegram-setup.md | — | ~1350 |
+| 11:22 | Edited docs/telegram-setup.md | 4→4 lines | ~30 |
+| 11:22 | Edited docs/telegram-setup.md | 9→9 lines | ~43 |
+| 11:22 | Edited docs/telegram-setup.md | 9→9 lines | ~33 |
+| 11:22 | Edited docs/telegram-setup.md | 9→9 lines | ~29 |
+| 11:22 | Edited docs/telegram-setup.md | 3→3 lines | ~16 |
+| 11:22 | Edited docs/telegram-setup.md | 2→2 lines | ~11 |
+| 11:23 | Session end: 13 writes across 2 files (2026-06-15-telegram-bot-design.md, telegram-setup.md) | 2 reads | ~7758 tok |

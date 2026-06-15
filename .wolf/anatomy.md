@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-15T13:52:22.871Z
-> Files: 216 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-15T14:22:35.462Z
+> Files: 218 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -106,6 +106,10 @@
 
 - `amazon-tracked-asins-2026-03-22.csv` (~179 tok)
 
+## docs/
+
+- `telegram-setup.md` — Telegram Notifications Setup Guide (~1274 tok)
+
 ## docs/backend/
 
 - `BACKEND_API_DOCUMENTATION.md` — Backend API Documentation (~8027 tok)
@@ -146,6 +150,7 @@
 - `2026-03-10-product-thumbnails-design.md` — Product Thumbnails Design (~255 tok)
 - `2026-04-01-scraper-price-bugs-design.md` — Scraper Price Bugs Fix (~1335 tok)
 - `2026-04-10-readme-and-improvements-design.md` — Design Spec: README Rewrite & Improvements Audit (~3297 tok)
+- `2026-06-15-telegram-bot-design.md` — Design: Telegram Bot Integration (~1061 tok)
 
 ## frontend/
 
