@@ -17,6 +17,7 @@ import setupRouter from './routes/setup';
 import { schedulerService } from './services/scheduler';
 import { getAvailablePort } from './utils/portManager';
 import { dbService } from './services/database';
+import { initTelegramBot } from './services/telegram';
 
 async function startServer() {
   const app = express();
@@ -90,6 +91,9 @@ async function startServer() {
         console.error('Error ensuring initial admin exists:', error);
       }
     }
+
+    // Start Telegram bot listener (no-op if TELEGRAM_BOT_TOKEN not set)
+    initTelegramBot(config.telegramBotToken);
 
     // Start scheduler for automatic daily updates (reads config from system_config)
     const schedulerEnabledConfig = await dbService.getConfig('scheduler_enabled');
