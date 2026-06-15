@@ -374,7 +374,6 @@
         "toAddress": "To Address"
       },
       "telegram": {
-        "botToken": "Bot Token",
         "chatId": "Chat ID"
       },
       "discord": {
