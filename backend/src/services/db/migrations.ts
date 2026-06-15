@@ -358,6 +358,38 @@ async function initializeSystemConfig(db: sqlite3.Database): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
+// Step 7 — strip bot_token from telegram channel configs (moved to env var)
+// ---------------------------------------------------------------------------
+
+async function migrateTelegramBotToken(db: sqlite3.Database): Promise<void> {
+  const rows = await dbAll<{ id: number; config: string }>(
+    db,
+    "SELECT id, config FROM notification_channels WHERE type = 'telegram'"
+  );
+  let updated = 0;
+  for (const row of rows) {
+    let cfg: Record<string, unknown>;
+    try {
+      cfg = JSON.parse(row.config);
+    } catch {
+      continue;
+    }
+    if ('bot_token' in cfg) {
+      delete cfg.bot_token;
+      await dbRun(
+        db,
+        'UPDATE notification_channels SET config = ? WHERE id = ?',
+        [JSON.stringify(cfg), row.id]
+      );
+      updated++;
+    }
+  }
+  if (updated > 0) {
+    console.log(`[migrations] Stripped bot_token from ${updated} telegram channel config(s)`);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
@@ -370,6 +402,7 @@ export function createMigrations(db: sqlite3.Database) {
       await migrateProductsTable(db);
       await createIndexes(db);
       await initializeSystemConfig(db);
+      await migrateTelegramBotToken(db);
     },
   };
 }
