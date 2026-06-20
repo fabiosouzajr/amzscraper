@@ -223,3 +223,70 @@
 | 11:22 | Edited docs/telegram-setup.md | 3→3 lines | ~16 |
 | 11:22 | Edited docs/telegram-setup.md | 2→2 lines | ~11 |
 | 11:23 | Session end: 13 writes across 2 files (2026-06-15-telegram-bot-design.md, telegram-setup.md) | 2 reads | ~7758 tok |
+
+## Session: 2026-06-15 12:23
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-15 12:25
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-15 12:25
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 12:33 | Created CONTEXT.md | — | ~348 |
+| 12:34 | Created docs/adr/0001-global-bot-token.md | — | ~265 |
+| 12:34 | Edited docs/superpowers/specs/2026-06-15-telegram-bot-design.md | 2→3 lines | ~18 |
+| 12:34 | Edited docs/superpowers/specs/2026-06-15-telegram-bot-design.md | 9→7 lines | ~88 |
+| 12:34 | Edited docs/superpowers/specs/2026-06-15-telegram-bot-design.md | modified initTelegramBot() | ~628 |
+| 12:34 | Edited docs/superpowers/specs/2026-06-15-telegram-bot-design.md | 9→8 lines | ~66 |
+| 12:34 | grill-with-docs on telegram bot spec — 5 decisions made | docs/superpowers/specs/2026-06-15-telegram-bot-design.md, CONTEXT.md, docs/adr/0001-global-bot-token.md | spec updated, ADR created, CONTEXT.md created | ~4k |
+| 12:34 | Session end: 6 writes across 3 files (CONTEXT.md, 0001-global-bot-token.md, 2026-06-15-telegram-bot-design.md) | 6 reads | ~9001 tok |
+| 12:42 | Created docs/superpowers/plans/2026-06-15-telegram-bot.md | — | ~4379 |
+| 12:43 | Edited docs/superpowers/plans/2026-06-15-telegram-bot.md | expanded (+64 lines) | ~504 |
+| 12:43 | Session end: 8 writes across 4 files (CONTEXT.md, 0001-global-bot-token.md, 2026-06-15-telegram-bot-design.md, 2026-06-15-telegram-bot.md) | 10 reads | ~21655 tok |
+| 12:50 | Installed node-telegram-bot-api + @types/node-telegram-bot-api | backend/package.json, backend/package-lock.json | success, 12 new packages added | ~1k |
+| 12:46 | Edited backend/src/config.ts | 8→11 lines | ~79 |
+| 12:46 | Edited backend/src/config.ts | 13→14 lines | ~123 |
+| 12:52 | Task 2: Add telegramBotToken to AppConfig | backend/src/config.ts | Interface + loadConfig() updated, TypeScript verified (pre-existing error unrelated), commit f995add | ~500 |
+| 12:48 | Edited backend/src/models/types.ts | 4→3 lines | ~16 |
+| 12:48 | Edited backend/src/services/notification-channel.ts | added 1 import(s) | ~56 |
+| 12:48 | Edited backend/src/services/notification-channel.ts | "https://api.telegram.org/" → "https://api.telegram.org/" | ~28 |
+| 12:50 | Edited backend/src/services/db/migrations.ts | added error handling | ~393 |
+| 12:52 | Edited backend/src/services/db/migrations.ts | added 1 condition(s) | ~213 |
+| 12:53 | Edited backend/src/routes/notifications.ts | added 1 import(s) | ~78 |
+| 12:53 | Edited backend/src/routes/notifications.ts | added 1 condition(s) | ~106 |
+| 12:54 | Created backend/src/services/telegram.ts | — | ~135 |
+| 12:54 | Edited backend/src/server.ts | added 1 import(s) | ~30 |
+| 12:55 | Edited backend/src/server.ts | 1→4 lines | ~59 |
+| 12:55 | Task 6: created backend/src/services/telegram.ts and wired initTelegramBot into server.ts after dbReady=true | backend/src/services/telegram.ts, backend/src/server.ts | committed 72e906d | ~200 |
+| 12:57 | Edited frontend/src/types.ts | 4→3 lines | ~16 |
+| 12:57 | Edited frontend/src/components/ChannelForm.tsx | 3→2 lines | ~50 |
+| 12:57 | Edited frontend/src/components/ChannelForm.tsx | 2→2 lines | ~17 |
+| 12:57 | Edited frontend/src/components/ChannelForm.tsx | reduced (-6 lines) | ~83 |
+| 12:58 | Edited frontend/src/i18n/locales/en.json | 4→3 lines | ~16 |
+| 12:58 | Edited frontend/src/i18n/locales/pt-BR.json | 4→3 lines | ~17 |
+
+| 15:35 | Task 8: Remove botToken i18n keys | en.json, pt-BR.json | Removed unused telegram.botToken keys from both locale files, TypeScript passes, commit 43f3221 created | ~2k |
+| 12:59 | Edited docs/telegram-setup.md | removed 7 lines | ~14 |
+| 12:59 | Edited docs/telegram-setup.md | reduced (-8 lines) | ~19 |
+| 12:59 | Edited docs/telegram-setup.md | 7→6 lines | ~54 |
+| 13:02 | Edited backend/src/services/telegram.ts | added nullish coalescing | ~92 |
+| 13:02 | Edited backend/src/services/telegram.ts | 4→4 lines | ~102 |
+| 13:02 | Edited backend/src/services/telegram.ts | removed 4 lines | ~14 |
+| 13:03 | Task 10 E2E verification: downgraded node-telegram-bot-api 1.1.0→0.67.0 (ESM/CJS compat fix) | backend/package.json, src/services/telegram.ts | All 4 checks passed | ~4k |
+| 13:05 | Session end: 32 writes across 15 files (CONTEXT.md, 0001-global-bot-token.md, 2026-06-15-telegram-bot-design.md, 2026-06-15-telegram-bot.md, config.ts) | 22 reads | ~35712 tok |
+
+## Session: 2026-06-20 11:58
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-20 12:00
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|

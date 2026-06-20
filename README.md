@@ -224,7 +224,7 @@ amzscraper/
 ### Database
 
 | Table | Purpose |
-|---|---|
+| --- | --- |
 | `users` | User accounts with roles (USER/ADMIN) and disable status |
 | `products` | Tracked products with ASIN, user ownership |
 | `price_history` | Price records per product (nullable price for unavailable items) |
@@ -262,10 +262,12 @@ For the complete API reference, see [Backend API Documentation](docs/backend/BAC
 1. Set `JWT_SECRET` to a strong random value (app exits if default is used in production)
 2. Set `NODE_ENV=production`
 3. Build both packages:
+
    ```bash
    cd backend && npm run build
    cd frontend && npm run build
    ```
+
 4. Set up a reverse proxy (nginx, Caddy) for SSL termination
 5. Use a process manager (PM2, systemd) to keep the backend running
 6. Ensure the `database/` directory exists and is writable

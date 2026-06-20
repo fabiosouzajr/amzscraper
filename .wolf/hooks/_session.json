@@ -1,105 +1,12 @@
 {
-  "session_id": "session-2026-06-15-1101",
-  "started": "2026-06-15T14:01:14.717Z",
-  "files_read": {
-    "/home/fj/git/amzscraper/docs/superpowers/specs/2026-06-15-telegram-bot-design.md": {
-      "count": 3,
-      "tokens": 1060,
-      "first_read": "2026-06-15T14:21:03.775Z"
-    },
-    "/home/fj/git/amzscraper/docs/telegram-setup.md": {
-      "count": 1,
-      "tokens": 1265,
-      "first_read": "2026-06-15T14:22:02.564Z"
-    }
-  },
-  "files_written": [
-    {
-      "file": "/home/fj/git/amzscraper/docs/superpowers/specs/2026-06-15-telegram-bot-design.md",
-      "action": "create",
-      "tokens": 1144,
-      "at": "2026-06-15T14:18:31.036Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/telegram-setup.md",
-      "action": "create",
-      "tokens": 1305,
-      "at": "2026-06-15T14:19:04.974Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/superpowers/specs/2026-06-15-telegram-bot-design.md",
-      "action": "create",
-      "tokens": 1208,
-      "at": "2026-06-15T14:20:56.412Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/superpowers/specs/2026-06-15-telegram-bot-design.md",
-      "action": "edit",
-      "tokens": 14,
-      "at": "2026-06-15T14:21:07.500Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/superpowers/specs/2026-06-15-telegram-bot-design.md",
-      "action": "edit",
-      "tokens": 116,
-      "at": "2026-06-15T14:21:15.387Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/superpowers/specs/2026-06-15-telegram-bot-design.md",
-      "action": "edit",
-      "tokens": 26,
-      "at": "2026-06-15T14:21:24.551Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/telegram-setup.md",
-      "action": "create",
-      "tokens": 1446,
-      "at": "2026-06-15T14:21:58.071Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/telegram-setup.md",
-      "action": "edit",
-      "tokens": 32,
-      "at": "2026-06-15T14:22:07.689Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/telegram-setup.md",
-      "action": "edit",
-      "tokens": 46,
-      "at": "2026-06-15T14:22:13.743Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/telegram-setup.md",
-      "action": "edit",
-      "tokens": 36,
-      "at": "2026-06-15T14:22:19.683Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/telegram-setup.md",
-      "action": "edit",
-      "tokens": 31,
-      "at": "2026-06-15T14:22:25.542Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/telegram-setup.md",
-      "action": "edit",
-      "tokens": 17,
-      "at": "2026-06-15T14:22:30.975Z"
-    },
-    {
-      "file": "/home/fj/git/amzscraper/docs/telegram-setup.md",
-      "action": "edit",
-      "tokens": 12,
-      "at": "2026-06-15T14:22:35.472Z"
-    }
-  ],
-  "edit_counts": {
-    "docs/superpowers/specs/2026-06-15-telegram-bot-design.md": 5,
-    "docs/telegram-setup.md": 8
-  },
-  "anatomy_hits": 2,
+  "session_id": "session-2026-06-20-1200",
+  "started": "2026-06-20T15:00:27.253Z",
+  "files_read": {},
+  "files_written": [],
+  "edit_counts": {},
+  "anatomy_hits": 0,
   "anatomy_misses": 0,
-  "repeated_reads_warned": 2,
+  "repeated_reads_warned": 0,
   "cerebrum_warnings": 0,
-  "stop_count": 9
+  "stop_count": 0
 }

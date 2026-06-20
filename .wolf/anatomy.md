@@ -1,13 +1,14 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-15T14:22:35.462Z
-> Files: 218 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-15T16:02:56.296Z
+> Files: 222 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
 - `.codex` (~0 tok)
 - `.gitignore` — Git ignore rules (~139 tok)
 - `CLAUDE.md` — OpenWolf (~1332 tok)
+- `CONTEXT.md` — Amazon Price Tracker (~326 tok)
 - `improvements.md` — Improvements & Optimization Opportunities (~2474 tok)
 - `install.sh` — Colors for output (~2058 tok)
 - `README.md` — Project documentation (~3417 tok)
@@ -38,8 +39,8 @@
 
 ## backend/src/
 
-- `config.ts` — Exports AppConfig, config (~744 tok)
-- `server.ts` — Import logger first to add timestamps to all console output (~1304 tok)
+- `config.ts` — Exports AppConfig, config (~774 tok)
+- `server.ts` — Import logger first to add timestamps to all console output (~1354 tok)
 
 ## backend/src/middleware/
 
@@ -49,7 +50,7 @@
 
 ## backend/src/models/
 
-- `types.ts` — Exports Product, Category, PriceHistory, ProductWithPrice + 25 more (~1235 tok)
+- `types.ts` — Exports Product, Category, PriceHistory, ProductWithPrice + 25 more (~1229 tok)
 
 ## backend/src/routes/
 
@@ -58,7 +59,7 @@
 - `config.ts` — API routes: GET, POST, PUT (6 endpoints) (~2991 tok)
 - `dashboard.ts` — API routes: GET (2 endpoints) (~430 tok)
 - `lists.ts` — API routes: GET, POST, PUT, DELETE (7 endpoints) (~2208 tok)
-- `notifications.ts` — API routes: GET, POST, PUT, DELETE (10 endpoints) (~2613 tok)
+- `notifications.ts` — API routes: GET, POST, PUT, DELETE (10 endpoints) (~2678 tok)
 - `prices.ts` — API routes: POST (1 endpoints) (~659 tok)
 - `products.ts` — API routes: GET, POST, DELETE (8 endpoints) (~2300 tok)
 - `setup.ts` — API routes: GET, POST (2 endpoints) (~832 tok)
@@ -66,17 +67,18 @@
 ## backend/src/services/
 
 - `database.ts` — Exports DatabaseService, dbService (~584 tok)
-- `notification-channel.ts` — Send notification via Email (SMTP) (~1274 tok)
+- `notification-channel.ts` — Send notification via Email (SMTP) (~1291 tok)
 - `notification-evaluator.ts` — Evaluate all applicable rules for a product after a price update (~1888 tok)
 - `scheduler.ts` — Exports SchedulerService (~3564 tok)
 - `scraper.ts` — Exports ScraperService (~11279 tok)
+- `telegram.ts` — Exports initTelegramBot (~135 tok)
 
 ## backend/src/services/db/
 
 - `admin-repo.ts` — Exports createAdminRepo, AdminRepo (~904 tok)
 - `helpers.ts` — Run a DML/DDL statement, resolve when done. (~266 tok)
 - `list-repo.ts` — Exports createListRepo, ListRepo (~930 tok)
-- `migrations.ts` — DDL — table definitions (~4166 tok)
+- `migrations.ts` — --------------------------------------------------------------------------- (~4459 tok)
 - `notification-repo.ts` — Exports createNotificationRepo (~5433 tok)
 - `product-repo.ts` — Exports createProductRepo (~5687 tok)
 - `user-repo.ts` — Exports createUserRepo, UserRepo (~2450 tok)
@@ -108,7 +110,11 @@
 
 ## docs/
 
-- `telegram-setup.md` — Telegram Notifications Setup Guide (~1274 tok)
+- `telegram-setup.md` — Telegram Notifications Setup Guide (~1111 tok)
+
+## docs/adr/
+
+- `0001-global-bot-token.md` — Global bot token via env var, not per-channel config (~248 tok)
 
 ## docs/backend/
 
@@ -143,6 +149,7 @@
 - `2026-03-31-admin-bootstrap-centralized-config.md` — Admin Bootstrap & Centralized Configuration Implementation Plan (~15258 tok)
 - `2026-04-01-scraper-price-bugs.md` — Scraper Price Bugs Fix Implementation Plan (~5374 tok)
 - `2026-04-10-readme-and-improvements.md` — README Rewrite & Improvements Audit — Implementation Plan (~20812 tok)
+- `2026-06-15-telegram-bot.md` — Telegram Bot Integration Implementation Plan (~4569 tok)
 
 ## docs/superpowers/specs/
 
@@ -150,7 +157,7 @@
 - `2026-03-10-product-thumbnails-design.md` — Product Thumbnails Design (~255 tok)
 - `2026-04-01-scraper-price-bugs-design.md` — Scraper Price Bugs Fix (~1335 tok)
 - `2026-04-10-readme-and-improvements-design.md` — Design Spec: README Rewrite & Improvements Audit (~3297 tok)
-- `2026-06-15-telegram-bot-design.md` — Design: Telegram Bot Integration (~1061 tok)
+- `2026-06-15-telegram-bot-design.md` — Design: Telegram Bot Integration (~1266 tok)
 
 ## frontend/
 
@@ -169,7 +176,7 @@
 - `index.css` — Styles: 60 rules, 7 media queries, 1 animations (~2941 tok)
 - `main.tsx` (~175 tok)
 - `queryClient.ts` — Exports queryClient (~74 tok)
-- `types.ts` — Exports Category, CategoryTreeNode, Product, PriceHistory + 23 more (~1144 tok)
+- `types.ts` — Exports Category, CategoryTreeNode, Product, PriceHistory + 23 more (~1138 tok)
 - `vite-env.d.ts` — / <reference types="vite/client" /> (~64 tok)
 
 ## frontend/src/components/
@@ -183,7 +190,7 @@
 - `CategoryFilter.tsx` — TreeNode — uses useState, useEffect (~1305 tok)
 - `CategoryTreeFilter.module.css` — Styles: 23 rules (~800 tok)
 - `CategoryTreeFilter.tsx` — TreeNode — uses useState, useEffect (~1138 tok)
-- `ChannelForm.tsx` — ChannelForm — renders form, modal — uses useState (~2391 tok)
+- `ChannelForm.tsx` — ChannelForm — renders form, modal (~2282 tok)
 - `Dashboard.module.css` — Styles: 61 rules, 6 media queries (~2676 tok)
 - `Dashboard.tsx` — MiniPriceChart (~4255 tok)
 - `LanguageSwitcher.module.css` — Styles: 5 rules, 1 media queries (~210 tok)
@@ -292,8 +299,8 @@
 
 ## frontend/src/i18n/locales/
 
-- `en.json` (~4304 tok)
-- `pt-BR.json` (~4594 tok)
+- `en.json` (~4294 tok)
+- `pt-BR.json` (~4584 tok)
 
 ## frontend/src/layout/
 

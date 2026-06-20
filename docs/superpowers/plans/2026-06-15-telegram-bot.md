@@ -16,7 +16,7 @@
 ## File Map
 
 | Action | File | Change |
-|--------|------|--------|
+| -------- | ------ | -------- |
 | Modify | `backend/src/config.ts` | Add `telegramBotToken` to `AppConfig` + `loadConfig` |
 | Modify | `backend/src/models/types.ts` | `TelegramConfig`: remove `bot_token`, keep `chat_id` only |
 | Modify | `backend/src/services/notification-channel.ts` | `sendTelegram` reads token from `appConfig.telegramBotToken` |
