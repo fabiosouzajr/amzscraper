@@ -34,6 +34,7 @@
 ### Task 1: Install dependency
 
 **Files:**
+
 - Modify: `backend/package.json` (auto-updated by npm)
 
 - [ ] **Step 1: Install `node-telegram-bot-api`**
@@ -64,6 +65,7 @@ git commit -m "chore: add node-telegram-bot-api dependency"
 ### Task 2: Add `telegramBotToken` to backend config
 
 **Files:**
+
 - Modify: `backend/src/config.ts`
 
 - [ ] **Step 1: Add field to `AppConfig` interface**
@@ -128,12 +130,14 @@ git commit -m "feat: add TELEGRAM_BOT_TOKEN to backend config"
 ### Task 3: Update backend `TelegramConfig` type and `sendTelegram`
 
 **Files:**
+
 - Modify: `backend/src/models/types.ts`
 - Modify: `backend/src/services/notification-channel.ts`
 
 - [ ] **Step 1: Remove `bot_token` from `TelegramConfig` in `backend/src/models/types.ts`**
 
 Find:
+
 ```typescript
 export interface TelegramConfig {
   bot_token: string;
@@ -142,6 +146,7 @@ export interface TelegramConfig {
 ```
 
 Replace with:
+
 ```typescript
 export interface TelegramConfig {
   chat_id: string;
@@ -151,17 +156,20 @@ export interface TelegramConfig {
 - [ ] **Step 2: Update `sendTelegram` in `backend/src/services/notification-channel.ts`**
 
 Add import at the top of the file (after existing imports):
+
 ```typescript
 import { config as appConfig } from '../config';
 ```
 
 Find the `sendTelegram` method:
+
 ```typescript
   async sendTelegram(config: TelegramConfig, payload: NotificationPayload): Promise<void> {
     const telegramUrl = `https://api.telegram.org/bot${config.bot_token}/sendMessage`;
 ```
 
 Replace the `telegramUrl` line only:
+
 ```typescript
   async sendTelegram(config: TelegramConfig, payload: NotificationPayload): Promise<void> {
     const telegramUrl = `https://api.telegram.org/bot${appConfig.telegramBotToken}/sendMessage`;
@@ -187,6 +195,7 @@ git commit -m "feat: telegram sendTelegram reads token from env config, not chan
 ### Task 4: DB migration — strip `bot_token` from existing telegram channels
 
 **Files:**
+
 - Modify: `backend/src/services/db/migrations.ts`
 
 - [ ] **Step 1: Add migration function before `createMigrations`**
@@ -225,6 +234,7 @@ async function migrateTelegramBotToken(db: sqlite3.Database): Promise<void> {
 - [ ] **Step 2: Call it in `createMigrations().run()`**
 
 Find:
+
 ```typescript
     async run(): Promise<void> {
       await createBaseTables(db);
@@ -237,6 +247,7 @@ Find:
 ```
 
 Replace with:
+
 ```typescript
     async run(): Promise<void> {
       await createBaseTables(db);
@@ -269,6 +280,7 @@ git commit -m "feat: migrate existing telegram channel configs to strip bot_toke
 ### Task 5: Creation guard in notifications route
 
 **Files:**
+
 - Modify: `backend/src/routes/notifications.ts`
 
 - [ ] **Step 1: Add config import**
@@ -319,6 +331,7 @@ git commit -m "feat: reject telegram channel creation when TELEGRAM_BOT_TOKEN no
 ### Task 6: Create bot listener service and wire into server
 
 **Files:**
+
 - Create: `backend/src/services/telegram.ts`
 - Modify: `backend/src/server.ts`
 
@@ -379,12 +392,14 @@ git commit -m "feat: add Telegram /start bot listener via node-telegram-bot-api"
 ### Task 7: Update frontend `TelegramConfig` type and `ChannelForm`
 
 **Files:**
+
 - Modify: `frontend/src/types.ts`
 - Modify: `frontend/src/components/ChannelForm.tsx`
 
 - [ ] **Step 1: Remove `bot_token` from `TelegramConfig` in `frontend/src/types.ts`**
 
 Find:
+
 ```typescript
 export interface TelegramConfig {
   bot_token: string;
@@ -393,6 +408,7 @@ export interface TelegramConfig {
 ```
 
 Replace with:
+
 ```typescript
 export interface TelegramConfig {
   chat_id: string;
@@ -402,6 +418,7 @@ export interface TelegramConfig {
 - [ ] **Step 2: Remove `botToken` state from `ChannelForm.tsx`**
 
 Find:
+
 ```typescript
   const telegramCfg = channel && channel.type === 'telegram' ? (channel.config as TelegramConfig) : null;
   const [botToken, setBotToken] = useState(telegramCfg?.bot_token ?? '');
@@ -409,6 +426,7 @@ Find:
 ```
 
 Replace with:
+
 ```typescript
   const telegramCfg = channel && channel.type === 'telegram' ? (channel.config as TelegramConfig) : null;
   const [chatId, setChatId] = useState(telegramCfg?.chat_id ?? '');
@@ -417,12 +435,14 @@ Replace with:
 - [ ] **Step 3: Remove `bot_token` from `buildConfig` in `ChannelForm.tsx`**
 
 Find:
+
 ```typescript
       case 'telegram':
         return { bot_token: botToken, chat_id: chatId };
 ```
 
 Replace with:
+
 ```typescript
       case 'telegram':
         return { chat_id: chatId };
@@ -431,6 +451,7 @@ Replace with:
 - [ ] **Step 4: Remove Bot Token input from JSX in `ChannelForm.tsx`**
 
 Find and delete the entire Bot Token form group:
+
 ```typescript
         {channelType === 'telegram' && (
           <>
@@ -447,6 +468,7 @@ Find and delete the entire Bot Token form group:
 ```
 
 Replace with:
+
 ```typescript
         {channelType === 'telegram' && (
           <div className={styles.formGroup}>
@@ -476,12 +498,14 @@ git commit -m "feat: remove bot_token from frontend TelegramConfig and ChannelFo
 ### Task 8: i18n cleanup
 
 **Files:**
+
 - Modify: `frontend/src/i18n/locales/en.json`
 - Modify: `frontend/src/i18n/locales/pt-BR.json`
 
 - [ ] **Step 1: Remove `botToken` key from `en.json`**
 
 Find in `frontend/src/i18n/locales/en.json`:
+
 ```json
       "telegram": {
         "botToken": "Bot Token",
@@ -492,6 +516,7 @@ Remove the `"botToken": "Bot Token",` line (keep the `"telegram"` block and any 
 - [ ] **Step 2: Remove `botToken` key from `pt-BR.json`**
 
 Find in `frontend/src/i18n/locales/pt-BR.json`:
+
 ```json
       "telegram": {
         "botToken": "Token do Bot",
@@ -519,9 +544,11 @@ git commit -m "chore: remove unused telegram botToken i18n keys"
 ### Task 9: Update `docs/telegram-setup.md`
 
 **Files:**
+
 - Modify: `docs/telegram-setup.md`
 
 The doc was written for the old design (per-channel bot token). Three sections are now wrong:
+
 - Admin Part 1, Step 5 ("Communicate the Bot Token to Users") — users no longer need the token
 - User Part 2, Step 2 ("Get the Bot Token") — no longer exists
 - User Part 2, Step 3 — "Bot Token" field is gone; only "Chat ID" remains
@@ -552,6 +579,7 @@ Ask your amzscraper admin for the **Bot Token**. It looks like:
 ```text
 8469732834:AAFrJ-ixveS_hoVm97h-EMo3x2trwiu_2Ho
 ```
+
 ```
 
 Renumber the remaining Part 2 steps (old Step 3 becomes Step 2, old Step 4 becomes Step 3).
@@ -566,6 +594,7 @@ Find:
 ```
 
 Replace with:
+
 ```markdown
 4. Fill in:
    - **Chat ID** — the number from Step 1
@@ -589,6 +618,7 @@ cd backend && npm run dev
 ```
 
 Then in another terminal:
+
 ```bash
 curl -s -X POST http://localhost:3000/api/notifications/channels \
   -H "Content-Type: application/json" \
