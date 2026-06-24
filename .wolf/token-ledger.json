@@ -2,14 +2,14 @@
   "version": 1,
   "created_at": "2026-04-10T11:24:17.635Z",
   "lifetime": {
-    "total_tokens_estimated": 3153730,
-    "total_reads": 1459,
-    "total_writes": 274,
-    "total_sessions": 27,
-    "anatomy_hits": 1431,
+    "total_tokens_estimated": 3170742,
+    "total_reads": 1477,
+    "total_writes": 276,
+    "total_sessions": 29,
+    "anatomy_hits": 1449,
     "anatomy_misses": 28,
     "repeated_reads_blocked": 160,
-    "estimated_savings_vs_bare_cli": 1112438
+    "estimated_savings_vs_bare_cli": 1116038
   },
   "sessions": [
     {
@@ -10756,6 +10756,158 @@
         "writes_count": 32,
         "repeated_reads_blocked": 39,
         "anatomy_lookups": 16
+      }
+    },
+    {
+      "id": "session-2026-06-24-1242",
+      "started": "2026-06-24T12:42:12.321Z",
+      "ended": "2026-06-24T12:51:18.305Z",
+      "reads": [
+        {
+          "file": "/home/fabio/amzscraper/backend/src/routes/auth.ts",
+          "tokens_estimated": 1542,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/run.sh",
+          "tokens_estimated": 796,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/frontend/vite.config.ts",
+          "tokens_estimated": 379,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/services/db/user-repo.ts",
+          "tokens_estimated": 2450,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/server.ts",
+          "tokens_estimated": 1354,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/services/telegram.ts",
+          "tokens_estimated": 135,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/middleware/auth.ts",
+          "tokens_estimated": 750,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/config.ts",
+          "tokens_estimated": 774,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/package.json",
+          "tokens_estimated": 314,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/home/fabio/amzscraper/backend/package.json",
+          "tokens_estimated": 12,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 8494,
+        "output_tokens_estimated": 12,
+        "reads_count": 9,
+        "writes_count": 1,
+        "repeated_reads_blocked": 0,
+        "anatomy_lookups": 9
+      }
+    },
+    {
+      "id": "session-2026-06-24-1242",
+      "started": "2026-06-24T12:42:12.321Z",
+      "ended": "2026-06-24T12:56:12.965Z",
+      "reads": [
+        {
+          "file": "/home/fabio/amzscraper/backend/src/routes/auth.ts",
+          "tokens_estimated": 1542,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/run.sh",
+          "tokens_estimated": 796,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/frontend/vite.config.ts",
+          "tokens_estimated": 379,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/services/db/user-repo.ts",
+          "tokens_estimated": 2450,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/server.ts",
+          "tokens_estimated": 1354,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/services/telegram.ts",
+          "tokens_estimated": 135,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/middleware/auth.ts",
+          "tokens_estimated": 750,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/src/config.ts",
+          "tokens_estimated": 774,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/home/fabio/amzscraper/backend/package.json",
+          "tokens_estimated": 314,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/home/fabio/amzscraper/backend/package.json",
+          "tokens_estimated": 12,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 8494,
+        "output_tokens_estimated": 12,
+        "reads_count": 9,
+        "writes_count": 1,
+        "repeated_reads_blocked": 0,
+        "anatomy_lookups": 9
       }
     }
   ],

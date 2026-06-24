@@ -300,3 +300,17 @@
 
 | Time | Action | File(s) | Outcome | ~Tokens |
 |------|--------|---------|---------|--------|
+
+## Session: 2026-06-24 12:41
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-24 12:42
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 12:49 | Edited backend/package.json | inline fix | ~12 |
+| 12:50 | Fixed login 500: reverted node-telegram-bot-api to ^0.67.0, reinstalled, restarted backend | backend/package.json | backend now on :3000, login 200 | ~500 |
+| 12:51 | Session end: 1 writes across 1 files (package.json) | 9 reads | ~8506 tok |
+| 12:56 | Session end: 1 writes across 1 files (package.json) | 9 reads | ~8506 tok |

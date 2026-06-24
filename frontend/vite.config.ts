@@ -32,6 +32,7 @@ export default defineConfig({
     allowedHosts: [
       'localhost',
       '.ts.net',
+      'amazon.fjlab.com.br',
     ],
     proxy: {
       '/api': {

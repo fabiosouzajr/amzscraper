@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-15T16:02:56.296Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-24T12:49:34.480Z
 > Files: 222 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -34,7 +34,7 @@
 - `CLAUDE.md` — Backend - Amazon Price Tracker (~1412 tok)
 - `gemini.md` — Backend Overview (~184 tok)
 - `package-lock.json` — npm lock file (~32848 tok)
-- `package.json` — Node.js package manifest (~314 tok)
+- `package.json` — Node.js package manifest (~339 tok)
 - `tsconfig.json` — TypeScript configuration (~131 tok)
 
 ## backend/src/
