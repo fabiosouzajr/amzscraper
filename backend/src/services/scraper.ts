@@ -1,5 +1,6 @@
 import { firefox, Browser, BrowserContext, Page } from 'playwright';
 import { ScrapedProductData } from '../models/types';
+import { checkFirefoxInstalled } from './browser-check';
 
 export class ScraperService {
   private browser: Browser | null = null;
@@ -7,6 +8,12 @@ export class ScraperService {
 
   async initialize(): Promise<void> {
     if (!this.browser) {
+      // Fail with the exact install command instead of Playwright's misleading banner
+      const browserCheck = checkFirefoxInstalled();
+      if (!browserCheck.ok) {
+        throw new Error(browserCheck.message);
+      }
+
       this.browser = await firefox.launch({
         headless: true
       });
