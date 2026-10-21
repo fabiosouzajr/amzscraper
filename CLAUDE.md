@@ -108,7 +108,7 @@ No frontend env vars — Vite proxies `/api` to the backend.
 ## Key Technical Decisions
 
 - **No ORM** — direct SQL queries in `backend/src/services/database.ts` (~1300 lines)
-- **No test framework** — `backend/test/` contains debug utilities, not test suites
+- **Minimal tests** — `cd backend && npm test` runs `test/*.test.ts` with `node:test`; the rest of `backend/test/` is debug utilities, not test suites
 - **SQLite** — single file DB at `database/products.db`, auto-created with migrations on startup
 - **Playwright Firefox** — scrapes Amazon.com.br with Chrome user-agent, Portuguese pattern matching
 - **SSE streaming** — price updates and ASIN imports stream progress via Server-Sent Events
