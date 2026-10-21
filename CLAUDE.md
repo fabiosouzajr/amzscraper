@@ -87,13 +87,13 @@ Each package has its own `CLAUDE.md` with detailed architecture notes.
 
 ```bash
 # Backend (terminal 1)
-cd backend && npm install && npm run dev    # Express on port 3000 (installs Playwright browsers automatically)
+cd backend && npm install && npm run dev    # Express on port 3000 (installs Playwright Firefox automatically)
 
 # Frontend (terminal 2)
 cd frontend && npm install && npm run dev   # Vite on port 5174, proxies /api to :3000
 ```
 
-**Note**: The backend `npm install` automatically installs Playwright browsers (Firefox + Chromium) via a postinstall script.
+**Note**: The backend `npm install` automatically installs the Playwright Firefox browser via a postinstall script (`playwright` is pinned to an exact version — each version expects one specific browser revision). Chromium is only used by `backend/test/` debug tools: `npm run browsers:debug`. To reinstall manually, always use the project's own Playwright: `cd backend && npx --no-install playwright install firefox`.
 
 ## Environment Variables
 

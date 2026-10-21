@@ -155,7 +155,7 @@ install_playwright_browsers() {
     echo ""
     echo -e "${BLUE}Installing Playwright Firefox browser...${NC}"
     cd backend
-    npx playwright install firefox
+    npx --no-install playwright install firefox
     cd ..
     echo -e "${GREEN}✓ Playwright Firefox installation complete${NC}"
 }
