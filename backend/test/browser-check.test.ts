@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { checkFirefoxInstalled, firefoxHasHostBuild, BROWSER_INSTALL_COMMAND } from '../src/services/browser-check';
+import { checkFirefoxInstalled, firefoxHasHostBuild, createHostBuildProbe, BROWSER_INSTALL_COMMAND } from '../src/services/browser-check';
 
 const P = '/x/firefox-1555/firefox/firefox';
 const V = '1.64.1';
@@ -94,4 +94,17 @@ test('dry-run with a Firefox download url means the host is supported', () => {
 
 test('dry-run without a Firefox download url means the host is unsupported, even if FFmpeg has one', () => {
   assert.equal(firefoxHasHostBuild(DRY_RUN_UNSUPPORTED), false);
+});
+
+test('unrecognized dry-run output means host support is unknown, not unsupported', () => {
+  assert.equal(firefoxHasHostBuild('Something new (playwright firefox v9999)\n  Location: /x\n'), null);
+  assert.equal(firefoxHasHostBuild(''), null);
+});
+
+test('host-build probe runs the CLI once per process, including unknown results', () => {
+  let runs = 0;
+  const probe = createHostBuildProbe(() => { runs++; return null; });
+  assert.equal(probe(), null);
+  assert.equal(probe(), null);
+  assert.equal(runs, 1);
 });

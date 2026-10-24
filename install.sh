@@ -95,8 +95,9 @@ try {
         echo -e "${GREEN}✓${NC} Playwright Firefox browser is installed"
         FIREFOX_OK=true
     # A Firefox "Download url:" in the dry-run means this OS is supported; if the probe
-    # itself fails, assume supported and fall back to the normal install offer
+    # fails or its output is unrecognized, assume supported and offer the normal install
     elif ! DRY_RUN=$(npx --no-install playwright install --dry-run firefox 2>/dev/null) \
+            || ! printf '%s\n' "$DRY_RUN" | awk '/^Firefox/{f=1} /^$/{f=0} f' | grep -q "Install location:" \
             || printf '%s\n' "$DRY_RUN" | awk '/^Firefox/{f=1} /^$/{f=0} f' | grep -q "Download url:"; then
         echo -e "${YELLOW}✗${NC} Playwright Firefox browser is not installed or version mismatch"
         MISSING_REQUIREMENTS=true

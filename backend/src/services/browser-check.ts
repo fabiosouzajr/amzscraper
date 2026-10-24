@@ -22,17 +22,34 @@ export interface BrowserCheckDeps {
 
 // `playwright install --dry-run firefox` lists a "Download url:" under Firefox only when this
 // Playwright release has a build for the host OS; on an unsupported OS the line is missing.
-export function firefoxHasHostBuild(dryRunOutput: string): boolean {
+// Returns null when the output isn't in the expected shape, so a format change is never
+// misreported as an unsupported OS.
+export function firefoxHasHostBuild(dryRunOutput: string): boolean | null {
   const firefoxSection = dryRunOutput.split(/\n\s*\n/).find((block) => block.trimStart().startsWith('Firefox'));
-  return !!firefoxSection && firefoxSection.includes('Download url:');
+  if (!firefoxSection || !firefoxSection.includes('Install location:')) return null;
+  return firefoxSection.includes('Download url:');
 }
 
-function probeHostBuild(): boolean | null {
+// Host support depends only on the installed Playwright version and the OS, neither of which
+// changes without a restart, so the (synchronous, ~2s) CLI probe runs at most once per process.
+export function createHostBuildProbe(run: () => boolean | null): () => boolean | null {
+  let probed = false;
+  let result: boolean | null = null;
+  return () => {
+    if (!probed) {
+      result = run();
+      probed = true;
+    }
+    return result;
+  };
+}
+
+const probeHostBuild = createHostBuildProbe(() => {
   const cli = path.join(path.dirname(require.resolve('playwright/package.json')), 'cli.js');
   const result = spawnSync(process.execPath, [cli, 'install', '--dry-run', 'firefox'], { encoding: 'utf8', timeout: 15000 });
   if (result.error || result.status !== 0) return null;
   return firefoxHasHostBuild(result.stdout);
-}
+});
 
 function describeHost(): string {
   if (process.env.PLAYWRIGHT_HOST_PLATFORM_OVERRIDE) return process.env.PLAYWRIGHT_HOST_PLATFORM_OVERRIDE;
@@ -76,7 +93,7 @@ export function checkFirefoxInstalled(deps: BrowserCheckDeps = {}): BrowserCheck
     return { ok: true, executablePath: firefoxPath };
   }
 
-  // Only probe on the failure path: it spawns the Playwright CLI (~2s)
+  // Only probe on the failure path: the first call spawns the Playwright CLI (~2s)
   if (hasHostBuild() === false) {
     return {
       ok: false,
