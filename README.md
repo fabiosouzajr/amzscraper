@@ -91,7 +91,7 @@ cd frontend && npm install && npm run dev
 
 Open `http://localhost:5174`. On first run, a **setup wizard** guides you through creating the admin account.
 
-**Note:** `npm install` in the backend automatically installs Playwright browsers (Firefox + Chromium) via a postinstall script.
+**Note:** `npm install` in the backend automatically installs the Playwright Firefox browser via a postinstall script. Chromium is only needed by the debug tools in `backend/test/` — install it with `cd backend && npm run browsers:debug`.
 
 ## Configuration
 
@@ -271,7 +271,7 @@ For the complete API reference, see [Backend API Documentation](docs/backend/BAC
 4. Set up a reverse proxy (nginx, Caddy) for SSL termination
 5. Use a process manager (PM2, systemd) to keep the backend running
 6. Ensure the `database/` directory exists and is writable
-7. Verify Playwright browsers are installed (`npx playwright install firefox chromium`)
+7. Verify the Playwright Firefox browser is installed (`cd backend && npx --no-install playwright install firefox`)
 
 ### Running in Production
 
@@ -285,7 +285,9 @@ Serve the frontend build (`frontend/dist/`) via your reverse proxy, proxying `/a
 
 **Node.js version:** Requires v18+. Use [nvm](https://github.com/nvm-sh/nvm) to install: `nvm install 18 && nvm use 18`
 
-**Playwright browsers not found:** Re-run `cd backend && npm install` (postinstall script handles it) or manually: `npx playwright install firefox chromium`
+**Playwright browser not found / "Executable doesn't exist":** Each `playwright` version expects one specific browser revision. Install it with the project's own Playwright: `cd backend && npx --no-install playwright install firefox`. Do not run a bare `npx playwright install` from another directory — it can use a different Playwright version and install a revision this app never looks for.
+
+**"Playwright does not support firefox on <os>" / "has no Firefox build for this OS":** Your OS is newer than the pinned Playwright release (the backend logs this at startup and `install.sh` detects it, using `playwright install --dry-run`). Bump `playwright` in `backend/package.json` (exact version, no `^`) and re-run `npm install`. As an unsupported stopgap, install the build for the nearest supported OS: `cd backend && PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64 npx --no-install playwright install firefox`.
 
 **Port already in use:** Backend auto-falls back to `PORT_FALLBACK` (default 3001). Or set custom ports via environment variables.
 

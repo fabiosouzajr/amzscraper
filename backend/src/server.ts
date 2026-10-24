@@ -18,6 +18,7 @@ import { schedulerService } from './services/scheduler';
 import { getAvailablePort } from './utils/portManager';
 import { dbService } from './services/database';
 import { initTelegramBot } from './services/telegram';
+import { checkFirefoxInstalled } from './services/browser-check';
 
 async function startServer() {
   const app = express();
@@ -69,6 +70,12 @@ async function startServer() {
   const server = app.listen(PORT, config.bindAddress, async () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Server accessible on all interfaces (including Tailscale)`);
+
+    // Warn early if the scraper browser is missing; the UI keeps working without it
+    const browserCheck = checkFirefoxInstalled();
+    if (!browserCheck.ok) {
+      console.error(`✗ Scraper unavailable: ${browserCheck.message}`);
+    }
 
     // Wait for DB tables/migrations to finish before starting the scheduler
     await dbService.ready;

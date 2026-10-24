@@ -7,12 +7,13 @@ npm run dev        # Dev server with hot reload (ts-node-dev, port 3000)
 npm run build      # Compile TypeScript to ./dist/
 npm start          # Production: run compiled JS from ./dist/server.js
 npm run watch      # TypeScript watch mode
-npm install        # Install dependencies + Playwright browsers (Firefox + Chromium) via postinstall
+npm install        # Install dependencies + Playwright Firefox via postinstall
+npm run browsers:debug  # Install Chromium (only needed by the test/ debug analyzers)
 ```
 
-**Note**: The `postinstall` script automatically installs Playwright browsers after `npm install`. This ensures the scraper has the required browsers for web scraping.
+**Note**: The `postinstall` script installs the Firefox revision that the pinned `playwright` version expects. Never fix a missing browser with a bare `npx playwright install` (it may use a different Playwright version); use `npx --no-install playwright install firefox` from `backend/`.
 
-No test runner configured. Files in `test/` are debug/analysis utilities, not test suites.
+`npm test` runs `test/*.test.ts` with Node's built-in `node:test` runner (via `ts-node/register/transpile-only`). The other files in `test/` are debug/analysis utilities, not test suites.
 
 ## Architecture
 
