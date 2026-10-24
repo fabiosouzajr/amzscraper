@@ -12,6 +12,7 @@ MISSING_REQUIREMENTS=false
 
 # Initialize browser status variables
 FIREFOX_OK=false
+FIREFOX_UNSUPPORTED=false
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Amazon Scraper Installation Check${NC}"
@@ -93,10 +94,22 @@ try {
     if [ -n "$FIREFOX_EXEC" ] && [ -f "$FIREFOX_EXEC" ]; then
         echo -e "${GREEN}✓${NC} Playwright Firefox browser is installed"
         FIREFOX_OK=true
-    else
+    # A Firefox "Download url:" in the dry-run means this OS is supported; if the probe
+    # itself fails, assume supported and fall back to the normal install offer
+    elif ! DRY_RUN=$(npx --no-install playwright install --dry-run firefox 2>/dev/null) \
+            || printf '%s\n' "$DRY_RUN" | awk '/^Firefox/{f=1} /^$/{f=0} f' | grep -q "Download url:"; then
         echo -e "${YELLOW}✗${NC} Playwright Firefox browser is not installed or version mismatch"
         MISSING_REQUIREMENTS=true
         FIREFOX_OK=false
+    else
+        # No Firefox build for this OS in the pinned Playwright: installing would fail
+        PW_VERSION=$(node -p "require('playwright/package.json').version" 2>/dev/null)
+        echo -e "${RED}✗${NC} Playwright ${PW_VERSION} has no Firefox build for this OS"
+        echo "    Upgrade \"playwright\" in backend/package.json to a release that supports it"
+        echo "    (exact version), then re-run: cd backend && npm install"
+        MISSING_REQUIREMENTS=true
+        FIREFOX_OK=false
+        FIREFOX_UNSUPPORTED=true
     fi
 
     cd ..
@@ -257,7 +270,7 @@ else
         
         # Re-check Playwright browsers if backend deps are now installed
         if [ -d "backend/node_modules/playwright" ]; then
-            if [ "$FIREFOX_OK" != "true" ]; then
+            if [ "$FIREFOX_OK" != "true" ] && [ "$FIREFOX_UNSUPPORTED" != "true" ]; then
                 echo ""
                 read -p "Install Playwright Firefox browser? (y/n) " -n 1 -r
                 echo

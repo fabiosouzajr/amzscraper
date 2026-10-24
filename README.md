@@ -287,7 +287,7 @@ Serve the frontend build (`frontend/dist/`) via your reverse proxy, proxying `/a
 
 **Playwright browser not found / "Executable doesn't exist":** Each `playwright` version expects one specific browser revision. Install it with the project's own Playwright: `cd backend && npx --no-install playwright install firefox`. Do not run a bare `npx playwright install` from another directory — it can use a different Playwright version and install a revision this app never looks for.
 
-**"Playwright does not support firefox on <os>":** Your OS is newer than the pinned Playwright release. Bump `playwright` in `backend/package.json` (exact version, no `^`) and re-run `npm install`. As an unsupported stopgap, install the build for the nearest supported OS: `cd backend && PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64 npx --no-install playwright install firefox`.
+**"Playwright does not support firefox on <os>" / "has no Firefox build for this OS":** Your OS is newer than the pinned Playwright release (the backend logs this at startup and `install.sh` detects it, using `playwright install --dry-run`). Bump `playwright` in `backend/package.json` (exact version, no `^`) and re-run `npm install`. As an unsupported stopgap, install the build for the nearest supported OS: `cd backend && PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64 npx --no-install playwright install firefox`.
 
 **Port already in use:** Backend auto-falls back to `PORT_FALLBACK` (default 3001). Or set custom ports via environment variables.
 
