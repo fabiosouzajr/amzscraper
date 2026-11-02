@@ -91,14 +91,14 @@ test('csv en', () => {
   assert.ok(csv.startsWith('﻿'));
   const lines = csv.slice(1).split('\r\n');
   assert.equal(lines[0], 'asin,description,date,price,available,unavailable_reason,lists,categories');
-  assert.equal(lines[1], 'B0ABCDEF12,"Cable, ""USB"" 2m",2026-01-02T00:00:00Z,199.9,true,,One; Two,Eletrônicos > Cabos');
+  assert.equal(lines[1], 'B0ABCDEF12,"Cable, ""USB"" 2m",2026-01-02 00:00:00,199.9,true,,One; Two,Eletrônicos > Cabos');
 });
 
 test('csv pt-BR', () => {
   const csv = formatPriceHistoryCsv(csvProducts(), 'pt-BR');
   const lines = csv.slice(1).split('\r\n');
   assert.equal(lines[0], 'asin;description;date;price;available;unavailable_reason;lists;categories');
-  assert.equal(lines[1], 'B0ABCDEF12;"Cable, ""USB"" 2m";2026-01-02T00:00:00Z;199,9;true;;One | Two;Eletrônicos > Cabos');
+  assert.equal(lines[1], 'B0ABCDEF12;"Cable, ""USB"" 2m";2026-01-02 00:00:00;199,9;true;;One | Two;Eletrônicos > Cabos');
 });
 
 test('csv product without history emits one row with empty date and price', () => {

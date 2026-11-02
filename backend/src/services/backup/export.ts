@@ -1,7 +1,7 @@
 import sqlite3 from 'sqlite3';
 import { dbAll } from '../db/helpers';
 import {
-  BACKUP_FORMAT, CURRENT_FORMAT_VERSION, BackupFileV1, BackupProduct, toIsoDate,
+  BACKUP_FORMAT, CURRENT_FORMAT_VERSION, BackupFileV1, BackupProduct, toIsoDate, toStorageDate,
 } from './format';
 
 type ProductRow = { id: number; asin: string; description: string; image_url: string | null; created_at: string };
@@ -133,7 +133,7 @@ export function formatPriceHistoryCsv(products: BackupProduct[], locale: 'en' | 
       lines.push(row([
         p.asin,
         p.description,
-        pt_ ? pt_.date : '',
+        pt_ ? toStorageDate(pt_.date) ?? pt_.date : '',
         price,
         pt_ ? String(pt_.available) : '',
         pt_?.unavailableReason ?? '',
