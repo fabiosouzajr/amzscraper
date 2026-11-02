@@ -78,6 +78,8 @@ export function DataImportExportSection() {
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    // Clear the input so picking the same file again (e.g. after fixing it) fires change again.
+    e.target.value = '';
     reset();
     if (!file) return;
     if (file.size > MAX_FILE_BYTES) {
@@ -132,8 +134,19 @@ export function DataImportExportSection() {
     }
   };
 
+  // Some codes have message variants, chosen by which params the server sent.
+  const issueKey = (issue: Issue): string => {
+    const p = issue.params ?? {};
+    if (issue.code === 'UNSUPPORTED_VERSION') {
+      if (p.version === undefined) return 'UNSUPPORTED_VERSION_missing';
+      if (Number(p.newer) > 0) return 'UNSUPPORTED_VERSION_newer';
+    }
+    if (issue.code === 'SERVER_SCHEMA_MISMATCH' && p.column === undefined) return 'SERVER_SCHEMA_MISMATCH_table';
+    return issue.code;
+  };
+
   const issueMessage = (issue: Issue) =>
-    t(`config.backup.issues.${issue.code}`, {
+    t(`config.backup.issues.${issueKey(issue)}`, {
       ...issue.params,
       path: issue.path,
       defaultValue: t('config.backup.issues.unknown', { code: issue.code, path: issue.path }),
