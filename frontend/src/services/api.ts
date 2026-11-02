@@ -1,4 +1,4 @@
-import { Product, ProductWithPrice, PriceDrop, Category, CategoryTreeNode, User, UserList, NotificationChannel, NotificationChannelType, EmailConfig, TelegramConfig, DiscordConfig, NotificationRule, NotificationRuleType, LowestInDaysParams, BelowThresholdParams, PercentageDropParams, NotificationLogEntry, NotificationChannelWithUser, NotificationRuleWithUser, NotificationLogEntryWithUser } from '../types';
+import { Product, ProductWithPrice, PriceDrop, Category, CategoryTreeNode, User, UserList, NotificationChannel, NotificationChannelType, EmailConfig, TelegramConfig, DiscordConfig, NotificationRule, NotificationRuleType, LowestInDaysParams, BelowThresholdParams, PercentageDropParams, NotificationLogEntry, NotificationChannelWithUser, NotificationRuleWithUser, NotificationLogEntryWithUser, RestoreMode, MergePreview, ReplacePreview, ValidationReport, RestoreResult } from '../types';
 
 const API_BASE_URL = '/api';
 
@@ -13,6 +13,45 @@ const getAuthHeaders = (): HeadersInit => {
   }
   return headers;
 };
+
+export class ApiError extends Error {
+  code: string;
+  report?: ValidationReport;
+  constructor(code: string, report?: ValidationReport) {
+    super(code);
+    this.code = code;
+    this.report = report;
+  }
+}
+
+async function throwApiError(response: Response): Promise<never> {
+  let body: { error?: string; report?: ValidationReport } = {};
+  try {
+    body = await response.json();
+  } catch {
+    // non-JSON error body (e.g. proxy error page)
+  }
+  throw new ApiError(body.error || `HTTP_${response.status}`, body.report);
+}
+
+async function downloadResult(response: Response, fallbackName: string): Promise<{ blob: Blob; filename: string }> {
+  if (!response.ok) await throwApiError(response);
+  const disposition = response.headers.get('Content-Disposition');
+  const filename = disposition?.split('filename=')[1]?.replace(/"/g, '') || fallbackName;
+  return { blob: await response.blob(), filename };
+}
+
+async function postJson<T>(path: string, body: unknown): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'POST',
+    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) await throwApiError(response);
+  return response.json();
+}
+
+const today = () => new Date().toISOString().split('T')[0];
 
 // Simple in-memory cache for deduplicating repeated API calls
 const _cache = new Map<string, { data: unknown; timestamp: number }>();
@@ -390,6 +429,36 @@ export const api = {
       throw new Error('Failed to fetch database information');
     }
     return response.json();
+  },
+
+  async exportASINs(): Promise<{ blob: Blob; filename: string }> {
+    const response = await fetch(`${API_BASE_URL}/config/export-asins`, { headers: getAuthHeaders() });
+    return downloadResult(response, `amazon-tracked-asins-${today()}.csv`);
+  },
+
+  backup: {
+    async exportJson(): Promise<{ blob: Blob; filename: string }> {
+      const response = await fetch(`${API_BASE_URL}/config/backup/export`, { headers: getAuthHeaders() });
+      return downloadResult(response, `amzscraper-backup-${today()}.json`);
+    },
+    async exportCsv(locale: string): Promise<{ blob: Blob; filename: string }> {
+      const response = await fetch(
+        `${API_BASE_URL}/config/backup/export-csv?locale=${encodeURIComponent(locale)}`,
+        { headers: getAuthHeaders() }
+      );
+      return downloadResult(response, `amzscraper-price-history-${today()}.csv`);
+    },
+    validate(backup: unknown): Promise<ValidationReport> {
+      return postJson('/config/backup/validate', { backup });
+    },
+    restore(body: {
+      backup: unknown;
+      mode: RestoreMode;
+      confirmReplace?: boolean;
+      expected: MergePreview | ReplacePreview;
+    }): Promise<RestoreResult> {
+      return postJson('/config/backup/restore', body);
+    },
   },
 
   async exportDatabase(): Promise<Blob> {

@@ -4,7 +4,7 @@ import { api } from '../../services/api';
 import { Notifications } from '../Notifications';
 import { DashboardSection } from './DashboardSection';
 import { DatabaseSection } from './DatabaseSection';
-import { DataExportSection } from './DataExportSection';
+import { DataImportExportSection } from './DataImportExportSection';
 import { AccountSection } from './AccountSection';
 
 interface DatabaseInfo {
@@ -101,7 +101,7 @@ export function Config() {
           {activeSection === 'database' && (
             <DatabaseSection dbInfo={dbInfo} loadingDbInfo={loadingDbInfo} />
           )}
-          {activeSection === 'data-export' && <DataExportSection />}
+          {activeSection === 'data-export' && <DataImportExportSection />}
           {activeSection === 'notifications' && (
             <div id="notifications" className="config-section">
               <Notifications />

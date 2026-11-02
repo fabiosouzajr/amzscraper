@@ -293,3 +293,119 @@
   border-color: var(--color-amazon-orange);
   box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
 }
+
+/* Data Import/Export */
+.backupHeading {
+  margin: 1.5rem 0 0.75rem;
+  color: var(--color-amazon-navy);
+}
+
+.backupReport {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.backupFileInfo {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.backupErrors {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+}
+
+.backupWarnings {
+  background: var(--color-warning-subtle);
+  color: var(--color-warning);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+}
+
+.backupErrors ul,
+.backupWarnings ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.backupLinkButton {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.backupBlocked {
+  margin: 0;
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
+.backupNotice {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-warning-subtle);
+  color: var(--color-warning);
+  border-radius: 6px;
+}
+
+.backupModes {
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.backupMode {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.backupMode span {
+  display: flex;
+  flex-direction: column;
+}
+
+.backupCounts {
+  margin: 0.5rem 0;
+}
+
+.backupCountRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--color-bg-inset);
+}
+
+.backupCountRow dt,
+.backupCountRow dd {
+  margin: 0;
+}
+
+.backupCountRow dd {
+  font-weight: 600;
+}
+
+.backupResult {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--color-success-subtle);
+  border-left: 4px solid var(--color-success);
+  border-radius: 6px;
+}

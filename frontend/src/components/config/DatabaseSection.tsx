@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 import styles from './Config.module.css';
 
 interface DatabaseInfo {
@@ -16,6 +17,7 @@ interface Props {
 
 export function DatabaseSection({ dbInfo, loadingDbInfo }: Props) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [exportingDb, setExportingDb] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,16 +66,18 @@ export function DatabaseSection({ dbInfo, loadingDbInfo }: Props) {
           <p className={styles.configDescription}>{t('config.unableToLoad')}</p>
         )}
       </div>
-      <div className={styles.configActions}>
-        <button
-          onClick={handleExportDatabase}
-          disabled={exportingDb || loadingDbInfo}
-          className={styles.exportButton}
-        >
-          {exportingDb ? t('config.exportingDatabase') : t('config.exportDatabase')}
-        </button>
-        <p className={styles.configDescription}>{t('config.exportDatabaseDescription')}</p>
-      </div>
+      {user?.role === 'ADMIN' && (
+        <div className={styles.configActions}>
+          <button
+            onClick={handleExportDatabase}
+            disabled={exportingDb || loadingDbInfo}
+            className={styles.exportButton}
+          >
+            {exportingDb ? t('config.exportingDatabase') : t('config.exportDatabase')}
+          </button>
+          <p className={styles.configDescription}>{t('config.exportDatabaseDescription')}</p>
+        </div>
+      )}
       {error && <div className="error-message">{error}</div>}
     </div>
   );

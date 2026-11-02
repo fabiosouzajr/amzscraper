@@ -186,3 +186,61 @@ export interface NotificationLogEntryWithUser extends NotificationLogEntry {
   product_description?: string;
   channel_name: string;
 }
+
+// Backup / restore (mirrors backend/src/services/backup/format.ts)
+export type RestoreMode = 'merge' | 'replace';
+
+export type Issue = {
+  severity: 'error' | 'warning';
+  code: string;
+  path: string;
+  params?: Record<string, string | number>;
+};
+
+export type MergePreview = {
+  productsAdded: number;
+  productsSkippedExisting: number;
+  pricePointsAdded: number;
+  pricePointsSkippedDuplicate: number;
+  listsAdded: number;
+  listsMatched: number;
+  membershipsAdded: number;
+};
+
+export type ReplacePreview = {
+  productsDeleted: number;
+  pricePointsDeleted: number;
+  listsDeleted: number;
+  notificationRulesDeleted: number;
+  productsAdded: number;
+  pricePointsAdded: number;
+  listsAdded: number;
+};
+
+export type ValidationReport = {
+  compatible: boolean;
+  fileInfo: {
+    formatVersion?: number;
+    appVersion?: string;
+    exportedAt?: string;
+    username?: string;
+    counts: { products: number; priceHistory: number; lists: number };
+  };
+  issues: Issue[];
+  issueTotals: { errors: number; warnings: number };
+  preview: { merge: MergePreview; replace: ReplacePreview };
+  quotaOk: { merge: boolean; replace: boolean };
+};
+
+export type RestoreResult = {
+  mode: RestoreMode;
+  productsAdded: number;
+  pricePointsAdded: number;
+  listsAdded: number;
+  membershipsAdded: number;
+  productsDeleted?: number;
+  pricePointsDeleted?: number;
+  listsDeleted?: number;
+  notificationRulesDeleted?: number;
+  durationMs: number;
+};

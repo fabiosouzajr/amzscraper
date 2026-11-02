@@ -4,10 +4,10 @@ import { useAuth } from '../contexts/AuthContext';
 import styles from './SettingsPage.module.css';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { api } from '../services/api';
-import { User, Database, Download, Bell, Users, BarChart, Settings as SettingsIcon, FileText } from 'lucide-react';
+import { User, Database, ArrowDownUp, Bell, Users, BarChart, Settings as SettingsIcon, FileText } from 'lucide-react';
 import { Notifications } from './Notifications';
 import { DatabaseSection } from './config/DatabaseSection';
-import { DataExportSection } from './config/DataExportSection';
+import { DataImportExportSection } from './config/DataImportExportSection';
 import { AccountSection } from './config/AccountSection';
 import { UserManagement } from './admin/UserManagement';
 import { SystemStats } from './admin/SystemStats';
@@ -31,7 +31,7 @@ interface Section {
 const USER_SECTIONS: Section[] = [
   { id: 'account', labelKey: 'config.account', icon: User },
   { id: 'database', labelKey: 'config.database', icon: Database },
-  { id: 'data-export', labelKey: 'config.dataExport', icon: Download },
+  { id: 'data-export', labelKey: 'config.dataExport', icon: ArrowDownUp },
   { id: 'notifications', labelKey: 'config.notifications', icon: Bell },
 ];
 
@@ -134,7 +134,7 @@ export function SettingsPage() {
           )}
 
           {/* Data Export Section */}
-          {activeSection === 'data-export' && <DataExportSection />}
+          {activeSection === 'data-export' && <DataImportExportSection />}
 
           {/* Notifications Section */}
           {activeSection === 'notifications' && (
