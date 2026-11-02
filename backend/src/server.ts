@@ -30,6 +30,8 @@ async function startServer() {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   }));
+  // Backup uploads need a larger limit; this parser runs first, so the global one skips these bodies
+  app.use('/api/config/backup', express.json({ limit: '25mb' }));
   app.use(express.json());
 
   // Readiness gate — block requests until DB migrations finish
@@ -51,6 +53,14 @@ async function startServer() {
   app.use('/api/config', configRouter);
   app.use('/api/admin', adminRouter);
   app.use('/api/notifications', notificationsRouter);
+
+  // Map oversized backup uploads to a clear 413; pass everything else on
+  app.use('/api/config/backup', (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (err && err.type === 'entity.too.large') {
+      return res.status(413).json({ error: 'PAYLOAD_TOO_LARGE' });
+    }
+    next(err);
+  });
 
   // Health check
   app.get('/health', (req, res) => {

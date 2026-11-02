@@ -3,6 +3,13 @@ import { dbService } from '../services/database';
 import { scraperService } from '../services/scraper';
 import { validateASIN, normalizeASIN } from '../utils/validation';
 import { AuthRequest, authenticate } from '../middleware/auth';
+import { requireAdmin } from '../middleware/admin';
+import { schedulerService } from '../services/scheduler';
+import { openConnection } from '../services/backup/connection';
+import { buildBackup, formatPriceHistoryCsv, backupFilename, priceHistoryCsvFilename } from '../services/backup/export';
+import { loadValidationContext } from '../services/backup/context';
+import { validateBackup } from '../services/backup/validate';
+import { restoreBackup, RestoreError } from '../services/backup/restore';
 import * as fs from 'fs';
 
 const router = Router();
@@ -238,7 +245,7 @@ router.get('/database-info', async (req: Request, res: Response) => {
 });
 
 // GET /api/config/export-database - Export the entire database
-router.get('/export-database', async (req: Request, res: Response) => {
+router.get('/export-database', requireAdmin, async (req: Request, res: Response) => {
   try {
     const dbPath = dbService.getDatabasePath();
     
@@ -260,6 +267,112 @@ router.get('/export-database', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error exporting database:', error);
     res.status(500).json({ error: 'Failed to export database' });
+  }
+});
+
+// ---- Per-user backup / restore ----
+
+const backupDeps = {
+  getConfig: (key: string) => dbService.getConfig(key),
+  isUpdateInProgress: () => schedulerService.isUpdateInProgress(),
+};
+
+function sendBackupError(res: Response, error: unknown, label: string) {
+  if (error instanceof RestoreError) {
+    return res.status(error.status).json({ error: error.code, report: error.report });
+  }
+  if ((error as { code?: string })?.code === 'SQLITE_BUSY') {
+    return res.status(503).json({ error: 'DATABASE_BUSY' });
+  }
+  console.error(`${label} failed:`, error);
+  return res.status(500).json({ error: 'RESTORE_FAILED' });
+}
+
+function closeConnection(db: { close(cb: (err: Error | null) => void): void }) {
+  db.close((err) => { if (err) console.error('Error closing backup connection:', err); });
+}
+
+// GET /api/config/backup/export - Download the user's backup as JSON
+router.get('/backup/export', async (req: Request, res: Response) => {
+  const authReq = req as AuthRequest;
+  let db;
+  try {
+    db = await openConnection(dbService.getDatabasePath());
+    const now = new Date();
+    const username = authReq.user!.username;
+    const backup = await buildBackup(db, authReq.userId!, {
+      username,
+      appVersion: require('../../package.json').version,
+      now,
+    });
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${backupFilename(username, now)}"`);
+    res.send(JSON.stringify(backup, null, 2));
+  } catch (error) {
+    console.error('Error exporting backup:', error);
+    res.status(500).json({ error: 'Failed to export backup' });
+  } finally {
+    if (db) closeConnection(db);
+  }
+});
+
+// GET /api/config/backup/export-csv?locale=en|pt-BR - Download price history as CSV
+router.get('/backup/export-csv', async (req: Request, res: Response) => {
+  const authReq = req as AuthRequest;
+  const locale = req.query.locale === 'pt-BR' ? 'pt-BR' : 'en';
+  let db;
+  try {
+    db = await openConnection(dbService.getDatabasePath());
+    const now = new Date();
+    const backup = await buildBackup(db, authReq.userId!, {
+      username: authReq.user!.username,
+      appVersion: require('../../package.json').version,
+      now,
+    });
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${priceHistoryCsvFilename(now)}"`);
+    res.send(formatPriceHistoryCsv(backup.products, locale));
+  } catch (error) {
+    console.error('Error exporting price history CSV:', error);
+    res.status(500).json({ error: 'Failed to export price history' });
+  } finally {
+    if (db) closeConnection(db);
+  }
+});
+
+// POST /api/config/backup/validate - Validate a backup file without writing
+router.post('/backup/validate', async (req: Request, res: Response) => {
+  const authReq = req as AuthRequest;
+  let db;
+  try {
+    db = await openConnection(dbService.getDatabasePath());
+    const ctx = await loadValidationContext(db, authReq.userId!, backupDeps);
+    const { report } = validateBackup(req.body?.backup, ctx);
+    res.json(report);
+  } catch (error) {
+    sendBackupError(res, error, 'Backup validation');
+  } finally {
+    if (db) closeConnection(db);
+  }
+});
+
+// POST /api/config/backup/restore - Restore a backup (merge or replace)
+router.post('/backup/restore', async (req: Request, res: Response) => {
+  const authReq = req as AuthRequest;
+  const { backup, mode, confirmReplace, expected } = req.body ?? {};
+  if ((mode !== 'merge' && mode !== 'replace') || !expected || typeof expected !== 'object' || Array.isArray(expected)) {
+    return res.status(400).json({ error: 'INVALID_REQUEST' });
+  }
+  try {
+    const result = await restoreBackup(
+      authReq.userId!,
+      backup,
+      { mode, confirmReplace: confirmReplace === true, expected },
+      { ...backupDeps, openConnection: () => openConnection(dbService.getDatabasePath()) }
+    );
+    res.json(result);
+  } catch (error) {
+    sendBackupError(res, error, 'Backup restore');
   }
 });
 

@@ -314,6 +314,10 @@ export class SchedulerService {
     }
   }
 
+  isUpdateInProgress(): boolean {
+    return this.isUpdating;
+  }
+
   isRunning(): boolean {
     return this.systemCronJob !== null;
   }
