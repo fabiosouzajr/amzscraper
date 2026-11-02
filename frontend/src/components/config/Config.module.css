@@ -352,6 +352,12 @@
   font-weight: 500;
 }
 
+.backupOk {
+  margin: 0;
+  color: var(--color-success);
+  font-weight: 500;
+}
+
 .backupNotice {
   margin-top: 0.75rem;
   padding: 0.75rem 1rem;

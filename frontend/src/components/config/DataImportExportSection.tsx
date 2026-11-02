@@ -273,7 +273,9 @@ export function DataImportExportSection() {
             </div>
           )}
 
-          {!report.compatible && <p className={styles.backupBlocked}>{t('config.backup.incompatible')}</p>}
+          {report.compatible
+            ? <p className={styles.backupOk}>{t('config.backup.compatible')}</p>
+            : <p className={styles.backupBlocked}>{t('config.backup.incompatible')}</p>}
 
           {report.compatible && (
             <>

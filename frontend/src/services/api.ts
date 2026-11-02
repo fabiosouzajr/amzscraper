@@ -36,9 +36,19 @@ async function throwApiError(response: Response): Promise<never> {
 
 async function downloadResult(response: Response, fallbackName: string): Promise<{ blob: Blob; filename: string }> {
   if (!response.ok) await throwApiError(response);
-  const disposition = response.headers.get('Content-Disposition');
-  const filename = disposition?.split('filename=')[1]?.replace(/"/g, '') || fallbackName;
+  const filename = filenameFromDisposition(response.headers.get('Content-Disposition')) || fallbackName;
   return { blob: await response.blob(), filename };
+}
+
+// Prefer RFC 5987 `filename*=UTF-8''…`, fall back to the quoted or bare `filename=`.
+function filenameFromDisposition(disposition: string | null): string | null {
+  if (!disposition) return null;
+  const extended = disposition.match(/filename\*\s*=\s*UTF-8''([^;]+)/i);
+  if (extended) {
+    try { return decodeURIComponent(extended[1].trim()); } catch { /* fall through */ }
+  }
+  const plain = disposition.match(/filename\s*=\s*"([^"]*)"/i) ?? disposition.match(/filename\s*=\s*([^;]+)/i);
+  return plain ? plain[1].trim() : null;
 }
 
 async function postJson<T>(path: string, body: unknown): Promise<T> {
