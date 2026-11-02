@@ -1,7 +1,7 @@
 # Design: Data Import/Export (Backup & Restore)
 
 **Date:** 2026-11-02
-**Status:** Approved
+**Status:** Implemented
 
 ---
 

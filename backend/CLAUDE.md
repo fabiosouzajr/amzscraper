@@ -31,10 +31,11 @@ src/
     prices.ts            # Manual price update trigger (SSE streaming)
     dashboard.ts         # Price drops/increases statistics
     lists.ts             # Custom user lists management
-    config.ts            # ASIN import/export, DB export, user schedule
+    config.ts            # ASIN import/export, DB export (admin-only), user schedule, backup routes (/api/config/backup/*)
     admin.ts             # User management, stats, config, audit log (admin-only)
   services/
     database.ts          # All SQL queries, schema, migrations (~1600 lines)
+    backup/              # Per-user JSON/CSV export, validated merge/replace restore (format, validate, context, export, restore, connection)
     scraper.ts           # Playwright browser automation (Firefox headless)
     scheduler.ts         # node-cron daily price updates + per-user scheduling
   models/types.ts        # TypeScript interfaces
@@ -110,4 +111,4 @@ INITIAL_ADMIN_PASSWORD=change-this-password-immediately  # Optional: Set initial
 - ASIN validation: exactly 10 alphanumeric chars, stored uppercase.
 - `logger.ts` overrides global `console.log/warn/error` with timestamped versions - imported in `server.ts`.
 - CORS is open (no origin restrictions) - relies on Tailscale for access control.
-- No explicit DB transaction support - uses `sqlite3.serialize()` for ordered execution.
+- No explicit DB transaction support in general - uses `sqlite3.serialize()` for ordered execution. Exception: backup restore (`services/backup/restore.ts`) runs one transaction with `BEGIN IMMEDIATE` on a dedicated connection (`backup/connection.ts`).

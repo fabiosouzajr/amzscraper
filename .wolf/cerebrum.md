@@ -25,3 +25,4 @@
 <!-- Significant technical decisions with rationale. Why X was chosen over Y. -->
 
 - [2026-06-14] amzscraper scraper runs **logged-out** (no storageState/cookies in `scraper.ts` newContext). User decided the tracker treats the **public (logged-out) price as truth**, not account/Pix/member prices. So logged-in vs logged-out price differences (e.g. B076KZYYRJ 15,00 vs public 16,90) are NOT bugs; no authenticated-session work to be done. Only genuine parser bugs (carousel contamination) get fixed.
+- [2026-11-02] SQLite FKs are off (`PRAGMA foreign_keys` is never set), so deletes must clear dependents explicitly.
