@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createTempDb } from './helpers/temp-db';
 import {
-  buildBackup, formatPriceHistoryCsv, backupFilename, priceHistoryCsvFilename,
+  buildBackup, formatPriceHistoryCsv, backupFilename, priceHistoryCsvFilename, attachmentDisposition,
 } from '../src/services/backup/export';
 import { validateBackup, ValidationContext } from '../src/services/backup/validate';
 import { BackupProduct } from '../src/services/backup/format';
@@ -111,4 +111,33 @@ test('csv product without history emits one row with empty date and price', () =
 test('filenames', () => {
   assert.equal(backupFilename('alice', NOW), 'amzscraper-backup-alice-2026-11-02.json');
   assert.equal(priceHistoryCsvFilename(NOW), 'amzscraper-price-history-2026-11-02.csv');
+});
+
+test('csv neutralizes formula-like text cells but not numeric columns', () => {
+  const p = csvProducts();
+  p[0].description = '=HYPERLINK("http://evil")';
+  p[0].lists = ['@list'];
+  p[0].categories = ['+cat'];
+  p[0].priceHistory[0].unavailableReason = '\tx';
+  p.push({ ...csvProducts()[0], description: '-50% off', lists: [], categories: [],
+    priceHistory: [{ date: '2026-01-03T00:00:00Z', price: 0, available: true, unavailableReason: null }] });
+  const lines = formatPriceHistoryCsv(p, 'en').slice(1).split('\r\n');
+  assert.equal(lines[1], `B0ABCDEF12,"'=HYPERLINK(""http://evil"")",2026-01-02 00:00:00,199.9,true,'\tx,'@list,'+cat`);
+  assert.equal(lines[2], "B0ABCDEF12,'-50% off,2026-01-03 00:00:00,0,true,,,");
+});
+
+test('attachmentDisposition is header-safe and round-trips the real name', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { validateHeaderValue } = require('node:http');
+  for (const name of ['João', '名前', 'a"b']) {
+    const filename = backupFilename(name, NOW);
+    const h = attachmentDisposition(filename);
+    assert.ok(/^[\x20-\x7e]*$/.test(h), h);
+    validateHeaderValue('Content-Disposition', h);
+    const m = /^attachment; filename="([A-Za-z0-9._-]+)"; filename\*=UTF-8''([^\s;"]+)$/.exec(h);
+    assert.ok(m, h);
+    assert.equal(decodeURIComponent(m![2]), filename);
+  }
+  assert.equal(attachmentDisposition(backupFilename('João', NOW)).split(';')[1],
+    ' filename="amzscraper-backup-Jo_o-2026-11-02.json"');
 });

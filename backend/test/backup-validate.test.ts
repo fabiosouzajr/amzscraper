@@ -114,7 +114,7 @@ test('INVALID_PRICE negative', () => {
 });
 
 test('INVALID_LIST_NAME too long and blank', () => {
-  const f = validFile(); f.lists[0].name = 'x'.repeat(101);
+  const f = validFile(); f.lists[0].name = 'x'.repeat(1001);
   assert.equal(find(run(f), 'INVALID_LIST_NAME')[0].path, 'lists[0].name');
   const g = validFile(); g.lists[0].name = '   ';
   assert.equal(find(run(g), 'INVALID_LIST_NAME')[0].path, 'lists[0].name');
@@ -273,4 +273,16 @@ test('issues capped at 500', () => {
   const r = run(f);
   assert.equal(r.report.issues.length, 500);
   assert.equal(r.report.issueTotals.errors, 600);
+});
+
+test('errors are reported before warnings under the issue cap', () => {
+  const f = validFile();
+  for (let i = 0; i < 600; i++) f[`extra${i}`] = i;
+  f.products[1].asin = 'bad';
+  const r = run(f);
+  assert.equal(r.report.issueTotals.warnings, 600);
+  assert.equal(r.report.issueTotals.errors, 1);
+  assert.equal(r.report.issues.length, 500);
+  assert.equal(r.report.issues[0].code, 'INVALID_ASIN');
+  assert.equal(find(r, 'INVALID_ASIN').length, 1);
 });

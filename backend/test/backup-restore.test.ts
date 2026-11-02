@@ -392,3 +392,64 @@ test('restores 20k price points under 10s', async () => {
     assert.equal((await counts(t, bob)).prices, 20000);
   } finally { await t.cleanup(); }
 });
+
+test('backup with duplicate and long list names round-trips', async () => {
+  const t = await createTempDb();
+  try {
+    const alice = await t.addUser('alice');
+    const bob = await t.addUser('bob');
+    const long = 'L'.repeat(150);
+    await t.addProduct(alice, 'B0AAAAAAA1', { lists: ['Wish'] });
+    await t.addProduct(alice, 'B0AAAAAAA2', { lists: [' Wish '] });
+    await t.addProduct(alice, 'B0AAAAAAA3', { lists: [long] });
+    // a second exact "Wish" list (older), holding product 3
+    await dbRun(t.db, 'INSERT INTO user_lists (user_id, name, created_at) VALUES (?, ?, ?)', [alice, 'Wish', '2025-06-01 00:00:00']);
+    const dup = (await dbGet<{ id: number }>(t.db, 'SELECT MAX(id) id FROM user_lists'))!.id;
+    const p3 = (await dbGet<{ id: number }>(t.db, "SELECT id FROM products WHERE asin = 'B0AAAAAAA3'"))!.id;
+    await dbRun(t.db, 'INSERT INTO product_lists (product_id, list_id) VALUES (?, ?)', [p3, dup]);
+
+    const file = await backupOf(t, alice, 'alice');
+    assert.deepEqual(file.lists.map((l: { name: string }) => l.name).sort(), [long, 'Wish'].sort());
+    assert.equal(file.lists.find((l: { name: string }) => l.name === 'Wish').createdAt, '2025-06-01T00:00:00Z');
+    assert.deepEqual(file.products.map((p: { lists: string[] }) => p.lists), [['Wish'], ['Wish'], [long, 'Wish'].sort()]);
+    const ctx = await loadValidationContext(t.db, bob, depsFor(t));
+    const { report } = validateBackup(file, ctx);
+    assert.equal(report.issueTotals.errors, 0, JSON.stringify(report.issues));
+
+    const result = await restoreWithPreview(t, bob, 'merge', file);
+    assert.equal(result.productsAdded, 3);
+    assert.equal(result.listsAdded, 2);
+    assert.equal(result.membershipsAdded, 4);
+  } finally { await t.cleanup(); }
+});
+
+test('restores 110k price points', async () => {
+  const t = await createTempDb();
+  try {
+    const bob = await t.addUser('bob');
+    const base = Date.UTC(2023, 0, 1);
+    const products = Array.from({ length: 100 }, (_, i) => ({
+      asin: `B0${String(i).padStart(8, '0')}`,
+      description: `P${i}`,
+      imageUrl: null,
+      createdAt: '2023-01-01T00:00:00Z',
+      categories: ['Cat'],
+      lists: [],
+      priceHistory: Array.from({ length: 1100 }, (_, j) => ({
+        date: new Date(base + j * 3600_000).toISOString().slice(0, 19) + 'Z',
+        price: 10 + j, available: j % 7 !== 0, unavailableReason: j % 7 === 0 ? 'oos' : null,
+      })),
+    }));
+    const file = {
+      format: 'amzscraper-backup', formatVersion: 1, exportedAt: '2026-01-01T00:00:00Z', appVersion: '1.0.0',
+      username: 'bob', counts: { products: 100, priceHistory: 110000, lists: 0 }, lists: [], products,
+    };
+    const result = await restoreWithPreview(t, bob, 'replace', file);
+    assert.equal(result.pricePointsAdded, 110000);
+    assert.equal((await counts(t, bob)).prices, 110000);
+    const sample = await dbGet<{ price: number; available: number; unavailable_reason: string | null; date: string }>(t.db,
+      "SELECT ph.price, ph.available, ph.unavailable_reason, ph.date FROM price_history ph JOIN products p ON p.id = ph.product_id WHERE p.asin = 'B000000099' ORDER BY ph.date LIMIT 1 OFFSET 7");
+    assert.deepEqual(sample, { price: 17, available: 0, unavailable_reason: 'oos', date: '2023-01-01 07:00:00' });
+    assert.ok(result.durationMs < 5000, `took ${result.durationMs}ms`);
+  } finally { await t.cleanup(); }
+});

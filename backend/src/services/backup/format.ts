@@ -1,7 +1,7 @@
 export const BACKUP_FORMAT = 'amzscraper-backup';
 export const CURRENT_FORMAT_VERSION = 1;
 export const SUPPORTED_FORMAT_VERSIONS: number[] = [1];
-export const MAX_LIST_NAME_LENGTH = 100;
+export const MAX_LIST_NAME_LENGTH = 1000;
 export const MAX_REPORTED_ISSUES = 500;
 
 export interface BackupPricePoint {

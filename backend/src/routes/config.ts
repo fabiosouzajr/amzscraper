@@ -6,7 +6,9 @@ import { AuthRequest, authenticate } from '../middleware/auth';
 import { requireAdmin } from '../middleware/admin';
 import { schedulerService } from '../services/scheduler';
 import { openConnection } from '../services/backup/connection';
-import { buildBackup, formatPriceHistoryCsv, backupFilename, priceHistoryCsvFilename } from '../services/backup/export';
+import {
+  buildBackup, formatPriceHistoryCsv, backupFilename, priceHistoryCsvFilename, attachmentDisposition,
+} from '../services/backup/export';
 import { loadValidationContext } from '../services/backup/context';
 import { validateBackup } from '../services/backup/validate';
 import { restoreBackup, RestoreError } from '../services/backup/restore';
@@ -306,7 +308,7 @@ router.get('/backup/export', async (req: Request, res: Response) => {
       now,
     });
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.setHeader('Content-Disposition', `attachment; filename="${backupFilename(username, now)}"`);
+    res.setHeader('Content-Disposition', attachmentDisposition(backupFilename(username, now)));
     res.send(JSON.stringify(backup, null, 2));
   } catch (error) {
     console.error('Error exporting backup:', error);

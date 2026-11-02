@@ -55,7 +55,7 @@ export async function buildBackup(
   );
   const lists = await dbAll<ListRow>(
     db,
-    'SELECT id, name, created_at FROM user_lists WHERE user_id = ? ORDER BY name, id',
+    'SELECT id, name, created_at FROM user_lists WHERE user_id = ? ORDER BY created_at, id',
     [userId]
   );
   const memberships = await dbAll<MembershipRow>(
@@ -67,7 +67,17 @@ export async function buildBackup(
     [userId]
   );
 
-  const listNameById = new Map(lists.map((l) => [l.id, l.name]));
+  // Lists collapse by trimmed name (the DB allows duplicates); the oldest one supplies createdAt.
+  const listNameById = new Map<number, string>();
+  const listCreatedAt = new Map<string, string>();
+  for (const l of lists) {
+    const name = l.name.trim();
+    listNameById.set(l.id, name);
+    if (!listCreatedAt.has(name)) listCreatedAt.set(name, l.created_at);
+  }
+  const outLists = [...listCreatedAt.entries()]
+    .sort(([a], [b]) => byString(a, b))
+    .map(([name, createdAt]) => ({ name, createdAt: toIsoDate(createdAt) }));
   const categoriesByProduct = new Map<number, string[]>();
   for (const c of categories) push(categoriesByProduct, c.product_id, c.name);
   const pricesByProduct = new Map<number, BackupProduct['priceHistory']>();
@@ -82,7 +92,9 @@ export async function buildBackup(
   const listsByProduct = new Map<number, string[]>();
   for (const m of memberships) {
     const name = listNameById.get(m.list_id);
-    if (name !== undefined) push(listsByProduct, m.product_id, name);
+    if (name !== undefined && !listsByProduct.get(m.product_id)?.includes(name)) {
+      push(listsByProduct, m.product_id, name);
+    }
   }
 
   const outProducts: BackupProduct[] = products.map((p) => ({
@@ -104,9 +116,9 @@ export async function buildBackup(
     counts: {
       products: outProducts.length,
       priceHistory: outProducts.reduce((n, p) => n + p.priceHistory.length, 0),
-      lists: lists.length,
+      lists: outLists.length,
     },
-    lists: lists.map((l) => ({ name: l.name, createdAt: toIsoDate(l.created_at) })),
+    lists: outLists,
     products: outProducts,
   };
 }
@@ -122,21 +134,23 @@ export function formatPriceHistoryCsv(products: BackupProduct[], locale: 'en' | 
   const cell = (value: string): string =>
     /["\r\n]/.test(value) || value.includes(delim) ? `"${value.replace(/"/g, '""')}"` : value;
   const row = (cells: string[]) => cells.map(cell).join(delim);
+  // Spreadsheets evaluate text starting with these as a formula; a leading ' keeps it literal.
+  const text = (value: string): string => (/^[=+\-@\t\r]/.test(value) ? `'${value}` : value);
 
   const lines = [row(CSV_HEADER)];
   for (const p of products) {
-    const lists = p.lists.join(listSep);
-    const categories = p.categories.join(' > ');
+    const lists = text(p.lists.join(listSep));
+    const categories = text(p.categories.join(' > '));
     const points = p.priceHistory.length > 0 ? p.priceHistory : [null];
     for (const pt_ of points) {
       const price = pt_ && pt_.price !== null ? (pt ? String(pt_.price).replace('.', ',') : String(pt_.price)) : '';
       lines.push(row([
-        p.asin,
-        p.description,
+        text(p.asin),
+        text(p.description),
         pt_ ? toStorageDate(pt_.date) ?? pt_.date : '',
         price,
         pt_ ? String(pt_.available) : '',
-        pt_?.unavailableReason ?? '',
+        text(pt_?.unavailableReason ?? ''),
         lists,
         categories,
       ]));
@@ -149,6 +163,16 @@ const ymd = (d: Date) => d.toISOString().slice(0, 10);
 
 export function backupFilename(username: string, now: Date): string {
   return `amzscraper-backup-${username}-${ymd(now)}.json`;
+}
+
+/**
+ * Content-Disposition for a download: an ASCII-only `filename` fallback plus the real name
+ * as RFC 5987 `filename*`, so any username is safe to put in a header.
+ */
+export function attachmentDisposition(filename: string): string {
+  const fallback = filename.replace(/[^A-Za-z0-9._-]/g, '_');
+  const encoded = encodeURIComponent(filename).replace(/['()*!]/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+  return `attachment; filename="${fallback}"; filename*=UTF-8''${encoded}`;
 }
 
 export function priceHistoryCsvFilename(now: Date): string {

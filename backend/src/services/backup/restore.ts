@@ -73,6 +73,8 @@ function close(db: sqlite3.Database): Promise<void> {
 }
 
 const USER_PRODUCTS = 'SELECT id FROM products WHERE user_id = ?';
+const PRICE_COLS = 6;
+const PRICE_BATCH = 140; // 140 rows x 6 params, well under SQLite's bound-parameter limit
 
 /** Deletes the user's products, prices, lists and product-specific notification rules (spec §2 order). */
 async function deleteUserData(db: sqlite3.Database, userId: number) {
@@ -138,9 +140,19 @@ async function insertBackup(db: sqlite3.Database, userId: number, data: Normaliz
     const selCategory = await stmt('SELECT id FROM categories WHERE name = ?');
     const insProductCategory = await stmt(
       'INSERT OR IGNORE INTO product_categories (product_id, category_id, level) VALUES (?, ?, ?)');
-    const insPrice = await stmt(
-      `INSERT INTO price_history (product_id, price, available, unavailable_reason, date, created_at)
-       VALUES (?, ?, ?, ?, ?, ?)`);
+    // Price points go in as multi-row INSERTs: one statement per PRICE_BATCH rows keeps the write lock short.
+    const priceSql = (rows: number) =>
+      `INSERT INTO price_history (product_id, price, available, unavailable_reason, date, created_at) VALUES ${
+        Array(rows).fill('(?, ?, ?, ?, ?, ?)').join(', ')}`;
+    const insPriceBatch = await stmt(priceSql(PRICE_BATCH));
+    let priceParams: unknown[] = [];
+    const flushPrices = async () => {
+      const rows = priceParams.length / PRICE_COLS;
+      if (rows === 0) return;
+      if (rows === PRICE_BATCH) await runStmt(insPriceBatch, priceParams);
+      else await exec(db, priceSql(rows), priceParams);
+      priceParams = [];
+    };
     const insMembership = await stmt('INSERT OR IGNORE INTO product_lists (product_id, list_id) VALUES (?, ?)');
 
     for (const l of data.lists) {
@@ -174,8 +186,9 @@ async function insertBackup(db: sqlite3.Database, userId: number, data: Normaliz
       }
       for (const pt of p.priceHistory) {
         if (existing && ctx.existingPriceKeys.has(`${p.asin}|${pt.date}`)) continue;
-        await runStmt(insPrice, [pid, pt.price, pt.available ? 1 : 0, pt.unavailableReason, pt.date, pt.date]);
+        priceParams.push(pid, pt.price, pt.available ? 1 : 0, pt.unavailableReason, pt.date, pt.date);
         counts.pricePointsAdded++;
+        if (priceParams.length === PRICE_BATCH * PRICE_COLS) await flushPrices();
       }
       for (const name of p.lists) {
         if (ctx.existingMemberships.has(`${p.asin}|${name}`)) continue;
@@ -183,6 +196,7 @@ async function insertBackup(db: sqlite3.Database, userId: number, data: Normaliz
         counts.membershipsAdded += r.changes;
       }
     }
+    await flushPrices();
   } finally {
     await Promise.all(stmts.map(finalize));
   }

@@ -68,11 +68,15 @@ export function validateBackup(
   const nowStorage = now.toISOString().slice(0, 19).replace('T', ' ');
   let quotaErrors = 0;
 
+  // Reported issues: errors first, then warnings, MAX_REPORTED_ISSUES in all (totals count everything).
+  const errors: Issue[] = [];
+  const warnings: Issue[] = [];
   const add = (severity: 'error' | 'warning', code: string, path: string, params?: Issue['params']) => {
     if (severity === 'error') report.issueTotals.errors++;
     else report.issueTotals.warnings++;
-    if (report.issues.length < MAX_REPORTED_ISSUES) {
-      report.issues.push(params ? { severity, code, path, params } : { severity, code, path });
+    const bucket = severity === 'error' ? errors : warnings;
+    if (bucket.length < MAX_REPORTED_ISSUES) {
+      bucket.push(params ? { severity, code, path, params } : { severity, code, path });
     }
   };
   const err = (code: string, path: string, params?: Issue['params']) => add('error', code, path, params);
@@ -87,6 +91,7 @@ export function validateBackup(
   for (const i of ctx.schemaIssues) add(i.severity, i.code, i.path, i.params);
 
   const finish = (data: NormalizedBackup | null) => {
+    report.issues = [...errors, ...warnings].slice(0, MAX_REPORTED_ISSUES);
     report.compatible = report.issueTotals.errors - quotaErrors === 0;
     return { report, data: report.compatible ? data : null };
   };

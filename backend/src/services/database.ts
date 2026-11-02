@@ -41,7 +41,7 @@ export class DatabaseService {
         return;
       }
       console.log('Connected to SQLite database');
-      db.configure('busyTimeout', 5000);
+      db.configure('busyTimeout', 30000);
       try {
         await createMigrations(db).run();
 
